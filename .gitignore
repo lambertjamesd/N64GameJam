@@ -3,3 +3,5 @@
 .vscode/*
 *.d
 *.out
+
+levelbuilder/levelbuilder
