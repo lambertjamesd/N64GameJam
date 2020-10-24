@@ -6,6 +6,9 @@
 #include "src/graphics/graphics.h"
 #include "boot.h"
 #include "memory.h"
+#include "src/debugger/debugger.h"
+
+#define USE_DEBUGGER     0
 
 OSThread gGameThread;
 OSThread gInitThread;
@@ -124,11 +127,12 @@ static void layoutMemory(void)
     gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT);
     gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * SCREEN_HT);
     gAudioHeap = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT - AUDIO_HEAP_SIZE);
-    heapInit((int)_codeSegmentRomEnd, (int)gAudioHeap);
+    heapInit((u32)PHYS_TO_K0(_codeSegmentRomEnd), (u32)gAudioHeap);
 }
 
 static void initGame(void)
 { 
+
     osCreateMesgQueue(&gDMAMessageQ, &gDMAMessageBuf, 1);
     osCreateMesgQueue(&gGfxFrameMsgQ, gGfxFrameMsgBuf, MAX_MESGS);
 
@@ -136,6 +140,14 @@ static void initGame(void)
                       SCHEDULER_PRIORITY, OS_VI_NTSC_LAN1, NUM_FIELDS);
 
     osScAddClient(&gScheduler, &gfxClient, &gGfxFrameMsgQ);  
+
+#if USE_DEBUGGER
+    OSThread* threadPtr[1];
+    threadPtr[0] = &gGameThread;
+    enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 1);
+#else
+    enum GDBError err = gdbSerialInit(handler, &gDMAMessageQ);
+#endif
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 

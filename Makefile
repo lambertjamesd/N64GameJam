@@ -33,9 +33,14 @@ HFILES = $(DEBUGGERHFILES) \
 CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
-	src/graphics/graphics.c		\
-	src/boot.c	\
-	src/game.c	\
+	src/graphics/graphics.c	\
+	src/math/plane.c		\
+	src/math/quaternion.c   \
+	src/math/ray.c   		\
+	src/math/vector.c   	\
+	src/system/assert.c		\
+	src/boot.c				\
+	src/game.c				\
 	src/memory.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)
@@ -62,8 +67,8 @@ LDIRT  =	$(APP)
 
 default:	$(TARGETS)
 
-# %.d: %.c
-# 	$(CC) $(GCINCS) $(LCINCS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
+%.d: %.c
+	$(CC) $(GCINCS) $(LCINCS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
 
 -include $(DEPS)
 

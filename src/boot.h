@@ -31,8 +31,8 @@ extern OSMesg           gGfxFrameMsgBuf[MAX_MESGS];
 extern OSPiHandle	*handler;
 
 extern char _codeSegmentRomStart[], _codeSegmentRomEnd[];
-extern char _gfxdlistsSegmentStart[], _gfxdlistsSegmentEnd[];
 extern char _staticSegmentRomStart[], _staticSegmentRomEnd[];
+extern char _debuglevelSegmentRomStart[], _debuglevelSegmentRomEnd[];
 extern char _tableSegmentRomStart[], _tableSegmentRomEnd[];
 extern char _seqSegmentRomStart[], _seqSegmentRomEnd[];
 extern char _bankSegmentRomStart[], _bankSegmentRomEnd[];

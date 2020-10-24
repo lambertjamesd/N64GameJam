@@ -2,8 +2,8 @@
 #ifndef _MEMORY_H
 #define _MOMORY_H
 
-void heapInit(int start, int end);
+void heapInit(unsigned int start, unsigned int end);
 void heapReset();
-void* heapMalloc(int len, int align);
+void* heapMalloc(unsigned int len, unsigned int align);
 
 #endif

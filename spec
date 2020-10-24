@@ -27,7 +27,7 @@ beginseg
 	name "debuglevel"
 	flags OBJECT
 	number LEVEL_SEGMENT
-	include "src/levels/debug/geo.c"
+	include "src/levels/debug/geo.o"
 endseg
 
 beginseg
@@ -52,6 +52,7 @@ beginwave
 	name "game"
 	include "code"
 	include "static"
+	include "debuglevel"
 	include "table"
 	include "bank"
 	include "seq"

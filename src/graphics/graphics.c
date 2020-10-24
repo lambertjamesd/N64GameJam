@@ -3,6 +3,8 @@
 
 #include "graphics.h"
 #include "src/boot.h"
+#include "src/memory.h"
+#include "src/levels/debug/header.h"
 
 extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
@@ -11,16 +13,22 @@ extern GFXInfo         gInfo[];
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 unsigned short	gZBuffer[SCREEN_WD*SCREEN_HT];
 unsigned short* gColorBuffer[2];
-Gfx gStaticSegmentBuffer[GFX_DL_BUF_SIZE];
+Gfx* gStaticSegmentBuffer;
+Gfx* gLevelSegmentBuffer;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 Dynamic dynamic;
 
 void graphicsInit(void) 
 {    
-    extern char _gfxdlistsSegmentEnd[];
     u32 len = (u32)(_staticSegmentRomEnd - _staticSegmentRomStart);
 
+    gStaticSegmentBuffer = heapMalloc(len, 8);
+
     romCopy(_staticSegmentRomStart, (char*)gStaticSegmentBuffer, len);
+
+    len = (u32)(_debuglevelSegmentRomEnd - _debuglevelSegmentRomStart);
+    gLevelSegmentBuffer = heapMalloc(len, 8);
+    romCopy(_debuglevelSegmentRomStart, (char*)gLevelSegmentBuffer, len);
 
     gInfo[0].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[0].cfb = gColorBuffer[0];
@@ -42,6 +50,7 @@ void createGfxTask(GFXInfo *i)
     gSPSegment(glistp++, 0, 0);
     gSPSegment(glistp++, STATIC_SEGMENT,  osVirtualToPhysical(gStaticSegmentBuffer));
     gSPSegment(glistp++, DYNAMIC_SEGMENT, osVirtualToPhysical(dynamicp));
+    gSPSegment(glistp++, LEVEL_SEGMENT, osVirtualToPhysical(gLevelSegmentBuffer));
 
     gSPDisplayList(glistp++, setup_rspstate);
     if (firsttime) {
@@ -69,13 +78,32 @@ void createGfxTask(GFXInfo *i)
     gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
     gDPPipeSync(glistp++);
-    gDPSetCycleType(glistp++, G_CYC_1CYCLE); 
+    gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 
-    
+    gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADE);
+    gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH);
+
+    guPerspective(&dynamicp->projection, &dynamicp->perspectiveCorrect, 70.0f, 4.0f / 3.0f, 1.0f, 128.0f, 1.0f);
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
+
+    Mtx worldScale;
+    Mtx traslate;
+    Mtx rotate;
+    Mtx combine;
+    guScale(&worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
+    guTranslate(&traslate, 0.0f, -10.0f, -6.0f);
+    guRotate(&rotate, 60.0f, 1.0f, 0.0f, 0.0f);
+    guMtxCatL(&worldScale, &traslate, &combine);
+    guMtxCatL(&combine, &rotate, &dynamicp->viewing);
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
+
+    gSPDisplayList(glistp++, Test_PlaneTest_mesh);
+
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);
 
     osWritebackDCache(&i->dp, (s32)glistp - (s32)&i->dp);
+    osWritebackDCache(&dynamicp, sizeof(Dynamic));
 
     t = &i->task;
     t->list.t.data_ptr = (u64 *) dynamicp->glist;

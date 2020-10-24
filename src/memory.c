@@ -1,11 +1,11 @@
 
 #include "memory.h"
 
-static int gHeapStart;
-static int gHeapEnd;
-static int gHeapCurrent;
+static unsigned int gHeapStart;
+static unsigned int gHeapEnd;
+static unsigned int gHeapCurrent;
 
-void heapInit(int start, int end)
+void heapInit(unsigned int start, unsigned int end)
 {
     gHeapStart = start;
     gHeapEnd = end;
@@ -17,7 +17,7 @@ void heapReset()
     gHeapCurrent = gHeapStart;
 }
 
-void* heapMalloc(int len, int align)
+void* heapMalloc(unsigned int len, unsigned int align)
 {
     gHeapCurrent = (gHeapCurrent + align - 1) & ~(align - 1);
     void* result = (void*)gHeapCurrent;
