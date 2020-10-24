@@ -26,9 +26,10 @@ HFILES =		\
 CODEFILES =		\
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
-	src/boot.c	\
 	src/graphics/graphics.c		\
-	src/game.c
+	src/boot.c	\
+	src/game.c	\
+	src/memory.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)
 
@@ -39,7 +40,8 @@ CODESEGMENT =	codesegment.o
 # Data files that have thier own segments:
 
 DATAFILES =		\
-	src/graphics/init.c
+	src/graphics/init.c \
+	src/levels/debug/geo.c
 
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 

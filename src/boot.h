@@ -30,6 +30,7 @@ extern OSMesgQueue      gGfxFrameMsgQ;
 extern OSMesg           gGfxFrameMsgBuf[MAX_MESGS];
 extern OSPiHandle	*handler;
 
+extern char _codeSegmentRomStart[], _codeSegmentRomEnd[];
 extern char _gfxdlistsSegmentStart[], _gfxdlistsSegmentEnd[];
 extern char _staticSegmentRomStart[], _staticSegmentRomEnd[];
 extern char _tableSegmentRomStart[], _tableSegmentRomEnd[];
@@ -37,7 +38,7 @@ extern char _seqSegmentRomStart[], _seqSegmentRomEnd[];
 extern char _bankSegmentRomStart[], _bankSegmentRomEnd[];
 
 
-void     initAudio(void);
+void     audioInit();
 void     graphicsInit(void);
 void     createGfxTask(GFXInfo *i);
 void     romCopy(const char *src, const char *dest, const int len);

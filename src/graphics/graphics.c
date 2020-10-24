@@ -22,9 +22,6 @@ void graphicsInit(void)
 
     romCopy(_staticSegmentRomStart, (char*)gStaticSegmentBuffer, len);
 
-    gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT);
-    gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * SCREEN_HT);
-    
     gInfo[0].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[0].cfb = gColorBuffer[0];
     gInfo[1].msg.gen.type = OS_SC_DONE_MSG;

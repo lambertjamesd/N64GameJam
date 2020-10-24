@@ -24,6 +24,13 @@ beginseg
 endseg
 
 beginseg
+	name "debuglevel"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/levels/debug/geo.c"
+endseg
+
+beginseg
 	name "bank"
 	flags RAW
 	include "$(ROOT)/usr/lib/soundbanks/GenMidiBank.ctl"

@@ -5,8 +5,7 @@
 
 extern OSSched         gScheduler;
 
-
-u8 audioHeap[AUDIO_HEAP_SIZE];
+u8* gAudioHeap;
 
 ALSeqPlayer	   *seqp;
 static u8          *seqPtr;
@@ -17,7 +16,7 @@ static ALSeqMarker seqEnd;
 
 ALHeap             hp;
 
-void initAudio(void) 
+void audioInit() 
 {
     ALBankFile    *bankPtr;
     u32           bankLen;
@@ -25,7 +24,7 @@ void initAudio(void)
     ALSeqpConfig  seqc;
     amConfig      amc;
     
-    alHeapInit(&hp, audioHeap, sizeof(audioHeap));    
+    alHeapInit(&hp, gAudioHeap, AUDIO_HEAP_SIZE);    
 
     bankLen = _bankSegmentRomEnd - _bankSegmentRomStart;
     bankPtr = alHeapAlloc(&hp, 1, bankLen);

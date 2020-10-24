@@ -5,6 +5,7 @@
 #include "audio/audio.h"
 #include "src/graphics/graphics.h"
 #include "boot.h"
+#include "memory.h"
 
 OSThread gGameThread;
 OSThread gInitThread;
@@ -118,6 +119,14 @@ void romCopy(const char *src, const char *dest, const int len)
     (void) osRecvMesg(&gDMAMessageQ, &dummyMesg, OS_MESG_BLOCK);
 }
 
+static void layoutMemory(void)
+{
+    gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT);
+    gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * SCREEN_HT);
+    gAudioHeap = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT - AUDIO_HEAP_SIZE);
+    heapInit((int)_codeSegmentRomEnd, (int)gAudioHeap);
+}
+
 static void initGame(void)
 { 
     osCreateMesgQueue(&gDMAMessageQ, &gDMAMessageBuf, 1);
@@ -130,7 +139,8 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
+    layoutMemory();
     graphicsInit(); 
-    initAudio();
+    audioInit();
 }
 
