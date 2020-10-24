@@ -4,8 +4,9 @@ include $(ROOT)/usr/include/make/PRdefs
 FINAL = YES
 
 ifeq ($(FINAL), YES)
-OPTIMIZER       = -O2 -std=gnu90 -mno-shared
-LCDEFS		= -DNDEBUG -D_FINALROM
+# OPTIMIZER       = -O2 -std=gnu90 -mno-shared
+OPTIMIZER       = -g
+LCDEFS			= -DNDEBUG -D_FINALROM
 N64LIB          = -lultra_rom
 else
 OPTIMIZER       = -g -std=gnu90 -mno-shared
@@ -17,13 +18,19 @@ APP =		game.out
 
 TARGETS =	game.n64
 
-HFILES =		\
+DEBUGGERHFILES = src/debugger/serial.h \
+	src/debugger/debugger.h
+
+DEBUGGERFILES = src/debugger/serial.c \
+	src/debugger/debugger.c
+
+HFILES = $(DEBUGGERHFILES) \
 	src/game.h	\
 	src/audio/audio.h		\
 	src/boot.h		\
 	src/graphics/graphics.h
 
-CODEFILES =		\
+CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
 	src/graphics/graphics.c		\
@@ -47,9 +54,9 @@ DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
 
-LCINCS =	-I.. -I$(ROOT)/usr/include/PR -I./
-LCOPTS =	$(DFLAG) -mno-shared -G 0
-LDFLAGS =	$(MKDEPOPT) -L$(ROOT)/usr/lib $(N64LIB)  -L$(N64_LIBGCCDIR) -lgcc
+LCINCS =	-I. -I$(ROOT)/usr/include/PR -I $(ROOT)/usr/include
+LCOPTS =	-mno-shared -G 0
+LDFLAGS =	$(MKDEPOPT) -L$(ROOT)/usr/lib $(N64LIB) -L$(N64_LIBGCCDIR) -L$(N64_NEWLIBDIR) -lgcc -lc
 
 LDIRT  =	$(APP)
 
