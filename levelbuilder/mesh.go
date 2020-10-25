@@ -8,7 +8,7 @@ type MeshVertex struct {
 }
 
 type MeshFace struct {
-	indices []uint16
+	indices []uint32
 }
 
 type Mesh struct {

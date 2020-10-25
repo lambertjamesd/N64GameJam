@@ -2,22 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
+	"os"
 )
 
 func main() {
-	content, err := ioutil.ReadFile("/home/james/Documents/GameJam/Test.ply")
+	var tileSet = BuildTileSet()
+	var tileMap = ParseLevel(os.Args[1], tileSet)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	mesh, err := ParsePly(string(content))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("Vertices %d Faces %d", len(mesh.vertices), len(mesh.faces))
+	fmt.Printf("Rows %d", len(tileMap.Tiles))
 }

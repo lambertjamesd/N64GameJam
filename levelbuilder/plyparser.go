@@ -171,16 +171,16 @@ func parseData(parseData *plyParseData) error {
 			}
 
 			var face MeshFace
-			face.indices = make([]uint16, count)
+			face.indices = make([]uint32, count)
 
 			for i := 0; uint64(i) < count; i = i + 1 {
-				index, err := strconv.ParseUint(parts[i+1], 10, 16)
+				index, err := strconv.ParseUint(parts[i+1], 10, 32)
 
 				if err != nil {
 					return nil
 				}
 
-				face.indices[i] = uint16(index)
+				face.indices[i] = uint32(index)
 			}
 
 			parseData.target.faces = append(parseData.target.faces, face)

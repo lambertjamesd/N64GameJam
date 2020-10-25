@@ -14,9 +14,18 @@ type LevelBlock struct {
 }
 
 type LevelTile struct {
-	Blocks [3]LevelBlock
+	Blocks [3]*LevelBlock
+}
+
+type LevelTileSet struct {
+	Tiles map[string]*LevelTile
+}
+
+type LevelTileSlot struct {
+	Tile     *LevelTile
+	Rotation int
 }
 
 type LevelGrid struct {
-	Tiles [][]LevelTile
+	Tiles [][]LevelTileSlot
 }
