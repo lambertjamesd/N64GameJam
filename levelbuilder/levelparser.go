@@ -42,19 +42,19 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 
 		var rowData = make([]LevelTileSlot, rows)
 
-		result.Tiles = append(result.Tiles, rowData)
-
 		for row := uint32(0); row < rows; row = row + 1 {
 			tile, _ := tileMap.Tiles[readString(file)]
 
 			var rotation uint8
 			binary.Read(file, binary.LittleEndian, &rotation)
 
-			rowData = append(rowData, LevelTileSlot{
+			rowData[row] = LevelTileSlot{
 				tile,
 				int(rotation),
-			})
+			}
 		}
+
+		result.Tiles = append(result.Tiles, rowData)
 	}
 
 	return &result

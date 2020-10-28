@@ -49,7 +49,7 @@ func floatToNormalCoord(input float32) int8 {
 }
 
 func writeNormalVertex(out *os.File, vertex *MeshVertex) {
-	out.WriteString(fmt.Sprintf("    {{%d, %d, %d}, %d, {%d, %d}, {%d, %d, %d, %d}",
+	out.WriteString(fmt.Sprintf("    {{{%d, %d, %d}, %d, {%d, %d}, {%d, %d, %d, %d}}},\n",
 		floatToVertexCoord(vertex.x),
 		floatToVertexCoord(vertex.y),
 		floatToVertexCoord(vertex.z),
@@ -65,7 +65,7 @@ func writeNormalVertex(out *os.File, vertex *MeshVertex) {
 }
 
 func writeColorVertex(out *os.File, vertex *MeshVertex) {
-	out.WriteString(fmt.Sprintf("    {{%d, %d, %d}, %d, {%d, %d}, {%d, %d, %d, %d}",
+	out.WriteString(fmt.Sprintf("    {{{%d, %d, %d}, %d, {%d, %d}, {%d, %d, %d, %d}}},\n",
 		floatToVertexCoord(vertex.x),
 		floatToVertexCoord(vertex.y),
 		floatToVertexCoord(vertex.z),
@@ -82,6 +82,30 @@ func writeColorVertex(out *os.File, vertex *MeshVertex) {
 
 type VertexWriter func(out *os.File, vertex *MeshVertex)
 
-func WriteMeshToC(out *os.File, mesh *Mesh) {
+func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) {
+	var graph = GraphFromMesh(mesh)
+	var drawOrder = CalculateGraphDrawOrder(graph)
 
+	out.WriteString(fmt.Sprintf("\nVtx %s_vtx[] = {\n", cName))
+
+	for _, vtx := range drawOrder.Vertices {
+		vertex(out, &mesh.vertices[vtx.Id])
+	}
+
+	out.WriteString("}\n")
+
+	out.WriteString(fmt.Sprintf("\nGfx %s_tri[] = {\n", cName))
+
+	for _, gfx := range drawOrder.DrawCommands {
+		out.WriteString(fmt.Sprintf("    gsSPVertex(&%s_vtx[%d], %d, %d),\n", cName, gfx.VertexStart, gfx.VertexCount, gfx.VertexBufferStart))
+
+		for i := 0; i < len(gfx.Triangles); i = i + 1 {
+			var a = gfx.Triangles[i]
+			out.WriteString(fmt.Sprintf("    gsSP1Triangle(%d, %d, %d, 0),\n", a[0], a[1], a[2]))
+		}
+	}
+
+	out.WriteString("    gsSPEndDisplayList(),\n")
+
+	out.WriteString("}\n")
 }

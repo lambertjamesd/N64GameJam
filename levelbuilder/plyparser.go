@@ -152,6 +152,11 @@ func parseData(parseData *plyParseData) error {
 		if currentElement.name == "vertex" {
 			var vertex MeshVertex
 
+			vertex.r = 255
+			vertex.g = 255
+			vertex.b = 255
+			vertex.a = 255
+
 			for j := 0; j < len(currentElement.properties); j = j + 1 {
 				parseVertexElement(&vertex, currentElement.properties[j].name, strings.TrimSpace(parts[j]))
 			}

@@ -1,15 +1,15 @@
 Vtx Test_PlaneTest_mesh_vtx_0[4] = {
-	{{{-256, 0, 256},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{256, 0, 256},0, {1008, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{256, 0, -256},0, {1008, -16},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{-256, 0, -256},0, {-16, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+    {{{-256, 0, -256}, 0, {0, 0}, {255, 255, 255, 255}}},
+    {{{256, 0, 256}, 0, {32, 32}, {255, 255, 255, 255}}},
+    {{{-256, 0, 256}, 0, {0, 32}, {255, 255, 255, 255}}},
+    {{{256, 0, -256}, 0, {32, 0}, {255, 255, 255, 255}}},
 };
 
 Gfx Test_PlaneTest_mesh_tri_0[] = {
-	gsSPVertex(Test_PlaneTest_mesh_vtx_0 + 0, 4, 0),
-	gsSP1Triangle(0, 1, 2, 0),
-	gsSP1Triangle(0, 2, 3, 0),
-	gsSPEndDisplayList(),
+    gsSPVertex(&Test_PlaneTest_mesh_vtx_0[0], 4, 0),
+    gsSP1Triangle(0, 1, 2, 0),
+    gsSP1Triangle(0, 3, 1, 0),
+    gsSPEndDisplayList(),
 };
 
 

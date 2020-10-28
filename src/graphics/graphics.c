@@ -91,7 +91,7 @@ void createGfxTask(GFXInfo *i)
     Mtx rotate;
     Mtx combine;
     guScale(&worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
-    guTranslate(&traslate, 0.0f, -10.0f, -6.0f);
+    guTranslate(&traslate, 0.0f, -10.0f, 0.0f);
     guRotate(&rotate, 60.0f, 1.0f, 0.0f, 0.0f);
     guMtxCatL(&worldScale, &traslate, &combine);
     guMtxCatL(&combine, &rotate, &dynamicp->viewing);
