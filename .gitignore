@@ -5,4 +5,4 @@
 *.out
 
 levelbuilder/levelbuilder
-levelbuilder/output
+levelbuilder/output/*

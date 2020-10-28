@@ -1,7 +1,5 @@
 package main
 
-import "math"
-
 type GraphVertex struct {
 	Id               int
 	AdjacentVertices []*GraphVertex
@@ -28,6 +26,35 @@ type GraphDrawCommand struct {
 type GraphDrawOrder struct {
 	Vertices     []*GraphVertex
 	DrawCommands []*GraphDrawCommand
+}
+
+func markAdjacentVertices(vertex *GraphVertex, into map[int]int, with int) {
+	_, alreadyHas := into[vertex.Id]
+
+	if !alreadyHas {
+		into[vertex.Id] = with
+
+		for _, adj := range vertex.AdjacentVertices {
+			markAdjacentVertices(adj, into, with)
+		}
+	}
+}
+
+func findMeshGroups(graph *GraphMesh) map[int]int {
+	var idx = 0
+
+	var result = make(map[int]int)
+
+	for _, vertex := range graph.Vertices {
+		_, alreadyHas := result[vertex.Id]
+
+		if !alreadyHas {
+			markAdjacentVertices(&vertex, result, idx)
+			idx = idx + 1
+		}
+	}
+
+	return result
 }
 
 const VERTEX_BUFFER_SIZE = 16
@@ -71,34 +98,34 @@ func (vertex *GraphVertex) FindFurthestVertex() *GraphVertex {
 	return result
 }
 
-func (graph *GraphMesh) FindStartingVertex(sampleCount int) *GraphVertex {
+func (graph *GraphMesh) FindStartingVertices() []*GraphVertex {
+	var grouping = findMeshGroups(graph)
+
 	var hitCount = make(map[*GraphVertex]int)
+	var groupCount = 0
 
-	if sampleCount < len(graph.Vertices) {
-		sampleCount = len(graph.Vertices)
-	}
-
-	var step = float64(len(graph.Vertices)) / float64(sampleCount)
-	var currIndex float64 = 0
-
-	for i := 0; i < sampleCount; i = i + 1 {
-		var currIndexAsInt = int(math.Floor(currIndex))
-
-		hit := graph.Vertices[currIndexAsInt].FindFurthestVertex()
+	for _, vertex := range graph.Vertices {
+		hit := vertex.FindFurthestVertex()
 
 		currHitCount, _ := hitCount[hit]
 		hitCount[hit] = currHitCount + 1
 
-		currIndex = currIndex + step
+		groupId, _ := grouping[vertex.Id]
+
+		if groupId > groupCount {
+			groupCount = groupId
+		}
 	}
 
-	var result *GraphVertex = nil
-	var currHitCount = 0
+	var result = make([]*GraphVertex, groupCount+1)
+	var currHitCount = make([]int, groupCount+1)
 
 	for check, checkHit := range hitCount {
-		if checkHit > currHitCount {
-			currHitCount = checkHit
-			result = check
+		groupId, _ := grouping[check.Id]
+
+		if checkHit > currHitCount[groupId] {
+			currHitCount[groupId] = checkHit
+			result[groupId] = check
 		}
 	}
 
@@ -286,8 +313,15 @@ func generateDrawOrder(chunks [][]*GraphFace) *GraphDrawOrder {
 }
 
 func CalculateGraphDrawOrder(graph *GraphMesh) *GraphDrawOrder {
-	start := graph.FindStartingVertex(10)
-	var drawOrder = calculateFaceDrawOrder(start.AdjacentFaces[0], make(map[*GraphFace]bool), nil)
+	startingVertices := graph.FindStartingVertices()
+	checked := make(map[*GraphFace]bool)
+
+	var drawOrder []*GraphFace = nil
+
+	for _, start := range startingVertices {
+		drawOrder = calculateFaceDrawOrder(start.AdjacentFaces[0], checked, drawOrder)
+	}
+
 	var drawChunks = breakupGraphFaceChunks(drawOrder)
 	return generateDrawOrder(drawChunks)
 }

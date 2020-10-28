@@ -5,6 +5,8 @@
 #include "src/boot.h"
 #include "src/memory.h"
 #include "src/levels/debug/header.h"
+#include "src/input/controller.h"
+#include "src/math/vector.h"
 
 extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
@@ -17,6 +19,8 @@ Gfx* gStaticSegmentBuffer;
 Gfx* gLevelSegmentBuffer;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 Dynamic dynamic;
+
+struct Vector3 cameraPos;
 
 void graphicsInit(void) 
 {    
@@ -73,7 +77,7 @@ void createGfxTask(GFXInfo *i)
     gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
 		     osVirtualToPhysical(i->cfb));
 
-    gDPSetFillColor(glistp++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
+    gDPSetFillColor(glistp++, (GPACK_RGBA5551(255, 0, 0, 1) << 16 | 
 			       GPACK_RGBA5551(0, 0, 0, 1)));
     gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
@@ -86,18 +90,26 @@ void createGfxTask(GFXInfo *i)
     guPerspective(&dynamicp->projection, &dynamicp->perspectiveCorrect, 70.0f, 4.0f / 3.0f, 1.0f, 128.0f, 1.0f);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
 
+    cameraPos.x += gControllerState[0].stick_x / (80.0f * 30.0f);
+    cameraPos.z -= gControllerState[0].stick_y / (80.0f * 30.0f);
+
     Mtx worldScale;
     Mtx traslate;
     Mtx rotate;
     Mtx combine;
     guScale(&worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
-    guTranslate(&traslate, 0.0f, -10.0f, 0.0f);
+    guTranslate(&traslate, -cameraPos.x, -10.0f, -cameraPos.z);
     guRotate(&rotate, 60.0f, 1.0f, 0.0f, 0.0f);
     guMtxCatL(&worldScale, &traslate, &combine);
     guMtxCatL(&combine, &rotate, &dynamicp->viewing);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
     gSPDisplayList(glistp++, Test_PlaneTest_mesh);
+    gSPDisplayList(glistp++, _level_test_geo_0_tri);
+    gSPDisplayList(glistp++, _level_test_geo_1_tri);
+    gSPDisplayList(glistp++, _level_test_geo_2_tri);
+    gSPDisplayList(glistp++, _level_test_geo_3_tri);
+    gSPDisplayList(glistp++, _level_test_geo_4_tri);
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);

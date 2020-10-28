@@ -7,6 +7,7 @@
 #include "boot.h"
 #include "memory.h"
 #include "src/debugger/debugger.h"
+#include "src/input/controller.h"
 
 #define USE_DEBUGGER     0
 
@@ -92,6 +93,8 @@ static void gameEntryPoint(void *argv)
                     pendingGFX++;
                     drawbuffer ^= 1;
                 }
+
+                controllersReadData();
                 break;
 
             case (OS_SC_DONE_MSG):
@@ -151,6 +154,7 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
+    controllersInit();
     layoutMemory();
     graphicsInit(); 
     audioInit();

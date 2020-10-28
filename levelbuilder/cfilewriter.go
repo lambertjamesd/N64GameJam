@@ -92,7 +92,7 @@ func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) {
 		vertex(out, &mesh.vertices[vtx.Id])
 	}
 
-	out.WriteString("}\n")
+	out.WriteString("};\n")
 
 	out.WriteString(fmt.Sprintf("\nGfx %s_tri[] = {\n", cName))
 
@@ -107,5 +107,5 @@ func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) {
 
 	out.WriteString("    gsSPEndDisplayList(),\n")
 
-	out.WriteString("}\n")
+	out.WriteString("};\n")
 }

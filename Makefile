@@ -34,6 +34,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
 	src/graphics/graphics.c	\
+	src/input/controller.c  \
 	src/math/plane.c		\
 	src/math/quaternion.c   \
 	src/math/ray.c   		\
