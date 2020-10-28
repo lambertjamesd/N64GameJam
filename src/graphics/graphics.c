@@ -20,7 +20,7 @@ Gfx* gLevelSegmentBuffer;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 Dynamic dynamic;
 
-struct Vector3 cameraPos;
+struct Vector3 cameraPos = {15.0f, 0.0f, 0.0f};
 
 void graphicsInit(void) 
 {    
@@ -98,18 +98,19 @@ void createGfxTask(GFXInfo *i)
     Mtx rotate;
     Mtx combine;
     guScale(&worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
-    guTranslate(&traslate, -cameraPos.x, -10.0f, -cameraPos.z);
+    guTranslate(&traslate, -cameraPos.x, -30.0f, -cameraPos.z);
     guRotate(&rotate, 60.0f, 1.0f, 0.0f, 0.0f);
     guMtxCatL(&worldScale, &traslate, &combine);
     guMtxCatL(&combine, &rotate, &dynamicp->viewing);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
-    gSPDisplayList(glistp++, Test_PlaneTest_mesh);
+    gSPDisplayList(glistp++, _alienFloor_material);
+    gSPDisplayList(glistp++, Test_PlaneTest_mesh_tri_0);
     gSPDisplayList(glistp++, _level_test_geo_0_tri);
-    gSPDisplayList(glistp++, _level_test_geo_1_tri);
-    gSPDisplayList(glistp++, _level_test_geo_2_tri);
-    gSPDisplayList(glistp++, _level_test_geo_3_tri);
-    gSPDisplayList(glistp++, _level_test_geo_4_tri);
+    // gSPDisplayList(glistp++, _level_test_geo_1_tri);
+    // gSPDisplayList(glistp++, _level_test_geo_2_tri);
+    // gSPDisplayList(glistp++, _level_test_geo_3_tri);
+    // gSPDisplayList(glistp++, _level_test_geo_4_tri);
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);
