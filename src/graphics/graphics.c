@@ -108,6 +108,7 @@ void createGfxTask(GFXInfo *i)
     gSPDisplayList(glistp++, _level_test_geo_0_tri);
     gSPDisplayList(glistp++, _level_test_geo_1_tri);
     gSPDisplayList(glistp++, _level_test_geo_2_tri);
+    gSPDisplayList(glistp++, _alienWall_material);
     gSPDisplayList(glistp++, _level_test_geo_3_tri);
     gSPDisplayList(glistp++, _level_test_geo_4_tri);
 
