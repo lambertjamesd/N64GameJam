@@ -25,7 +25,7 @@ func floatToVertexCoord(input float32) int16 {
 }
 
 func floatToTextureCoord(input float32) int16 {
-	var scaled = math.Round(float64(input * 32))
+	var scaled = math.Round(float64(input*1024)) - 16
 
 	if scaled > MAX_INT16 {
 		scaled = MAX_INT16

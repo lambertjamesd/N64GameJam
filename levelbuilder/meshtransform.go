@@ -28,8 +28,8 @@ func RoundToN64(input *MeshVertex) {
 	input.ny = float32(math.Round(float64(input.ny)*128) / 128)
 	input.nz = float32(math.Round(float64(input.nz)*128) / 128)
 
-	input.s = float32(math.Round(float64(input.s)*32) / 32)
-	input.t = float32(math.Round(float64(input.t)*32) / 32)
+	input.s = float32(math.Round(float64(input.s)*1024) / 1024)
+	input.t = float32(math.Round(float64(input.t)*1024) / 1024)
 }
 
 func FlipZ(input *Mesh) *Mesh {

@@ -25,6 +25,7 @@ func testLevelCombine() {
 		mesh = RemoveDuplicates(mesh)
 		mesh = FlipZ(mesh)
 		mesh = Triangulate(mesh)
+		mesh = TransformMesh(mesh, ApplyLighting(0.5, -0.57735, -0.57735, -0.57735))
 
 		WriteMeshToC(output, mesh, fmt.Sprintf("_level_test_geo_%d", material), writeColorVertex)
 	}

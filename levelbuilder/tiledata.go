@@ -67,29 +67,29 @@ func BuildTileSet() *LevelTileSet {
 
 	var floorBlock = buildBlock(
 		true,
-		"ply/flat_face.ply", Underhang,
-		"ply/flat_face.ply", Underhang,
-		"ply/flat_face.ply", Underhang,
-		"ply/flat_face.ply", Underhang,
-		"ply/flat_face.ply", LowerFloor,
+		"ply/wall_color.ply", Underhang,
+		"ply/wall_color.ply", Underhang,
+		"ply/wall_color.ply", Underhang,
+		"ply/wall_color.ply", Underhang,
+		"ply/floor_color.ply", LowerFloor,
 	)
 
 	var platformBlock = buildBlock(
 		true,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", UpperFloor,
+		"ply/wall_color.ply", Wall,
+		"ply/wall_color.ply", Wall,
+		"ply/wall_color.ply", Wall,
+		"ply/wall_color.ply", Wall,
+		"ply/platform_color.ply", UpperFloor,
 	)
 
 	var barrierBlock = buildBlock(
 		true,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", Wall,
-		"ply/flat_face.ply", BarrierTop,
+		"ply/wall_color.ply", Wall,
+		"ply/wall_color.ply", Wall,
+		"ply/wall_color.ply", Wall,
+		"ply/wall_color.ply", Wall,
+		"ply/barrier_color.ply", BarrierTop,
 	)
 
 	result.Tiles = make(map[string]*LevelTile)
