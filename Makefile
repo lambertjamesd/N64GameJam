@@ -64,7 +64,8 @@ CODESEGMENT =	codesegment.o
 # Data files that have thier own segments:
 
 DATAFILES =	$(LEVEL_GEO) \
-	src/graphics/init.c
+	src/graphics/init.c \
+	src/levelthemes/alienworld/materials.c
 
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 

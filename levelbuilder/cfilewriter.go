@@ -82,7 +82,7 @@ func writeColorVertex(out *os.File, vertex *MeshVertex) {
 
 type VertexWriter func(out *os.File, vertex *MeshVertex)
 
-func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) {
+func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) string {
 	var graph = GraphFromMesh(mesh)
 	var drawOrder = CalculateGraphDrawOrder(graph)
 
@@ -108,4 +108,6 @@ func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) {
 	out.WriteString("    gsSPEndDisplayList(),\n")
 
 	out.WriteString("};\n")
+
+	return cName + "_vtx"
 }

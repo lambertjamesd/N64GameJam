@@ -17,6 +17,7 @@ unsigned short	gZBuffer[SCREEN_WD*SCREEN_HT];
 unsigned short* gColorBuffer[2];
 Gfx* gStaticSegmentBuffer;
 Gfx* gLevelSegmentBuffer;
+Gfx* gLevelThemeSegmentBuffer;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 Dynamic dynamic;
 
@@ -33,6 +34,10 @@ void graphicsInit(void)
     len = (u32)(_debuglevelSegmentRomEnd - _debuglevelSegmentRomStart);
     gLevelSegmentBuffer = heapMalloc(len, 8);
     romCopy(_debuglevelSegmentRomStart, (char*)gLevelSegmentBuffer, len);
+
+    len = (u32)(_alienworldSegmentRomEnd - _alienworldSegmentRomStart);
+    gLevelThemeSegmentBuffer = heapMalloc(len, 8);
+    romCopy(_alienworldSegmentRomStart, (char*)gLevelThemeSegmentBuffer, len);
 
     gInfo[0].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[0].cfb = gColorBuffer[0];
@@ -55,6 +60,7 @@ void createGfxTask(GFXInfo *i)
     gSPSegment(glistp++, STATIC_SEGMENT,  osVirtualToPhysical(gStaticSegmentBuffer));
     gSPSegment(glistp++, DYNAMIC_SEGMENT, osVirtualToPhysical(dynamicp));
     gSPSegment(glistp++, LEVEL_SEGMENT, osVirtualToPhysical(gLevelSegmentBuffer));
+    gSPSegment(glistp++, LEVEL_THEME_SEGMENT, osVirtualToPhysical(gLevelThemeSegmentBuffer));
 
     gSPDisplayList(glistp++, setup_rspstate);
     if (firsttime) {

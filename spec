@@ -31,6 +31,13 @@ beginseg
 endseg
 
 beginseg
+	name "alienworld"
+	flags OBJECT
+	number LEVEL_THEME_SEGMENT
+	include "src/levelthemes/alienworld/materials.o"
+endseg
+
+beginseg
 	name "bank"
 	flags RAW
 	include "$(ROOT)/usr/lib/soundbanks/GenMidiBank.ctl"
@@ -53,6 +60,7 @@ beginwave
 	include "code"
 	include "static"
 	include "debuglevel"
+	include "alienworld"
 	include "table"
 	include "bank"
 	include "seq"

@@ -13,8 +13,15 @@ func processLevel(levelFile string, outputDirectory string) {
 
 	var joinedMesh = ExtractCombinedMesh(tileMap)
 
+	var writtenMeshes []string = nil
+	var exportedGfx []string = nil
+
 	for material, mesh := range joinedMesh {
-		output, err := os.OpenFile(fmt.Sprintf(filepath.Join(filepath.Dir(outputDirectory), "geo_%d.inc.c"), material), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
+		var cFile = fmt.Sprintf(filepath.Join(filepath.Dir(outputDirectory), "geo_%d.inc.c"), material)
+
+		output, err := os.OpenFile(cFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
+
+		writtenMeshes = append(writtenMeshes, cFile)
 
 		if err != nil {
 			log.Fatal(err)
@@ -36,7 +43,9 @@ func processLevel(levelFile string, outputDirectory string) {
 
 		mesh = TransformMesh(mesh, ApplyLighting(0.25, lx, ly, lz))
 
-		WriteMeshToC(output, mesh, fmt.Sprintf("_level_test_geo_%d", material), writeColorVertex)
+		var gfxName = WriteMeshToC(output, mesh, fmt.Sprintf("_level_test_geo_%d", material), writeColorVertex)
+
+		exportedGfx = append(exportedGfx, gfxName)
 	}
 }
 
