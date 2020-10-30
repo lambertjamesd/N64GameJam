@@ -8,6 +8,8 @@ const (
 	BarrierTop MaterialType = 2
 	Wall       MaterialType = 3
 	Underhang  MaterialType = 4
+	Lava       MaterialType = 5
+	Track      MaterialType = 6
 )
 
 var AllMaterials = []MaterialType{
@@ -25,10 +27,7 @@ type LevelBlockFace struct {
 
 type LevelBlock struct {
 	IsSolid bool
-	Left    *LevelBlockFace
-	Right   *LevelBlockFace
-	Front   *LevelBlockFace
-	Back    *LevelBlockFace
+	Sides   [4]*LevelBlockFace
 	Top     *LevelBlockFace
 }
 

@@ -107,13 +107,15 @@ func (graph *GraphMesh) FindStartingVertices() []*GraphVertex {
 	for _, vertex := range graph.Vertices {
 		hit := vertex.FindFurthestVertex()
 
-		currHitCount, _ := hitCount[hit]
-		hitCount[hit] = currHitCount + 1
+		if hit != nil {
+			currHitCount, _ := hitCount[hit]
+			hitCount[hit] = currHitCount + 1
 
-		groupId, _ := grouping[vertex.Id]
+			groupId, _ := grouping[vertex.Id]
 
-		if groupId > groupCount {
-			groupCount = groupId
+			if groupId > groupCount {
+				groupCount = groupId
+			}
 		}
 	}
 

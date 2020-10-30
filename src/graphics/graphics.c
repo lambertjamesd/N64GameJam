@@ -77,15 +77,16 @@ void createGfxTask(GFXInfo *i)
     gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
 		     osVirtualToPhysical(i->cfb));
 
-    gDPSetFillColor(glistp++, (GPACK_RGBA5551(255, 0, 0, 1) << 16 | 
-			       GPACK_RGBA5551(0, 0, 0, 1)));
+    gDPSetFillColor(glistp++, (GPACK_RGBA5551(46, 14, 89, 1) << 16 | 
+			       GPACK_RGBA5551(46, 14, 89, 1)));
     gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
     gDPPipeSync(glistp++);
     gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 
-    gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADE);
-    gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH);
+    gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
+    gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
+	gDPSetTextureLUT(glistp++, G_TT_NONE);
 
     guPerspective(&dynamicp->projection, &dynamicp->perspectiveCorrect, 70.0f, 4.0f / 3.0f, 1.0f, 128.0f, 1.0f);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
@@ -110,6 +111,7 @@ void createGfxTask(GFXInfo *i)
     gSPDisplayList(glistp++, _level_test_geo_2_tri);
     gSPDisplayList(glistp++, _alienWall_material);
     gSPDisplayList(glistp++, _level_test_geo_3_tri);
+    gSPDisplayList(glistp++, _alienUnderhang_material);
     gSPDisplayList(glistp++, _level_test_geo_4_tri);
 
     gDPFullSync(glistp++);

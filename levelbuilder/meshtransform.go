@@ -65,6 +65,11 @@ func RotateVertexCCW(input *MeshVertex) {
 	input.nx, input.nz = -input.nz, input.nx
 }
 
+func RotateVertexCW(input *MeshVertex) {
+	input.x, input.z = input.z, -input.x
+	input.nx, input.nz = input.nz, -input.nx
+}
+
 func RotateVertex180(input *MeshVertex) {
 	input.x, input.z = -input.x, -input.z
 	input.nx, input.nz = -input.nx, -input.nz
@@ -101,8 +106,12 @@ func TranslateMesh(dx float32, dy float32, dz float32) VertexTransform {
 	}
 }
 
-func FullTopTileTransform(tileX int, tileY int, layer int) VertexTransform {
+func FullTopTileTransform(tileX int, tileY int, layer int, rotation int) VertexTransform {
 	return func(input *MeshVertex) {
+		for i := 0; i < rotation; i = i + 1 {
+			RotateVertexCW(input)
+		}
+
 		input.x = input.x + float32(tileX)*2
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2

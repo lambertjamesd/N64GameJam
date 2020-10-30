@@ -1,5 +1,21 @@
 package main
 
+type FullVertexTransform func(int, int, int) VertexTransform
+
+var rotationTransforms = []FullVertexTransform{
+	FullLeftTileTransform,
+	FullFrontTileTransform,
+	FullRightTileTransform,
+	FullBackTileTransform,
+}
+
+var faceDir = [][2]int{
+	[2]int{-1, 0},
+	[2]int{0, -1},
+	[2]int{1, 0},
+	[2]int{0, 1},
+}
+
 func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, tile *LevelTileSlot, level *LevelGrid, material MaterialType) []*Mesh {
 	if tile.Tile != nil {
 		for height := 0; height < 3; height = height + 1 {
@@ -9,36 +25,18 @@ func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, tile *LevelTileSlot
 				if !tile.Tile.IsSolidAtHeight(height+1) && block.Top != nil && block.Top.Material == material {
 					separateMeshes = append(
 						separateMeshes,
-						TransformMesh(block.Top.Mesh, FullTopTileTransform(x, y, height)),
+						TransformMesh(block.Top.Mesh, FullTopTileTransform(x, y, height, tile.Rotation)),
 					)
 				}
 
-				if !level.IsSolid(x-1, y, height) && block.Left != nil && block.Left.Material == material {
-					separateMeshes = append(
-						separateMeshes,
-						TransformMesh(block.Left.Mesh, FullLeftTileTransform(x, y, height)),
-					)
-				}
-
-				if !level.IsSolid(x+1, y, height) && block.Right != nil && block.Right.Material == material {
-					separateMeshes = append(
-						separateMeshes,
-						TransformMesh(block.Right.Mesh, FullRightTileTransform(x, y, height)),
-					)
-				}
-
-				if !level.IsSolid(x, y+1, height) && block.Back != nil && block.Back.Material == material {
-					separateMeshes = append(
-						separateMeshes,
-						TransformMesh(block.Back.Mesh, FullBackTileTransform(x, y, height)),
-					)
-				}
-
-				if !level.IsSolid(x, y-1, height) && block.Front != nil && block.Front.Material == material {
-					separateMeshes = append(
-						separateMeshes,
-						TransformMesh(block.Front.Mesh, FullFrontTileTransform(x, y, height)),
-					)
+				for i := 0; i < 4; i = i + 1 {
+					var rotIndex = (i + 4 - tile.Rotation) % 4
+					if !level.IsSolid(x+faceDir[rotIndex][0], y+faceDir[rotIndex][1], height) && block.Sides[i] != nil && block.Sides[i].Material == material {
+						separateMeshes = append(
+							separateMeshes,
+							TransformMesh(block.Sides[i].Mesh, rotationTransforms[rotIndex](x, y, height)),
+						)
+					}
 				}
 			}
 		}

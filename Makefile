@@ -18,6 +18,19 @@ APP =		game.out
 
 TARGETS =	game.n64
 
+GO_SOURCE = $(wildcard ./levelbuilder/*.go)
+
+levelbuilder/levelbuilder: $(GO_SOURCE)
+	go build -o levelbuilder/levelbuilder ./levelbuilder/
+
+LEVELS = debug
+LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
+LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
+
+src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
+	levelbuilder/levelbuilder level $< $@
+	touch $@
+
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
 
@@ -46,17 +59,16 @@ CODEFILES = $(DEBUGGERFILES) \
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)
 
-DEPS = $(CODEFILES:.c=.d) $(DATAFILES:.c=.d)
-
 CODESEGMENT =	codesegment.o
 
 # Data files that have thier own segments:
 
-DATAFILES =		\
-	src/graphics/init.c \
-	src/levels/debug/geo.c
+DATAFILES =	$(LEVEL_GEO) \
+	src/graphics/init.c
 
 DATAOBJECTS =	$(DATAFILES:.c=.o)
+
+DEPS = $(CODEFILES:.c=.d) $(DATAFILES:.c=.d)
 
 OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
 
