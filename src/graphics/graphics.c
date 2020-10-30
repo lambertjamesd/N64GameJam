@@ -5,6 +5,7 @@
 #include "src/boot.h"
 #include "src/memory.h"
 #include "src/levels/debug/header.h"
+#include "src/levelthemes/alienworld/header.h"
 #include "src/input/controller.h"
 #include "src/math/vector.h"
 
