@@ -7,27 +7,27 @@ import (
 	"path/filepath"
 )
 
-func processLevel(levelFile string, outputDirectory string) {
+func processLevel(levelName string, levelFile string, outputFile string) {
 	var tileSet = BuildTileSet()
 	var tileMap = ParseLevel(levelFile, tileSet)
 
 	var joinedMesh = ExtractCombinedMesh(tileMap)
 
-	var writtenMeshes []string = nil
+	var geoSources []string = nil
 	var exportedGfx []string = nil
 
 	for material, mesh := range joinedMesh {
-		var cFile = fmt.Sprintf(filepath.Join(filepath.Dir(outputDirectory), "geo_%d.inc.c"), material)
+		var cFile = fmt.Sprintf("geo_%d.inc.c", material)
 
-		output, err := os.OpenFile(cFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
+		outputGeo, err := os.OpenFile(filepath.Join(filepath.Dir(outputFile), cFile), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
 
-		writtenMeshes = append(writtenMeshes, cFile)
+		geoSources = append(geoSources, cFile)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		defer output.Close()
+		defer outputGeo.Close()
 
 		mesh = TransformMesh(mesh, RoundToN64)
 		mesh = RemoveDuplicates(mesh)
@@ -43,10 +43,13 @@ func processLevel(levelFile string, outputDirectory string) {
 
 		mesh = TransformMesh(mesh, ApplyLighting(0.25, lx, ly, lz))
 
-		var gfxName = WriteMeshToC(output, mesh, fmt.Sprintf("_level_test_geo_%d", material), writeColorVertex)
+		var gfxName = WriteMeshToC(outputGeo, mesh, fmt.Sprintf("_level_"+levelName+"_geo_%d", material), writeColorVertex)
 
 		exportedGfx = append(exportedGfx, gfxName)
 	}
+
+	WriteGeoFile(outputFile, geoSources)
+	WriteGeoHeader(outputFile, exportedGfx)
 }
 
 func printUsage() {
@@ -60,8 +63,8 @@ func main() {
 	if len(os.Args) < 2 {
 		printUsage()
 	} else if os.Args[1] == "level" {
-		if len(os.Args) == 4 {
-			processLevel(os.Args[2], os.Args[3])
+		if len(os.Args) == 5 {
+			processLevel(os.Args[2], os.Args[3], os.Args[4])
 		} else {
 			printUsage()
 		}

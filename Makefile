@@ -28,7 +28,7 @@ LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
 LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
 
 src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
-	levelbuilder/levelbuilder level $< $@
+	levelbuilder/levelbuilder level $* $< $@
 	touch $@
 
 DEBUGGERHFILES = src/debugger/serial.h \

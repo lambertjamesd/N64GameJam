@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"os"
+	"path/filepath"
 )
 
 const MIN_INT16 = -32768
@@ -109,5 +111,35 @@ func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) s
 
 	out.WriteString("};\n")
 
-	return cName + "_vtx"
+	return cName + "_tri"
+}
+
+func WriteGeoFile(filename string, geoSources []string) {
+	output, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer output.Close()
+
+	output.WriteString("\n#include <ultra64.h>\n\n")
+
+	for _, geoSource := range geoSources {
+		output.WriteString(fmt.Sprintf("#include \"%s\"\n", geoSource))
+	}
+}
+
+func WriteGeoHeader(filename string, geoNames []string) {
+	output, err := os.OpenFile(filepath.Join(filepath.Dir(filename), "header.h"), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer output.Close()
+
+	for _, geoSource := range geoNames {
+		output.WriteString(fmt.Sprintf("extern Gfx %s[];\n", geoSource))
+	}
 }
