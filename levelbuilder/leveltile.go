@@ -48,6 +48,18 @@ type LevelGrid struct {
 	Tiles [][]LevelTileSlot
 }
 
+func (level *LevelGrid) GetSize() (int, int) {
+	var cols = 0
+
+	for _, row := range level.Tiles {
+		if len(row) > cols {
+			cols = len(row)
+		}
+	}
+
+	return len(level.Tiles), cols
+}
+
 func (tile *LevelTile) IsSolidAtHeight(height int) bool {
 	return height >= 0 && height < 3 && tile.Blocks[height] != nil && tile.Blocks[height].IsSolid
 }

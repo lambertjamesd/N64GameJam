@@ -88,6 +88,7 @@ func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) s
 	var graph = GraphFromMesh(mesh)
 	var drawOrder = CalculateGraphDrawOrder(graph)
 
+	out.WriteString("/*** Generated File ***/\n")
 	out.WriteString(fmt.Sprintf("\nVtx %s_vtx[] = {\n", cName))
 
 	for _, vtx := range drawOrder.Vertices {
@@ -123,7 +124,8 @@ func WriteGeoFile(filename string, geoSources []string) {
 
 	defer output.Close()
 
-	output.WriteString("\n#include <ultra64.h>\n\n")
+	output.WriteString("/*** Generated File ***/\n")
+	output.WriteString("\n#include <ultra64.h>\n#include \"src/graphics/levelgraphics.h\"\n\n")
 
 	for _, geoSource := range geoSources {
 		output.WriteString(fmt.Sprintf("#include \"%s\"\n", geoSource))
@@ -139,7 +141,9 @@ func WriteGeoHeader(filename string, geoNames []string) {
 
 	defer output.Close()
 
+	output.WriteString("/*** Generated File ***/\n\n")
+
 	for _, geoSource := range geoNames {
-		output.WriteString(fmt.Sprintf("extern Gfx %s[];\n", geoSource))
+		output.WriteString(fmt.Sprintf("extern %s;\n", geoSource))
 	}
 }

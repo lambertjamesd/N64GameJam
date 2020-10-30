@@ -1,6 +1,10 @@
 package main
 
-type FullVertexTransform func(int, int, int) VertexTransform
+type MeshTile struct {
+	Tiles [][]map[MaterialType]*Mesh
+}
+
+type FullVertexTransform func(int, int, int, int, int) VertexTransform
 
 var rotationTransforms = []FullVertexTransform{
 	FullLeftTileTransform,
@@ -16,7 +20,7 @@ var faceDir = [][2]int{
 	[2]int{0, 1},
 }
 
-func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, tile *LevelTileSlot, level *LevelGrid, material MaterialType) []*Mesh {
+func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, s int, t int, tile *LevelTileSlot, level *LevelGrid, material MaterialType) []*Mesh {
 	if tile.Tile != nil {
 		for height := 0; height < 3; height = height + 1 {
 			var block = tile.Tile.Blocks[height]
@@ -25,7 +29,7 @@ func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, tile *LevelTileSlot
 				if !tile.Tile.IsSolidAtHeight(height+1) && block.Top != nil && block.Top.Material == material {
 					separateMeshes = append(
 						separateMeshes,
-						TransformMesh(block.Top.Mesh, FullTopTileTransform(x, y, height, tile.Rotation)),
+						TransformMesh(block.Top.Mesh, FullTopTileTransform(x, y, x, t, height, tile.Rotation)),
 					)
 				}
 
@@ -34,7 +38,7 @@ func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, tile *LevelTileSlot
 					if !level.IsSolid(x+faceDir[rotIndex][0], y+faceDir[rotIndex][1], height) && block.Sides[i] != nil && block.Sides[i].Material == material {
 						separateMeshes = append(
 							separateMeshes,
-							TransformMesh(block.Sides[i].Mesh, rotationTransforms[rotIndex](x, y, height)),
+							TransformMesh(block.Sides[i].Mesh, rotationTransforms[rotIndex](x, y, s, t, height)),
 						)
 					}
 				}
@@ -45,15 +49,16 @@ func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, tile *LevelTileSlot
 	return separateMeshes
 }
 
-func ExtractCombinedMesh(level *LevelGrid) map[MaterialType]*Mesh {
+func ExtractCombinedMesh(level *LevelGrid, startX, startY, groupSize int) map[MaterialType]*Mesh {
 	var result = make(map[MaterialType]*Mesh)
 
 	for _, material := range AllMaterials {
 		var separateMeshes []*Mesh = nil
 
-		for x, rowData := range level.Tiles {
-			for y, cell := range rowData {
-				separateMeshes = ExtractTileMeshes(separateMeshes, x, y, &cell, level, material)
+		for x := startX; x < startX+groupSize && x < len(level.Tiles); x = x + 1 {
+			var row = level.Tiles[x]
+			for y := startY; y < startY+groupSize && y < len(row); y = y + 1 {
+				separateMeshes = ExtractTileMeshes(separateMeshes, x, y, x-startX, y-startY, &row[y], level, material)
 			}
 		}
 
@@ -61,4 +66,22 @@ func ExtractCombinedMesh(level *LevelGrid) map[MaterialType]*Mesh {
 	}
 
 	return result
+}
+
+func ExtractMeshTiles(level *LevelGrid, groupSize int) *MeshTile {
+	var result MeshTile
+
+	width, height := level.GetSize()
+
+	for x := 0; x < width; x = x + groupSize {
+		var row []map[MaterialType]*Mesh = nil
+
+		for y := 0; y < height; y = y + groupSize {
+			row = append(row, ExtractCombinedMesh(level, x, y, groupSize))
+		}
+
+		result.Tiles = append(result.Tiles, row)
+	}
+
+	return &result
 }

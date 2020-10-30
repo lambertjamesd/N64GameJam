@@ -112,14 +112,14 @@ void createGfxTask(GFXInfo *i)
     guMtxCatL(&combine, &rotate, &dynamicp->viewing);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
-    gSPDisplayList(glistp++, _alienFloor_material);
-    gSPDisplayList(glistp++, _level_debug_geo_0_tri);
-    gSPDisplayList(glistp++, _level_debug_geo_1_tri);
-    gSPDisplayList(glistp++, _level_debug_geo_2_tri);
-    gSPDisplayList(glistp++, _alienWall_material);
-    gSPDisplayList(glistp++, _level_debug_geo_3_tri);
-    gSPDisplayList(glistp++, _alienUnderhang_material);
-    gSPDisplayList(glistp++, _level_debug_geo_4_tri);
+    // gSPDisplayList(glistp++, _alienFloor_material);
+    // gSPDisplayList(glistp++, _level_debug_geo_0_tri);
+    // gSPDisplayList(glistp++, _level_debug_geo_1_tri);
+    // gSPDisplayList(glistp++, _level_debug_geo_2_tri);
+    // gSPDisplayList(glistp++, _alienWall_material);
+    // gSPDisplayList(glistp++, _level_debug_geo_3_tri);
+    // gSPDisplayList(glistp++, _alienUnderhang_material);
+    // gSPDisplayList(glistp++, _level_debug_geo_4_tri);
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);

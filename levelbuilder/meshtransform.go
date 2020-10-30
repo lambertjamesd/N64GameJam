@@ -106,7 +106,7 @@ func TranslateMesh(dx float32, dy float32, dz float32) VertexTransform {
 	}
 }
 
-func FullTopTileTransform(tileX int, tileY int, layer int, rotation int) VertexTransform {
+func FullTopTileTransform(tileX int, tileY int, s int, t int, layer int, rotation int) VertexTransform {
 	return func(input *MeshVertex) {
 		for i := 0; i < rotation; i = i + 1 {
 			RotateVertexCW(input)
@@ -116,12 +116,12 @@ func FullTopTileTransform(tileX int, tileY int, layer int, rotation int) VertexT
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s + float32(tileX)
-		input.t = input.t + float32(tileY)
+		input.s = input.s + float32(s)
+		input.t = input.t + float32(t)
 	}
 }
 
-func FullFrontTileTransform(tileX int, tileY int, layer int) VertexTransform {
+func FullFrontTileTransform(tileX int, tileY int, s int, t int, layer int) VertexTransform {
 	return func(input *MeshVertex) {
 		RotateVertexToFront(input)
 
@@ -129,12 +129,12 @@ func FullFrontTileTransform(tileX int, tileY int, layer int) VertexTransform {
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s + float32(tileX)
+		input.s = input.s + float32(s)
 		input.t = input.t + float32(layer)
 	}
 }
 
-func FullRightTileTransform(tileX int, tileY int, layer int) VertexTransform {
+func FullRightTileTransform(tileX int, tileY int, s int, t int, layer int) VertexTransform {
 	return func(input *MeshVertex) {
 		RotateVertexToRight(input)
 
@@ -142,12 +142,12 @@ func FullRightTileTransform(tileX int, tileY int, layer int) VertexTransform {
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s + float32(tileY)
+		input.s = input.s + float32(t)
 		input.t = input.t + float32(layer)
 	}
 }
 
-func FullBackTileTransform(tileX int, tileY int, layer int) VertexTransform {
+func FullBackTileTransform(tileX int, tileY int, s int, t int, layer int) VertexTransform {
 	return func(input *MeshVertex) {
 		RotateVertexToBack(input)
 
@@ -155,12 +155,12 @@ func FullBackTileTransform(tileX int, tileY int, layer int) VertexTransform {
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s - float32(tileX)
+		input.s = input.s - float32(s)
 		input.t = input.t + float32(layer)
 	}
 }
 
-func FullLeftTileTransform(tileX int, tileY int, layer int) VertexTransform {
+func FullLeftTileTransform(tileX int, tileY int, s int, t int, layer int) VertexTransform {
 	return func(input *MeshVertex) {
 		RotateVertexToLeft(input)
 
@@ -168,7 +168,7 @@ func FullLeftTileTransform(tileX int, tileY int, layer int) VertexTransform {
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s - float32(tileY)
+		input.s = input.s - float32(t)
 		input.t = input.t + float32(layer)
 	}
 }
