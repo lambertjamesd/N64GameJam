@@ -47,11 +47,18 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
 	src/graphics/graphics.c	\
+	src/graphics/levelgraphics.c	\
+	src/graphics/levelthemegraphics.c	\
+	src/graphics/renderscene.c	\
+	src/levelthemes/alienworld/theme.c	\
 	src/input/controller.c  \
 	src/math/plane.c		\
 	src/math/quaternion.c   \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
+	src/math/basictransform.c   	\
+	src/math/mathf.c   	\
+	src/time/time.c		\
 	src/system/assert.c		\
 	src/boot.c				\
 	src/game.c				\

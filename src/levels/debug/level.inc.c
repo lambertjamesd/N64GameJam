@@ -4,6 +4,7 @@ Gfx** _level_debug_row_0[] = {
     _level_debug_tile_0_1,
     _level_debug_tile_0_2,
     _level_debug_tile_0_3,
+    (void*)0xDEADBEEF,
 };
 
 Gfx** _level_debug_row_1[] = {
@@ -11,6 +12,7 @@ Gfx** _level_debug_row_1[] = {
     _level_debug_tile_1_1,
     _level_debug_tile_1_2,
     _level_debug_tile_1_3,
+    (void*)0xDEADBEEF,
 };
 
 Gfx** _level_debug_row_2[] = {
@@ -18,12 +20,14 @@ Gfx** _level_debug_row_2[] = {
     _level_debug_tile_2_1,
     _level_debug_tile_2_2,
     _level_debug_tile_2_3,
+    (void*)0xDEADBEEF,
 };
 
 Gfx*** _level_debug_tileGrid[] = {
     _level_debug_row_0,
     _level_debug_row_1,
     _level_debug_row_2,
+    (void*)0xDEADBEEF,
 };
 
 struct LevelGraphics _level_debug_levelGraphics = {

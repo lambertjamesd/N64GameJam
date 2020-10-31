@@ -83,3 +83,7 @@ func (level *LevelGrid) IsSolid(x, y, height int) bool {
 
 	return cell.Tile.IsSolidAtHeight(height)
 }
+
+// func (level *LevelGrid) Trim() *LevelGrid {
+
+// }

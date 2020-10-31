@@ -6,13 +6,14 @@
 
 #define	SCREEN_HT	240
 #define	SCREEN_WD	320
+#define DYANAMIC_LIST_LEN 512
 
 typedef struct {
 	Mtx	projection;
     u16 perspectiveCorrect;
 	Mtx	viewing;
     Mtx bg_model;
-	Gfx	glist[512];
+	Gfx	glist[DYANAMIC_LIST_LEN];
 } Dynamic;
 
 typedef union {    

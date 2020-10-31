@@ -115,7 +115,7 @@ func WriteMeshToC(out *os.File, mesh *Mesh, cName string, vertex VertexWriter) s
 	return cName + "_tri"
 }
 
-func WriteGeoFile(filename string, geoSources []string) {
+func WriteGeoFile(filename string, name string, geoSources []string) {
 	output, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
 
 	if err != nil {

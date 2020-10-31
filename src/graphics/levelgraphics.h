@@ -17,4 +17,6 @@ struct LevelGraphics {
     struct LevelTileGrid grid;
 };
 
+Gfx* graphicsRenderLevelTileGrid(struct LevelTileGrid* levelGrid, Gfx** materials, int materialCount, Gfx* dl);
+
 #endif

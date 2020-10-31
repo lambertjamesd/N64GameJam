@@ -14,6 +14,7 @@ struct Vector3 {
 extern struct Vector3 gRight;
 extern struct Vector3 gUp;
 extern struct Vector3 gForward;
+extern struct Vector3 gZeroVec;
 
 void vector3Negate(struct Vector3* in, struct Vector3* out);
 void vector3Scale(struct Vector3* in, struct Vector3* out, float scale);

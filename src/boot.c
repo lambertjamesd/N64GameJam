@@ -8,8 +8,9 @@
 #include "memory.h"
 #include "src/debugger/debugger.h"
 #include "src/input/controller.h"
-
-#define USE_DEBUGGER     0
+#include "src/graphics/renderscene.h"
+#include "src/time/time.h"
+#include "defs.h"
 
 OSThread gGameThread;
 OSThread gInitThread;
@@ -95,6 +96,7 @@ static void gameEntryPoint(void *argv)
                 }
 
                 controllersReadData();
+                // timeUpdate(osGetTime());
                 break;
 
             case (OS_SC_DONE_MSG):
@@ -144,7 +146,7 @@ static void initGame(void)
 
     osScAddClient(&gScheduler, &gfxClient, &gGfxFrameMsgQ);  
 
-#if USE_DEBUGGER
+#if DEBUG
     OSThread* threadPtr[1];
     threadPtr[0] = &gGameThread;
     enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 1);
@@ -154,6 +156,7 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
+    // cameraInit(&gMainCamera);
     controllersInit();
     layoutMemory();
     graphicsInit(); 

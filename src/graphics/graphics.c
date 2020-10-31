@@ -5,9 +5,11 @@
 #include "src/boot.h"
 #include "src/memory.h"
 #include "src/levels/debug/header.h"
-#include "src/levelthemes/alienworld/header.h"
+#include "src/levelthemes/alienworld/theme.h"
 #include "src/input/controller.h"
 #include "src/math/vector.h"
+#include "levelgraphics.h"
+#include "src/system/assert.h"
 
 extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
@@ -33,8 +35,15 @@ void graphicsInit(void)
     romCopy(_staticSegmentRomStart, (char*)gStaticSegmentBuffer, len);
 
     len = (u32)(_debuglevelSegmentRomEnd - _debuglevelSegmentRomStart);
-    gLevelSegmentBuffer = heapMalloc(len, 8);
+    u32 levelAlign;
+    u32 levelPageMask;
+    tlbAlign(len, &levelAlign, &levelPageMask);
+
+    gLevelSegmentBuffer = heapMalloc(len, levelAlign);
     romCopy(_debuglevelSegmentRomStart, (char*)gLevelSegmentBuffer, len);
+
+    osUnmapTLBAll();
+    osMapTLB(0, levelPageMask, (void*)(LEVEL_SEGMENT << 24), osVirtualToPhysical(gLevelSegmentBuffer), -1, -1);
 
     len = (u32)(_alienworldSegmentRomEnd - _alienworldSegmentRomStart);
     gLevelThemeSegmentBuffer = heapMalloc(len, 8);
@@ -84,8 +93,8 @@ void createGfxTask(GFXInfo *i)
     gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
 		     osVirtualToPhysical(i->cfb));
 
-    gDPSetFillColor(glistp++, (GPACK_RGBA5551(46, 14, 89, 1) << 16 | 
-			       GPACK_RGBA5551(46, 14, 89, 1)));
+    gDPSetFillColor(glistp++, (GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1) << 16 | 
+			       GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1)));
     gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
     gDPPipeSync(glistp++);
@@ -112,6 +121,7 @@ void createGfxTask(GFXInfo *i)
     guMtxCatL(&combine, &rotate, &dynamicp->viewing);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
+    glistp = graphicsRenderLevelTileGrid(&_level_debug_levelGraphics.grid, gAlienWorldLevelTheme.materials, gAlienWorldLevelTheme.materialCount, glistp);
     // gSPDisplayList(glistp++, _alienFloor_material);
     // gSPDisplayList(glistp++, _level_debug_geo_0_tri);
     // gSPDisplayList(glistp++, _level_debug_geo_1_tri);
@@ -126,6 +136,8 @@ void createGfxTask(GFXInfo *i)
 
     osWritebackDCache(&i->dp, (s32)glistp - (s32)&i->dp);
     osWritebackDCache(&dynamicp, sizeof(Dynamic));
+
+    assert(glistp <= &dynamicp->glist[DYANAMIC_LIST_LEN]);
 
     t = &i->task;
     t->list.t.data_ptr = (u64 *) dynamicp->glist;

@@ -1,7 +1,12 @@
 package main
 
+type MeshMaterial struct {
+	Mesh     *Mesh
+	Material MaterialType
+}
+
 type MeshTile struct {
-	Tiles [][]map[MaterialType]*Mesh
+	Tiles [][][]MeshMaterial
 }
 
 type FullVertexTransform func(int, int, int, int, int) VertexTransform
@@ -49,8 +54,8 @@ func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, s int, t int, tile 
 	return separateMeshes
 }
 
-func ExtractCombinedMesh(level *LevelGrid, startX, startY, groupSize int) map[MaterialType]*Mesh {
-	var result = make(map[MaterialType]*Mesh)
+func ExtractCombinedMesh(level *LevelGrid, startX, startY, groupSize int) []MeshMaterial {
+	var result []MeshMaterial = nil
 
 	for _, material := range AllMaterials {
 		var separateMeshes []*Mesh = nil
@@ -62,7 +67,7 @@ func ExtractCombinedMesh(level *LevelGrid, startX, startY, groupSize int) map[Ma
 			}
 		}
 
-		result[material] = JoinMesh(separateMeshes)
+		result = append(result, MeshMaterial{JoinMesh(separateMeshes), material})
 	}
 
 	return result
@@ -74,7 +79,7 @@ func ExtractMeshTiles(level *LevelGrid, groupSize int) *MeshTile {
 	width, height := level.GetSize()
 
 	for x := 0; x < width; x = x + groupSize {
-		var row []map[MaterialType]*Mesh = nil
+		var row [][]MeshMaterial = nil
 
 		for y := 0; y < height; y = y + groupSize {
 			row = append(row, ExtractCombinedMesh(level, x, y, groupSize))

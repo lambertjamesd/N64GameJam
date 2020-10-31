@@ -44,7 +44,10 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 
 			var tileMeshNames []string = nil
 
-			for material, mesh := range tile {
+			for _, meshPair := range tile {
+				var mesh = meshPair.Mesh
+				var material = meshPair.Material
+
 				if len(mesh.faces) > 0 {
 					mesh = TransformMesh(mesh, RoundToN64)
 					mesh = RemoveDuplicates(mesh)
@@ -76,11 +79,14 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 				outputGeo.WriteString(fmt.Sprintf("    %s,\n", name))
 			}
 
+			outputGeo.WriteString("    (void*)0xDEADBEEF,\n")
+
 			outputGeo.WriteString("};\n")
 
 			outputLevel.WriteString(fmt.Sprintf("    _level_%s_tile_%d_%d,\n", levelName, x, y))
 		}
 
+		outputLevel.WriteString("    (void*)0xDEADBEEF,\n")
 		outputLevel.WriteString("};\n")
 	}
 
@@ -92,6 +98,8 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 		height = len(row)
 		outputLevel.WriteString(fmt.Sprintf("    _level_%s_row_%d,\n", levelName, x))
 	}
+
+	outputLevel.WriteString("    (void*)0xDEADBEEF,\n")
 
 	outputLevel.WriteString("};\n")
 
@@ -108,7 +116,7 @@ struct LevelGraphics _level_%s_levelGraphics = {
 
 	geoSources = append(geoSources, leveIncFile)
 
-	WriteGeoFile(outputFile, geoSources)
+	WriteGeoFile(outputFile, levelName, geoSources)
 	WriteGeoHeader(outputFile, []string{
 		fmt.Sprintf("struct LevelGraphics _level_%s_levelGraphics", levelName),
 	})
