@@ -96,7 +96,7 @@ static void gameEntryPoint(void *argv)
                 }
 
                 controllersReadData();
-                // timeUpdate(osGetTime());
+                timeUpdate(osGetTime());
                 break;
 
             case (OS_SC_DONE_MSG):
@@ -156,7 +156,7 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
-    // cameraInit(&gMainCamera);
+    cameraInit(&gMainCamera);
     controllersInit();
     layoutMemory();
     graphicsInit(); 

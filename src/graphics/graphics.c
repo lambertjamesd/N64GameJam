@@ -16,7 +16,8 @@ extern OSMesgQueue     *gSchedulerCommandQ;
 extern GFXInfo         gInfo[];
 
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
-unsigned short	gZBuffer[SCREEN_WD*SCREEN_HT];
+// extra 64 bytes to make sure it is aligned to 64 bytes
+unsigned short	gZBuffer[SCREEN_WD*SCREEN_HT + 64 / sizeof(u16)];
 unsigned short* gColorBuffer[2];
 Gfx* gStaticSegmentBuffer;
 Gfx* gLevelSegmentBuffer;
@@ -79,14 +80,14 @@ void createGfxTask(GFXInfo *i)
     }
 
     gSPDisplayList(glistp++, setup_rdpstate);
+
+    u32 zBuffAligned = ALIGN_64_BYTES(osVirtualToPhysical(gZBuffer));
     
-    gDPSetDepthImage(glistp++, osVirtualToPhysical(gZBuffer));
+    gDPSetDepthImage(glistp++, zBuffAligned);
     gDPPipeSync(glistp++);
     gDPSetCycleType(glistp++, G_CYC_FILL);
-    gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
-		     osVirtualToPhysical(gZBuffer));
-    gDPSetFillColor(glistp++, (GPACK_ZDZ(G_MAXFBZ,0) << 16 |
-			       GPACK_ZDZ(G_MAXFBZ,0)));
+    gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, zBuffAligned);
+    gDPSetFillColor(glistp++, (GPACK_ZDZ(G_MAXFBZ,0) << 16 | GPACK_ZDZ(G_MAXFBZ,0)));
     gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 	
     gDPPipeSync(glistp++);
@@ -122,14 +123,6 @@ void createGfxTask(GFXInfo *i)
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
     glistp = graphicsRenderLevelTileGrid(&_level_debug_levelGraphics.grid, gAlienWorldLevelTheme.materials, gAlienWorldLevelTheme.materialCount, glistp);
-    // gSPDisplayList(glistp++, _alienFloor_material);
-    // gSPDisplayList(glistp++, _level_debug_geo_0_tri);
-    // gSPDisplayList(glistp++, _level_debug_geo_1_tri);
-    // gSPDisplayList(glistp++, _level_debug_geo_2_tri);
-    // gSPDisplayList(glistp++, _alienWall_material);
-    // gSPDisplayList(glistp++, _level_debug_geo_3_tri);
-    // gSPDisplayList(glistp++, _alienUnderhang_material);
-    // gSPDisplayList(glistp++, _level_debug_geo_4_tri);
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);
