@@ -6,3 +6,6 @@
 
 levelbuilder/levelbuilder
 levelbuilder/output/*
+
+src/levels/**/*.c
+src/levels/**/*.h
