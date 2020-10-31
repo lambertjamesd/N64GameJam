@@ -56,9 +56,11 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/quaternion.c   \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
+	src/cadet/cadet.c   	\
 	src/math/basictransform.c   	\
 	src/math/mathf.c   	\
 	src/time/time.c		\
+	src/cadet/geo/model.c \
 	src/system/assert.c		\
 	src/boot.c				\
 	src/game.c				\

@@ -3,7 +3,7 @@
 
 #include "src/math/mathf.h"
 
-struct SceneCamera gMainCamera;
+struct RenderScene gScene;
 
 void cameraCalculatePos(struct Quaternion* rotation, struct Vector3* target, float distance, struct Vector3* out) {
     quatMultVector(rotation, &gForward, out);
@@ -25,7 +25,7 @@ void cameraUpdate(void* cameraPtr) {
 
 
 void cameraInit(struct SceneCamera* camera) {
-    quatAxisAngle(&gRight, M_PI / 3.0f, &camera->transform.rotation);
+    quatAxisAngle(&gRight, -M_PI / 3.0f, &camera->transform.rotation);
     camera->targetPosition = camera->centerPosition = gZeroVec;
     camera->transform.scale = 1.0f;
     camera->followDistance = camera->targetFollowDistance = START_FOLLOW_DISTANCE;

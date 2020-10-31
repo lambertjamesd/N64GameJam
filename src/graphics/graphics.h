@@ -12,7 +12,8 @@ typedef struct {
 	Mtx	projection;
     u16 perspectiveCorrect;
 	Mtx	viewing;
-    Mtx bg_model;
+    Mtx cadet;
+    Mtx worldScale;
 	Gfx	glist[DYANAMIC_LIST_LEN];
 } Dynamic;
 

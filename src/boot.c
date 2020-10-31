@@ -10,6 +10,7 @@
 #include "src/input/controller.h"
 #include "src/graphics/renderscene.h"
 #include "src/time/time.h"
+#include "src/cadet/cadet.h"
 #include "defs.h"
 
 OSThread gGameThread;
@@ -156,7 +157,8 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
-    cameraInit(&gMainCamera);
+    cameraInit(&gScene.camera);
+    cadetInit();
     controllersInit();
     layoutMemory();
     graphicsInit(); 

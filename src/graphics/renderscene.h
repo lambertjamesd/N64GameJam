@@ -4,6 +4,8 @@
 
 #include "src/math/basictransform.h"
 #include "src/time/time.h"
+#include "levelgraphics.h"
+#include "levelthemegraphics.h"
 
 #define START_FOLLOW_DISTANCE 10.0f
 #define CAMERA_MAX_SPEED 10.0f
@@ -17,9 +19,15 @@ struct SceneCamera {
     float targetFollowDistance;
 };
 
-extern struct SceneCamera gMainCamera;
-
 void cameraInit(struct SceneCamera* camera);
 void cameraCleanup(struct SceneCamera* camera);
+
+struct RenderScene {
+    struct SceneCamera camera;
+    struct LevelTileGrid* levelGrid;
+    struct LeveThemeGraphics* theme;
+};
+
+extern struct RenderScene gScene;
 
 #endif

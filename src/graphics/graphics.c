@@ -10,6 +10,10 @@
 #include "src/math/vector.h"
 #include "levelgraphics.h"
 #include "src/system/assert.h"
+#include "src/cadet/geo/model.h"
+#include "src/math/basictransform.h"
+#include "src/cadet/cadet.h"
+#include "renderscene.h"
 
 extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
@@ -25,7 +29,7 @@ Gfx* gLevelThemeSegmentBuffer;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 Dynamic dynamic;
 
-struct Vector3 cameraPos = {15.0f, 0.0f, 0.0f};
+struct Vector3 cameraPos = {0.0f, 0.0f, 0.0f};
 
 void graphicsInit(void) 
 {    
@@ -111,18 +115,23 @@ void createGfxTask(GFXInfo *i)
     cameraPos.x += gControllerState[0].stick_x / (80.0f * 30.0f);
     cameraPos.z -= gControllerState[0].stick_y / (80.0f * 30.0f);
 
-    Mtx worldScale;
-    Mtx traslate;
-    Mtx rotate;
-    Mtx combine;
-    guScale(&worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
-    guTranslate(&traslate, -cameraPos.x, -10.0f, -cameraPos.z);
-    guRotate(&rotate, 60.0f, 1.0f, 0.0f, 0.0f);
-    guMtxCatL(&worldScale, &traslate, &combine);
-    guMtxCatL(&combine, &rotate, &dynamicp->viewing);
+    struct BasicTransform cameraInverse;
+    float mtx[4][4];
+    transformInvert(&gScene.camera.transform, &cameraInverse);
+    transformToMatrix(&cameraInverse, mtx);
+    guScale(&dynamicp->worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
+    guMtxF2L(mtx, &dynamicp->viewing);
+
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     glistp = graphicsRenderLevelTileGrid(&_level_debug_levelGraphics.grid, gAlienWorldLevelTheme.materials, gAlienWorldLevelTheme.materialCount, glistp);
+    gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+
+    transformToMatrixL(&gCadet.transform, &dynamicp->cadet);
+    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->cadet), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
+    gSPDisplayList(glistp++, Cadet_Cadet_mesh);
+    gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);
