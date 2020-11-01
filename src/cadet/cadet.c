@@ -17,9 +17,21 @@ void cadetUpdate(void* cadetPtr) {
     gScene.camera.targetPosition = cadet->transform.position;
 }
 
-void cadetInit() {
+void cadetReset(struct Vector3* startLocation) {
     transformIdentity(&gCadet.transform);
-    gCadet.transform.scale = 1.0f / 256.0f;
+    gCadet.transform.position = *startLocation;
     gCadet.state = cadetMove;
+
+    gCadet.velocity = gZeroVec;
+    gCadet.lastStableLocation = *startLocation;
+    gCadet.isJumping = 0;
+    gCadet.anchor = 0;
+    gCadet.relativeToAnchor = gZeroVec;
+}
+
+void cadetInit() {
     timeAddListener(&gCadet.updateListener, cadetUpdate, &gCadet);
+    gCadet.transform.scale = 1.0f / 256.0f;
+
+    cadetReset(&gZeroVec);
 }

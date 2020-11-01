@@ -46,25 +46,27 @@ HFILES = $(DEBUGGERHFILES) \
 CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
+	src/cadet/cadet.c   	\
+	src/cadet/geo/model.c \
+	src/collision/collisionscene.c \
 	src/graphics/graphics.c	\
 	src/graphics/levelgraphics.c	\
 	src/graphics/levelthemegraphics.c	\
 	src/graphics/renderscene.c	\
-	src/levelthemes/alienworld/theme.c	\
 	src/input/controller.c  \
+	src/input/inputfocus.c  \
+	src/levelthemes/alienworld/theme.c	\
+	src/math/basictransform.c   	\
+	src/math/mathf.c   	\
 	src/math/plane.c		\
 	src/math/quaternion.c   \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
-	src/cadet/cadet.c   	\
-	src/math/basictransform.c   	\
-	src/math/mathf.c   	\
-	src/time/time.c		\
-	src/cadet/geo/model.c \
 	src/system/assert.c		\
+	src/time/time.c		\
 	src/boot.c				\
 	src/game.c				\
-	src/memory.c
+	src/system/memory.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)
 

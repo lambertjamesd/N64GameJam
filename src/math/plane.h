@@ -2,7 +2,10 @@
 #ifndef _MATH_PLANE_H
 #define _MATH_PLANE_H
 
+#include <math.h>
 #include "vector.h"
+
+#define RAYCAST_NO_HIT  MAXFLOAT
 
 /**
  * ax + by + cz + d = 0

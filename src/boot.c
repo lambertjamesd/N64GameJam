@@ -1,17 +1,20 @@
 
 #include <ultra64.h>
 #include <sched.h>
-#include "game.h"
+
 #include "audio/audio.h"
-#include "src/graphics/graphics.h"
-#include "boot.h"
-#include "memory.h"
-#include "src/debugger/debugger.h"
-#include "src/input/controller.h"
-#include "src/graphics/renderscene.h"
-#include "src/time/time.h"
 #include "src/cadet/cadet.h"
+#include "src/debugger/debugger.h"
+#include "src/graphics/graphics.h"
+#include "src/graphics/renderscene.h"
+#include "src/input/controller.h"
+#include "src/system/memory.h"
+#include "src/time/time.h"
+
+#include "boot.h"
 #include "defs.h"
+#include "game.h"
+#include "memory.h"
 
 OSThread gGameThread;
 OSThread gInitThread;
@@ -157,6 +160,7 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
+    fastMallocReset();
     cameraInit(&gScene.camera);
     cadetInit();
     controllersInit();
