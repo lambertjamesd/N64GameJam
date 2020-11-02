@@ -24,3 +24,7 @@ int collisionColliderCollideSphere(struct CollisionCollider* collider, struct Ve
 
     return didCollide;
 }
+
+int collisionTransColliderCollideSphere(struct CollisionTransformedCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result) {
+    
+}

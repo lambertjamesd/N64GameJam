@@ -100,3 +100,19 @@ int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, 
 
     return 0;
 }
+
+int collisionBoxOverlapSphere(struct CollisionBox* box, struct Vector3* center, float radius) {
+    struct Vector3 nearestPoint;
+    int i;
+    for (i = 0; i < 3; ++i) {
+        if (center->el[i] < box->min.el[i]) {
+            nearestPoint.el[i] = box->min.el[i];
+        } else if (center->el[i] > box->max.el[i]) {
+            nearestPoint.el[i] = box->max.el[i];
+        } else {
+            nearestPoint.el[i] = center->el[i];
+        }
+    }
+
+    return vector3DistSqrd(&nearestPoint, center) < radius * radius;
+}

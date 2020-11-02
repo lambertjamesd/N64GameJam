@@ -2,8 +2,9 @@
 #ifndef _COLLISION_COLLISION_H
 #define _COLLISION_COLLISION_H
 
-#include "src/math/vector.h"
+#include "src/math/basictransform.h"
 #include "src/math/plane.h"
+#include "src/math/vector.h"
 
 #define MAX_CONTACT_POINTS  16
 
@@ -75,6 +76,16 @@ struct CollisionCollider {
     };
 };
 
+typedef void (*TriggerCallback)(void* data);
+
+struct CollisionTransformedCollider {
+    struct CollisionCollider* collider;
+    struct BasicTransform* transform;
+    void* data;
+    TriggerCallback trigger;
+};
+
 int collisionColliderCollideSphere(struct CollisionCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
+int collisionTransColliderCollideSphere(struct CollisionTransformedCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
 
 #endif

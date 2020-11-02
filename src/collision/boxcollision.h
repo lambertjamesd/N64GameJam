@@ -5,5 +5,6 @@
 #include "collisiondata.h"
 
 int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, float radius, struct CollisionResult* result);
+int collisionBoxOverlapSphere(struct CollisionBox* box, struct Vector3* center, float radius);
 
 #endif
