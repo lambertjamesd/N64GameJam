@@ -3,14 +3,73 @@
 #define _COLLISION_COLLISION_H
 
 #include "src/math/vector.h"
+#include "src/math/plane.h"
 
-struct CollisionFace {
-    struct Vector3 origin;
-    float barycentricDenom;
-    struct Vector3 dotCompare1;
-    struct Vector3 dotCompare2;
+#define MAX_CONTACT_POINTS  16
+
+struct ContactPoint {
+    struct Vector3 point;
+    struct Vector3 normal;
+    struct BasicTransform* transform;
+    int collisionMask;
 };
 
-void collisionFaceBaryCoord(struct CollisionFace* face, struct Vector3* in, struct Vector3* baryCoord);
+struct CollisionResult {
+    struct ContactPoint* contacts;
+    int contactCount;
+};
+
+enum CollisionFaceType {
+    CollisionFaceTypeTriangle,
+    CollisionFaceTypeRectangle,
+};
+
+struct CollisionFace {
+    struct Plane plane;
+    struct Vector3 origin;
+    struct Vector3 dotCompare1;
+    struct Vector3 dotCompare2;
+    enum CollisionFaceType faceType;
+};
+
+struct CollisionEdge {
+    struct Vector3 origin;
+    struct Vector3 dir;
+    float length;
+};
+
+struct CollisionPoint {
+    struct Vector3 origin;
+};
+
+struct CollisionMesh {
+    struct CollisionFace* faces;
+    int faceCount;
+    struct CollisionEdge* edges;
+    int edgeCount;
+    struct CollisionPoint* points;
+    int pointCount;
+};
+
+struct CollisionBox {
+    struct Vector3 min;
+    struct Vector3 max;
+};
+
+enum ColliderType {
+    ColliderTypeMesh,
+    ColliderTypeBox,
+};
+
+struct CollisionCollider {
+    enum ColliderType type;
+    int collisionMask;
+    union {
+        struct CollisionBox box;
+        struct CollisionMesh mesh;
+    };
+};
+
+int collisionColliderCollideSphere(struct CollisionCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
 
 #endif

@@ -160,6 +160,7 @@ static void initGame(void)
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
 
+    timeUpdate(osGetTime());
     fastMallocReset();
     cameraInit(&gScene.camera);
     cadetInit();

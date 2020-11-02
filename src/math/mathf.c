@@ -21,3 +21,29 @@ float mathfMoveTowards(float from, float to, float maxMove) {
         return fsign(offset) * maxMove + from;
     }
 }
+
+float floorf(float input) {
+    int result;
+
+    if (input > 0) {
+        result = (int)input;
+    } else {
+        result = (int)-input;
+        input = -input;
+    }
+
+    return (float)result;
+}
+
+float ceilf(float input) {
+    int result;
+
+    if (input < 0) {
+        result = (int)input;
+    } else {
+        result = (int)-input;
+        input = -input;
+    }
+
+    return (float)result;
+}

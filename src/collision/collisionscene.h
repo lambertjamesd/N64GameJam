@@ -4,18 +4,9 @@
 
 #include "src/math/vector.h"
 #include "src/math/basictransform.h"
+#include "collisiondata.h"
 
-struct ContactPoint {
-    struct Vector3 point;
-    struct Vector3 normal;
-    struct BasicTransform* transform;
-    int collisionMask;
-};
-
-struct CollisionResult {
-    struct ContactPoint* contacts;
-    int contactCount;
-};
+#define GLOBAL_GRAVITY -9.8f
 
 struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, float radius, int collisionMask);
 

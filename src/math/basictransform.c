@@ -21,6 +21,16 @@ void transformPoint(struct BasicTransform* trans, struct Vector3* in, struct Vec
     out->z += trans->position.z;
 }
 
+void transformPointInverse(struct BasicTransform* trans, struct Vector3* in, struct Vector3* out) {
+    vector3Sub(in, &trans->position, out);
+    if (trans->scale != 1.0f) {
+        vector3Scale(out, out, 1.0f / trans->scale);
+    }
+    struct Quaternion invRot;
+    quatConjugate(&trans->rotation, &invRot);
+    quatMultVector(&invRot, out, out);
+}
+
 void transformInvert(struct BasicTransform* in, struct BasicTransform* out) {
     out->scale = 1.0f / in->scale;
     quatConjugate(&in->rotation, &out->rotation);

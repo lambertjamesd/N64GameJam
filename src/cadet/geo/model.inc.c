@@ -1128,6 +1128,3 @@ Gfx Cadet_Cadet_mesh[] = {
 	gsDPPipeSync(),
 	gsSPEndDisplayList(),
 };
-
-
-

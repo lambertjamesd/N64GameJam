@@ -9,3 +9,4 @@ levelbuilder/output/*
 
 src/levels/**/*.c
 src/levels/**/*.h
+src/collision/geo/*.inc.c

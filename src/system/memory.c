@@ -57,7 +57,7 @@ static char gFastMallocHeap[FAST_MALLOC_HEAP_SIZE];
 static char* gFastMallocCurrent;
 
 void* fastMalloc(int len, int align) {
-    gFastMallocCurrent = (char*)(((int)gFastMallocCurrent + (align - 1)) & (align - 1));
+    gFastMallocCurrent = (char*)(((int)gFastMallocCurrent + (align - 1)) & ~(align - 1));
     void* result = gFastMallocCurrent;
     gFastMallocCurrent += len;
     return result;

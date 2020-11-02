@@ -32,3 +32,15 @@ void controllersReadData() {
         osContStartReadData(&gContMessageQ);
     }
 }
+
+int getButton(int controller, int mask) {
+    return gControllerState[0].button & mask;
+}
+
+int getButtonDown(int controller, int mask) {
+    return gControllerState[0].button & ~gControllerLastButton[controller] & mask;
+}
+
+int getButtonUp(int controller, int mask) {
+    return ~gControllerState[0].button & gControllerLastButton[controller] & mask;
+}

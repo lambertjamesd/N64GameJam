@@ -29,7 +29,14 @@ LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
 
 src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
 	levelbuilder/levelbuilder level $* $< $@
-	touch $@
+
+COLLISION_SHAPES = solid_block
+COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
+
+src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
+	levelbuilder/levelbuilder collision $* $< $@
+
+srce/collision/geo/geo.c: $(COLLISION_GEO)
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
@@ -48,7 +55,11 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audiomgr.c	\
 	src/cadet/cadet.c   	\
 	src/cadet/geo/model.c \
+	src/collision/collisiondata.c \
 	src/collision/collisionscene.c \
+	src/collision/geo/geo.c \
+	src/collision/levelcollisiongrid.c \
+	src/collision/meshcollision.c \
 	src/graphics/graphics.c	\
 	src/graphics/levelgraphics.c	\
 	src/graphics/levelthemegraphics.c	\
