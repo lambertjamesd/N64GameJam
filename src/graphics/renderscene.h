@@ -25,7 +25,7 @@ void cameraCleanup(struct SceneCamera* camera);
 struct RenderScene {
     struct SceneCamera camera;
     struct LevelTileGrid* levelGrid;
-    struct LeveThemeGraphics* theme;
+    struct LevelThemeGraphics* theme;
 };
 
 extern struct RenderScene gScene;

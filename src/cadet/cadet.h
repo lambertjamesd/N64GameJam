@@ -6,9 +6,9 @@
 #include "src/time/time.h"
 
 #define CADET_RADIUS    0.2f
-#define CADET_SPEED     4.0f
-#define CADET_ACCEL     14.0f
-#define CADET_AIR_ACCEL 4.0f
+#define CADET_SPEED     3.0f
+#define CADET_ACCEL     24.0f
+#define CADET_AIR_ACCEL 8.0f
 
 #define CADET_JUMP_IMPULSE  4.0f
 #define CADET_JUMP_ACCEL    4.0f

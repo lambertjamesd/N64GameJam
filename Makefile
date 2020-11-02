@@ -30,7 +30,7 @@ LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
 src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
 	levelbuilder/levelbuilder level $* $< $@
 
-COLLISION_SHAPES = solid_block
+COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
 
 src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
@@ -67,6 +67,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/input/controller.c  \
 	src/input/inputfocus.c  \
 	src/level/level.c	\
+	src/levels/levels.c \
 	src/levelthemes/alienworld/theme.c	\
 	src/math/basictransform.c   	\
 	src/math/mathf.c   	\

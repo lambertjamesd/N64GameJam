@@ -37,7 +37,7 @@ func writeOutTiles(levelName string, outputFile string, level *LevelGrid) {
 			if tileName != "" {
 				outputLevel.WriteString(fmt.Sprintf("    {&%s, %d},\n", tileName, rotation))
 			} else {
-				outputLevel.WriteString("    {0, 1},\n")
+				outputLevel.WriteString("    {0, 0},\n")
 			}
 		}
 	}
@@ -166,9 +166,14 @@ struct LevelGraphics _level_%s_levelGraphics = {
 	outputLevel.WriteString(fmt.Sprintf(`
 struct LevelData _level_%s_levelData = {
 	&_level_%s_levelGraphics,
-	&_level_%s_collision_grid
+	&_level_%s_collision_grid,
+	{%.6f, %.6f, %.6f},
+	{%.6f, %.6f, %.6f},
 };
-`, levelName, levelName, levelName))
+`, levelName, levelName, levelName,
+		tileMap.PlayerPosX, 0.1, -tileMap.PlayerPosY,
+		tileMap.RobotPosX, 0.1, -tileMap.RobotPosY,
+	))
 
 	geoSources = append(geoSources, tileIncFile)
 	geoSources = append(geoSources, levelIncFile)

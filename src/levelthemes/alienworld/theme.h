@@ -4,6 +4,6 @@
 
 #include "src/graphics/levelthemegraphics.h"
 
-extern struct LeveThemeGraphics gAlienWorldLevelTheme;
+extern struct LevelThemeGraphics gAlienWorldLevelTheme;
 
 #endif

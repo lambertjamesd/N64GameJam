@@ -46,7 +46,9 @@ type LevelTileSlot struct {
 }
 
 type LevelGrid struct {
-	Tiles [][]LevelTileSlot
+	Tiles                  [][]LevelTileSlot
+	PlayerPosX, PlayerPosY float32
+	RobotPosX, RobotPosY   float32
 }
 
 func (level *LevelGrid) GetSize() (int, int) {

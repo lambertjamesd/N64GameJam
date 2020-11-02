@@ -3,6 +3,8 @@
 #define _RENDER_RENDER_H
 
 #include <sched.h>
+#include "levelgraphics.h"
+#include "levelthemegraphics.h"
 
 #define	SCREEN_HT	240
 #define	SCREEN_WD	320
@@ -38,8 +40,6 @@ typedef struct {
     u16		*cfb;
 } GFXInfo;
 
-extern Dynamic	dynamic;
-
 extern Gfx	rdpstateinit_dl[];
 extern Gfx	setup_rdpstate[];
 extern Gfx	setup_rspstate[];
@@ -54,5 +54,13 @@ extern unsigned short	gZBuffer[];
 extern u64	gRSPYieldBuffer[];
 
 extern u64          gDramStack[];
+
+void graphicsInitLevel(
+    char* staticSegment, 
+    char* levelSegment, 
+    char* themeSegment, 
+    struct LevelGraphics* levelGraphics, 
+    struct LevelThemeGraphics* theme
+);
 
 #endif /* _RENDER_RENDER_H */

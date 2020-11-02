@@ -10,6 +10,8 @@
 #include "src/input/controller.h"
 #include "src/system/memory.h"
 #include "src/time/time.h"
+#include "src/level/level.h"
+#include "src/levels/levels.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -168,5 +170,6 @@ static void initGame(void)
     layoutMemory();
     graphicsInit(); 
     audioInit();
+    loadLevel(&gAllLevels[0]);
 }
 

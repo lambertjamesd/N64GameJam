@@ -24,43 +24,38 @@ u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 // extra 64 bytes to make sure it is aligned to 64 bytes
 unsigned short	gZBuffer[SCREEN_WD*SCREEN_HT + 64 / sizeof(u16)];
 unsigned short* gColorBuffer[2];
-Gfx* gStaticSegmentBuffer;
-Gfx* gLevelSegmentBuffer;
-Gfx* gLevelThemeSegmentBuffer;
+char* gStaticSegmentBuffer;
+char* gLevelSegmentBuffer;
+char* gLevelThemeSegmentBuffer;
+struct LevelGraphics* gCurrentLevelGraphics;
+struct LevelThemeGraphics* gCurrentLevelTheme;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
-Dynamic dynamic;
 
 struct Vector3 cameraPos = {0.0f, 0.0f, 0.0f};
 
 void graphicsInit(void) 
-{    
-    u32 len = (u32)(_staticSegmentRomEnd - _staticSegmentRomStart);
-
-    gStaticSegmentBuffer = heapMalloc(len, 8);
-
-    romCopy(_staticSegmentRomStart, (char*)gStaticSegmentBuffer, len);
-
-    len = (u32)(_debuglevelSegmentRomEnd - _debuglevelSegmentRomStart);
-    u32 levelAlign;
-    u32 levelPageMask;
-    tlbAlign(len, &levelAlign, &levelPageMask);
-
-    gLevelSegmentBuffer = heapMalloc(len, levelAlign);
-    romCopy(_debuglevelSegmentRomStart, (char*)gLevelSegmentBuffer, len);
-
-    osUnmapTLBAll();
-    osMapTLB(0, levelPageMask, (void*)(LEVEL_SEGMENT << 24), osVirtualToPhysical(gLevelSegmentBuffer), -1, -1);
-
-    len = (u32)(_alienworldSegmentRomEnd - _alienworldSegmentRomStart);
-    gLevelThemeSegmentBuffer = heapMalloc(len, 8);
-    romCopy(_alienworldSegmentRomStart, (char*)gLevelThemeSegmentBuffer, len);
-
+{
     gInfo[0].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[0].cfb = gColorBuffer[0];
     gInfo[1].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[1].cfb = gColorBuffer[1];
 
     osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
+}
+
+void graphicsInitLevel(
+    char* staticSegment, 
+    char* levelSegment, 
+    char* themeSegment, 
+    struct LevelGraphics* levelGraphics, 
+    struct LevelThemeGraphics* theme
+) {
+    gStaticSegmentBuffer = staticSegment;
+    gLevelSegmentBuffer = levelSegment;
+    gLevelThemeSegmentBuffer = themeSegment;
+
+    gCurrentLevelGraphics = levelGraphics;
+    gCurrentLevelTheme = theme;
 }
 
 void createGfxTask(GFXInfo *i) 
@@ -99,8 +94,13 @@ void createGfxTask(GFXInfo *i)
     gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
 		     osVirtualToPhysical(i->cfb));
 
-    gDPSetFillColor(glistp++, (GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1) << 16 | 
-			       GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1)));
+    if (gCurrentLevelTheme) {
+        gDPSetFillColor(glistp++, (GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1) << 16 | 
+                    GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1)));
+    } else {
+        gDPSetFillColor(glistp++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
+                    GPACK_RGBA5551(0, 0, 0, 1)));
+    }
     gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
     gDPPipeSync(glistp++);
@@ -125,9 +125,11 @@ void createGfxTask(GFXInfo *i)
 
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    glistp = graphicsRenderLevelTileGrid(&_level_debug_levelData.graphics->grid, gAlienWorldLevelTheme.materials, gAlienWorldLevelTheme.materialCount, glistp);
-    gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+    if (gCurrentLevelGraphics && gCurrentLevelTheme) {
+        gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
+        glistp = graphicsRenderLevelTileGrid(&gCurrentLevelGraphics->grid, gCurrentLevelTheme->materials, gCurrentLevelTheme->materialCount, glistp);
+        gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+    }
 
     transformToMatrixL(&gCadet.transform, &dynamicp->cadet);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->cadet), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);

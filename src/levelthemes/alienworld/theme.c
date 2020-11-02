@@ -10,7 +10,7 @@ Gfx* _gAlienWorldMaterials[] = {
     _alienUnderhang_material,
 };
 
-struct LeveThemeGraphics gAlienWorldLevelTheme = {
+struct LevelThemeGraphics gAlienWorldLevelTheme = {
     _gAlienWorldMaterials,
     sizeof(_gAlienWorldMaterials) / sizeof(*_gAlienWorldMaterials),
     46, 14, 89,

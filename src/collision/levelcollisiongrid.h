@@ -17,7 +17,7 @@ struct LevelCollisionCell {
 };
 
 struct LevelCollisionGrid {
-    // struct LevelCollisionCell tiles[x + z * width]
+    // struct LevelCollisionCell tiles[x * height + z]
     struct LevelCollisionCell* tiles;
     int width;
     int height;

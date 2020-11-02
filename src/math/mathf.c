@@ -23,27 +23,19 @@ float mathfMoveTowards(float from, float to, float maxMove) {
 }
 
 float floorf(float input) {
-    int result;
-
-    if (input > 0) {
-        result = (int)input;
+    if (input >= 0 || input == (int)input) {
+        return (int)input;
     } else {
-        result = (int)-input;
-        input = -input;
+        int result = (int)(input);
+        return result - 1;
     }
-
-    return (float)result;
 }
 
 float ceilf(float input) {
-    int result;
-
-    if (input < 0) {
-        result = (int)input;
+    if (input <= 0 || input == (int)input) {
+        return (int)input;
     } else {
-        result = (int)-input;
-        input = -input;
+        int result = (int)(input);
+        return result + 1;
     }
-
-    return (float)result;
 }

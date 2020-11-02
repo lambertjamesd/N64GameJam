@@ -57,5 +57,11 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 		result.Tiles = append(result.Tiles, rowData)
 	}
 
+	binary.Read(file, binary.LittleEndian, &result.PlayerPosX)
+	binary.Read(file, binary.LittleEndian, &result.PlayerPosY)
+
+	binary.Read(file, binary.LittleEndian, &result.RobotPosX)
+	binary.Read(file, binary.LittleEndian, &result.RobotPosY)
+
 	return &result
 }

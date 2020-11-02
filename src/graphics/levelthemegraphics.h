@@ -14,7 +14,7 @@ enum LevelThemeMaterialType {
 	LevelThemeMaterialTypeTrack      = 6,
 };
 
-struct LeveThemeGraphics {
+struct LevelThemeGraphics {
     Gfx** materials;
     int materialCount;
     u8 clearColorR, clearColorG, clearColorB;
