@@ -83,6 +83,7 @@ static void gameEntryPoint(void *argv)
 {
     u32         drawbuffer = 0;
     u32         pendingGFX = 0;
+    int         nextLevel = 0;
     GFXMsg      *msg = NULL;
 
     initGame();
@@ -93,16 +94,32 @@ static void gameEntryPoint(void *argv)
 
         switch (msg->gen.type) 
         {
-            case (OS_SC_RETRACE_MSG):            
-                if (pendingGFX < 2) 
-                {
-                    createGfxTask(&gInfo[drawbuffer]);
-                    pendingGFX++;
-                    drawbuffer ^= 1;
+            case (OS_SC_RETRACE_MSG):       
+                if (getButtonDown(0, R_JPAD) && gCurrentLevel + 1 < gLevelCount) {
+                    nextLevel = gCurrentLevel + 1;
+                } else if (getButtonDown(0, L_JPAD) && gCurrentLevel > 0) {
+                    nextLevel = gCurrentLevel - 1;
                 }
 
-                controllersReadData();
-                timeUpdate(osGetTime());
+                if (nextLevel != gCurrentLevel) {
+                    controllersReadData();
+
+                    if (pendingGFX == 0) {
+                        loadLevel(&gAllLevels[nextLevel]);
+                        gCurrentLevel = nextLevel;
+                    }
+                } else {
+                    if (pendingGFX < 2) 
+                    {
+                        createGfxTask(&gInfo[drawbuffer]);
+                        pendingGFX++;
+                        drawbuffer ^= 1;
+                    }
+
+                    controllersReadData();
+
+                    timeUpdate(osGetTime());
+                }
                 break;
 
             case (OS_SC_DONE_MSG):

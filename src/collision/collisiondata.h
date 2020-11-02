@@ -7,6 +7,11 @@
 
 #define MAX_CONTACT_POINTS  16
 
+enum CollisionLayers {
+    CollisionLayersCadet = 1 << 0,
+    CollisionLayersKillPlane = 1 << 1,
+};
+
 struct ContactPoint {
     struct Vector3 point;
     struct Vector3 normal;

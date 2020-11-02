@@ -11,7 +11,9 @@
 
 struct Cadet gCadet;
 
-char gTmp[0x100];
+void cadetWalk(struct Cadet* cadet);
+void cadetFreefall(struct Cadet* cadet);
+void cadetJump(struct Cadet* cadet);
 
 void cadetCheckCollisions(struct Cadet* cadet) {
     struct Vector3 centerPos = cadet->transform.position;
@@ -36,9 +38,16 @@ void cadetCheckCollisions(struct Cadet* cadet) {
             cadet->velocity.z -= dotDiff * collisionResult->contacts[i].normal.z;
         }
 
-        if (collisionResult->contacts[i].normal.y > 0.73f) {
+        if (collisionResult->contacts[i].collisionMask & CollisionLayersKillPlane) {
+            cadet->transform.position = cadet->lastStableLocation;
+            cadet->velocity = gZeroVec;
+            nextGrounded = 0;
+            cadet->anchor = 0;
+            cadet->state = cadetFreefall;
+        } else if (collisionResult->contacts[i].normal.y > 0.73f) {
             nextGrounded = 1;
             cadet->anchor = collisionResult->contacts[i].transform;
+            cadet->lastStableLocation = cadet->transform.position;
         }
     }
 
@@ -87,10 +96,6 @@ void cadetMove(struct Cadet* cadet) {
 
     cadetCheckCollisions(cadet);
 }
-
-void cadetWalk(struct Cadet* cadet);
-void cadetFreefall(struct Cadet* cadet);
-void cadetJump(struct Cadet* cadet);
 
 void cadetWalk(struct Cadet* cadet) {
     cadetMove(cadet);

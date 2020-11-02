@@ -23,17 +23,19 @@ GO_SOURCE = $(wildcard ./levelbuilder/*.go)
 levelbuilder/levelbuilder: $(GO_SOURCE)
 	go build -o levelbuilder/levelbuilder ./levelbuilder/
 
-LEVELS = debug
+LEVELS = debug 00_cadet_intro 01_robot_intro
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
 LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
 
 src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
+	@mkdir -p $(@D)
 	levelbuilder/levelbuilder level $* $< $@
 
 COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
 
 src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
+	@mkdir -p $(@D)
 	levelbuilder/levelbuilder collision $* $< $@
 
 srce/collision/geo/geo.c: $(COLLISION_GEO)
@@ -57,6 +59,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/cadet/geo/model.c \
 	src/collision/collisiondata.c \
 	src/collision/collisionscene.c \
+	src/collision/boxcollision.c \
 	src/collision/geo/geo.c \
 	src/collision/levelcollisiongrid.c \
 	src/collision/meshcollision.c \

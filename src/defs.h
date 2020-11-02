@@ -9,6 +9,6 @@
 #define	LEVEL_SEGMENT		3
 #define	LEVEL_THEME_SEGMENT	4
 
-#define DEBUG 1
+#define DEBUG 0
 
 #endif

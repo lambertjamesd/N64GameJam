@@ -2,7 +2,6 @@
 #include "collisionscene.h"
 #include "src/system/memory.h"
 
-#include "geo/geo.h"
 #include "meshcollision.h"
 
 static struct LevelCollisionGrid* gLevelCollisionGrid;
@@ -12,22 +11,21 @@ struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, fl
     result->contacts = FAST_MALLOC_STRUCT_ARRAY(struct ContactPoint, MAX_CONTACT_POINTS);
     result->contactCount = 0;
 
-    if (position->y - radius < -2.0f) {
+    if (position->y - radius < KILL_PLANE_HEIGHT) {
         result->contactCount = 1;
 
         result->contacts[0].normal = gUp;
         result->contacts[0].point = *position;
-        result->contacts[0].point.y = -2.0f;
+        result->contacts[0].point.y = KILL_PLANE_HEIGHT;
         result->contacts[0].transform = 0;
+        result->contacts[0].collisionMask = CollisionLayersKillPlane;
 
-        position->y = radius - 2.0f;
+        position->y = radius + KILL_PLANE_HEIGHT;
     }
 
     if (gLevelCollisionGrid) {
         collisionGridCollideSphere(gLevelCollisionGrid, position, radius, result);
     }
-    
-    collisionColliderCollideSphere(&_solid_block_collider, position, radius, result);
 
     return result;
 }

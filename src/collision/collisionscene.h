@@ -8,6 +8,7 @@
 #include "levelcollisiongrid.h"
 
 #define GLOBAL_GRAVITY -9.8f
+#define KILL_PLANE_HEIGHT -4.0f
 
 struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, float radius, int collisionMask);
 

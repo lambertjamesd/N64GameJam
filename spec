@@ -31,6 +31,20 @@ beginseg
 endseg
 
 beginseg
+	name "00_cadet_intro"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/levels/00_cadet_intro/geo.o"
+endseg
+
+beginseg
+	name "01_robot_intro"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/levels/01_robot_intro/geo.o"
+endseg
+
+beginseg
 	name "alienworld"
 	flags OBJECT
 	number LEVEL_THEME_SEGMENT
@@ -60,6 +74,8 @@ beginwave
 	include "code"
 	include "static"
 	include "debuglevel"
+	include "00_cadet_intro"
+	include "01_robot_intro"
 	include "alienworld"
 	include "table"
 	include "bank"

@@ -66,9 +66,9 @@ int collisionEdgeCollideSphere(struct CollisionEdge* edge, struct Vector3* cente
     return 1;
 }
 
-int collisionPointCollideSphere(struct CollisionPoint* point, struct Vector3* center, float radius, struct ContactPoint* contact) {
+int collisionPointCollideSphere(struct Vector3* point, struct Vector3* center, float radius, struct ContactPoint* contact) {
     struct Vector3 overlap;
-    vector3Sub(center, &point->origin, &overlap);
+    vector3Sub(center, point, &overlap);
 
     float overlapLen = vector3MagSqrd(&overlap);
 
@@ -80,7 +80,7 @@ int collisionPointCollideSphere(struct CollisionPoint* point, struct Vector3* ce
         vector3Scale(&overlap, &contact->normal, 1.0f / sqrtf(overlapLen));
     }
 
-    contact->point = point->origin;
+    contact->point = *point;
     contact->transform = 0;
 
     return 1;
@@ -125,7 +125,7 @@ int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* cente
 
     for (i = 0; i < mesh->pointCount; ++i) {
         struct ContactPoint* contact = &result->contacts[result->contactCount];
-        if (collisionPointCollideSphere(&mesh->points[i], center, radius, contact)) {
+        if (collisionPointCollideSphere(&mesh->points[i].origin, center, radius, contact)) {
             vector3AddScaled(&contact->point, &contact->normal, radius, center);
             ++result->contactCount;
             didCollide = 1;
