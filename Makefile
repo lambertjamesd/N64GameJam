@@ -66,6 +66,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/graphics/renderscene.c	\
 	src/input/controller.c  \
 	src/input/inputfocus.c  \
+	src/level/level.c	\
 	src/levelthemes/alienworld/theme.c	\
 	src/math/basictransform.c   	\
 	src/math/mathf.c   	\

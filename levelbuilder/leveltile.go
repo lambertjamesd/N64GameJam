@@ -32,7 +32,8 @@ type LevelBlock struct {
 }
 
 type LevelTile struct {
-	Blocks [3]*LevelBlock
+	Blocks            [3]*LevelBlock
+	CollisionTileName string
 }
 
 type LevelTileSet struct {

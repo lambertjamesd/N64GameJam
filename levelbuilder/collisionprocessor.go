@@ -188,10 +188,14 @@ func WriteOutCollisionMesh(file *os.File, namePrefix string, mesh *Mesh) error {
 	file.WriteString("};\n")
 
 	file.WriteString(fmt.Sprintf(`
-struct CollisionMesh _%s_mesh = {
-	_%s_faces, %d,
-	_%s_edges, %d,
-	_%s_points, %d,
+struct CollisionCollider _%s_collider = {
+	ColliderTypeMesh,
+	0,
+	.mesh = {
+		_%s_faces, %d,
+		_%s_edges, %d,
+		_%s_points, %d,
+	},
 };
 `, namePrefix,
 		namePrefix, len(collisionMesh.faces),

@@ -125,7 +125,14 @@ func WriteGeoFile(filename string, name string, geoSources []string) {
 	defer output.Close()
 
 	output.WriteString("/*** Generated File ***/\n")
-	output.WriteString("\n#include <ultra64.h>\n#include \"src/graphics/levelgraphics.h\"\n\n")
+	output.WriteString(`
+#include <ultra64.h>
+#include "src/graphics/levelgraphics.h"
+#include "src/collision/levelcollisiongrid.h"
+#include "src/collision/geo/geo.h"
+#include "src/level/level.h"
+
+`)
 
 	for _, geoSource := range geoSources {
 		output.WriteString(fmt.Sprintf("#include \"%s\"\n", geoSource))

@@ -62,9 +62,11 @@ func buildBlock(
 
 func buildTile(
 	blocks [3]*LevelBlock,
+	collisionName string,
 ) *LevelTile {
 	return &LevelTile{
 		blocks,
+		collisionName,
 	}
 }
 
@@ -176,97 +178,97 @@ func BuildTileSet() *LevelTileSet {
 		floorBlock,
 		nil,
 		nil,
-	})
+	}, "gCollideTileFloor")
 
 	result.Tiles["Platform"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		platformBlock,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["Barrier"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		platformBlock,
 		barrierBlock,
-	})
+	}, "")
 
 	result.Tiles["Ramp"] = buildTile([3]*LevelBlock{
 		rampLowerBlock,
 		rampUpperBlock,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["Stair"] = buildTile([3]*LevelBlock{
 		stairLowerBlock,
 		stairUpperBlock,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["Tunnel"] = buildTile([3]*LevelBlock{
 		stairLowerBlock,
 		tunnelBlock,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["Overhang"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		barrierBlock,
-	})
+	}, "")
 
 	result.Tiles["PlatformFragile"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["BarrierFragile"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["Lava"] = buildTile([3]*LevelBlock{
 		lavaBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["OverhangLava"] = buildTile([3]*LevelBlock{
 		lavaBlock,
 		nil,
 		barrierBlock,
-	})
+	}, "")
 
 	result.Tiles["LargeSwitch"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["SmallSwitch"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["Door"] = buildTile([3]*LevelBlock{
 		floorHole,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["MovingPlatform"] = buildTile([3]*LevelBlock{
 		trackBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	result.Tiles["PlatformTrack"] = buildTile([3]*LevelBlock{
 		trackBlock,
 		nil,
 		nil,
-	})
+	}, "")
 
 	return &result
 }

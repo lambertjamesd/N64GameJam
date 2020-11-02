@@ -21,7 +21,7 @@ struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, fl
         position->y = radius - 2.0f;
     }
 
-    collisionMeshCollideSphere(&_solid_block_mesh, position, radius, result);
+    collisionColliderCollideSphere(&_solid_block_collider, position, radius, result);
 
     return result;
 }

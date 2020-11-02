@@ -13,6 +13,7 @@
 #include "src/cadet/geo/model.h"
 #include "src/math/basictransform.h"
 #include "src/cadet/cadet.h"
+#include "src/level/level.h"
 #include "renderscene.h"
 
 extern OSSched         gScheduler;
@@ -125,7 +126,7 @@ void createGfxTask(GFXInfo *i)
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    glistp = graphicsRenderLevelTileGrid(&_level_debug_levelGraphics.grid, gAlienWorldLevelTheme.materials, gAlienWorldLevelTheme.materialCount, glistp);
+    glistp = graphicsRenderLevelTileGrid(&_level_debug_levelData.graphics->grid, gAlienWorldLevelTheme.materials, gAlienWorldLevelTheme.materialCount, glistp);
     gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
 
     transformToMatrixL(&gCadet.transform, &dynamicp->cadet);
