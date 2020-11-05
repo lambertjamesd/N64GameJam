@@ -6,9 +6,12 @@
 #include "src/math/basictransform.h"
 #include "collisiondata.h"
 #include "levelcollisiongrid.h"
+#include "sparsecollisiongrid.h"
 
 #define GLOBAL_GRAVITY -9.8f
 #define KILL_PLANE_HEIGHT -4.0f
+
+extern struct SparseCollisionGrid gSparseCollisionGrid;
 
 struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, float radius, int collisionMask);
 

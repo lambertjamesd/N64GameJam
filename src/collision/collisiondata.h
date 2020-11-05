@@ -86,6 +86,7 @@ struct CollisionTransformedCollider {
 };
 
 int collisionColliderCollideSphere(struct CollisionCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
+int collisionColliderOverlapSphere(struct CollisionCollider* collider, struct Vector3* center, float radius);
 int collisionTransColliderCollideSphere(struct CollisionTransformedCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
 
 #endif

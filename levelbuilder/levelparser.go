@@ -15,6 +15,64 @@ func readString(reader io.Reader) string {
 	return string(buffer)
 }
 
+func TrimLevel(level *LevelGrid) *LevelGrid {
+	maxX, maxY := 0, 0
+	minX, minY := level.GetSize()
+
+	for x, row := range level.Tiles {
+		for y, tile := range row {
+			if tile.Tile != nil {
+				if x < minX {
+					minX = x
+				}
+				if x > maxX {
+					maxX = x
+				}
+				if y < minY {
+					minY = y
+				}
+				if y > maxY {
+					maxY = y
+				}
+			}
+		}
+	}
+
+	if minX > maxX || minY > maxY {
+		// there is no level data
+		return &LevelGrid{
+			nil,
+			0, 0,
+			0, 0,
+		}
+	}
+
+	maxX = maxX + 1
+	maxY = maxY + 1
+
+	var result LevelGrid
+
+	result.Tiles = make([][]LevelTileSlot, maxX-minX)
+
+	for x, row := range level.Tiles {
+		if maxY <= len(row) {
+			result.Tiles[x-minX] = row[minY:maxY]
+		} else if minY < len(row) {
+			result.Tiles[x-minX] = row[minY:len(row)]
+		} else {
+			result.Tiles[x-minX] = nil
+		}
+	}
+
+	result.PlayerPosX = level.PlayerPosX - float32(minX)
+	result.PlayerPosY = level.PlayerPosY - float32(minY)
+
+	result.RobotPosX = level.RobotPosX - float32(minX)
+	result.RobotPosY = level.RobotPosY - float32(minY)
+
+	return &result
+}
+
 func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 	var result LevelGrid
 
@@ -63,5 +121,5 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 	binary.Read(file, binary.LittleEndian, &result.RobotPosX)
 	binary.Read(file, binary.LittleEndian, &result.RobotPosY)
 
-	return &result
+	return TrimLevel(&result)
 }

@@ -7,20 +7,23 @@
 int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, float radius, struct CollisionResult* result) {
     struct ContactPoint* contact = &result->contacts[result->contactCount];
 
-    if (box->min.x >= center->x + radius || box->max.x <= center->z - radius ||
+    if (box->min.x >= center->x + radius || box->max.x <= center->x - radius ||
         box->min.y >= center->y + radius || box->max.y <= center->y - radius ||
         box->min.z >= center->z + radius || box->max.z <= center->z - radius
     ) {
         return 0;
     }
 
-    int contained[3] = {0, 0, 0};
-    int containedCount = 0;
     int i;
+    int containedCount = 0;
 
     for (i = 0; i < 3; ++i) {
-        if (box->min.el[i] <= center->el[i] && box->max.el[i] >= center->el[i]) {
-            contained[i] = 1;
+        if (center->el[i] < box->min.el[i]) {
+            contact->point.el[i] = box->min.el[i];
+        } else if (center->el[i] > box->max.el[i]) {
+            contact->point.el[i] = box->max.el[i];
+        } else {
+            contact->point.el[i] = center->el[i];
             ++containedCount;
         }
     }
@@ -30,7 +33,7 @@ int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, 
         int edgeIndex = 0;
 
         for (i = 0; i < 3; ++i) {
-            contact->point.el[i] = center->el[i] < (box->min.el[i] + box->max.el[i]) * 0.5f ? box->min.el[i] : box->min.el[i];
+            contact->point.el[i] = center->el[i] < (box->min.el[i] + box->max.el[i]) * 0.5f ? box->min.el[i] : box->max.el[i];
             float faceDist = fabsf(contact->point.el[i] - center->el[i]);
 
             if (faceDist < edgeDifference) {
@@ -63,16 +66,13 @@ int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, 
         return 1;
     } else if (containedCount == 2) {
         for (i = 0; i < 3; ++i) {
-            if (contained[i]) {
+            if (contact->point.el[i] == center->el[i]) {
                 contact->normal.el[i] = 0.0f;
-                contact->point.el[i] = center->el[i];
             } else {
                 if (center->el[i] < box->min.el[i]) {
                     contact->normal.el[i] = -1.0f;
-                    contact->point.el[i] = box->min.el[i];
                 } else {
                     contact->normal.el[i] = 1.0f;
-                    contact->point.el[i] = box->max.el[i];
                 }
             }
         }
@@ -85,13 +85,7 @@ int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, 
 
         return 1;
     } else {
-        struct Vector3 cornerCheck;
-
-        cornerCheck.x = contained[0] ? center->x : (center->x < box->min.x ? box->min.x : box->max.x);
-        cornerCheck.y = contained[1] ? center->y : (center->y < box->min.y ? box->min.y : box->max.y);
-        cornerCheck.z = contained[2] ? center->z : (center->z < box->min.z ? box->min.z : box->max.z);
-
-        if (collisionPointCollideSphere(&cornerCheck, center, radius, contact)) {
+        if (collisionPointCollideSphere(&contact->point, center, radius, contact)) {
             vector3AddScaled(&contact->point, &contact->normal, radius, center);
             ++result->contactCount;
             return 1;

@@ -5,6 +5,7 @@
 #include "meshcollision.h"
 
 static struct LevelCollisionGrid* gLevelCollisionGrid;
+struct SparseCollisionGrid gSparseCollisionGrid;
 
 struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, float radius, int collisionMask) {
     struct CollisionResult* result = FAST_MALLOC_STRUCT(struct CollisionResult);
@@ -27,9 +28,14 @@ struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, fl
         collisionGridCollideSphere(gLevelCollisionGrid, position, radius, result);
     }
 
+    if (result->contactCount != MAX_CONTACT_POINTS) {
+        collisionSparseGridCollideSphere(&gSparseCollisionGrid, position, radius, result);
+    }
+
     return result;
 }
 
 void collisionSceneUseGrid(struct LevelCollisionGrid* grid) {
     gLevelCollisionGrid = grid;
+    sparseCollisionInit(&gSparseCollisionGrid);
 }
