@@ -5,6 +5,7 @@ Gfx _alienWorldTexAlign[] = {gsSPEndDisplayList()};
 #include "tex_floor.inc.c"
 #include "tex_wall.inc.c"
 #include "tex_underhang.inc.c"
+#include "geo/switches.inc.c"
 
 Gfx _alienFloor_material[] = {
     gsDPPipeSync(),

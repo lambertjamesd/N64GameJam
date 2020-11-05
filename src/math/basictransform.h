@@ -17,8 +17,8 @@ void transformConcat(struct BasicTransform* a, struct BasicTransform* b, struct 
 void transformPoint(struct BasicTransform* trans, struct Vector3* in, struct Vector3* out);
 void transformPointInverse(struct BasicTransform* trans, struct Vector3* in, struct Vector3* out);
 void transformInvert(struct BasicTransform* in, struct BasicTransform* out);
-void transformToMatrix(struct BasicTransform* in, float mtx[4][4]);
-void transformToMatrixL(struct BasicTransform* in, Mtx* mtx);
+void transformToMatrix(struct BasicTransform* in, float worldScale, float mtx[4][4]);
+void transformToMatrixL(struct BasicTransform* in, float worldScale, Mtx* mtx);
 
 void transformIdentity(struct BasicTransform* trans);
 

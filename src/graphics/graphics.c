@@ -117,11 +117,9 @@ void createGfxTask(GFXInfo *i)
     cameraPos.z -= gControllerState[0].stick_y / (80.0f * 30.0f);
 
     struct BasicTransform cameraInverse;
-    float mtx[4][4];
     transformInvert(&gScene.camera.transform, &cameraInverse);
-    transformToMatrix(&cameraInverse, mtx);
+    transformToMatrixL(&cameraInverse, 1.0f, &dynamicp->viewing);
     guScale(&dynamicp->worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
-    guMtxF2L(mtx, &dynamicp->viewing);
 
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
@@ -131,7 +129,7 @@ void createGfxTask(GFXInfo *i)
         gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
     }
 
-    transformToMatrixL(&gCadet.transform, &dynamicp->cadet);
+    transformToMatrixL(&gCadet.transform, 1.0f / 256.0f, &dynamicp->cadet);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->cadet), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(glistp++, Cadet_Cadet_mesh);
     gSPPopMatrix(glistp++, G_MTX_MODELVIEW);

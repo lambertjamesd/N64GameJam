@@ -9,30 +9,6 @@
 
 struct Cadet gCadet;
 
-struct CollisionCollider gFooBox = {
-    ColliderTypeBox,
-    0,
-    .box = {
-        {-1.0f, -1.0f, -1.0f},
-        {1.0f, 0.5f, 1.0f},
-    },
-};
-
-struct CollisionBox gPrevFoo;
-
-struct BasicTransform gFooTransform = {
-    {0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 1.0f},
-    1.0f,
-};
-
-struct CollisionTransformedCollider gFooTransformedBox = {
-    &gFooBox,
-    &gFooTransform,
-    0,
-    0,
-};
-
 void cadetWalk(struct Cadet* cadet);
 void cadetFreefall(struct Cadet* cadet);
 void cadetJump(struct Cadet* cadet);
@@ -110,20 +86,6 @@ void cadetMove(struct Cadet* cadet) {
         &cadet->velocity
     );
 
-    if (getButton(0, B_BUTTON)) {
-        struct CollisionBox nextFoo;
-        struct Vector3 moveBy = {0.0f, 0.0f, 0.0f};
-        moveBy.x = gTimeDelta;
-
-        vector3Add(&gFooTransform.position, &moveBy, &gFooTransform.position);
-        vector3Add(&gFooBox.box.min, &gFooTransform.position, &nextFoo.min);
-        vector3Add(&gFooBox.box.max, &gFooTransform.position, &nextFoo.max);
-
-        sparseCollisionReindex(&gSparseCollisionGrid, &gFooTransformedBox, &nextFoo, &gPrevFoo);
-
-        gPrevFoo = nextFoo;
-    }
-
     if (cadet->anchor) {
         transformPoint(cadet->anchor, &cadet->relativeToAnchor, &cadet->transform.position);
     }
@@ -173,7 +135,6 @@ void cadetUpdate(void* cadetPtr) {
 
 void cadetReset(struct Vector3* startLocation) {
     transformIdentity(&gCadet.transform);
-    gCadet.transform.scale = 1.0f / 256.0f;
     
     gCadet.transform.position = *startLocation;
     gCadet.state = cadetFreefall;
@@ -183,9 +144,6 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.stateFlags = 0;
     gCadet.anchor = 0;
     gCadet.relativeToAnchor = gZeroVec;
-
-    gPrevFoo = gFooBox.box;
-    sparseCollisionReindex(&gSparseCollisionGrid, &gFooTransformedBox, &gPrevFoo, 0);
 }
 
 void cadetInit() {

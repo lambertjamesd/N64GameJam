@@ -12,6 +12,16 @@ enum LevelThemeMeshes {
 	LevelThemeMeshesCount,
 };
 
+// Color.red,
+// Color.yellow,
+// Color.blue,
+// Color.green,
+// Color.magenta,
+
+
+
+#define SWITCH_RED		255, 0, 0
+
 #define SWITCH_COLOR_COUNT	5
 
 enum LevelThemeMaterialType {
@@ -28,7 +38,7 @@ struct LevelThemeGraphics {
     Gfx** materials;
     int materialCount;
     u8 clearColorR, clearColorG, clearColorB;
-	Gfx* themeMeshes[LevelThemeMeshesCount][SWITCH_COLOR_COUNT];
+	Gfx* themeMeshes[LevelThemeMeshesCount];
 };
 
 #endif

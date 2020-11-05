@@ -79,6 +79,8 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/quaternion.c   \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
+	src/robot/robot.c \
+	src/robot/geo/model.c \
 	src/signal/signal.c  \
 	src/system/assert.c		\
 	src/time/time.c		\

@@ -125,46 +125,6 @@ u8 _alien_switch_pal[] = {
 	0x1F, 0xD6, 0xB5, 0x39, 0xD3, 0x4A, 0x57, 
 };
 
-Vtx _alien_lswitch_up_vtx[20] = {
-	{{{-200, 0, -200},0, {-16, -16},{0xAC, 0x5F, 0x0, 0xFF}}},
-	{{{-200, 0, 200},0, {-16, 1008},{0xAC, 0x5F, 0x0, 0xFF}}},
-	{{{-148, 47, 148},0, {118, 874},{0xAC, 0x5F, 0x0, 0xFF}}},
-	{{{-148, 47, -148},0, {118, 118},{0xAC, 0x5F, 0x0, 0xFF}}},
-	{{{148, 47, -148},0, {874, 118},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{-148, 47, -148},0, {118, 118},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{-148, 47, 148},0, {118, 874},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{148, 47, 148},0, {874, 874},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{-200, 0, 200},0, {-16, 1008},{0x0, 0x5F, 0x54, 0xFF}}},
-	{{{200, 0, 200},0, {1008, 1008},{0x0, 0x5F, 0x54, 0xFF}}},
-	{{{148, 47, 148},0, {874, 874},{0x0, 0x5F, 0x54, 0xFF}}},
-	{{{-148, 47, 148},0, {118, 874},{0x0, 0x5F, 0x54, 0xFF}}},
-	{{{200, 0, -200},0, {1008, -16},{0x0, 0x5F, 0xAC, 0xFF}}},
-	{{{-200, 0, -200},0, {-16, -16},{0x0, 0x5F, 0xAC, 0xFF}}},
-	{{{-148, 47, -148},0, {118, 118},{0x0, 0x5F, 0xAC, 0xFF}}},
-	{{{148, 47, -148},0, {874, 118},{0x0, 0x5F, 0xAC, 0xFF}}},
-	{{{200, 0, 200},0, {1008, 1008},{0x54, 0x5F, 0x0, 0xFF}}},
-	{{{200, 0, -200},0, {1008, -16},{0x54, 0x5F, 0x0, 0xFF}}},
-	{{{148, 47, -148},0, {874, 118},{0x54, 0x5F, 0x0, 0xFF}}},
-	{{{148, 47, 148},0, {874, 874},{0x54, 0x5F, 0x0, 0xFF}}},
-};
-
-Gfx _alien_lswitch_up_tri[] = {
-	gsSPVertex(_alien_lswitch_up_vtx + 0, 16, 0),
-	gsSP1Triangle(0, 1, 2, 0),
-	gsSP1Triangle(0, 2, 3, 0),
-	gsSP1Triangle(4, 5, 6, 0),
-	gsSP1Triangle(4, 6, 7, 0),
-	gsSP1Triangle(8, 9, 10, 0),
-	gsSP1Triangle(8, 10, 11, 0),
-	gsSP1Triangle(12, 13, 14, 0),
-	gsSP1Triangle(12, 14, 15, 0),
-	gsSPVertex(_alien_lswitch_up_vtx + 16, 4, 0),
-	gsSP1Triangle(0, 1, 2, 0),
-	gsSP1Triangle(0, 2, 3, 0),
-	gsSPEndDisplayList(),
-};
-
-
 Gfx _alien_switch_material[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, 1, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, 1),
@@ -184,6 +144,85 @@ Gfx _alien_switch_material[] = {
 	gsDPPipeSync(),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0),
 	gsDPSetTileSize(0, 0, 0, 124, 124),
-	gsDPSetPrimColor(0, 0, 187, 0, 12, 255),
+	gsSPEndDisplayList(),
+};
+
+Vtx _alien_lswitch_up_vtx[] = {
+	{{{-200, 13, -200},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-200, 13, 200},0, {-16, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-148, 59, 148},0, {118, 874},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{148, 59, 148},0, {874, 874},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{200, 13, 200},0, {1008, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{148, 59, -148},0, {874, 118},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{200, 13, -200},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-148, 59, -148},0, {118, 118},{0xFF, 0xFF, 0xFF, 0xFF}}},
+};
+
+Gfx _alien_lswitch_up_tri[] = {
+	gsSPVertex(_alien_lswitch_up_vtx + 0, 8, 0),
+	gsSP1Triangle(0, 1, 2, 0),
+	gsSP1Triangle(1, 3, 2, 0),
+	gsSP1Triangle(1, 4, 3, 0),
+	gsSP1Triangle(4, 5, 3, 0),
+	gsSP1Triangle(4, 6, 5, 0),
+	gsSP1Triangle(6, 7, 5, 0),
+	gsSP1Triangle(6, 0, 7, 0),
+	gsSP1Triangle(0, 2, 7, 0),
+	gsSP1Triangle(5, 7, 2, 0),
+	gsSP1Triangle(5, 2, 3, 0),
+	gsSPEndDisplayList(),
+};
+
+Vtx _alien_lswitch_down_vtx[] = {
+	{{{-200, 13, 200},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{200, 13, 200},0, {1008, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{200, 13, -200},0, {1008, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{-200, 13, -200},0, {-16, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+};
+
+Gfx _alien_lswitch_down_tri[] = {
+	gsSPVertex(_alien_lswitch_down_vtx + 0, 4, 0),
+	gsSP1Triangle(0, 1, 2, 0),
+	gsSP1Triangle(0, 2, 3, 0),
+	gsSPEndDisplayList(),
+};
+
+Vtx _alien_sswitch_up_vtx[] = {
+	{{{-61, 13, -61},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-61, 13, 61},0, {-16, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-38, 59, 38},0, {179, 813},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{38, 59, 38},0, {813, 813},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{61, 13, 61},0, {1008, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{38, 59, -38},0, {813, 179},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{61, 13, -61},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-38, 59, -38},0, {179, 179},{0xFF, 0xFF, 0xFF, 0xFF}}},
+};
+
+Gfx _alien_sswitch_up_tri[] = {
+	gsSPVertex(_alien_sswitch_up_vtx + 0, 8, 0),
+	gsSP1Triangle(0, 1, 2, 0),
+	gsSP1Triangle(1, 3, 2, 0),
+	gsSP1Triangle(1, 4, 3, 0),
+	gsSP1Triangle(4, 5, 3, 0),
+	gsSP1Triangle(4, 6, 5, 0),
+	gsSP1Triangle(6, 7, 5, 0),
+	gsSP1Triangle(6, 0, 7, 0),
+	gsSP1Triangle(0, 2, 7, 0),
+	gsSP1Triangle(5, 7, 2, 0),
+	gsSP1Triangle(5, 2, 3, 0),
+	gsSPEndDisplayList(),
+};
+
+Vtx _alien_sswitch_down_vtx[] = {
+	{{{61, 13, 61},0, {1008, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{61, 13, -61},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-61, 13, -61},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
+	{{{-61, 13, 61},0, {-16, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
+};
+
+Gfx _alien_sswitch_down_tri[] = {
+	gsSPVertex(_alien_sswitch_down_vtx + 0, 4, 0),
+	gsSP1Triangle(0, 1, 2, 0),
+	gsSP1Triangle(0, 2, 3, 0),
 	gsSPEndDisplayList(),
 };

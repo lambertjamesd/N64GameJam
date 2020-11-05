@@ -40,13 +40,15 @@ void transformInvert(struct BasicTransform* in, struct BasicTransform* out) {
     out->position.z *= -out->scale;
 }
 
-void transformToMatrix(struct BasicTransform* in, float mtx[4][4]) {
+void transformToMatrix(struct BasicTransform* in, float worldScale, float mtx[4][4]) {
     quatToMatrix(&in->rotation, mtx);
 
-    if (in->scale != 1.0f) {
-        mtx[0][0] *= in->scale; mtx[0][1] *= in->scale; mtx[0][2] *= in->scale;
-        mtx[1][0] *= in->scale; mtx[1][1] *= in->scale; mtx[1][2] *= in->scale;
-        mtx[2][0] *= in->scale; mtx[2][1] *= in->scale; mtx[2][2] *= in->scale;
+    float finalScale = in->scale * worldScale;
+
+    if (finalScale != 1.0f) {
+        mtx[0][0] *= finalScale; mtx[0][1] *= finalScale; mtx[0][2] *= finalScale;
+        mtx[1][0] *= finalScale; mtx[1][1] *= finalScale; mtx[1][2] *= finalScale;
+        mtx[2][0] *= finalScale; mtx[2][1] *= finalScale; mtx[2][2] *= finalScale;
     }
 
     mtx[3][0] = in->position.x;
@@ -54,9 +56,9 @@ void transformToMatrix(struct BasicTransform* in, float mtx[4][4]) {
     mtx[3][2] = in->position.z;
 }
 
-void transformToMatrixL(struct BasicTransform* in, Mtx* mtx) {
+void transformToMatrixL(struct BasicTransform* in, float worldScale, Mtx* mtx) {
     float mtxf[4][4];
-    transformToMatrix(in, mtxf);
+    transformToMatrix(in, worldScale, mtxf);
     guMtxF2L(mtxf, mtx);
 }
 
