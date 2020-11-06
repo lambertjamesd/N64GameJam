@@ -3,6 +3,7 @@
 #define _QUATERNION_H
 
 #include "vector.h"
+#include "vector2.h"
 
 struct Quaternion {
     float x, y, z, w;
@@ -10,6 +11,7 @@ struct Quaternion {
 
 void quatIdent(struct Quaternion* q);
 void quatAxisAngle(struct Vector3* axis, float angle, struct Quaternion* out);
+void quatAxisComplex(struct Vector3* axis, struct Vector2* complex, struct Quaternion* out);
 void quatConjugate(struct Quaternion* in, struct Quaternion* out);
 void quatMultVector(struct Quaternion* q, struct Vector3* a, struct Vector3* out);
 void quatMultiply(struct Quaternion* a, struct Quaternion* b, struct Quaternion* out);

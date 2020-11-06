@@ -81,6 +81,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/quaternion.c   \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
+	src/math/vector2.c   	\
 	src/robot/robot.c \
 	src/robot/geo/model.c \
 	src/signal/signal.c  \

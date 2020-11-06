@@ -15,6 +15,8 @@ struct TimeUpdateListener {
 
 extern float gTimeDelta;
 
+#define MIN_DELTA_TIME (1.0f / 60.0f)
+
 void timeUpdate(OSTime time);
 void timeAddListener(struct TimeUpdateListener* listener, UpdateCallback callback, void* data);
 void timeRemoveListener(struct TimeUpdateListener* listener);
