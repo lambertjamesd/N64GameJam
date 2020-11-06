@@ -5,8 +5,7 @@
 #include "src/graphics/renderscene.h"
 #include "src/collision/collisionscene.h"
 #include "geo/model.h"
-
-#include "src/system/memory.h"
+#include "src/graphics/dynamic.h"
 
 struct Cadet gCadet;
 
@@ -23,54 +22,6 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 
-void cadetCheckCollisions(struct Cadet* cadet) {
-    struct Vector3 centerPos = cadet->transform.position;
-    centerPos.y += CADET_RADIUS;
-
-    struct CollisionResult* collisionResult = collisionSceneCollideSphere(&centerPos, CADET_RADIUS, 0);
-
-    cadet->transform.position = centerPos;
-    cadet->transform.position.y -= CADET_RADIUS;
-
-    int nextGrounded = 0;
-    cadet->anchor = 0;
-
-    int i;
-    for (i = 0; i < collisionResult->contactCount; ++i) {
-        float dotDiff = vector3Dot(&cadet->velocity, &collisionResult->contacts[i].normal);
-
-        if (dotDiff < 0.0f)
-        {
-            cadet->velocity.x -= dotDiff * collisionResult->contacts[i].normal.x;
-            cadet->velocity.y -= dotDiff * collisionResult->contacts[i].normal.y;
-            cadet->velocity.z -= dotDiff * collisionResult->contacts[i].normal.z;
-        }
-
-        if (collisionResult->contacts[i].collisionMask & CollisionLayersKillPlane) {
-            cadet->transform.position = cadet->lastStableLocation;
-            cadet->velocity = gZeroVec;
-            nextGrounded = 0;
-            cadet->anchor = 0;
-            cadet->state = cadetFreefall;
-        } else if (collisionResult->contacts[i].normal.y > 0.73f) {
-            nextGrounded = 1;
-            cadet->anchor = collisionResult->contacts[i].transform;
-            cadet->lastStableLocation = cadet->transform.position;
-        }
-    }
-
-    if (nextGrounded) {
-        cadet->stateFlags |= CADET_IS_GROUNDED;
-        if (cadet->anchor) {
-            transformPointInverse(cadet->anchor, &cadet->transform.position, &cadet->relativeToAnchor);
-        }
-    } else {
-        cadet->stateFlags &= ~CADET_IS_GROUNDED;
-    }
-
-    fastMallocReset();
-}
-
 void cadetMove(struct Cadet* cadet) {
     float inputX = 0.0f;
     float inputY = 0.0f;
@@ -80,39 +31,39 @@ void cadetMove(struct Cadet* cadet) {
         inputY = -gControllerState[0].stick_y / 80.0f;
     }
 
-    cadet->velocity.y += GLOBAL_GRAVITY * gTimeDelta;
+    cadet->actor.velocity.y += GLOBAL_GRAVITY * gTimeDelta;
     struct Vector3 targetVelocity;
 
     targetVelocity.x = CADET_SPEED * inputX;
-    targetVelocity.y = cadet->velocity.y;
+    targetVelocity.y = cadet->actor.velocity.y;
     targetVelocity.z = CADET_SPEED * inputY;
 
     vector3MoveTowards(
-        &cadet->velocity, 
+        &cadet->actor.velocity, 
         &targetVelocity, 
-        (cadet->stateFlags & CADET_IS_GROUNDED) ? 
+        (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? 
             CADET_ACCEL * gTimeDelta :
             CADET_AIR_ACCEL * gTimeDelta,
-        &cadet->velocity
+        &cadet->actor.velocity
     );
 
-    if (cadet->anchor) {
-        transformPoint(cadet->anchor, &cadet->relativeToAnchor, &cadet->transform.position);
+    if (cadet->actor.anchor) {
+        transformPoint(cadet->actor.anchor, &cadet->actor.relativeToAnchor, &cadet->transform.position);
     }
 
-    vector3AddScaled(&cadet->transform.position, &cadet->velocity, gTimeDelta, &cadet->transform.position);
+    vector3AddScaled(&cadet->transform.position, &cadet->actor.velocity, gTimeDelta, &cadet->transform.position);
 
-    cadetCheckCollisions(cadet);
+    sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
 }
 
 void cadetWalk(struct Cadet* cadet) {
     cadetMove(cadet);
 
-    if (!(cadet->stateFlags & CADET_IS_GROUNDED)) {
+    if (!(cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED)) {
         cadet->state = cadetFreefall;
     } else {
         if ((gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON)) {
-            cadet->velocity.y = CADET_JUMP_IMPULSE;
+            cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
         }
     }
@@ -121,14 +72,14 @@ void cadetWalk(struct Cadet* cadet) {
 void cadetFreefall(struct Cadet* cadet) {
     cadetMove(cadet);
 
-    if (cadet->stateFlags & CADET_IS_GROUNDED) {
+    if (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) {
         cadet->state = cadetWalk;
     }
 }
 
 void cadetJump(struct Cadet* cadet) {
     if ((gInputMask & InputMaskCadet) && getButton(0, A_BUTTON)) {
-        cadet->velocity.y += CADET_JUMP_ACCEL * gTimeDelta;
+        cadet->actor.velocity.y += CADET_JUMP_ACCEL * gTimeDelta;
     } else {
         cadet->state = cadetFreefall;
     }
@@ -140,7 +91,13 @@ void cadetUpdate(void* cadetPtr) {
     struct Cadet* cadet = (struct Cadet*)cadetPtr;
     cadet->state(cadet);
 
-    gScene.camera.targetPosition = cadet->transform.position;
+    if (gInputMask & InputMaskCadet) {
+        if (getButtonDown(0, L_TRIG | Z_TRIG)) {
+            gInputMask = INPUT_MASK_ROBOT;
+        }
+
+        gScene.camera.targetPosition = cadet->transform.position;
+    }
 }
 
 void cadetReset(struct Vector3* startLocation) {
@@ -149,11 +106,12 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.transform.position = *startLocation;
     gCadet.state = cadetFreefall;
 
-    gCadet.velocity = gZeroVec;
-    gCadet.lastStableLocation = *startLocation;
-    gCadet.stateFlags = 0;
-    gCadet.anchor = 0;
-    gCadet.relativeToAnchor = gZeroVec;
+    gCadet.actor.radius = CADET_RADIUS;
+    gCadet.actor.velocity = gZeroVec;
+    gCadet.actor.lastStableLocation = *startLocation;
+    gCadet.actor.stateFlags = 0;
+    gCadet.actor.anchor = 0;
+    gCadet.actor.relativeToAnchor = gZeroVec;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
 }

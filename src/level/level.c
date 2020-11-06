@@ -7,6 +7,7 @@
 #include "src/graphics/dynamic.h"
 #include "src/system/memory.h"
 #include "src/cadet/cadet.h"
+#include "src/robot/robot.h"
 
 void loadLevel(struct LevelDefinition* levelDef) {
     heapReset();
@@ -42,4 +43,5 @@ void loadLevel(struct LevelDefinition* levelDef) {
 
     collisionSceneUseGrid(levelDef->levelData->collision);
     cadetReset(&levelDef->levelData->cadetStart);
+    robotReset(&levelDef->levelData->robotStart);
 }

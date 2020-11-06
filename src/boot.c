@@ -12,6 +12,7 @@
 #include "src/time/time.h"
 #include "src/level/level.h"
 #include "src/levels/levels.h"
+#include "src/robot/robot.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -183,6 +184,7 @@ static void initGame(void)
     fastMallocReset();
     cameraInit(&gScene.camera);
     cadetInit();
+    robotInit();
     controllersInit();
     layoutMemory();
     graphicsInit(); 

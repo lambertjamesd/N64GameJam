@@ -63,6 +63,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/geo/geo.c \
 	src/collision/levelcollisiongrid.c \
 	src/collision/meshcollision.c \
+	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
 	src/graphics/dynamic.c	\
 	src/graphics/graphics.c	\

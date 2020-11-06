@@ -9,7 +9,7 @@
 #include "dynamic.h"
 
 #define START_FOLLOW_DISTANCE 10.0f
-#define CAMERA_MAX_SPEED 10.0f
+#define CAMERA_MAX_SPEED 20.0f
 
 struct SceneCamera {
     struct BasicTransform transform;

@@ -2,9 +2,9 @@
 #ifndef _CADET_CADET_C
 #define _CADET_CADET_C
 
+#include "src/collision/sphereactor.h"
 #include "src/math/basictransform.h"
 #include "src/time/time.h"
-#include "src/graphics/dynamic.h"
 
 #define CADET_RADIUS    0.2f
 #define CADET_SPEED     3.0f
@@ -18,25 +18,18 @@ struct Cadet;
 
 typedef void (*CadetState)(struct Cadet* cadet);
 
-#define CADET_IS_JUMPING  (1 << 0)
-#define CADET_IS_GROUNDED  (1 << 1)
+#define CADET_IS_JUMPING  (1 << 1)
 
 struct Cadet {
     struct BasicTransform transform;
+    struct SphereActor actor;
     CadetState state;
     struct TimeUpdateListener updateListener;
-    struct Vector3 velocity;
-    struct Vector3 lastStableLocation;
-    int stateFlags;
-
-    struct BasicTransform* anchor;
-    struct Vector3 relativeToAnchor;
 };
 
 extern struct Cadet gCadet;
 
 void cadetInit();
 void cadetReset(struct Vector3* startLocation);
-void cadetRender(struct DynamicActor* data, struct GraphicsState* state);
 
 #endif
