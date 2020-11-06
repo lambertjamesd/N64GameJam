@@ -106,7 +106,7 @@ static void gameEntryPoint(void *argv)
                     controllersReadData();
 
                     if (pendingGFX == 0) {
-                        loadLevel(&gAllLevels[nextLevel]);
+                        levelLoad(&gAllLevels[nextLevel]);
                         gCurrentLevel = nextLevel;
                     }
                 } else {
@@ -189,6 +189,6 @@ static void initGame(void)
     layoutMemory();
     graphicsInit(); 
     audioInit();
-    loadLevel(&gAllLevels[0]);
+    levelLoad(&gAllLevels[0]);
 }
 

@@ -164,15 +164,28 @@ struct LevelGraphics _level_%s_levelGraphics = {
 `, levelName, levelName, len(joinedMesh.Tiles), height, materialCount, gridSize))
 
 	outputLevel.WriteString(fmt.Sprintf(`
+struct LevelSwitchDef _level_%s_levelSwitches[] = {
+`, levelName))
+
+	for _, puzzleSwitch := range tileMap.Switches {
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}, %d, %d},\n", puzzleSwitch.Pos.X, puzzleSwitch.Pos.Y, puzzleSwitch.Pos.Z, puzzleSwitch.Type, puzzleSwitch.Color))
+	}
+
+	outputLevel.WriteString("};\n")
+
+	outputLevel.WriteString(fmt.Sprintf(`
 struct LevelData _level_%s_levelData = {
 	&_level_%s_levelGraphics,
 	&_level_%s_collision_grid,
 	{%.6f, %.6f, %.6f},
 	{%.6f, %.6f, %.6f},
+	_level_%s_levelSwitches,
+	%d,
 };
 `, levelName, levelName, levelName,
 		tileMap.PlayerPosX, 0.1, -tileMap.PlayerPosY,
 		tileMap.RobotPosX, 0.1, -tileMap.RobotPosY,
+		levelName, len(tileMap.Switches),
 	))
 
 	geoSources = append(geoSources, tileIncFile)

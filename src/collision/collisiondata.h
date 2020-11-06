@@ -9,8 +9,11 @@
 #define MAX_CONTACT_POINTS  16
 
 enum CollisionLayers {
-    CollisionLayersCadet = 1 << 0,
-    CollisionLayersKillPlane = 1 << 1,
+    CollisionLayersGeometry = 1 << 0,
+    CollisionLayersRobot = 1 << 1,
+    CollisionLayersLargeSwitch = 1 << 2,
+    CollisionLayersSmallSwitch = 1 << 3,
+    CollisionLayersKillPlane = 1 << 4,
 };
 
 struct ContactPoint {
@@ -85,8 +88,8 @@ struct CollisionTransformedCollider {
     TriggerCallback trigger;
 };
 
-int collisionColliderCollideSphere(struct CollisionCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
+int collisionColliderCollideSphere(struct Vector3* center, float radius, struct CollisionCollider* collider, int collisionMask, struct CollisionResult* result);
 int collisionColliderOverlapSphere(struct CollisionCollider* collider, struct Vector3* center, float radius);
-int collisionTransColliderCollideSphere(struct CollisionTransformedCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result);
+int collisionTransColliderCollideSphere(struct Vector3* center, float radius, struct CollisionTransformedCollider* collider, int collisionMask, struct CollisionResult* result);
 
 #endif

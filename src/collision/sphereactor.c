@@ -6,7 +6,7 @@ void sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position
     struct Vector3 centerPos = *position;
     centerPos.y += actor->radius;
 
-    struct CollisionResult* collisionResult = collisionSceneCollideSphere(&centerPos, actor->radius, 0);
+    struct CollisionResult* collisionResult = collisionSceneCollideSphere(&centerPos, actor->radius, actor->collisionMask);
 
     *position = centerPos;
     position->y -= actor->radius;

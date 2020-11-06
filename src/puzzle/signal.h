@@ -1,6 +1,6 @@
 
-#ifndef _SIGNAL_SIGNAL_H
-#define _SIGNAL_SIGNAL_H
+#ifndef _PUZZLE_SIGNAL_H
+#define _PUZZLE_SIGNAL_H
 
 #define MAX_SIGNAL_SLOTS 5
 
@@ -14,7 +14,6 @@ typedef void (*SignalRecieveCallback)(void* data, int signalIndex, int currentSi
 struct SignalReciever {
     struct SignalReciever* next;
     struct SignalReciever* prev;
-    int signalIndex;
     void* data;
     SignalRecieveCallback callback;
 };

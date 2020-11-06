@@ -8,8 +8,57 @@
 #include "src/system/memory.h"
 #include "src/cadet/cadet.h"
 #include "src/robot/robot.h"
+#include "src/puzzle/switch.h"
 
-void loadLevel(struct LevelDefinition* levelDef) {
+struct LevelDefinition* gLoadedLevel;
+
+static CleanupFunction* gCleanupFn; 
+static void** gCleanupParam;
+static int gCleanupCount;
+
+void levelExpand(struct LevelDefinition* levelDef) {
+    struct PuzzleSwitch* switches = fastMalloc(ARRAY_SIZE(struct PuzzleSwitch, levelDef->levelData->switchCount), ALIGNMENT_OF(struct PuzzleSwitch));
+
+    int i;
+    for (i = 0; i < levelDef->levelData->switchCount; ++i) {
+        struct LevelSwitchDef* def = &levelDef->levelData->switches[i];
+        switchInit(&switches[i], &def->pos, def->type, def->color);
+    }
+
+    gCleanupCount = levelDef->levelData->switchCount;
+
+    gCleanupFn = fastMalloc(ARRAY_SIZE(
+        CleanupFunction,
+        gCleanupCount
+    ), ALIGNMENT_OF(CleanupFunction));
+
+    gCleanupParam = fastMalloc(ARRAY_SIZE(
+        void*,
+        gCleanupCount
+    ), ALIGNMENT_OF(void*));
+
+    int cleanupIndex = 0;
+
+    for (i = 0; i < levelDef->levelData->switchCount; ++i) {   
+        gCleanupFn[i] = switchDestroy;
+        gCleanupParam[i] = &switches[i];
+        ++cleanupIndex;
+    }
+}
+
+void levelCleanup(struct LevelDefinition* levelDef) {
+    int i;
+
+    for (i = 0; i < gCleanupCount; ++i) {
+        gCleanupFn[i](gCleanupParam[i]);
+    }
+}
+
+void levelLoad(struct LevelDefinition* levelDef) {
+    if (gLoadedLevel) {
+        levelCleanup(gLoadedLevel);
+    }
+
     heapReset();
     osUnmapTLBAll();
 
@@ -42,6 +91,11 @@ void loadLevel(struct LevelDefinition* levelDef) {
     dynamicActorGroupReset(&gScene.dynamicActors);
 
     collisionSceneUseGrid(levelDef->levelData->collision);
+    
     cadetReset(&levelDef->levelData->cadetStart);
     robotReset(&levelDef->levelData->robotStart);
+
+    levelExpand(levelDef);
+
+    gLoadedLevel = levelDef;
 }

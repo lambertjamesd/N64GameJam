@@ -9,6 +9,10 @@
 #define MAX_MATERIAL_GROUPS 8
 #define MATERIAL_INDEX_NOT_BATCHED 8
 
+enum DynamicMaterialType {
+    DynamicMaterialTypeSwitch,
+};
+
 struct GraphicsState {
     Gfx* dl;
     Mtx* matrices;

@@ -98,7 +98,7 @@ void sparseCollisionReindex(struct SparseCollisionGrid* to, struct CollisionTran
     }
 }
 
-int collisionSparseGridCellCollideSphere(struct SparseCollisionGridCell* cell, struct Vector3* center, float radius, struct CollisionResult* result, int resultCountCheck) {
+int collisionSparseGridCellCollideSphere(struct Vector3* center, float radius, struct SparseCollisionGridCell* cell, int collisionMask, struct CollisionResult* result, int resultCountCheck) {
     int didCollide = 0;
 
     while (cell) {
@@ -115,7 +115,7 @@ int collisionSparseGridCellCollideSphere(struct SparseCollisionGridCell* cell, s
         if (!alreadyChecked) {
             int startCount = result->contactCount;
 
-            if (collisionTransColliderCollideSphere(cell->collider, center, radius, result)) {
+            if (collisionTransColliderCollideSphere(center, radius, cell->collider, collisionMask, result)) {
                 didCollide = 1;
 
                 for (i = startCount; i < result->contactCount; ++i) {
@@ -134,7 +134,7 @@ int collisionSparseGridCellCollideSphere(struct SparseCollisionGridCell* cell, s
     return didCollide;
 }
 
-int collisionSparseGridCollideSphere(struct SparseCollisionGrid* grid, struct Vector3* center, float radius, struct CollisionResult* result) {
+int collisionSparseGridCollideSphere(struct Vector3* center, float radius, struct SparseCollisionGrid* grid, int collisionMask, struct CollisionResult* result) {
     int didCollide = 0;
 
     int minX = MIN_INDEX(center->x - radius);
@@ -150,7 +150,7 @@ int collisionSparseGridCollideSphere(struct SparseCollisionGrid* grid, struct Ve
 
     for (x = minX; x < maxX; ++x) {
         for (z = minZ; z < maxZ; ++z) {
-            if (collisionSparseGridCellCollideSphere(grid->cells[CELL_INDEX(x, z)], center, radius, result, startCount)) {
+            if (collisionSparseGridCellCollideSphere(center, radius, grid->cells[CELL_INDEX(x, z)], collisionMask, result, startCount)) {
                 didCollide = 1;
 
                 if (result->contactCount == MAX_CONTACT_POINTS) {

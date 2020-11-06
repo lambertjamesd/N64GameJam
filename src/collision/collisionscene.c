@@ -25,11 +25,11 @@ struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, fl
     }
 
     if (gLevelCollisionGrid) {
-        collisionGridCollideSphere(gLevelCollisionGrid, position, radius, result);
+        collisionGridCollideSphere(position, radius, gLevelCollisionGrid, collisionMask, result);
     }
 
     if (result->contactCount != MAX_CONTACT_POINTS) {
-        collisionSparseGridCollideSphere(&gSparseCollisionGrid, position, radius, result);
+        collisionSparseGridCollideSphere(position, radius, &gSparseCollisionGrid, collisionMask, result);
     }
 
     return result;

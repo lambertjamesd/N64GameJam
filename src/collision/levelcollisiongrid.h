@@ -23,6 +23,6 @@ struct LevelCollisionGrid {
     int height;
 };
 
-int collisionGridCollideSphere(struct LevelCollisionGrid* grid, struct Vector3* center, float radius, struct CollisionResult* result);
+int collisionGridCollideSphere(struct Vector3* center, float radius, struct LevelCollisionGrid* grid, int collisionMask, struct CollisionResult* result);
 
 #endif

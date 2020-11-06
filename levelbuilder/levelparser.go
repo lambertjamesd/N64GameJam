@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 func readString(reader io.Reader) string {
@@ -44,6 +45,7 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 			nil,
 			0, 0,
 			0, 0,
+			nil,
 		}
 	}
 
@@ -52,7 +54,7 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 
 	var result LevelGrid
 
-	result.Tiles = make([][]LevelTileSlot, maxX-minX)
+	result.Tiles = make([][]LevelTileSlot, maxX-minX+1)
 
 	for x, row := range level.Tiles {
 		if maxY <= len(row) {
@@ -71,6 +73,48 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 	result.RobotPosY = level.RobotPosY - float32(minY)
 
 	return &result
+}
+
+func splitTileName(tileName string) (string, map[string]string) {
+	var parts = strings.Split(tileName, ";")
+	var mapResult = make(map[string]string)
+
+	for i := 1; i < len(parts); i = i + 1 {
+		var valuePair = strings.Split(parts[i], "=")
+
+		if len(valuePair) == 1 {
+			mapResult[valuePair[0]] = ""
+		} else {
+			mapResult[valuePair[0]] = valuePair[1]
+		}
+	}
+
+	return parts[0], mapResult
+}
+
+func findSwitches(level *LevelGrid) {
+	for x, row := range level.Tiles {
+		for y, cell := range row {
+			if cell.Tile == nil {
+				continue
+			}
+
+			switch cell.Tile.DynamicType {
+			case DynamicTypeLargeSwitch:
+				level.Switches = append(level.Switches, LevelSwitchDef{
+					Vector3{float32(x * 2), 0, float32(-y * 2)},
+					LevelSwitchTypeLarge,
+					cell.ParamAsInt("color", 0),
+				})
+			case DynamicTypeSmallSwitch:
+				level.Switches = append(level.Switches, LevelSwitchDef{
+					Vector3{float32(x * 2), 0, float32(-y * 2)},
+					LevelSwitchTypeSmall,
+					cell.ParamAsInt("color", 0),
+				})
+			}
+		}
+	}
 }
 
 func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
@@ -101,7 +145,9 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 		var rowData = make([]LevelTileSlot, rows)
 
 		for row := uint32(0); row < rows; row = row + 1 {
-			tile, _ := tileMap.Tiles[readString(file)]
+			tileName, extraValues := splitTileName(readString(file))
+
+			tile, _ := tileMap.Tiles[tileName]
 
 			var rotation uint8
 			binary.Read(file, binary.LittleEndian, &rotation)
@@ -109,6 +155,7 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 			rowData[row] = LevelTileSlot{
 				tile,
 				int(rotation),
+				extraValues,
 			}
 		}
 
@@ -121,5 +168,9 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 	binary.Read(file, binary.LittleEndian, &result.RobotPosX)
 	binary.Read(file, binary.LittleEndian, &result.RobotPosY)
 
-	return TrimLevel(&result)
+	var trimmed = TrimLevel(&result)
+
+	findSwitches(trimmed)
+
+	return trimmed
 }

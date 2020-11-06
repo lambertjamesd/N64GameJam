@@ -850,7 +850,6 @@ Gfx _robot_mesh_tri_1[] = {
 Gfx _robot_bottom_material[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, 1, 0, 0, 0, PRIMITIVE, 0, 0, 0, 1),
-	gsSPClearGeometryMode(G_SHADE | G_LIGHTING),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 166, 130, 102, 255),
 	gsSPEndDisplayList(),
@@ -860,7 +859,6 @@ Gfx _robot_bottom_material[] = {
 Gfx _robot_material[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, 1, 0, 0, 0, PRIMITIVE, 0, 0, 0, 1),
-	gsSPClearGeometryMode(G_SHADE | G_LIGHTING | G_SHADING_SMOOTH),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 217, 155, 32, 255),
 	gsSPEndDisplayList(),

@@ -133,7 +133,7 @@ func CollisionMeshFromMesh(mesh *Mesh) CollisionMesh {
 	return result
 }
 
-func WriteOutCollisionMesh(file *os.File, namePrefix string, mesh *Mesh) error {
+func WriteOutCollisionMesh(file *os.File, namePrefix string, mesh *Mesh, collisionLayers string) error {
 	var collisionMesh = CollisionMeshFromMesh(mesh)
 
 	file.WriteString(fmt.Sprintf("\nstruct CollisionFace _%s_faces[] = {\n", namePrefix))
@@ -190,14 +190,14 @@ func WriteOutCollisionMesh(file *os.File, namePrefix string, mesh *Mesh) error {
 	file.WriteString(fmt.Sprintf(`
 struct CollisionCollider _%s_collider = {
 	ColliderTypeMesh,
-	0,
+	%s,
 	.mesh = {
 		_%s_faces, %d,
 		_%s_edges, %d,
 		_%s_points, %d,
 	},
 };
-`, namePrefix,
+`, namePrefix, collisionLayers,
 		namePrefix, len(collisionMesh.faces),
 		namePrefix, len(collisionMesh.edges),
 		namePrefix, len(collisionMesh.points),
@@ -213,7 +213,7 @@ func ConvertCollisionMesh(prefix string, inFile string, outFile string) {
 		log.Fatal(err)
 	}
 
-	mesh, err := ParsePly(string(content))
+	mesh, ply, err := ParsePly(string(content))
 
 	mesh = TransformMesh(mesh, func(vertex *MeshVertex) {
 		vertex.nx = 0
@@ -237,5 +237,11 @@ func ConvertCollisionMesh(prefix string, inFile string, outFile string) {
 
 	defer output.Close()
 
-	WriteOutCollisionMesh(output, prefix, mesh)
+	var collisionName = ply.collisionLayers
+
+	if collisionName == "" {
+		collisionName = "CollisionLayersGeometry"
+	}
+
+	WriteOutCollisionMesh(output, prefix, mesh, collisionName)
 }

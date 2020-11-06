@@ -6,11 +6,21 @@
 #include "src/graphics/levelgraphics.h"
 #include "src/graphics/levelthemegraphics.h"
 
+typedef void (*CleanupFunction)(void*);
+
+struct LevelSwitchDef {
+    struct Vector3 pos;
+    short type;
+    short color;
+};
+
 struct LevelData {
     struct LevelGraphics* graphics;
     struct LevelCollisionGrid* collision;
     struct Vector3 cadetStart;
     struct Vector3 robotStart;
+    struct LevelSwitchDef* switches;
+    int switchCount;
 };
 
 struct LevelThemeDefinition {
@@ -26,6 +36,8 @@ struct LevelDefinition {
     struct LevelThemeDefinition* theme;
 };
 
-void loadLevel(struct LevelDefinition* levelDef);
+extern struct LevelDefinition* gLoadedLevel;
+
+void levelLoad(struct LevelDefinition* levelDef);
 
 #endif

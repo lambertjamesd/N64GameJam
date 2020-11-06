@@ -19,10 +19,11 @@ type plyElement struct {
 }
 
 type plyParseData struct {
-	elements    []*plyElement
-	target      *Mesh
-	lines       []string
-	currentLine int
+	elements        []*plyElement
+	target          *Mesh
+	lines           []string
+	currentLine     int
+	collisionLayers string
 }
 
 func parseElements(parseData *plyParseData) error {
@@ -68,6 +69,8 @@ func parseElements(parseData *plyParseData) error {
 		} else if name == "end_header" {
 			i = i + 1
 			break
+		} else if name == "comment" && strings.TrimSpace(lineSplit[1]) == "CollisionLayers" {
+			parseData.collisionLayers = strings.Join(lineSplit[2:len(lineSplit)], " ")
 		}
 	}
 
@@ -208,7 +211,7 @@ func parseData(parseData *plyParseData) error {
 	return nil
 }
 
-func ParsePly(fileContent string) (*Mesh, error) {
+func ParsePly(fileContent string) (*Mesh, *plyParseData, error) {
 	var result Mesh
 	var state plyParseData
 
@@ -219,14 +222,14 @@ func ParsePly(fileContent string) (*Mesh, error) {
 	err := parseElements(&state)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	err = parseData(&state)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &result, nil
+	return &result, &state, nil
 }

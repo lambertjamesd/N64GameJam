@@ -13,6 +13,7 @@ struct SphereActor {
     struct Vector3 relativeToAnchor;
     float radius;
     int stateFlags;
+    int collisionMask;
 };
 
 void sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position);

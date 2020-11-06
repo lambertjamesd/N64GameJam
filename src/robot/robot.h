@@ -13,6 +13,8 @@
 #define ROBOT_RADIUS 0.8f
 #define ROBOT_TURN_RATE (M_PI)
 
+#define ROBOT_BB_RADIUS 0.9f
+
 struct Robot;
 
 typedef void (*RobotState)(struct Robot* robot);
@@ -23,6 +25,8 @@ struct Robot {
     RobotState state;
     struct TimeUpdateListener updateListener;
     struct Vector2 rotation;
+    struct CollisionBox lastBB;
+    struct CollisionTransformedCollider collider;
 };
 
 extern struct Robot gRobot;

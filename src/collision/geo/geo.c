@@ -8,7 +8,7 @@
 
 struct CollisionCollider gBasicCollisionBlock = {
     ColliderTypeBox,
-    0,
+    CollisionLayersGeometry,
     .box = {
         {-1.0f, -2.0f, -1.0f},
         {1.0f, 0.0f, 1.0f},

@@ -4,7 +4,11 @@
 #include "meshcollision.h"
 #include "boxcollision.h"
 
-int collisionColliderCollideSphere(struct CollisionCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result) {
+int collisionColliderCollideSphere(struct Vector3* center, float radius, struct CollisionCollider* collider, int collisionMask, struct CollisionResult* result) {
+    if (!(collider->collisionMask & collisionMask)) {
+        return 0;
+    }
+
     int didCollide = 0;
     int contactsBefore = result->contactCount;
     switch (collider->type) {
@@ -33,7 +37,11 @@ int collisionColliderOverlapSphere(struct CollisionCollider* collider, struct Ve
     return 0;
 }
 
-int collisionTransColliderCollideSphere(struct CollisionTransformedCollider* collider, struct Vector3* center, float radius, struct CollisionResult* result) {
+int collisionTransColliderCollideSphere(struct Vector3* center, float radius, struct CollisionTransformedCollider* collider, int collisionMask, struct CollisionResult* result) {
+    if (!(collider->collider->collisionMask & collisionMask)) {
+        return 0;
+    }
+
     struct Vector3 transformedCenter;
     transformPointInverse(collider->transform, center, &transformedCenter);
 
@@ -50,11 +58,7 @@ int collisionTransColliderCollideSphere(struct CollisionTransformedCollider* col
 
     struct Vector3 transformedCenterCopy = transformedCenter;
 
-    if (collisionColliderCollideSphere(collider->collider, &transformedCenter, radius, result)) {
-        if (vector3DistSqrd(&transformedCenter, &transformedCenterCopy) > radius * radius) {
-            collisionColliderCollideSphere(collider->collider, &transformedCenterCopy, radius, result);
-        }
-
+    if (collisionColliderCollideSphere(&transformedCenter, radius, collider->collider, collisionMask, result)) {
         transformPoint(collider->transform, &transformedCenter, center);
 
 

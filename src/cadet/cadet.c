@@ -92,10 +92,6 @@ void cadetUpdate(void* cadetPtr) {
     cadet->state(cadet);
 
     if (gInputMask & InputMaskCadet) {
-        if (getButtonDown(0, L_TRIG | Z_TRIG)) {
-            gInputMask = INPUT_MASK_ROBOT;
-        }
-
         gScene.camera.targetPosition = cadet->transform.position;
     }
 }
@@ -119,4 +115,9 @@ void cadetReset(struct Vector3* startLocation) {
 void cadetInit() {
     timeAddListener(&gCadet.updateListener, cadetUpdate, &gCadet);
     cadetReset(&gZeroVec);
+    gCadet.actor.collisionMask = 
+        CollisionLayersGeometry | 
+        CollisionLayersRobot | 
+        CollisionLayersSmallSwitch |
+        CollisionLayersKillPlane;
 }

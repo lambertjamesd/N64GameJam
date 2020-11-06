@@ -6,8 +6,20 @@
 #include "src/graphics/renderscene.h"
 #include "geo/model.h"
 
+#include "src/collision/geo/robot_collision.inc.c"
+
 struct Robot gRobot;
 struct Vector2 _gMaxRobotRotate;
+
+void robotCalcBB(struct Robot* robot, struct CollisionBox* box) {
+    box->min.x = robot->transform.position.x - ROBOT_BB_RADIUS;
+    box->min.y = robot->transform.position.y;
+    box->min.z = robot->transform.position.z - ROBOT_BB_RADIUS;
+
+    box->max.x = robot->transform.position.x + ROBOT_BB_RADIUS;
+    box->max.y = robot->transform.position.y + 2.0f;
+    box->max.z = robot->transform.position.z + ROBOT_BB_RADIUS;
+}
 
 void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
@@ -74,14 +86,30 @@ void robotWalk(struct Robot* robot) {
 
 void robotUpdate(void* robotPtr) {
     struct Robot* robot = (struct Robot*)robotPtr;
+
+    struct Vector3 lastPos = robot->transform.position;
+
     robot->state(robot);
 
-    if (gInputMask & InputMaskRobot) {
-        if (getButtonDown(0, L_TRIG | Z_TRIG)) {
-            gInputMask = INPUT_MASK_CADET;
-        }
+    if (lastPos.x != robot->transform.position.x || 
+        lastPos.y != robot->transform.position.y || 
+        lastPos.z != robot->transform.position.z) {
+        struct CollisionBox nextBB;
+        robotCalcBB(robot, &nextBB);
+        sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &nextBB, &gRobot.lastBB);
+        gRobot.lastBB = nextBB;
+    }
 
+    if (gInputMask & InputMaskRobot) {
         gScene.camera.targetPosition = robot->transform.position;
+    }
+
+    if (getButtonDown(0, L_TRIG | Z_TRIG)) {
+        if (gInputMask & InputMaskRobot) {
+            gInputMask = INPUT_MASK_CADET;
+        } else {
+            gInputMask = INPUT_MASK_ROBOT;
+        }
     }
 }
 
@@ -100,12 +128,25 @@ void robotReset(struct Vector3* startLocation) {
     gRobot.rotation = gUp2;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED);
+
+    robotCalcBB(&gRobot, &gRobot.lastBB);
+    sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &gRobot.lastBB, 0);
 }
 
 void robotInit() {
     timeAddListener(&gRobot.updateListener, robotUpdate, &gRobot);
-    robotReset(&gZeroVec);
 
     _gMaxRobotRotate.x = cosf(MIN_DELTA_TIME * ROBOT_TURN_RATE);
     _gMaxRobotRotate.y = sinf(MIN_DELTA_TIME * ROBOT_TURN_RATE);
+
+    gRobot.actor.collisionMask = 
+        CollisionLayersGeometry | 
+        CollisionLayersLargeSwitch |
+        CollisionLayersSmallSwitch |
+        CollisionLayersKillPlane;
+
+    gRobot.collider.collider = &_robot_collision_collider;
+    gRobot.collider.transform = &gRobot.transform;
+
+    robotReset(&gZeroVec);
 }

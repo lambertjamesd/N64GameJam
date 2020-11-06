@@ -23,7 +23,7 @@ func buildFace(plyFile string, matType MaterialType) *LevelBlockFace {
 			log.Fatal(err)
 		}
 
-		mesh, err = ParsePly(string(content))
+		mesh, _, err = ParsePly(string(content))
 
 		if err != nil {
 			log.Fatal(err)
@@ -63,10 +63,12 @@ func buildBlock(
 func buildTile(
 	blocks [3]*LevelBlock,
 	collisionName string,
+	switchType int,
 ) *LevelTile {
 	return &LevelTile{
 		blocks,
 		collisionName,
+		switchType,
 	}
 }
 
@@ -178,97 +180,97 @@ func BuildTileSet() *LevelTileSet {
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor")
+	}, "gCollideTileFloor", DynamicTypeNone)
 
 	result.Tiles["Platform"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		platformBlock,
 		nil,
-	}, "gCollideTilePlatform")
+	}, "gCollideTilePlatform", DynamicTypeNone)
 
 	result.Tiles["Barrier"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		platformBlock,
 		barrierBlock,
-	}, "gCollideTileBarrier")
+	}, "gCollideTileBarrier", DynamicTypeNone)
 
 	result.Tiles["Ramp"] = buildTile([3]*LevelBlock{
 		rampLowerBlock,
 		rampUpperBlock,
 		nil,
-	}, "gCollideTileRamp")
+	}, "gCollideTileRamp", DynamicTypeNone)
 
 	result.Tiles["Stair"] = buildTile([3]*LevelBlock{
 		stairLowerBlock,
 		stairUpperBlock,
 		nil,
-	}, "gCollideTileStair")
+	}, "gCollideTileStair", DynamicTypeNone)
 
 	result.Tiles["Tunnel"] = buildTile([3]*LevelBlock{
 		stairLowerBlock,
 		tunnelBlock,
 		nil,
-	}, "gCollideTileTunnel")
+	}, "gCollideTileTunnel", DynamicTypeNone)
 
 	result.Tiles["Overhang"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		barrierBlock,
-	}, "gCollideTileOverhang")
+	}, "gCollideTileOverhang", DynamicTypeNone)
 
 	result.Tiles["PlatformFragile"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor")
+	}, "gCollideTileFloor", DynamicTypeNone)
 
 	result.Tiles["BarrierFragile"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor")
+	}, "gCollideTileFloor", DynamicTypeNone)
 
 	result.Tiles["Lava"] = buildTile([3]*LevelBlock{
 		lavaBlock,
 		nil,
 		nil,
-	}, "gCollideTileLava")
+	}, "gCollideTileLava", DynamicTypeNone)
 
 	result.Tiles["OverhangLava"] = buildTile([3]*LevelBlock{
 		lavaBlock,
 		nil,
 		barrierBlock,
-	}, "gCollideTileLavaOverhang")
+	}, "gCollideTileLavaOverhang", DynamicTypeNone)
 
 	result.Tiles["LargeSwitch"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor")
+	}, "gCollideTileFloor", DynamicTypeLargeSwitch)
 
 	result.Tiles["SmallSwitch"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor")
+	}, "gCollideTileFloor", DynamicTypeSmallSwitch)
 
 	result.Tiles["Door"] = buildTile([3]*LevelBlock{
 		floorHole,
 		nil,
 		nil,
-	}, "")
+	}, "", DynamicTypeNone)
 
 	result.Tiles["MovingPlatform"] = buildTile([3]*LevelBlock{
 		trackBlock,
 		nil,
 		nil,
-	}, "")
+	}, "", DynamicTypeNone)
 
 	result.Tiles["PlatformTrack"] = buildTile([3]*LevelBlock{
 		trackBlock,
 		nil,
 		nil,
-	}, "")
+	}, "", DynamicTypeNone)
 
 	return &result
 }

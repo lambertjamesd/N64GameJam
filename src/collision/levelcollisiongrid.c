@@ -41,7 +41,7 @@ static VertexTransform gSimpleRotationInv[] = {
     VertexRotate90,
 };
 
-int collisionGridCollideSphere(struct LevelCollisionGrid* grid, struct Vector3* center, float radius, struct CollisionResult* result) {
+int collisionGridCollideSphere(struct Vector3* center, float radius, struct LevelCollisionGrid* grid, int collisionMask, struct CollisionResult* result) {
     float gridX = (center->x + 1.0f) * 0.5f;
     float gridY = (center->y + 2.0f) * 0.5f;
     float gridZ = (center->z - 1.0f) * -0.5f;
@@ -88,7 +88,7 @@ int collisionGridCollideSphere(struct LevelCollisionGrid* grid, struct Vector3* 
 
                     gSimpleRotationInv[cell->rotation](&relativeCenter);
 
-                    if (collisionColliderCollideSphere(tile->blocks[y], &relativeCenter, radius, result)) {
+                    if (collisionColliderCollideSphere(&relativeCenter, radius, tile->blocks[y], collisionMask, result)) {
                         gSimpleRotation[cell->rotation](&relativeCenter);
 
                         center->x = relativeCenter.x + x * LEVEL_GRID_SIZE;
