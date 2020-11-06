@@ -10,9 +10,15 @@ Gfx* _gAlienWorldMaterials[] = {
     _alienUnderhang_material,
 };
 
+Gfx* _gAlienWorldDynamicMaterials[] = {
+
+};
+
 struct LevelThemeGraphics gAlienWorldLevelTheme = {
     _gAlienWorldMaterials,
     sizeof(_gAlienWorldMaterials) / sizeof(*_gAlienWorldMaterials),
-    46, 14, 89,
+    _gAlienWorldDynamicMaterials,
+    sizeof(_gAlienWorldDynamicMaterials) / sizeof(*_gAlienWorldDynamicMaterials),
+    _alien_clearScreen,
     {_alien_lswitch_up_tri, _alien_lswitch_down_tri, _alien_sswitch_up_tri, _alien_sswitch_down_tri},
 };

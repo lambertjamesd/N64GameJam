@@ -48,16 +48,9 @@ Gfx rdpstateinit_dl[] = {
     gsDPSetTileSize(7, 0, 0, (1 - 1) << G_TEXTURE_IMAGE_FRAC, (1 - 1) <<
 		G_TEXTURE_IMAGE_FRAC),
 
+		gsDPSetColorDither(G_CD_BAYER),
 
     gsDPPipeSync(),
-    gsSPEndDisplayList(),
-};
-
-
-
-Gfx setup_rdpstate[] = {
-    gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
-		gsDPSetColorDither(G_CD_BAYER),
     gsSPEndDisplayList(),
 };
 

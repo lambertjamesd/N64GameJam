@@ -6,6 +6,7 @@ Gfx _alienWorldTexAlign[] = {gsSPEndDisplayList()};
 #include "tex_wall.inc.c"
 #include "tex_underhang.inc.c"
 #include "geo/switches.inc.c"
+#include "src/defs.h"
 
 Gfx _alienFloor_material[] = {
     gsDPPipeSync(),
@@ -62,5 +63,12 @@ Gfx _alienUnderhang_material[] = {
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_4b, 2, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0),
 	gsDPSetTileSize(0, 0, 0, 124, 124),
 	gsDPSetPrimColor(0, 0, 187, 187, 187, 255),
+	gsSPEndDisplayList(),
+};
+
+Gfx _alien_clearScreen[] = {
+    gsDPSetFillColor(GPACK_RGBA5551(46, 14, 89, 1) << 16 | 
+                    GPACK_RGBA5551(46, 14, 89, 1)),
+    gsDPFillRectangle(0, 0, SCREEN_WD-1, SCREEN_HT-1),
 	gsSPEndDisplayList(),
 };

@@ -4,6 +4,7 @@
 #include "src/input/inputfocus.h"
 #include "src/graphics/renderscene.h"
 #include "src/collision/collisionscene.h"
+#include "geo/model.h"
 
 #include "src/system/memory.h"
 
@@ -12,6 +13,15 @@ struct Cadet gCadet;
 void cadetWalk(struct Cadet* cadet);
 void cadetFreefall(struct Cadet* cadet);
 void cadetJump(struct Cadet* cadet);
+
+void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
+    Mtx* nextTransfrom = graphicsStateNextMtx(state);
+
+    transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
+    gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
+    gSPDisplayList(state->dl++, Cadet_Cadet_mesh);
+    gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
+}
 
 void cadetCheckCollisions(struct Cadet* cadet) {
     struct Vector3 centerPos = cadet->transform.position;
@@ -144,6 +154,8 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.stateFlags = 0;
     gCadet.anchor = 0;
     gCadet.relativeToAnchor = gZeroVec;
+
+    dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
 }
 
 void cadetInit() {

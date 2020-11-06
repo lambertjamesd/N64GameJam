@@ -5,18 +5,18 @@
 #include <sched.h>
 #include "levelgraphics.h"
 #include "levelthemegraphics.h"
+#include "renderscene.h"
+#include "src/defs.h"
 
-#define	SCREEN_HT	240
-#define	SCREEN_WD	320
 #define DYANAMIC_LIST_LEN 512
 
 typedef struct {
 	Mtx	projection;
     u16 perspectiveCorrect;
 	Mtx	viewing;
-    Mtx cadet;
     Mtx worldScale;
 	Gfx	glist[DYANAMIC_LIST_LEN];
+    Mtx dynamicActors[MAX_DYNAMIC_ACTORS];
 } Dynamic;
 
 typedef union {    
@@ -41,7 +41,6 @@ typedef struct {
 } GFXInfo;
 
 extern Gfx	rdpstateinit_dl[];
-extern Gfx	setup_rdpstate[];
 extern Gfx	setup_rspstate[];
 extern Gfx 	logo_dl[];
 extern Gfx 	bg_dl[];

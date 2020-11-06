@@ -4,6 +4,7 @@
 #include "src/boot.h"
 #include "src/collision/collisionscene.h"
 #include "src/graphics/graphics.h"
+#include "src/graphics/dynamic.h"
 #include "src/system/memory.h"
 #include "src/cadet/cadet.h"
 
@@ -36,6 +37,8 @@ void loadLevel(struct LevelDefinition* levelDef) {
         levelDef->levelData->graphics, 
         levelDef->theme->theme
     );
+
+    dynamicActorGroupReset(&gScene.dynamicActors);
 
     collisionSceneUseGrid(levelDef->levelData->collision);
     cadetReset(&levelDef->levelData->cadetStart);

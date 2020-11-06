@@ -10,9 +10,7 @@
 #include "src/math/vector.h"
 #include "levelgraphics.h"
 #include "src/system/assert.h"
-#include "src/cadet/geo/model.h"
 #include "src/math/basictransform.h"
-#include "src/cadet/cadet.h"
 #include "src/level/level.h"
 #include "renderscene.h"
 
@@ -30,8 +28,6 @@ char* gLevelThemeSegmentBuffer;
 struct LevelGraphics* gCurrentLevelGraphics;
 struct LevelThemeGraphics* gCurrentLevelTheme;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
-
-struct Vector3 cameraPos = {0.0f, 0.0f, 0.0f};
 
 void graphicsInit(void) 
 {
@@ -79,8 +75,6 @@ void createGfxTask(GFXInfo *i)
 	    firsttime = 0;
     }
 
-    gSPDisplayList(glistp++, setup_rdpstate);
-
     u32 zBuffAligned = ALIGN_64_BYTES(osVirtualToPhysical(gZBuffer));
     
     gDPSetDepthImage(glistp++, zBuffAligned);
@@ -95,13 +89,12 @@ void createGfxTask(GFXInfo *i)
 		     osVirtualToPhysical(i->cfb));
 
     if (gCurrentLevelTheme) {
-        gDPSetFillColor(glistp++, (GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1) << 16 | 
-                    GPACK_RGBA5551(gAlienWorldLevelTheme.clearColorR, gAlienWorldLevelTheme.clearColorG, gAlienWorldLevelTheme.clearColorB, 1)));
+        gSPDisplayList(glistp++, gCurrentLevelTheme->clear);
     } else {
         gDPSetFillColor(glistp++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
                     GPACK_RGBA5551(0, 0, 0, 1)));
+        gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
     }
-    gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
     gDPPipeSync(glistp++);
     gDPSetCycleType(glistp++, G_CYC_1CYCLE);
@@ -112,9 +105,6 @@ void createGfxTask(GFXInfo *i)
 
     guPerspective(&dynamicp->projection, &dynamicp->perspectiveCorrect, 70.0f, 4.0f / 3.0f, 1.0f, 128.0f, 1.0f);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
-
-    cameraPos.x += gControllerState[0].stick_x / (80.0f * 30.0f);
-    cameraPos.z -= gControllerState[0].stick_y / (80.0f * 30.0f);
 
     struct BasicTransform cameraInverse;
     transformInvert(&gScene.camera.transform, &cameraInverse);
@@ -129,10 +119,19 @@ void createGfxTask(GFXInfo *i)
         gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
     }
 
-    transformToMatrixL(&gCadet.transform, 1.0f / 256.0f, &dynamicp->cadet);
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->cadet), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    gSPDisplayList(glistp++, Cadet_Cadet_mesh);
-    gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+    struct GraphicsState state;
+    state.dl = glistp;
+    state.matrices = dynamicp->dynamicActors;
+    state.usedMatrices = 0;
+    state.matrixCount = MAX_DYNAMIC_ACTORS;
+
+    if (gCurrentLevelTheme) {
+        dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCount);
+    } else {
+        dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0);
+    }
+
+    glistp = state.dl;
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);

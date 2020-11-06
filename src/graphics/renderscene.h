@@ -6,6 +6,7 @@
 #include "src/time/time.h"
 #include "levelgraphics.h"
 #include "levelthemegraphics.h"
+#include "dynamic.h"
 
 #define START_FOLLOW_DISTANCE 10.0f
 #define CAMERA_MAX_SPEED 10.0f
@@ -24,6 +25,7 @@ void cameraCleanup(struct SceneCamera* camera);
 
 struct RenderScene {
     struct SceneCamera camera;
+    struct DynamicActorGroup dynamicActors;
     struct LevelTileGrid* levelGrid;
     struct LevelThemeGraphics* theme;
 };

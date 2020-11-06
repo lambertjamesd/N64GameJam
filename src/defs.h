@@ -9,6 +9,9 @@
 #define	LEVEL_SEGMENT		3
 #define	LEVEL_THEME_SEGMENT	4
 
+#define	SCREEN_HT	240
+#define	SCREEN_WD	320
+
 #define DEBUG 0
 
 #endif

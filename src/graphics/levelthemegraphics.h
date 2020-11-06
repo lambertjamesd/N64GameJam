@@ -37,7 +37,9 @@ enum LevelThemeMaterialType {
 struct LevelThemeGraphics {
     Gfx** materials;
     int materialCount;
-    u8 clearColorR, clearColorG, clearColorB;
+    Gfx** dynamicMaterials;
+    int dynamicMaterialCount;
+	Gfx* clear;
 	Gfx* themeMeshes[LevelThemeMeshesCount];
 };
 

@@ -4,6 +4,7 @@
 
 #include "src/math/basictransform.h"
 #include "src/time/time.h"
+#include "src/graphics/dynamic.h"
 
 #define CADET_RADIUS    0.2f
 #define CADET_SPEED     3.0f
@@ -36,5 +37,6 @@ extern struct Cadet gCadet;
 
 void cadetInit();
 void cadetReset(struct Vector3* startLocation);
+void cadetRender(struct DynamicActor* data, struct GraphicsState* state);
 
 #endif
