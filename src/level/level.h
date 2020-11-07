@@ -14,6 +14,11 @@ struct LevelSwitchDef {
     short color;
 };
 
+struct LevelDoorDef {
+    struct Vector3 pos;
+    short color;
+};
+
 struct LevelData {
     struct LevelGraphics* graphics;
     struct LevelCollisionGrid* collision;
@@ -21,6 +26,8 @@ struct LevelData {
     struct Vector3 robotStart;
     struct LevelSwitchDef* switches;
     int switchCount;
+    struct LevelDoorDef* doors;
+    int doorCount;
 };
 
 struct LevelThemeDefinition {

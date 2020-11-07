@@ -9,6 +9,7 @@
 #include "src/cadet/cadet.h"
 #include "src/robot/robot.h"
 #include "src/puzzle/switch.h"
+#include "src/puzzle/door.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -25,7 +26,14 @@ void levelExpand(struct LevelDefinition* levelDef) {
         switchInit(&switches[i], &def->pos, def->type, def->color);
     }
 
-    gCleanupCount = levelDef->levelData->switchCount;
+    struct PuzzleDoor* doors = heapMalloc(ARRAY_SIZE(struct PuzzleDoor, levelDef->levelData->doorCount), ALIGNMENT_OF(struct PuzzleDoor));
+
+    for (i = 0; i < levelDef->levelData->doorCount; ++i) {
+        struct LevelDoorDef* def = &levelDef->levelData->doors[i];
+        doorInit(&doors[i], &def->pos, def->color);
+    }
+
+    gCleanupCount = levelDef->levelData->switchCount + levelDef->levelData->doorCount;
 
     gCleanupFn = heapMalloc(ARRAY_SIZE(
         CleanupFunction,
@@ -40,8 +48,14 @@ void levelExpand(struct LevelDefinition* levelDef) {
     int cleanupIndex = 0;
 
     for (i = 0; i < levelDef->levelData->switchCount; ++i) {   
-        gCleanupFn[i] = switchDestroy;
-        gCleanupParam[i] = &switches[i];
+        gCleanupFn[cleanupIndex] = switchDestroy;
+        gCleanupParam[cleanupIndex] = &switches[i];
+        ++cleanupIndex;
+    }
+
+    for (i = 0; i < levelDef->levelData->doorCount; ++i) {
+        gCleanupFn[cleanupIndex] = doorDestroy;
+        gCleanupParam[cleanupIndex] = &doors[i];
         ++cleanupIndex;
     }
 }

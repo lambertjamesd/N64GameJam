@@ -258,7 +258,7 @@ func BuildTileSet() *LevelTileSet {
 		floorHole,
 		nil,
 		nil,
-	}, "", DynamicTypeNone)
+	}, "", DynamicTypeDoor)
 
 	result.Tiles["MovingPlatform"] = buildTile([3]*LevelBlock{
 		trackBlock,

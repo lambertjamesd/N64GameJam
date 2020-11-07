@@ -84,6 +84,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/vector2.c   	\
 	src/robot/robot.c \
 	src/robot/geo/model.c \
+	src/puzzle/door.c  \
 	src/puzzle/signal.c  \
 	src/puzzle/switch.c  \
 	src/system/assert.c		\

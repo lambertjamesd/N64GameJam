@@ -19,6 +19,7 @@ const (
 	DynamicTypeLargeSwitch    = 1
 	DynamicTypeSmallSwitch    = 2
 	DynamicTypePlatformSwitch = 3
+	DynamicTypeDoor           = 3
 )
 
 var AllMaterials = []MaterialType{
@@ -67,11 +68,17 @@ type LevelSwitchDef struct {
 	Color int
 }
 
+type LevelDoorDef struct {
+	Pos   Vector3
+	Color int
+}
+
 type LevelGrid struct {
 	Tiles                  [][]LevelTileSlot
 	PlayerPosX, PlayerPosY float32
 	RobotPosX, RobotPosY   float32
 	Switches               []LevelSwitchDef
+	Doors                  []LevelDoorDef
 }
 
 func (level *LevelGrid) GetSize() (int, int) {

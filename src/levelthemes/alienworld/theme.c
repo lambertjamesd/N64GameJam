@@ -12,6 +12,7 @@ Gfx* _gAlienWorldMaterials[] = {
 
 Gfx* _gAlienWorldDynamicMaterials[] = {
     _alien_switch_material,
+    _alien_puzzle_door_material,
 };
 
 struct LevelThemeGraphics gAlienWorldLevelTheme = {
@@ -20,5 +21,11 @@ struct LevelThemeGraphics gAlienWorldLevelTheme = {
     _gAlienWorldDynamicMaterials,
     sizeof(_gAlienWorldDynamicMaterials) / sizeof(*_gAlienWorldDynamicMaterials),
     _alien_clearScreen,
-    {_alien_lswitch_up_tri, _alien_lswitch_down_tri, _alien_sswitch_up_tri, _alien_sswitch_down_tri},
+    {
+        _alien_lswitch_up_tri, 
+        _alien_lswitch_down_tri, 
+        _alien_sswitch_up_tri, 
+        _alien_sswitch_down_tri, 
+        _alien_puzzle_door_mesh_tri_0,
+    },
 };

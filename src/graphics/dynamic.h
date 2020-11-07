@@ -11,6 +11,7 @@
 
 enum DynamicMaterialType {
     DynamicMaterialTypeSwitch,
+    DynamicMaterialTypeDoor,
 };
 
 struct GraphicsState {
