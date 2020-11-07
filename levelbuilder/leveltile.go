@@ -30,6 +30,8 @@ var AllMaterials = []MaterialType{
 	BarrierTop,
 	Wall,
 	Underhang,
+	Lava,
+	Track,
 }
 
 type LevelBlockFace struct {

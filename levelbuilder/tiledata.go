@@ -153,7 +153,7 @@ func BuildTileSet() *LevelTileSet {
 		"ply/wall_color.ply", Underhang,
 		"ply/wall_color.ply", Underhang,
 		"ply/wall_color.ply", Underhang,
-		"ply/floor_color.ply", Lava,
+		"ply/lava_color.ply", Lava,
 	)
 
 	var floorHole = buildBlock(
@@ -166,12 +166,12 @@ func BuildTileSet() *LevelTileSet {
 	)
 
 	var trackBlock = buildBlock(
-		true,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"", Track,
+		false,
+		"", Underhang,
+		"", Underhang,
+		"", Underhang,
+		"", Underhang,
+		"ply/track.ply", Track,
 	)
 
 	result.Tiles = make(map[string]*LevelTile)

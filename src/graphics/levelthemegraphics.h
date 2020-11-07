@@ -30,6 +30,8 @@ enum LevelThemeMaterialType {
 	LevelThemeMaterialTypeTrack      = 6,
 };
 
+typedef void (*AnimCallback)();
+
 struct LevelThemeGraphics {
     Gfx** materials;
     int materialCount;
@@ -37,6 +39,7 @@ struct LevelThemeGraphics {
     int dynamicMaterialCount;
 	Gfx* clear;
 	Gfx* themeMeshes[LevelThemeMeshesCount];
+	AnimCallback animCallback;
 };
 
 #endif

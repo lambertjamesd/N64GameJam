@@ -112,6 +112,10 @@ void robotUpdate(void* robotPtr) {
     if (gInputMask & InputMaskRobot) {
         gScene.camera.targetPosition = robot->transform.position;
 
+        if (gScene.camera.targetPosition.y < 0.0f) {
+            gScene.camera.targetPosition.y = 0.0f;
+        }
+
         if (getButtonDown(0, B_BUTTON)) {
             robotAttack(robot);
         }
@@ -156,6 +160,7 @@ void robotInit() {
         CollisionLayersGeometry | 
         CollisionLayersLargeSwitch |
         CollisionLayersSmallSwitch |
+        CollisionLayersSwamp |
         CollisionLayersKillPlane;
 
     gRobot.collider.collider = &_robot_collision_collider;

@@ -54,8 +54,11 @@ void graphicsInitLevel(
     gCurrentLevelTheme = theme;
 }
 
-void createGfxTask(GFXInfo *i) 
-{
+void createGfxTask(GFXInfo *i) {
+    if (gCurrentLevelTheme && gCurrentLevelTheme->animCallback) {
+        gCurrentLevelTheme->animCallback();
+    }
+
     static int firsttime = 1;
     Dynamic *dynamicp;
     OSScTask *t;

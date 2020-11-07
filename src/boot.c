@@ -70,6 +70,24 @@ void boot(void *arg)
 
 static void idleThreadEntryPoint(char *argv) 
 {
+    osCreateViManager(OS_PRIORITY_VIMGR);
+
+	switch (osTvType) {
+		case 0: // PAL
+			osViSetMode(&osViModeTable[OS_VI_PAL_LPF1]);
+			break;
+		case 1: // NTSC
+			osViSetMode(&osViModeTable[OS_VI_NTSC_LPF1]);
+			break;
+		case 2: // MPAL
+			osViSetMode(&osViModeTable[OS_VI_MPAL_LPF1]);
+			break;
+	}
+	osViSetSpecialFeatures(OS_VI_GAMMA_OFF |
+			OS_VI_GAMMA_DITHER_OFF |
+			OS_VI_DIVOT_OFF |
+			OS_VI_DITHER_FILTER_OFF);
+
     osCreatePiManager((OSPri) OS_PRIORITY_PIMGR, &PiMessageQ, PiMessages,
                         DMA_QUEUE_SIZE);
     osCreateThread(&gGameThread, 6, gameEntryPoint, argv, gGameThreadStack + 

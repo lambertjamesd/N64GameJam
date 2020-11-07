@@ -14,7 +14,8 @@ enum CollisionLayers {
     CollisionLayersLargeSwitch = 1 << 2,
     CollisionLayersSmallSwitch = 1 << 3,
     CollisionLayersBreakable = 1 << 4,
-    CollisionLayersKillPlane = 1 << 5,
+    CollisionLayersSwamp = 1 << 5,
+    CollisionLayersKillPlane = 1 << 6,
 };
 
 struct ContactPoint {

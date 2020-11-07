@@ -93,6 +93,10 @@ void cadetUpdate(void* cadetPtr) {
 
     if (gInputMask & InputMaskCadet) {
         gScene.camera.targetPosition = cadet->transform.position;
+
+        if (gScene.camera.targetPosition.y < 0.0f) {
+            gScene.camera.targetPosition.y = 0.0f;
+        }
     }
 }
 
