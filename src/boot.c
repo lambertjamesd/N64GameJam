@@ -174,7 +174,7 @@ static void layoutMemory(void)
     gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT);
     gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * SCREEN_HT);
     gAudioHeap = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT - AUDIO_HEAP_SIZE);
-    heapInit((u32)PHYS_TO_K0(_codeSegmentRomEnd), (u32)gAudioHeap);
+    heapInit((u32)gAudioHeap);
 }
 
 static void initGame(void)

@@ -56,7 +56,7 @@ void graphicsInitLevel(
 
 void createGfxTask(GFXInfo *i) {
     if (gCurrentLevelTheme && gCurrentLevelTheme->animCallback) {
-        gCurrentLevelTheme->animCallback();
+        gCurrentLevelTheme->animCallback(gLevelThemeSegmentBuffer);
     }
 
     static int firsttime = 1;

@@ -25,32 +25,31 @@ Gfx* _gAlienWorldDynamicMaterials[] = {
 static float gAlienScrollX = 0.0f;
 static float gAlienScrollY = 0.0f;
 
-void alienWorldAnimate() {
-    u32 physicalAddr = osVirtualToPhysical(_alien_swamp_material_anim);
+void alienWorldAnimate(void* themeBufferStart) {
+    u32 swampStart = ((u32)_alien_swamp_material_anim) & 0xFFFFFF;
+    swampStart += (u32)themeBufferStart;
 
-    if (physicalAddr != -1) {
-        Gfx* texDL = _alien_swamp_material_anim;
+    Gfx* texDL = (Gfx*)swampStart;
 
-        gAlienScrollX += SCROLL_SPEED_X * gTimeDelta;
-        gAlienScrollY += SCROLL_SPEED_Y * gTimeDelta;
+    gAlienScrollX += SCROLL_SPEED_X * gTimeDelta;
+    gAlienScrollY += SCROLL_SPEED_Y * gTimeDelta;
 
-        if (gAlienScrollX > 1.0f) {
-            gAlienScrollX -= 1.0f;
-        }
-
-        if (gAlienScrollY > 1.0f) {
-            gAlienScrollY -= 1.0f;
-        }
-
-        int xOff = (int)(gAlienScrollX * 128.0f);
-        int yOff = (int)(gAlienScrollY * 128.0f);
-
-        gSPDisplayList(texDL++, _alien_swamp_material);
-        gDPSetTileSize(texDL++, 0, xOff, yOff, xOff + 124, yOff + 124);
-        gSPEndDisplayList(texDL++);
-
-        osWritebackDCache(_alien_swamp_material_anim, sizeof(Gfx) * 3);
+    if (gAlienScrollX > 1.0f) {
+        gAlienScrollX -= 1.0f;
     }
+
+    if (gAlienScrollY > 1.0f) {
+        gAlienScrollY -= 1.0f;
+    }
+
+    int xOff = (int)(gAlienScrollX * 128.0f);
+    int yOff = (int)(gAlienScrollY * 128.0f);
+
+    gSPDisplayList(texDL++, _alien_swamp_material);
+    gDPSetTileSize(texDL++, 0, xOff, yOff, xOff + 124, yOff + 124);
+    gSPEndDisplayList(texDL++);
+
+    osWritebackDCache((void*)swampStart, sizeof(Gfx) * 3);
 }
 
 struct LevelThemeGraphics gAlienWorldLevelTheme = {

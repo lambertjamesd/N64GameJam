@@ -11,7 +11,7 @@
 
 #define ARRAY_SIZE(structType, elementcount) (((sizeof(structType) + (ALIGNMENT_OF(structType) - 1)) & ~(ALIGNMENT_OF(structType) - 1)) * elementcount)
 
-void heapInit(unsigned int start, unsigned int end);
+void heapInit(unsigned int end);
 void heapReset();
 void* heapMalloc(unsigned int len, unsigned int align);
 

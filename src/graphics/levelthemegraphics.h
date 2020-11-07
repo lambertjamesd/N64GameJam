@@ -30,7 +30,7 @@ enum LevelThemeMaterialType {
 	LevelThemeMaterialTypeTrack      = 6,
 };
 
-typedef void (*AnimCallback)();
+typedef void (*AnimCallback)(void* themeBufferStart);
 
 struct LevelThemeGraphics {
     Gfx** materials;

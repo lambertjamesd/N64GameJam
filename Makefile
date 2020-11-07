@@ -102,7 +102,8 @@ CODESEGMENT =	codesegment.o
 
 DATAFILES =	$(LEVEL_GEO) \
 	src/graphics/init.c \
-	src/levelthemes/alienworld/materials.c
+	src/levelthemes/alienworld/materials.c \
+	src/system/heapstart.c
 
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 

@@ -5,9 +5,11 @@ static unsigned int gHeapStart;
 static unsigned int gHeapEnd;
 static unsigned int gHeapCurrent;
 
-void heapInit(unsigned int start, unsigned int end)
+extern int gHeapStartPos;
+
+void heapInit(unsigned int end)
 {
-    gHeapStart = start;
+    gHeapStart = &gHeapStartPos;
     gHeapEnd = end;
     gHeapCurrent = end;
 }

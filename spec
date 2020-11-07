@@ -14,6 +14,7 @@ beginseg
 	include "$(ROOT)/usr/lib/PR/gspFast3D.o"
 	include "$(ROOT)/usr/lib/PR/gspFast3D.dram.o"
 	include "$(ROOT)/usr/lib/PR/aspMain.o"
+	include "src/system/heapstart.o"
 endseg
 
 beginseg
