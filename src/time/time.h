@@ -20,5 +20,6 @@ extern float gTimeDelta;
 void timeUpdate(OSTime time);
 void timeAddListener(struct TimeUpdateListener* listener, UpdateCallback callback, void* data);
 void timeRemoveListener(struct TimeUpdateListener* listener);
+void timeResetListeners();
 
 #endif

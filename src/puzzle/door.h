@@ -16,6 +16,5 @@ struct PuzzleDoor {
 };
 
 void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color);
-void doorDestroy(void* door);
 
 #endif

@@ -22,6 +22,5 @@ struct PuzzleSwitch {
 };
 
 void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enum PuzzleSwitchType type, int color);
-void switchDestroy(void* puzzleSwitch);
 
 #endif

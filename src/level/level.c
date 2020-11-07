@@ -62,32 +62,9 @@ void levelExpand(struct LevelDefinition* levelDef) {
     /////////////////////
     // cleanup
     
-    gCleanupCount = levelDef->levelData->switchCount + 
-        levelDef->levelData->doorCount;
-
-    gCleanupFn = heapMalloc(ARRAY_SIZE(
-        CleanupFunction,
-        gCleanupCount
-    ), ALIGNMENT_OF(CleanupFunction));
-
-    gCleanupParam = heapMalloc(ARRAY_SIZE(
-        void*,
-        gCleanupCount
-    ), ALIGNMENT_OF(void*));
-
-    int cleanupIndex = 0;
-
-    for (i = 0; i < levelDef->levelData->switchCount; ++i) {   
-        gCleanupFn[cleanupIndex] = switchDestroy;
-        gCleanupParam[cleanupIndex] = &switches[i];
-        ++cleanupIndex;
-    }
-
-    for (i = 0; i < levelDef->levelData->doorCount; ++i) {
-        gCleanupFn[cleanupIndex] = doorDestroy;
-        gCleanupParam[cleanupIndex] = &doors[i];
-        ++cleanupIndex;
-    }
+    gCleanupCount = 0;
+    gCleanupFn = 0;
+    gCleanupParam = 0;
 }
 
 void levelCleanup(struct LevelDefinition* levelDef) {
@@ -124,6 +101,9 @@ void levelLoad(struct LevelDefinition* levelDef) {
     char* themeSegment = heapMalloc(len, 8);
     romCopy(levelDef->theme->themeRomStart, (char*)themeSegment, len);
 
+    timeResetListeners();
+    signalResetAll();
+
     graphicsInitLevel(
         staticSegment, 
         levelSegment, 
@@ -136,6 +116,7 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
     collisionSceneUseGrid(levelDef->levelData->collision);
     
+    cameraInit(&gScene.camera);
     cadetReset(&levelDef->levelData->cadetStart);
     robotReset(&levelDef->levelData->robotStart);
 

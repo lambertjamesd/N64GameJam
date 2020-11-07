@@ -60,3 +60,7 @@ void timeRemoveListener(struct TimeUpdateListener* listener) {
         listener->prev = 0;
     }
 }
+
+void timeResetListeners() {
+    gTimeListenerHead = 0;
+}

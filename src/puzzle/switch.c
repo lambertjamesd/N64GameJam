@@ -92,9 +92,3 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, puzzleSwitch, switchRender, DynamicMaterialTypeSwitch);
 }
-
-void switchDestroy(void* data) {
-    struct PuzzleSwitch* puzzleSwitch = (struct PuzzleSwitch*)data;
-    signalSetSender(&puzzleSwitch->sender, 0);
-    timeRemoveListener(&puzzleSwitch->updateListener);
-}

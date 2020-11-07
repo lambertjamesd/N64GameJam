@@ -127,6 +127,7 @@ void robotUpdate(void* robotPtr) {
 }
 
 void robotReset(struct Vector3* startLocation) {
+    timeAddListener(&gRobot.updateListener, robotUpdate, &gRobot);
     transformIdentity(&gRobot.transform);
     
     gRobot.transform.position = *startLocation;
@@ -148,8 +149,6 @@ void robotReset(struct Vector3* startLocation) {
 }
 
 void robotInit() {
-    timeAddListener(&gRobot.updateListener, robotUpdate, &gRobot);
-
     _gMaxRobotRotate.x = cosf(MIN_DELTA_TIME * ROBOT_TURN_RATE);
     _gMaxRobotRotate.y = sinf(MIN_DELTA_TIME * ROBOT_TURN_RATE);
 

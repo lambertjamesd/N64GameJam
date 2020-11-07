@@ -66,8 +66,3 @@ void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color) {
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &door->transform, door, doorRender, DynamicMaterialTypeDoor);
 }
-
-void doorDestroy(void* data) {
-    struct PuzzleDoor* door = (struct PuzzleDoor*)data;
-    timeRemoveListener(&door->updateListener);
-}

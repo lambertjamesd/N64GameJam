@@ -97,6 +97,7 @@ void cadetUpdate(void* cadetPtr) {
 }
 
 void cadetReset(struct Vector3* startLocation) {
+    timeAddListener(&gCadet.updateListener, cadetUpdate, &gCadet);
     transformIdentity(&gCadet.transform);
     
     gCadet.transform.position = *startLocation;
@@ -113,7 +114,6 @@ void cadetReset(struct Vector3* startLocation) {
 }
 
 void cadetInit() {
-    timeAddListener(&gCadet.updateListener, cadetUpdate, &gCadet);
     cadetReset(&gZeroVec);
     gCadet.actor.collisionMask = 
         CollisionLayersGeometry | 
