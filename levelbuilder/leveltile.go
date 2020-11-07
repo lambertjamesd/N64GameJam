@@ -58,7 +58,7 @@ type LevelTileSlot struct {
 
 const (
 	LevelSwitchTypeLarge = 0
-	LevelSwitchTypeSmall = 0
+	LevelSwitchTypeSmall = 1
 )
 
 type LevelSwitchDef struct {

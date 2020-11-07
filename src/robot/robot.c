@@ -77,6 +77,10 @@ void robotMove(struct Robot* robot) {
 
     vector3AddScaled(&robot->transform.position, &robot->actor.velocity, gTimeDelta, &robot->transform.position);
 
+    if (getButton(0, B_BUTTON)) {
+        targetVelocity.x = 1.0f;
+    }
+
     sphereActorCollideScene(&robot->actor, &robot->transform.position);
 }
 

@@ -12,17 +12,10 @@ enum LevelThemeMeshes {
 	LevelThemeMeshesCount,
 };
 
-// Color.red,
-// Color.yellow,
-// Color.blue,
-// Color.green,
-// Color.magenta,
-
-
-
-#define SWITCH_RED		255, 0, 0
-
 #define SWITCH_COLOR_COUNT	5
+
+extern u32 gSwitchColors[];
+extern u32 gSwitchDarkColors[];
 
 enum LevelThemeMaterialType {
 	LevelThemeMaterialTypeLowerFloor = 0,

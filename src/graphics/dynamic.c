@@ -11,6 +11,13 @@ Mtx* graphicsStateNextMtx(struct GraphicsState* state) {
     return 0;
 }
 
+void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color) {
+    if (state->primColor != color) {
+        gDPSetPrimColor(state->dl++, 0, 0, (color & 0xFF000000) >> 24, (color & 0xFF0000) >> 16, (color & 0xFF00) >> 8, color & 0xFF);
+        state->primColor = color;
+    }
+}
+
 int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex) {
     int result = group->nextActorId;
 
@@ -52,7 +59,7 @@ void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsSta
     for (i = 0; i < materialCount && i < MAX_MATERIAL_GROUPS; ++i) {
         if (group->actorByMaterial[i]) {
             if (materials[i]) {
-                gSPDisplayList(state->dl, materials[i]);
+                gSPDisplayList(state->dl++, materials[i]);
             }
 
             dynamicActorRenderChain(group->actorByMaterial[i], state);

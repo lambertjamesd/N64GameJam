@@ -16,6 +16,7 @@ struct SignalReciever {
     struct SignalReciever* prev;
     void* data;
     SignalRecieveCallback callback;
+    int signalIndex;
 };
 
 extern int gCurrentSignal[MAX_SIGNAL_SLOTS];

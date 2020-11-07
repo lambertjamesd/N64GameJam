@@ -17,7 +17,7 @@ static void** gCleanupParam;
 static int gCleanupCount;
 
 void levelExpand(struct LevelDefinition* levelDef) {
-    struct PuzzleSwitch* switches = fastMalloc(ARRAY_SIZE(struct PuzzleSwitch, levelDef->levelData->switchCount), ALIGNMENT_OF(struct PuzzleSwitch));
+    struct PuzzleSwitch* switches = heapMalloc(ARRAY_SIZE(struct PuzzleSwitch, levelDef->levelData->switchCount), ALIGNMENT_OF(struct PuzzleSwitch));
 
     int i;
     for (i = 0; i < levelDef->levelData->switchCount; ++i) {
@@ -27,12 +27,12 @@ void levelExpand(struct LevelDefinition* levelDef) {
 
     gCleanupCount = levelDef->levelData->switchCount;
 
-    gCleanupFn = fastMalloc(ARRAY_SIZE(
+    gCleanupFn = heapMalloc(ARRAY_SIZE(
         CleanupFunction,
         gCleanupCount
     ), ALIGNMENT_OF(CleanupFunction));
 
-    gCleanupParam = fastMalloc(ARRAY_SIZE(
+    gCleanupParam = heapMalloc(ARRAY_SIZE(
         void*,
         gCleanupCount
     ), ALIGNMENT_OF(void*));

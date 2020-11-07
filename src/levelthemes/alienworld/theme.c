@@ -11,7 +11,7 @@ Gfx* _gAlienWorldMaterials[] = {
 };
 
 Gfx* _gAlienWorldDynamicMaterials[] = {
-
+    _alien_switch_material,
 };
 
 struct LevelThemeGraphics gAlienWorldLevelTheme = {

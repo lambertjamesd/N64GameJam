@@ -18,6 +18,7 @@ struct GraphicsState {
     Mtx* matrices;
     int usedMatrices;
     int matrixCount;
+    unsigned int primColor;
 };
 
 struct DynamicActor;
@@ -40,6 +41,7 @@ struct DynamicActorGroup {
 };
 
 Mtx* graphicsStateNextMtx(struct GraphicsState* state);
+void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color);
 
 int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex);
 void dynamicActorRemoveFromGroup(struct DynamicActorGroup* group, int actorId);

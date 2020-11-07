@@ -30,6 +30,12 @@ void switchRender(struct DynamicActor* data, struct GraphicsState* state) {
 
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
 
+    if (puzzleSwitch->sender.currentSignal) {
+        graphicsStateSetPrimitiveColor(state, gSwitchColors[puzzleSwitch->sender.signalIndex]);
+    } else {
+        graphicsStateSetPrimitiveColor(state, gSwitchDarkColors[puzzleSwitch->sender.signalIndex]);
+    }
+
     transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, toRender);
@@ -82,7 +88,7 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     vector3Add(&collider->box.max, position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &puzzleSwitch->collider, &bb, 0);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, &puzzleSwitch, switchRender, DynamicMaterialTypeSwitch);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, puzzleSwitch, switchRender, DynamicMaterialTypeSwitch);
 }
 
 void switchDestroy(void* data) {

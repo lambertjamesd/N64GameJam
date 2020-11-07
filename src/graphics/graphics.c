@@ -121,6 +121,7 @@ void createGfxTask(GFXInfo *i)
         gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
         gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
         gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+	    gDPSetTextureLUT(glistp++, G_TT_NONE);
     }
 
     struct GraphicsState state;
@@ -128,6 +129,7 @@ void createGfxTask(GFXInfo *i)
     state.matrices = dynamicp->dynamicActors;
     state.usedMatrices = 0;
     state.matrixCount = MAX_DYNAMIC_ACTORS;
+    state.primColor = 0;
 
     if (gCurrentLevelTheme) {
         dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCount);
