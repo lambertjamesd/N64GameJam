@@ -13,6 +13,7 @@ Gfx* _gAlienWorldMaterials[] = {
 Gfx* _gAlienWorldDynamicMaterials[] = {
     _alien_switch_material,
     _alien_puzzle_door_material,
+    _alien_breakable_material,
 };
 
 struct LevelThemeGraphics gAlienWorldLevelTheme = {
@@ -27,5 +28,7 @@ struct LevelThemeGraphics gAlienWorldLevelTheme = {
         _alien_sswitch_up_tri, 
         _alien_sswitch_down_tri, 
         _alien_puzzle_door_mesh_tri_0,
+        _alien_puzzle_door_mesh_tri_0,
+        _alien_breakable_mesh_tri_0,
     },
 };

@@ -15,6 +15,10 @@
 
 #define ROBOT_BB_RADIUS 0.9f
 
+#define ROBOT_ATTACK_DISTANCE   1.4f
+#define ROBOT_ATTACK_RADIUS     0.25f
+#define ROBOT_ATTACK_DELAY      1.0f
+
 struct Robot;
 
 typedef void (*RobotState)(struct Robot* robot);
@@ -27,6 +31,7 @@ struct Robot {
     struct Vector2 rotation;
     struct CollisionBox lastBB;
     struct CollisionTransformedCollider collider;
+    float attackTimer;
 };
 
 extern struct Robot gRobot;

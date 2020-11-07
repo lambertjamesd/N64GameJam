@@ -11,6 +11,8 @@
 struct Robot gRobot;
 struct Vector2 _gMaxRobotRotate;
 
+struct Vector3 gAttackCenter = {0.0f, 0.0f, ROBOT_ATTACK_DISTANCE};
+
 void robotCalcBB(struct Robot* robot, struct CollisionBox* box) {
     box->min.x = robot->transform.position.x - ROBOT_BB_RADIUS;
     box->min.y = robot->transform.position.y;
@@ -84,6 +86,13 @@ void robotWalk(struct Robot* robot) {
     robotMove(robot);
 }
 
+void robotAttack(struct Robot* robot) {
+    struct Vector3 attackPos;
+    transformPoint(&robot->transform, &gAttackCenter, &attackPos);
+    attackPos.y += ROBOT_ATTACK_RADIUS;
+    collisionSceneCollideSphere(&attackPos, ROBOT_ATTACK_RADIUS, CollisionLayersBreakable);
+}
+
 void robotUpdate(void* robotPtr) {
     struct Robot* robot = (struct Robot*)robotPtr;
 
@@ -102,6 +111,10 @@ void robotUpdate(void* robotPtr) {
 
     if (gInputMask & InputMaskRobot) {
         gScene.camera.targetPosition = robot->transform.position;
+
+        if (getButtonDown(0, B_BUTTON)) {
+            robotAttack(robot);
+        }
     }
 
     if (getButtonDown(0, L_TRIG | Z_TRIG)) {
@@ -126,6 +139,7 @@ void robotReset(struct Vector3* startLocation) {
     gRobot.actor.anchor = 0;
     gRobot.actor.relativeToAnchor = gZeroVec;
     gRobot.rotation = gUp2;
+    gRobot.attackTimer = 0.0f;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED);
 

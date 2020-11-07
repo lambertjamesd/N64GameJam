@@ -13,7 +13,8 @@ enum CollisionLayers {
     CollisionLayersRobot = 1 << 1,
     CollisionLayersLargeSwitch = 1 << 2,
     CollisionLayersSmallSwitch = 1 << 3,
-    CollisionLayersKillPlane = 1 << 4,
+    CollisionLayersBreakable = 1 << 4,
+    CollisionLayersKillPlane = 1 << 5,
 };
 
 struct ContactPoint {
@@ -84,6 +85,7 @@ typedef void (*TriggerCallback)(void* data);
 struct CollisionTransformedCollider {
     struct CollisionCollider* collider;
     struct BasicTransform* transform;
+    int triggerMask;
     void* data;
     TriggerCallback trigger;
 };

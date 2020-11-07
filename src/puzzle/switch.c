@@ -6,7 +6,7 @@
 
 struct CollisionCollider gLargeSwitchCollider = {
     ColliderTypeBox,
-    CollisionLayersLargeSwitch,
+    0,
     .box = {
         {-0.576787f, 0.0f, -0.576787f},
         {0.576787f, 0.25f, 0.576787f},
@@ -15,7 +15,7 @@ struct CollisionCollider gLargeSwitchCollider = {
 
 struct CollisionCollider gSmallSwitchCollider = {
     ColliderTypeBox,
-    CollisionLayersSmallSwitch,
+    0,
     .box = {
         {-0.1466f, 0.0f, -0.1466f},
         {0.1466f, 0.25f, 0.1466f},
@@ -55,16 +55,17 @@ void switchUpdate(void* data) {
 
 void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enum PuzzleSwitchType type, int color) {
     struct CollisionCollider* collider;
+    int triggerMask = 0;
 
     switch (type) {
         case PuzzleSwitchTypeLarge:
             collider = &gLargeSwitchCollider;
-            break;
-        case PuzzleSwitchTypeSmall:
-            collider = &gSmallSwitchCollider;
+            triggerMask = CollisionLayersLargeSwitch;
             break;
         default:
             collider = &gSmallSwitchCollider;
+            triggerMask = CollisionLayersSmallSwitch;
+            break;
     }
     
     transformIdentity(&puzzleSwitch->transform);
@@ -74,6 +75,7 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     puzzleSwitch->collider.transform = &puzzleSwitch->transform;
     puzzleSwitch->collider.data = puzzleSwitch;
     puzzleSwitch->collider.trigger = switchTrigger;
+    puzzleSwitch->collider.triggerMask = triggerMask;
 
     puzzleSwitch->sender.currentSignal = 0;
     puzzleSwitch->sender.signalIndex = color;

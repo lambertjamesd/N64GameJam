@@ -10,6 +10,8 @@ enum LevelThemeMeshes {
 	LevelThemeMeshesSSwitchUp,
 	LevelThemeMeshesSSwitchDown,
 	LevelThemeMeshesDoor,
+	LevelThemeMeshesBreakPlatform,
+	LevelThemeMeshesBreakBarrier,
 	LevelThemeMeshesCount,
 };
 

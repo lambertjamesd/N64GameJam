@@ -222,13 +222,13 @@ func BuildTileSet() *LevelTileSet {
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor", DynamicTypeNone)
+	}, "gCollideTileFloor", DynamicTypeBreakablePlatform)
 
 	result.Tiles["BarrierFragile"] = buildTile([3]*LevelBlock{
 		floorBlock,
 		nil,
 		nil,
-	}, "gCollideTileFloor", DynamicTypeNone)
+	}, "gCollideTileFloor", DynamicTypeBreakableBarrier)
 
 	result.Tiles["Lava"] = buildTile([3]*LevelBlock{
 		lavaBlock,

@@ -38,19 +38,17 @@ int collisionColliderOverlapSphere(struct CollisionCollider* collider, struct Ve
 }
 
 int collisionTransColliderCollideSphere(struct Vector3* center, float radius, struct CollisionTransformedCollider* collider, int collisionMask, struct CollisionResult* result) {
-    if (!(collider->collider->collisionMask & collisionMask)) {
+    if (!((collider->collider->collisionMask | collider->triggerMask) & collisionMask)) {
         return 0;
     }
 
     struct Vector3 transformedCenter;
     transformPointInverse(collider->transform, center, &transformedCenter);
 
-    if (collider->trigger) {
+    if ((collider->triggerMask & collisionMask) && collider->trigger) {
         if (collisionColliderOverlapSphere(collider->collider, &transformedCenter, radius)) {
             collider->trigger(collider->data);
         }
-
-        return 0;
     }
 
 

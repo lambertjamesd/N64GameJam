@@ -102,6 +102,8 @@ int collisionSparseGridCellCollideSphere(struct Vector3* center, float radius, s
     int didCollide = 0;
 
     while (cell) {
+        // next cell retrieved here in case trigger callbacks remove current collider
+        struct SparseCollisionGridCell* nextCell = cell->next;
         int alreadyChecked = 0;
         int i;
 
@@ -128,7 +130,7 @@ int collisionSparseGridCellCollideSphere(struct Vector3* center, float radius, s
             }
         }
 
-        cell = cell->next;
+        cell = nextCell;
     }
 
     return didCollide;

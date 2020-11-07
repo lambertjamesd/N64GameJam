@@ -184,6 +184,16 @@ struct LevelDoorDef _level_%s_levelDoors[] = {
 	outputLevel.WriteString("};\n")
 
 	outputLevel.WriteString(fmt.Sprintf(`
+struct LevelBreakableDef _level_%s_levelBreakables[] = {
+`, levelName))
+
+	for _, breakable := range tileMap.Breakables {
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}, %d},\n", breakable.Pos.X, breakable.Pos.Y, breakable.Pos.Z, breakable.Type))
+	}
+
+	outputLevel.WriteString("};\n")
+
+	outputLevel.WriteString(fmt.Sprintf(`
 struct LevelData _level_%s_levelData = {
 	&_level_%s_levelGraphics,
 	&_level_%s_collision_grid,
@@ -193,12 +203,15 @@ struct LevelData _level_%s_levelData = {
 	%d,
 	_level_%s_levelDoors,
 	%d,
+	_level_%s_levelBreakables,
+	%d,
 };
 `, levelName, levelName, levelName,
 		tileMap.PlayerPosX, 0.1, -tileMap.PlayerPosY,
 		tileMap.RobotPosX, 0.1, -tileMap.RobotPosY,
 		levelName, len(tileMap.Switches),
 		levelName, len(tileMap.Doors),
+		levelName, len(tileMap.Breakables),
 	))
 
 	geoSources = append(geoSources, tileIncFile)

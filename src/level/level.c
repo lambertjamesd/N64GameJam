@@ -10,6 +10,7 @@
 #include "src/robot/robot.h"
 #include "src/puzzle/switch.h"
 #include "src/puzzle/door.h"
+#include "src/puzzle/breakable.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -18,7 +19,13 @@ static void** gCleanupParam;
 static int gCleanupCount;
 
 void levelExpand(struct LevelDefinition* levelDef) {
-    struct PuzzleSwitch* switches = heapMalloc(ARRAY_SIZE(struct PuzzleSwitch, levelDef->levelData->switchCount), ALIGNMENT_OF(struct PuzzleSwitch));
+    /////////////////////
+    // switches
+
+    struct PuzzleSwitch* switches = heapMalloc(
+        ARRAY_SIZE(struct PuzzleSwitch, levelDef->levelData->switchCount), 
+        ALIGNMENT_OF(struct PuzzleSwitch)
+    );
 
     int i;
     for (i = 0; i < levelDef->levelData->switchCount; ++i) {
@@ -26,14 +33,37 @@ void levelExpand(struct LevelDefinition* levelDef) {
         switchInit(&switches[i], &def->pos, def->type, def->color);
     }
 
-    struct PuzzleDoor* doors = heapMalloc(ARRAY_SIZE(struct PuzzleDoor, levelDef->levelData->doorCount), ALIGNMENT_OF(struct PuzzleDoor));
+    /////////////////////
+    // doors
+    
+    struct PuzzleDoor* doors = heapMalloc(
+        ARRAY_SIZE(struct PuzzleDoor, levelDef->levelData->doorCount), 
+        ALIGNMENT_OF(struct PuzzleDoor)
+    );
 
     for (i = 0; i < levelDef->levelData->doorCount; ++i) {
         struct LevelDoorDef* def = &levelDef->levelData->doors[i];
         doorInit(&doors[i], &def->pos, def->color);
     }
 
-    gCleanupCount = levelDef->levelData->switchCount + levelDef->levelData->doorCount;
+    /////////////////////
+    // barriers
+
+    struct Breakable* breakables = heapMalloc(
+        ARRAY_SIZE(struct Breakable, levelDef->levelData->breakableCount),
+        ALIGNMENT_OF(struct Breakable)
+    );
+
+    for (i = 0; i < levelDef->levelData->breakableCount; ++i) {
+        struct LevelBreakableDef* def = &levelDef->levelData->breakables[i];
+        breakableInit(&breakables[i], &def->pos, def->type);
+    }
+
+    /////////////////////
+    // cleanup
+    
+    gCleanupCount = levelDef->levelData->switchCount + 
+        levelDef->levelData->doorCount;
 
     gCleanupFn = heapMalloc(ARRAY_SIZE(
         CleanupFunction,

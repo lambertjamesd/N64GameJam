@@ -15,11 +15,13 @@ const (
 )
 
 const (
-	DynamicTypeNone           = 0
-	DynamicTypeLargeSwitch    = 1
-	DynamicTypeSmallSwitch    = 2
-	DynamicTypePlatformSwitch = 3
-	DynamicTypeDoor           = 3
+	DynamicTypeNone              = 0
+	DynamicTypeLargeSwitch       = 1
+	DynamicTypeSmallSwitch       = 2
+	DynamicTypePlatformSwitch    = 3
+	DynamicTypeDoor              = 4
+	DynamicTypeBreakablePlatform = 5
+	DynamicTypeBreakableBarrier  = 6
 )
 
 var AllMaterials = []MaterialType{
@@ -73,12 +75,18 @@ type LevelDoorDef struct {
 	Color int
 }
 
+type LevelBreakableDef struct {
+	Pos  Vector3
+	Type int
+}
+
 type LevelGrid struct {
 	Tiles                  [][]LevelTileSlot
 	PlayerPosX, PlayerPosY float32
 	RobotPosX, RobotPosY   float32
 	Switches               []LevelSwitchDef
 	Doors                  []LevelDoorDef
+	Breakables             []LevelBreakableDef
 }
 
 func (level *LevelGrid) GetSize() (int, int) {

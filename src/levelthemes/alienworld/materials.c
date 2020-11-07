@@ -2,11 +2,12 @@
 
 Gfx _alienWorldTexAlign[] = {gsSPEndDisplayList()};
 
-#include "tex_floor.inc.c"
-#include "tex_wall.inc.c"
-#include "tex_underhang.inc.c"
+#include "tex/tex_floor.inc.c"
+#include "tex/tex_wall.inc.c"
+#include "tex/tex_underhang.inc.c"
 #include "geo/switches.inc.c"
 #include "geo/door.inc.c"
+#include "geo/breakable.inc.c"
 #include "src/defs.h"
 
 Gfx _alienFloor_material[] = {

@@ -19,6 +19,11 @@ struct LevelDoorDef {
     short color;
 };
 
+struct LevelBreakableDef {
+    struct Vector3 pos;
+    short type;
+};
+
 struct LevelData {
     struct LevelGraphics* graphics;
     struct LevelCollisionGrid* collision;
@@ -28,6 +33,8 @@ struct LevelData {
     int switchCount;
     struct LevelDoorDef* doors;
     int doorCount;
+    struct LevelBreakableDef* breakables;
+    int breakableCount;
 };
 
 struct LevelThemeDefinition {

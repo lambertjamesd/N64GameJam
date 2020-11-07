@@ -42,8 +42,39 @@ int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransfor
     return result;
 }
 
-void dynamicActorRemoveFromGroup(struct DynamicActorGroup* group, int actorId) {
+void dynamicActorRemoveFromGroup(struct DynamicActorGroup* group, ActorId* actorId) {
+    if (*actorId == ACTOR_ID_NONE) {
+        return;
+    }
 
+    struct DynamicActor* actor = &group->actors[*actorId];
+
+    if (actor->render) {
+        struct DynamicActor* prev = 0;
+        struct DynamicActor* curr = group->actorByMaterial[actor->materialIndex];
+
+        while (curr) {
+            if (curr == actor) {
+                break;
+            }
+
+            prev = curr;
+            curr = curr->next;
+        }
+
+        if (curr) {
+            if (prev) {
+                prev->next = curr->next;
+            } else {
+                group->actorByMaterial[actor->materialIndex] = curr->next;
+            }
+            curr->next = 0;
+        }
+
+        actor->render = 0;
+    }
+
+    *actorId = ACTOR_ID_NONE;
 }
 
 void dynamicActorRenderChain(struct DynamicActor* actor, struct GraphicsState* state) {
