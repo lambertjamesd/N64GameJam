@@ -1,5 +1,6 @@
 
 #include "meshcollision.h"
+#include "src/math/ray.h"
 
 void collisionFaceBaryCoord(struct CollisionFace* face, struct Vector3* in, struct Vector3* baryCoord) {
     struct Vector3 relative;
@@ -137,4 +138,44 @@ int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* cente
     }
 
     return didCollide;
+}
+
+float collisionPlaneRaycast(struct Plane* plane, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact) {
+    float dot = vector3Dot(&plane->normal, dir);
+
+    if (dot > NEAR_ZERO) {
+        return RAYCAST_NO_HIT;
+    }
+
+    float result = -(vector3Dot(&plane->normal, origin) + plane->d) / dot;
+
+    rayPointAtDistance(origin, dir, result, &contact->point);
+    contact->normal = plane->normal;
+
+    return result;
+}
+
+float collisionMeshRaycast(struct CollisionMesh* mesh, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact) {
+    float result = RAYCAST_NO_HIT;
+    int i;
+
+    for (i = 0; i < mesh->faceCount; ++i) {
+        struct CollisionFace* face = &mesh->faces[i];
+        struct ContactPoint contactCheck;
+
+        float faceDistance = collisionPlaneRaycast(&face->plane, origin, dir, &contactCheck);
+
+        if (faceDistance < result && faceDistance >= 0.0f) {
+            struct Vector3 baryCoord;
+            collisionFaceBaryCoord(face, &contactCheck.point, &baryCoord);
+
+            if (baryCoord.x > -NEAR_ZERO && baryCoord.y > -NEAR_ZERO && baryCoord.z > -NEAR_ZERO) {
+                result = faceDistance;
+                contact->point = contactCheck.point;
+                contact->normal = contactCheck.normal;
+            }
+        }
+    }
+
+    return result;
 }

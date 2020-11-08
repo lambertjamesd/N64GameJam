@@ -35,6 +35,25 @@ struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, fl
     return result;
 }
 
+float collisionSceneRaycast(struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit) {
+    struct ContactPoint sparseContact;
+
+    if (gLevelCollisionGrid) {
+        float gridHit = collisionGridRaycast(gLevelCollisionGrid, position, dir, collisionMask, maxDistance, hit);
+        float sparseHit = collisionSparseGridRaycast(&gSparseCollisionGrid, position, dir, collisionMask, maxDistance, &sparseContact);
+
+        if (gridHit < sparseHit) {
+            return gridHit;
+        } else {
+            *hit = sparseContact;
+            return sparseHit;
+        }
+
+    } else {
+        return collisionSparseGridRaycast(&gSparseCollisionGrid, position, dir, collisionMask, maxDistance, hit);
+    }
+}
+
 void collisionSceneUseGrid(struct LevelCollisionGrid* grid) {
     gLevelCollisionGrid = grid;
     sparseCollisionInit(&gSparseCollisionGrid);

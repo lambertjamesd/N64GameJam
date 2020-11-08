@@ -11,4 +11,6 @@ int collisionPointCollideSphere(struct Vector3* point, struct Vector3* center, f
 
 int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* center, float radius, struct CollisionResult* result);
 
+float collisionMeshRaycast(struct CollisionMesh* mesh, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact);
+
 #endif

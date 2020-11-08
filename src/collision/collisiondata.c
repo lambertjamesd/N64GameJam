@@ -70,3 +70,49 @@ int collisionTransColliderCollideSphere(struct Vector3* center, float radius, st
         return 0;
     }
 }
+
+float collisionColliderRaycast(struct CollisionCollider* collider, struct Vector3* origin, struct Vector3* dir, int collisionMask, struct ContactPoint* contact) {
+    if (!(collider->collisionMask & collisionMask)) {
+        return RAYCAST_NO_HIT;
+    }
+
+    float result = RAYCAST_NO_HIT;
+
+    switch (collider->type) {
+        case ColliderTypeMesh:
+            result = collisionMeshRaycast(&collider->mesh, origin, dir, contact);
+            break;
+        case ColliderTypeBox:
+            result = collisionBoxRaycast(&collider->box, origin, dir, contact);
+            break;
+    }
+
+    if (result != RAYCAST_NO_HIT) {
+        contact->collisionMask = collider->collisionMask;
+        contact->transform = 0;
+    }
+
+    return RAYCAST_NO_HIT;
+}
+
+float collisionTransColliderRaycast(struct CollisionTransformedCollider* collider, struct Vector3* origin, struct Vector3* dir, int collisionMask, struct ContactPoint* contact) {
+    if (!(collider->collider->collisionMask & collisionMask)) {
+        return RAYCAST_NO_HIT;
+    }
+
+    struct Vector3 relativeOrigin;
+    struct Vector3 relativeDir;
+
+    transformPoint(collider->transform, origin, &relativeOrigin);
+    transformDirectionInverse(collider->transform, dir, &relativeDir);
+
+    float result = collisionColliderRaycast(collider->collider, &relativeOrigin, &relativeDir, collisionMask, contact);
+
+    if (result != RAYCAST_NO_HIT) {
+        transformPoint(collider->transform, &contact->point, &contact->point);
+        transformPointInverse(collider->transform, &contact->normal, &contact->normal);
+        contact->transform = collider->transform;
+    }
+
+    return result;
+}

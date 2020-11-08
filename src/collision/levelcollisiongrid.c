@@ -108,3 +108,7 @@ int collisionGridCollideSphere(struct Vector3* center, float radius, struct Leve
 
     return didCollide;
 }
+
+float collisionGridRaycast(struct LevelCollisionGrid* grid, struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit) {
+    return RAYCAST_NO_HIT;
+}

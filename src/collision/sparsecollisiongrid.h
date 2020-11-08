@@ -28,5 +28,6 @@ void sparseCollisionInit(struct SparseCollisionGrid* grid);
 void sparseCollisionReindex(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider, struct CollisionBox* bb, struct CollisionBox* prevBB);
 
 int collisionSparseGridCollideSphere(struct Vector3* center, float radius, struct SparseCollisionGrid* grid, int collisionMask, struct CollisionResult* result);
+float collisionSparseGridRaycast(struct SparseCollisionGrid* grid, struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit);
 
 #endif

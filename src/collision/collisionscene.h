@@ -14,6 +14,7 @@
 extern struct SparseCollisionGrid gSparseCollisionGrid;
 
 struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, float radius, int collisionMask);
+float collisionSceneRaycast(struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit);
 
 void collisionSceneUseGrid(struct LevelCollisionGrid* grid);
 

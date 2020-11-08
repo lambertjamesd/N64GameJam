@@ -24,5 +24,6 @@ struct LevelCollisionGrid {
 };
 
 int collisionGridCollideSphere(struct Vector3* center, float radius, struct LevelCollisionGrid* grid, int collisionMask, struct CollisionResult* result);
+float collisionGridRaycast(struct LevelCollisionGrid* grid, struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit);
 
 #endif

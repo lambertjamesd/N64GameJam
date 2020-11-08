@@ -5,8 +5,6 @@
 #include <math.h>
 #include "vector.h"
 
-#define RAYCAST_NO_HIT  MAXFLOAT
-
 /**
  * ax + by + cz + d = 0
  */

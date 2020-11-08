@@ -8,6 +8,10 @@
 
 #define MAX_CONTACT_POINTS  16
 
+#define RAYCAST_NO_HIT  MAXFLOAT
+
+#define NEAR_ZERO   0.000001f
+
 enum CollisionLayers {
     CollisionLayersGeometry = 1 << 0,
     CollisionLayersRobot = 1 << 1,
@@ -94,5 +98,8 @@ struct CollisionTransformedCollider {
 int collisionColliderCollideSphere(struct Vector3* center, float radius, struct CollisionCollider* collider, int collisionMask, struct CollisionResult* result);
 int collisionColliderOverlapSphere(struct CollisionCollider* collider, struct Vector3* center, float radius);
 int collisionTransColliderCollideSphere(struct Vector3* center, float radius, struct CollisionTransformedCollider* collider, int collisionMask, struct CollisionResult* result);
+
+float collisionColliderRaycast(struct CollisionCollider* collider, struct Vector3* origin, struct Vector3* dir, int collisionMask, struct ContactPoint* contact);
+float collisionTransColliderRaycast(struct CollisionTransformedCollider* collider, struct Vector3* origin, struct Vector3* dir, int collisionMask, struct ContactPoint* contact);
 
 #endif

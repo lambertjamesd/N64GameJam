@@ -164,3 +164,28 @@ int collisionSparseGridCollideSphere(struct Vector3* center, float radius, struc
 
     return didCollide;
 }
+
+float collisionSparseGridCellRaycast(struct SparseCollisionGridCell* cell, struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit) {
+    float result = RAYCAST_NO_HIT;
+
+    while (cell) {
+        struct ContactPoint hitCheck;
+        float hitDistance = collisionTransColliderRaycast(cell->collider, position, dir, collisionMask, hit);
+
+        if (hitDistance < result) {
+            result = hitDistance;
+            *hit = hitCheck;
+        }
+
+        cell = cell->next;
+    }
+
+    return result;
+}
+
+float collisionSparseGridRaycast(struct SparseCollisionGrid* grid, struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit) {
+    int x = MIN_INDEX(position->x);
+    int z = MIN_INDEX(position->z);
+
+    return collisionSparseGridCellRaycast(grid->cells[CELL_INDEX(x, z)], position, dir, collisionMask, maxDistance, hit);
+}
