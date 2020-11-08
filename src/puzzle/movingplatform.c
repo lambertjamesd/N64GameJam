@@ -14,6 +14,13 @@ struct CollisionCollider gMovingPlatformCollider = {
     }
 };
 
+struct Quaternion gMoveRotations[] = {
+    {0.0f, 0.707106781, 0.0f, 0.707106781},
+    {0.0f, 0.0f, 0.0f, 1.0f},
+    {0.0f, -0.707106781f, 0.0f, 0.707106781f},
+    {0.0f, 1.0f, 0.0f, 0.0f},
+};
+
 struct MovingPlatformSlot* movingPlatformGetEmptySlotInDir(struct MovingPlatformSlot* platform, int dir) {
     struct MovingPlatformSlot* result = platform->adjacent[dir];
 
@@ -66,9 +73,25 @@ void movingPlatformRender(struct DynamicActor* data, struct GraphicsState* state
     struct MovingPlatform* platform = (struct MovingPlatform*)data->data;
     Gfx* toRender = gLoadedLevel->theme->theme->themeMeshes[LevelThemeMeshesMovingPlatform];
 
+    int rotationIndex;
+    
+    if (platform->moveDirection != -1) {
+        rotationIndex = platform->moveDirection;
+    } else if (platform->nextMoveDir != -1) {
+        rotationIndex = platform->nextMoveDir;
+    } else {
+        rotationIndex = 0;
+    }
+
+    struct BasicTransform transform;
+
+    transform.rotation = gMoveRotations[rotationIndex];
+    transform.position = platform->transform.position;
+    transform.scale = 1.0f;
+
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
     graphicsStateSetPrimitiveColor(state, gSwitchDarkColors[platform->signalIndex]);
-    transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
+    transformToMatrixL(&transform, 1.0f / 256.0f, nextTransfrom);
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, toRender);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
