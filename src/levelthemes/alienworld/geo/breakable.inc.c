@@ -124,45 +124,6 @@ u8 _alien_breakable_tex_ci8_pal_rgba16[] = {
 	0x59, 0x73, 0x63, 0x73, 0x61, 0x73, 0x21, 
 };
 
-Vtx _alien_breakable_mesh_vtx_0[20] = {
-	{{{256, 0, 256},0, {-16, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 0, -256},0, {1008, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 1024, -256},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 1024, 256},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 1024, -256},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 1024, 256},0, {-16, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 1024, 256},0, {1008, 1008},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 0, -256},0, {-16, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 0, -256},0, {1008, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 1024, -256},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 1024, -256},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 0, 256},0, {-16, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 0, 256},0, {1008, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{256, 1024, 256},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 1024, 256},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 0, -256},0, {-16, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 0, 256},0, {1008, 2032},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 1024, 256},0, {1008, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-	{{{-256, 1024, -256},0, {-16, -16},{0xFF, 0xFF, 0xFF, 0xFF}}},
-};
-
-Gfx _alien_breakable_mesh_tri_0[] = {
-	gsSPVertex(_alien_breakable_mesh_vtx_0 + 0, 15, 0),
-	gsSP1Triangle(0, 1, 2, 0),
-	gsSP1Triangle(0, 2, 3, 0),
-	gsSP1Triangle(2, 4, 5, 0),
-	gsSP1Triangle(2, 5, 6, 0),
-	gsSP1Triangle(7, 8, 9, 0),
-	gsSP1Triangle(7, 9, 10, 0),
-	gsSP1Triangle(11, 12, 13, 0),
-	gsSP1Triangle(11, 13, 14, 0),
-	gsSPVertex(_alien_breakable_mesh_vtx_0 + 15, 4, 0),
-	gsSP1Triangle(0, 1, 2, 0),
-	gsSP1Triangle(0, 2, 3, 0),
-	gsSPEndDisplayList(),
-};
-
-
 Gfx _alien_breakable_material[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT),

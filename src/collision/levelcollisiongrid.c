@@ -88,8 +88,22 @@ int collisionGridCollideSphere(struct Vector3* center, float radius, struct Leve
 
                     gSimpleRotationInv[cell->rotation](&relativeCenter);
 
+                    int startHits = result->contactCount;
+
                     if (collisionColliderCollideSphere(&relativeCenter, radius, tile->blocks[y], collisionMask, result)) {
-                        gSimpleRotation[cell->rotation](&relativeCenter);
+                        VertexTransform rotate = gSimpleRotation[cell->rotation];
+                        rotate(&relativeCenter);
+
+                        int i;
+
+                        for (i = startHits; i < result->contactCount; ++i) {
+                            rotate(&result->contacts[i].normal);
+                            rotate(&result->contacts[i].point);
+
+                            result->contacts[i].point.x = relativeCenter.x + x * LEVEL_GRID_SIZE;
+                            result->contacts[i].point.y = relativeCenter.y + y * LEVEL_GRID_SIZE;
+                            result->contacts[i].point.z = relativeCenter.z - z * LEVEL_GRID_SIZE;
+                        }
 
                         center->x = relativeCenter.x + x * LEVEL_GRID_SIZE;
                         center->y = relativeCenter.y + y * LEVEL_GRID_SIZE;
@@ -147,7 +161,7 @@ float collisionGridRaycast(struct LevelCollisionGrid* grid, struct Vector3* posi
 
             if (result != RAYCAST_NO_HIT) {
                 gSimpleRotation[cell->rotation](&hit->point);
-                // gSimpleRotation[cell->rotation](&hit->normal);
+                gSimpleRotation[cell->rotation](&hit->normal);
 
                 hit->point.x += x * LEVEL_GRID_SIZE;
                 hit->point.y += y * LEVEL_GRID_SIZE;

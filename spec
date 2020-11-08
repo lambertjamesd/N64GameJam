@@ -53,6 +53,20 @@ beginseg
 endseg
 
 beginseg
+	name "robot_platform"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/levels/robot_platform/geo.o"
+endseg
+
+beginseg
+	name "lava_platform"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/levels/lava_platform/geo.o"
+endseg
+
+beginseg
 	name "alienworld"
 	flags OBJECT
 	number LEVEL_THEME_SEGMENT
@@ -85,6 +99,8 @@ beginwave
 	include "cadet_intro"
 	include "robot_intro"
 	include "switch_tutorial"
+	include "lava_platform"
+	include "robot_platform"
 	include "alienworld"
 	include "table"
 	include "bank"
