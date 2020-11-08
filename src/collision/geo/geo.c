@@ -15,6 +15,15 @@ struct CollisionCollider gBasicCollisionBlock = {
     }
 };
 
+struct CollisionCollider gHalfCollisionBlock = {
+    ColliderTypeBox,
+    CollisionLayersGeometry,
+    .box = {
+        {-1.0f, -2.0f, -1.0f},
+        {1.0f, -1.0f, 1.0f},
+    }
+};
+
 struct CollisionCollider gSwampCollisionBlock = {
     ColliderTypeBox,
     CollisionLayersSwamp,
@@ -26,6 +35,10 @@ struct CollisionCollider gSwampCollisionBlock = {
 
 struct LevelCollisionTile gCollideTileFloor = {
     {&gBasicCollisionBlock, 0, 0},
+};
+
+struct LevelCollisionTile gCollideHalfPlatform = {
+    {&gBasicCollisionBlock, &gHalfCollisionBlock, 0},
 };
 
 struct LevelCollisionTile gCollideTilePlatform = {

@@ -8,6 +8,7 @@
 extern struct CollisionCollider _solid_block_collider;
 
 extern struct LevelCollisionTile gCollideTileFloor;
+extern struct LevelCollisionTile gCollideHalfPlatform;
 extern struct LevelCollisionTile gCollideTilePlatform;
 extern struct LevelCollisionTile gCollideTileBarrier;
 extern struct LevelCollisionTile gCollideTileOverhang;

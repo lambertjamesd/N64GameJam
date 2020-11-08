@@ -174,6 +174,15 @@ func BuildTileSet() *LevelTileSet {
 		"ply/track.ply", Track,
 	)
 
+	var halfBlock = buildBlock(
+		false,
+		"ply/half_wall_color.ply", Wall,
+		"ply/half_wall_color.ply", Wall,
+		"ply/half_wall_color.ply", Wall,
+		"ply/half_wall_color.ply", Wall,
+		"ply/low_floor_color.ply", UpperFloor,
+	)
+
 	result.Tiles = make(map[string]*LevelTile)
 
 	result.Tiles["Floor"] = buildTile([3]*LevelBlock{
@@ -253,6 +262,12 @@ func BuildTileSet() *LevelTileSet {
 		nil,
 		nil,
 	}, "gCollideTileFloor", DynamicTypeSmallSwitch)
+
+	result.Tiles["PlatformSwitch"] = buildTile([3]*LevelBlock{
+		floorBlock,
+		halfBlock,
+		nil,
+	}, "gCollideHalfPlatform", DynamicTypePlatformSwitch)
 
 	result.Tiles["Door"] = buildTile([3]*LevelBlock{
 		floorHole,

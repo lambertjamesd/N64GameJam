@@ -3,6 +3,7 @@
 #define _MATH_MATHF_H
 
 float fsign(float in);
+float mathfLerp(float from, float to, float t);
 float mathfMoveTowards(float from, float to, float maxMove);
 
 #endif

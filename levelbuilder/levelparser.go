@@ -116,6 +116,12 @@ func findSwitches(level *LevelGrid) {
 					LevelSwitchTypeSmall,
 					cell.ParamAsInt("color", 0),
 				})
+			case DynamicTypePlatformSwitch:
+				level.Switches = append(level.Switches, LevelSwitchDef{
+					Vector3{float32(x * 2), 1, float32(-y * 2)},
+					LevelSwitchTypeSmall,
+					cell.ParamAsInt("color", 0),
+				})
 			case DynamicTypeDoor:
 				level.Doors = append(level.Doors, LevelDoorDef{
 					Vector3{float32(x * 2), 0, float32(-y * 2)},

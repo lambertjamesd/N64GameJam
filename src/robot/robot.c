@@ -33,19 +33,22 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
 }
 
 void robotMove(struct Robot* robot) {
-    struct Vector2 input = {0.0f, 0.0f};
+    struct Vector2 input2d = {0.0f, 0.0f};
+    struct Vector2 rotatedInput;
 
     if (gInputMask & InputMaskRobot) {
-        input.x = gControllerState[0].stick_x / 80.0f;
-        input.y = -gControllerState[0].stick_y / 80.0f;
+        input2d.x = gControllerState[0].stick_x / 80.0f;
+        input2d.y = -gControllerState[0].stick_y / 80.0f;
     }
+
+    cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
 
     robot->actor.velocity.y += GLOBAL_GRAVITY * gTimeDelta;
     struct Vector3 targetVelocity;
 
-    targetVelocity.x = ROBOT_SPEED * input.x;
+    targetVelocity.x = ROBOT_SPEED * rotatedInput.x;
     targetVelocity.y = robot->actor.velocity.y;
-    targetVelocity.z = ROBOT_SPEED * input.y;
+    targetVelocity.z = ROBOT_SPEED * rotatedInput.y;
 
     vector3MoveTowards(
         &robot->actor.velocity, 
@@ -54,11 +57,11 @@ void robotMove(struct Robot* robot) {
         &robot->actor.velocity
     );
 
-    if (input.x != 0.0f || input.y != 0.0f) {
+    if (rotatedInput.x != 0.0f || rotatedInput.y != 0.0f) {
         float timeLeft = gTimeDelta - MIN_DELTA_TIME;
         struct Vector2 maxRotate = _gMaxRobotRotate;
         struct Vector2 dir;
-        vector2Normalize(&input, &dir);
+        vector2Normalize(&rotatedInput, &dir);
 
         while (timeLeft >= MIN_DELTA_TIME) {
             vector2ComplexMul(&maxRotate, &_gMaxRobotRotate, &maxRotate);

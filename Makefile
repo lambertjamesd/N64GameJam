@@ -23,7 +23,7 @@ GO_SOURCE = $(wildcard ./levelbuilder/*.go)
 levelbuilder/levelbuilder: $(GO_SOURCE)
 	go build -o levelbuilder/levelbuilder ./levelbuilder/
 
-LEVELS = debug 00_cadet_intro 01_robot_intro
+LEVELS = debug cadet_intro robot_intro switch_tutorial
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
 LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
 

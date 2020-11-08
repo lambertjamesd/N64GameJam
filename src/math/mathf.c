@@ -13,6 +13,10 @@ float fsign(float in) {
     }
 }
 
+float mathfLerp(float from, float to, float t) {
+    return from * (1.0f - t) + to * t;
+}
+
 float mathfMoveTowards(float from, float to, float maxMove) {
     float offset = to - from;
     if (fabs(offset) <= maxMove) {

@@ -23,20 +23,22 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
 }
 
 void cadetMove(struct Cadet* cadet) {
-    float inputX = 0.0f;
-    float inputY = 0.0f;
+    struct Vector2 input2d = {0.0f, 0.0f};
+    struct Vector2 rotatedInput;
 
     if (gInputMask & InputMaskCadet) {
-        inputX = gControllerState[0].stick_x / 80.0f;
-        inputY = -gControllerState[0].stick_y / 80.0f;
+        input2d.x = gControllerState[0].stick_x / 80.0f;
+        input2d.y = -gControllerState[0].stick_y / 80.0f;
     }
+
+    cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
 
     cadet->actor.velocity.y += GLOBAL_GRAVITY * gTimeDelta;
     struct Vector3 targetVelocity;
 
-    targetVelocity.x = CADET_SPEED * inputX;
+    targetVelocity.x = CADET_SPEED * rotatedInput.x;
     targetVelocity.y = cadet->actor.velocity.y;
-    targetVelocity.z = CADET_SPEED * inputY;
+    targetVelocity.z = CADET_SPEED * rotatedInput.y;
 
     vector3MoveTowards(
         &cadet->actor.velocity, 

@@ -3,6 +3,7 @@
 #define _GRAPHICS_RENDERSCENE_H
 
 #include "src/math/basictransform.h"
+#include "src/math/vector2.h"
 #include "src/time/time.h"
 #include "levelgraphics.h"
 #include "levelthemegraphics.h"
@@ -17,11 +18,16 @@ struct SceneCamera {
     float followDistance;
     struct TimeUpdateListener updateListener;
     struct Vector3 targetPosition;
-    float targetFollowDistance;
+    float currentRotation;
+    float targetRotation;
+    float currentPitch;
+    short followDistanceStep;
+    short targetDistanceStep;
 };
 
 void cameraInit(struct SceneCamera* camera);
 void cameraCleanup(struct SceneCamera* camera);
+void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct Vector2* out);
 
 struct RenderScene {
     struct SceneCamera camera;
