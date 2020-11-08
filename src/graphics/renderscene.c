@@ -19,7 +19,7 @@ float gFollowDistances[] = {
 float gFollowPitches[] = {
     -M_PI / 3.5f,
     -M_PI / 3.0f,
-    -M_PI / 2.5f,
+    -M_PI / 2.6f,
 };
 
 #define FOLLOW_STEP_COUNT (sizeof(gFollowDistances) / sizeof(float))
