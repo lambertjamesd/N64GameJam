@@ -1097,6 +1097,7 @@ Gfx Cadet_Cadet_mesh_tri_2[] = {
 Gfx mat_Cadet_Suit[] = {
 	gsDPPipeSync(),
     gsDPSetPrimColor(0, 0, 200, 175, 50, 255),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsDPSetRenderMode(G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2),
 	gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, ENVIRONMENT, 0, 0, 0, PRIMITIVE, 0, 0, 0, ENVIRONMENT),
 	gsSPTexture(65535, 65535, 0, 0, 1),

@@ -12,6 +12,7 @@
 #include "src/puzzle/door.h"
 #include "src/puzzle/breakable.h"
 #include "src/puzzle/movingplatform.h"
+#include "src/effects/shadow.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -140,15 +141,17 @@ void levelLoad(struct LevelDefinition* levelDef) {
         levelDef->theme->theme
     );
 
-    dynamicActorGroupReset(&gScene.dynamicActors);
+    renderSceneReset(&gScene);
 
     collisionSceneUseGrid(levelDef->levelData->collision);
     
     cameraInit(&gScene.camera);
-    cadetReset(&levelDef->levelData->cadetStart);
     robotReset(&levelDef->levelData->robotStart);
+    cadetReset(&levelDef->levelData->cadetStart);
 
     levelExpand(levelDef);
 
     gLoadedLevel = levelDef;
+
+    gScene.transparentMaterials[TransparentMaterialTypeShadow] = _drop_shadow_material;
 }

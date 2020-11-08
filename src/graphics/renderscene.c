@@ -109,3 +109,13 @@ void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct 
     out->x = right.x * input->x + forward.x * input->y;
     out->y = right.z * input->x + forward.z * input->y;
 }
+
+void renderSceneReset(struct RenderScene* scene) {
+    dynamicActorGroupReset(&scene->dynamicActors);
+    dynamicActorGroupReset(&scene->transparentActors);
+
+    int i;
+    for (i = 0; i < MAX_MATERIAL_GROUPS; ++i) {
+        scene->transparentMaterials[i] = 0;
+    }
+}

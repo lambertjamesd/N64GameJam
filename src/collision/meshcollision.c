@@ -143,7 +143,7 @@ int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* cente
 float collisionPlaneRaycast(struct Plane* plane, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact) {
     float dot = vector3Dot(&plane->normal, dir);
 
-    if (dot > NEAR_ZERO) {
+    if (dot > -NEAR_ZERO) {
         return RAYCAST_NO_HIT;
     }
 

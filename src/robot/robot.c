@@ -8,6 +8,14 @@
 
 #include "src/collision/geo/robot_collision.inc.c"
 
+struct DropShadowParams gRobotShadowParams = {
+    1.0f,
+    1.5f,
+    168.0f,
+    94.0f,
+    CollisionLayersGeometry,
+};
+
 struct Robot gRobot;
 struct Vector2 _gMaxRobotRotate;
 
@@ -112,6 +120,9 @@ void robotUpdate(void* robotPtr) {
         gRobot.lastBB = nextBB;
     }
 
+    dropShadowCalculate(&robot->shadow, robot->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &robot->transform.position);
+
+
     if (gInputMask & InputMaskRobot) {
         gScene.camera.targetPosition = robot->transform.position;
 
@@ -153,6 +164,7 @@ void robotReset(struct Vector3* startLocation) {
 
     robotCalcBB(&gRobot, &gRobot.lastBB);
     sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &gRobot.lastBB, 0);
+    dynamicActorAddToGroup(&gScene.transparentActors, &gRobot.transform, &gRobot.shadow, dropShadowRender, TransparentMaterialTypeShadow);
 }
 
 void robotInit() {
@@ -168,6 +180,8 @@ void robotInit() {
 
     gRobot.collider.collider = &_robot_collision_collider;
     gRobot.collider.transform = &gRobot.transform;
+
+    gRobot.shadow.params = &gRobotShadowParams;
 
     robotReset(&gZeroVec);
 }

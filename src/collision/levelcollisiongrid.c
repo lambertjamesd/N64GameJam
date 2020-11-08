@@ -110,5 +110,55 @@ int collisionGridCollideSphere(struct Vector3* center, float radius, struct Leve
 }
 
 float collisionGridRaycast(struct LevelCollisionGrid* grid, struct Vector3* position, struct Vector3* dir, int collisionMask, float maxDistance, struct ContactPoint* hit) {
+    float gridX = (position->x + 1.0f) * 0.5f;
+    float gridY = (position->y + 2.0f) * 0.5f;
+    float gridZ = (position->z - 1.0f) * -0.5f;
+    
+    int x = (int)floorf(gridX);
+    int y = (int)floorf(gridY);
+    int z = (int)floorf(gridZ);
+
+    if (x < 0 || x >= grid->width ||
+        y < 0 ||
+        z < 0 || z >= grid->height) {
+        return RAYCAST_NO_HIT;
+    }
+
+    if (y >=3 ) {
+        y = 2;
+    }
+
+    while (y >= 0) {
+        struct LevelCollisionCell* cell = &grid->tiles[x * grid->height + z];
+
+        if (cell->tile && cell->tile->blocks[y]) {
+            struct Vector3 relativeCenter;
+            relativeCenter.x = position->x - x * LEVEL_GRID_SIZE;
+            relativeCenter.y = position->y - y * LEVEL_GRID_SIZE;
+            relativeCenter.z = position->z + z * LEVEL_GRID_SIZE;
+
+            struct Vector3 rotatedDir;
+
+            gSimpleRotationInv[cell->rotation](&relativeCenter);
+            // gSimpleRotationInv[cell->rotation](&rotatedDir);
+
+
+            float result = collisionColliderRaycast(cell->tile->blocks[y], &relativeCenter, dir, collisionMask, hit);
+
+            if (result != RAYCAST_NO_HIT) {
+                gSimpleRotation[cell->rotation](&hit->point);
+                // gSimpleRotation[cell->rotation](&hit->normal);
+
+                hit->point.x += x * LEVEL_GRID_SIZE;
+                hit->point.y += y * LEVEL_GRID_SIZE;
+                hit->point.z -= z * LEVEL_GRID_SIZE;
+
+                return result;
+            }
+        }
+
+        --y;
+    }
+
     return RAYCAST_NO_HIT;
 }

@@ -90,6 +90,7 @@ float collisionColliderRaycast(struct CollisionCollider* collider, struct Vector
     if (result != RAYCAST_NO_HIT) {
         contact->collisionMask = collider->collisionMask;
         contact->transform = 0;
+        return result;
     }
 
     return RAYCAST_NO_HIT;
@@ -103,14 +104,14 @@ float collisionTransColliderRaycast(struct CollisionTransformedCollider* collide
     struct Vector3 relativeOrigin;
     struct Vector3 relativeDir;
 
-    transformPoint(collider->transform, origin, &relativeOrigin);
+    transformPointInverse(collider->transform, origin, &relativeOrigin);
     transformDirectionInverse(collider->transform, dir, &relativeDir);
 
     float result = collisionColliderRaycast(collider->collider, &relativeOrigin, &relativeDir, collisionMask, contact);
 
     if (result != RAYCAST_NO_HIT) {
         transformPoint(collider->transform, &contact->point, &contact->point);
-        transformPointInverse(collider->transform, &contact->normal, &contact->normal);
+        transformDirection(collider->transform, &contact->normal, &contact->normal);
         contact->transform = collider->transform;
     }
 

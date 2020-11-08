@@ -6,6 +6,7 @@
 #include "src/math/basictransform.h"
 #include "src/time/time.h"
 #include "src/math/vector2.h"
+#include "src/effects/shadow.h"
 
 #define ROBOT_ACCEL 8.0f
 #define ROBOT_SPEED 2.0f
@@ -32,6 +33,7 @@ struct Robot {
     struct CollisionBox lastBB;
     struct CollisionTransformedCollider collider;
     float attackTimer;
+    struct DropShadow shadow;
 };
 
 extern struct Robot gRobot;

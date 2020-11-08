@@ -9,6 +9,7 @@
 #include "src/defs.h"
 
 #define DYANAMIC_LIST_LEN 512
+#define DYNAMIC_MATRIX_COUNT 128
 
 typedef struct {
 	Mtx	projection;
@@ -16,7 +17,7 @@ typedef struct {
 	Mtx	viewing;
     Mtx worldScale;
 	Gfx	glist[DYANAMIC_LIST_LEN];
-    Mtx dynamicActors[MAX_DYNAMIC_ACTORS];
+    Mtx dynamicActors[DYNAMIC_MATRIX_COUNT];
 } Dynamic;
 
 typedef union {    
@@ -53,6 +54,8 @@ extern unsigned short	gZBuffer[];
 extern u64	gRSPYieldBuffer[];
 
 extern u64          gDramStack[];
+
+extern int gFrameNumber;
 
 void graphicsInitLevel(
     char* staticSegment, 

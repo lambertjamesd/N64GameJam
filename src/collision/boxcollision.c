@@ -114,55 +114,46 @@ int collisionBoxOverlapSphere(struct CollisionBox* box, struct Vector3* center, 
 }
 
 float collisionBoxRaycast(struct CollisionBox* mesh, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact) {
-    int xContained = contact->point.x + NEAR_ZERO >= mesh->min.x && contact->point.x - NEAR_ZERO <= mesh->max.x;
-    int yContained = contact->point.y + NEAR_ZERO >= mesh->min.y && contact->point.y - NEAR_ZERO <= mesh->max.y;
-    int zContained = contact->point.z + NEAR_ZERO >= mesh->min.z && contact->point.z - NEAR_ZERO <= mesh->max.z;
+    int xContained = origin->x + NEAR_ZERO >= mesh->min.x && origin->x - NEAR_ZERO <= mesh->max.x;
+    int yContained = origin->y + NEAR_ZERO >= mesh->min.y && origin->y - NEAR_ZERO <= mesh->max.y;
+    int zContained = origin->z + NEAR_ZERO >= mesh->min.z && origin->z - NEAR_ZERO <= mesh->max.z;
 
     if (dir->x < -NEAR_ZERO || dir->x > NEAR_ZERO) {
         float distaceCheck = ((dir->x > 0.0f ? mesh->min.x : mesh->max.x) - origin->x) / dir->x;
 
-        if (distaceCheck >= 0.0f) {
+        if (distaceCheck >= 0.0f && yContained && zContained) {
             rayPointAtDistance(origin, dir, distaceCheck, &contact->point);
+            contact->normal.x = -fsign(dir->x);
+            contact->normal.y = 0.0f;
+            contact->normal.z = 0.0f;
 
-            if (yContained && zContained) {
-                contact->normal.x = -fsign(dir->x);
-                contact->normal.y = 0.0f;
-                contact->normal.z = 0.0f;
-
-                return distaceCheck;
-            }
+            return distaceCheck;
         }
     }
 
     if (dir->y < -NEAR_ZERO || dir->y > NEAR_ZERO) {
         float distaceCheck = ((dir->y > 0.0f ? mesh->min.y : mesh->max.y) - origin->y) / dir->y;
 
-        if (distaceCheck >= 0.0f) {
+        if (distaceCheck >= 0.0f && xContained && zContained) {
             rayPointAtDistance(origin, dir, distaceCheck, &contact->point);
+            contact->normal.x = 0.0f;
+            contact->normal.y = -fsign(dir->y);
+            contact->normal.z = 0.0f;
 
-            if (xContained && zContained) {
-                contact->normal.x = 0.0f;
-                contact->normal.y = -fsign(dir->y);
-                contact->normal.z = 0.0f;
-
-                return distaceCheck;
-            }
+            return distaceCheck;
         }
     }
 
     if (dir->z < -NEAR_ZERO || dir->z > NEAR_ZERO) {
         float distaceCheck = ((dir->z > 0.0f ? mesh->min.z : mesh->max.z) - origin->z) / dir->z;
 
-        if (distaceCheck >= 0.0f) {
+        if (distaceCheck >= 0.0f && xContained && yContained) {
             rayPointAtDistance(origin, dir, distaceCheck, &contact->point);
+            contact->normal.x = 0.0f;
+            contact->normal.y = 0.0f;
+            contact->normal.z = -fsign(dir->z);
 
-            if (xContained && yContained) {
-                contact->normal.x = 0.0f;
-                contact->normal.y = 0.0f;
-                contact->normal.z = -fsign(dir->z);
-
-                return distaceCheck;
-            }
+            return distaceCheck;
         }
     }
 

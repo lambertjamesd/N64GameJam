@@ -24,6 +24,10 @@ enum DynamicMaterialType {
 	DynamicMaterialTypeMovingPlatform,
 };
 
+enum TransparentMaterialType {
+	TransparentMaterialTypeShadow,
+};
+
 #define SWITCH_COLOR_COUNT	5
 
 extern u32 gSwitchColors[];

@@ -28,6 +28,7 @@ char* gLevelThemeSegmentBuffer;
 struct LevelGraphics* gCurrentLevelGraphics;
 struct LevelThemeGraphics* gCurrentLevelTheme;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
+int gFrameNumber;
 
 void graphicsInit(void) 
 {
@@ -37,6 +38,8 @@ void graphicsInit(void)
     gInfo[1].cfb = gColorBuffer[1];
 
     osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
+
+    gFrameNumber = -1;
 }
 
 void graphicsInitLevel(
@@ -131,7 +134,7 @@ void createGfxTask(GFXInfo *i) {
     state.dl = glistp;
     state.matrices = dynamicp->dynamicActors;
     state.usedMatrices = 0;
-    state.matrixCount = MAX_DYNAMIC_ACTORS;
+    state.matrixCount = DYNAMIC_MATRIX_COUNT;
     state.primColor = 0;
 
     if (gCurrentLevelTheme) {
@@ -139,6 +142,8 @@ void createGfxTask(GFXInfo *i) {
     } else {
         dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0);
     }
+
+    dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, MAX_MATERIAL_GROUPS);
 
     glistp = state.dl;
 
@@ -175,4 +180,5 @@ void createGfxTask(GFXInfo *i) {
     t->msg      = (OSMesg)&i->msg;
     t->framebuffer = (void *)i->cfb;
     osSendMesg(gSchedulerCommandQ, (OSMesg) t, OS_MESG_BLOCK); 
+    ++gFrameNumber;
 }

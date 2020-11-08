@@ -5,6 +5,7 @@
 #include "src/collision/sphereactor.h"
 #include "src/math/basictransform.h"
 #include "src/time/time.h"
+#include "src/effects/shadow.h"
 
 #define CADET_RADIUS    0.2f
 #define CADET_SPEED     3.0f
@@ -25,6 +26,7 @@ struct Cadet {
     struct SphereActor actor;
     CadetState state;
     struct TimeUpdateListener updateListener;
+    struct DropShadow shadow;
 };
 
 extern struct Cadet gCadet;

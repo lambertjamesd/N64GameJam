@@ -6,11 +6,11 @@ FINAL = YES
 ifeq ($(FINAL), YES)
 # OPTIMIZER       = -O2 -std=gnu90 -mno-shared
 OPTIMIZER       = -g
-LCDEFS			= -DNDEBUG -D_FINALROM
+LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
 else
 OPTIMIZER       = -g -std=gnu90 -mno-shared
-LCDEFS          = -DDEBUG
+LCDEFS          = -DDEBUG -Werror
 N64LIB          = -lultra_d
 endif
 
@@ -65,6 +65,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/meshcollision.c \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
+	src/effects/shadow.c	\
 	src/graphics/dynamic.c	\
 	src/graphics/graphics.c	\
 	src/graphics/levelgraphics.c	\

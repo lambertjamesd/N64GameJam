@@ -170,7 +170,7 @@ float collisionSparseGridCellRaycast(struct SparseCollisionGridCell* cell, struc
 
     while (cell) {
         struct ContactPoint hitCheck;
-        float hitDistance = collisionTransColliderRaycast(cell->collider, position, dir, collisionMask, hit);
+        float hitDistance = collisionTransColliderRaycast(cell->collider, position, dir, collisionMask, &hitCheck);
 
         if (hitDistance < result) {
             result = hitDistance;

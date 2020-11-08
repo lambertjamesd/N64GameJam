@@ -32,10 +32,14 @@ void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct 
 struct RenderScene {
     struct SceneCamera camera;
     struct DynamicActorGroup dynamicActors;
+    struct DynamicActorGroup transparentActors;
+    Gfx* transparentMaterials[MAX_MATERIAL_GROUPS];
     struct LevelTileGrid* levelGrid;
     struct LevelThemeGraphics* theme;
 };
 
 extern struct RenderScene gScene;
+
+void renderSceneReset(struct RenderScene* scene);
 
 #endif

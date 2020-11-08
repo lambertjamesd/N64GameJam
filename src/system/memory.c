@@ -9,7 +9,7 @@ extern int gHeapStartPos;
 
 void heapInit(unsigned int end)
 {
-    gHeapStart = &gHeapStartPos;
+    gHeapStart = (unsigned int)&gHeapStartPos;
     gHeapEnd = end;
     gHeapCurrent = end;
 }

@@ -6,6 +6,21 @@
 #include "src/collision/collisionscene.h"
 #include "geo/model.h"
 #include "src/graphics/dynamic.h"
+#include "src/math/mathf.h"
+
+#define MAX_SHADOW_SCALE 0.6f
+#define MIN_SHADOW_SCALE 0.2f
+
+#define MAX_SHADOW_TRANS 168.0f
+#define MIN_SHADOW_TRANS 94.0f
+
+struct DropShadowParams gCadetShadowParams = {
+    MIN_SHADOW_SCALE,
+    MAX_SHADOW_SCALE,
+    MIN_SHADOW_TRANS,
+    MAX_SHADOW_TRANS,
+    CollisionLayersGeometry | CollisionLayersRobot,
+};
 
 struct Cadet gCadet;
 
@@ -14,8 +29,9 @@ void cadetFreefall(struct Cadet* cadet);
 void cadetJump(struct Cadet* cadet);
 
 void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
-    Mtx* nextTransfrom = graphicsStateNextMtx(state);
+    struct Cadet* cadet = (struct Cadet*)data->data;
 
+    Mtx* nextTransfrom = graphicsStateNextMtx(state);
     transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, Cadet_Cadet_mesh);
@@ -93,6 +109,8 @@ void cadetUpdate(void* cadetPtr) {
     struct Cadet* cadet = (struct Cadet*)cadetPtr;
     cadet->state(cadet);
 
+    dropShadowCalculate(&cadet->shadow, cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &cadet->transform.position);
+
     if (gInputMask & InputMaskCadet) {
         gScene.camera.targetPosition = cadet->transform.position;
 
@@ -117,13 +135,15 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.actor.relativeToAnchor = gZeroVec;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
+    dynamicActorAddToGroup(&gScene.transparentActors, &gCadet.transform, &gCadet.shadow, dropShadowRender, TransparentMaterialTypeShadow);
 }
 
 void cadetInit() {
-    cadetReset(&gZeroVec);
+    gCadet.shadow.params = &gCadetShadowParams;
     gCadet.actor.collisionMask = 
         CollisionLayersGeometry | 
         CollisionLayersRobot | 
         CollisionLayersSmallSwitch |
         CollisionLayersKillPlane;
+    cadetReset(&gZeroVec);
 }
