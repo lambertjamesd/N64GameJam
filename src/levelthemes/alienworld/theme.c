@@ -17,6 +17,7 @@ Gfx* _gAlienWorldDynamicMaterials[] = {
     _alien_switch_material,
     _alien_puzzle_door_material,
     _alien_breakable_material,
+    _alien_moving_platform_material,
 };
 
 #define SCROLL_SPEED_X 0.3f
@@ -66,6 +67,7 @@ struct LevelThemeGraphics gAlienWorldLevelTheme = {
         _alien_puzzle_door_mesh_tri_0,
         _alien_puzzle_door_mesh_tri_0,
         _alien_breakable_mesh_tri_0,
+        _alien_moving_platform_tri_0,
     },
     alienWorldAnimate,
 };

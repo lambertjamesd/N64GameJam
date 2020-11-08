@@ -48,6 +48,8 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 			nil,
 			nil,
 			nil,
+			nil,
+			nil,
 		}
 	}
 
@@ -128,6 +130,19 @@ func findSwitches(level *LevelGrid) {
 				level.Breakables = append(level.Breakables, LevelBreakableDef{
 					Vector3{float32(x * 2), 0, float32(-y * 2)},
 					1,
+				})
+			case DynamicTypeMovingPlatform:
+				level.Platforms = append(level.Platforms, LevelPlatformDef{
+					Vector3{float32(x * 2), 0, float32(-y * 2)},
+					cell.ParamAsInt("color", 0),
+					len(level.PlatformSlots),
+				})
+				level.PlatformSlots = append(level.PlatformSlots, LevelPlatformSlotDef{
+					Vector3{float32(x * 2), 0, float32(-y * 2)},
+				})
+			case DynamicTypePlatformSlot:
+				level.PlatformSlots = append(level.PlatformSlots, LevelPlatformSlotDef{
+					Vector3{float32(x * 2), 0, float32(-y * 2)},
 				})
 			}
 		}

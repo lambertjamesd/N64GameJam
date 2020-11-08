@@ -264,13 +264,13 @@ func BuildTileSet() *LevelTileSet {
 		trackBlock,
 		nil,
 		nil,
-	}, "", DynamicTypeNone)
+	}, "", DynamicTypeMovingPlatform)
 
 	result.Tiles["PlatformTrack"] = buildTile([3]*LevelBlock{
 		trackBlock,
 		nil,
 		nil,
-	}, "", DynamicTypeNone)
+	}, "", DynamicTypePlatformSlot)
 
 	return &result
 }

@@ -22,6 +22,8 @@ const (
 	DynamicTypeDoor              = 4
 	DynamicTypeBreakablePlatform = 5
 	DynamicTypeBreakableBarrier  = 6
+	DynamicTypeMovingPlatform    = 7
+	DynamicTypePlatformSlot      = 8
 )
 
 var AllMaterials = []MaterialType{
@@ -82,6 +84,16 @@ type LevelBreakableDef struct {
 	Type int
 }
 
+type LevelPlatformDef struct {
+	Pos       Vector3
+	Color     int
+	SlotIndex int
+}
+
+type LevelPlatformSlotDef struct {
+	Pos Vector3
+}
+
 type LevelGrid struct {
 	Tiles                  [][]LevelTileSlot
 	PlayerPosX, PlayerPosY float32
@@ -89,6 +101,8 @@ type LevelGrid struct {
 	Switches               []LevelSwitchDef
 	Doors                  []LevelDoorDef
 	Breakables             []LevelBreakableDef
+	Platforms              []LevelPlatformDef
+	PlatformSlots          []LevelPlatformSlotDef
 }
 
 func (level *LevelGrid) GetSize() (int, int) {

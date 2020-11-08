@@ -13,9 +13,11 @@ extern Gfx _alien_sswitch_down_tri[];
 
 extern Gfx _alien_puzzle_door_mesh_tri_0[];
 extern Gfx _alien_breakable_mesh_tri_0[];
+extern Gfx _alien_moving_platform_tri_0[];
 
 extern Gfx _alien_switch_material[];
 extern Gfx _alien_puzzle_door_material[];
 extern Gfx _alien_breakable_material[];
+extern Gfx _alien_moving_platform_material[];
 
 extern Gfx _alien_clearScreen[];

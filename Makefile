@@ -86,6 +86,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/robot/geo/model.c \
 	src/puzzle/breakable.c  \
 	src/puzzle/door.c  \
+	src/puzzle/movingplatform.c  \
 	src/puzzle/signal.c  \
 	src/puzzle/switch.c  \
 	src/system/assert.c		\

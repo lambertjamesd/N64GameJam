@@ -194,6 +194,26 @@ struct LevelBreakableDef _level_%s_levelBreakables[] = {
 	outputLevel.WriteString("};\n")
 
 	outputLevel.WriteString(fmt.Sprintf(`
+struct LevelPlatformDef _level_%s_movingPlatforms[] = {
+`, levelName))
+
+	for _, platform := range tileMap.Platforms {
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}, %d, %d},\n", platform.Pos.X, platform.Pos.Y, platform.Pos.Z, platform.Color, platform.SlotIndex))
+	}
+
+	outputLevel.WriteString("};\n")
+
+	outputLevel.WriteString(fmt.Sprintf(`
+struct LevelPlatformSlotDef _level_%s_platformSlots[] = {
+`, levelName))
+
+	for _, slot := range tileMap.PlatformSlots {
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}},\n", slot.Pos.X, slot.Pos.Y, slot.Pos.Z))
+	}
+
+	outputLevel.WriteString("};\n")
+
+	outputLevel.WriteString(fmt.Sprintf(`
 struct LevelData _level_%s_levelData = {
 	&_level_%s_levelGraphics,
 	&_level_%s_collision_grid,
@@ -205,6 +225,10 @@ struct LevelData _level_%s_levelData = {
 	%d,
 	_level_%s_levelBreakables,
 	%d,
+	_level_%s_movingPlatforms,
+	%d,
+	_level_%s_platformSlots,
+	%d,
 };
 `, levelName, levelName, levelName,
 		tileMap.PlayerPosX, 0.1, -tileMap.PlayerPosY,
@@ -212,6 +236,8 @@ struct LevelData _level_%s_levelData = {
 		levelName, len(tileMap.Switches),
 		levelName, len(tileMap.Doors),
 		levelName, len(tileMap.Breakables),
+		levelName, len(tileMap.Platforms),
+		levelName, len(tileMap.PlatformSlots),
 	))
 
 	geoSources = append(geoSources, tileIncFile)

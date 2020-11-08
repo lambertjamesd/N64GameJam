@@ -12,7 +12,16 @@ enum LevelThemeMeshes {
 	LevelThemeMeshesDoor,
 	LevelThemeMeshesBreakPlatform,
 	LevelThemeMeshesBreakBarrier,
+	LevelThemeMeshesMovingPlatform,
 	LevelThemeMeshesCount,
+};
+
+
+enum DynamicMaterialType {
+    DynamicMaterialTypeSwitch,
+    DynamicMaterialTypeDoor,
+    DynamicMaterialTypeBreakable,
+	DynamicMaterialTypeMovingPlatform,
 };
 
 #define SWITCH_COLOR_COUNT	5

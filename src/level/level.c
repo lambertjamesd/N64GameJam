@@ -11,6 +11,7 @@
 #include "src/puzzle/switch.h"
 #include "src/puzzle/door.h"
 #include "src/puzzle/breakable.h"
+#include "src/puzzle/movingplatform.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -57,6 +58,33 @@ void levelExpand(struct LevelDefinition* levelDef) {
     for (i = 0; i < levelDef->levelData->breakableCount; ++i) {
         struct LevelBreakableDef* def = &levelDef->levelData->breakables[i];
         breakableInit(&breakables[i], &def->pos, def->type);
+    }
+
+    /////////////////////
+    // platform slots
+
+    struct MovingPlatformSlot* slots = heapMalloc(
+        ARRAY_SIZE(struct MovingPlatformSlot, levelDef->levelData->platformSlotCount),
+        ALIGNMENT_OF(struct MovingPlatformSlot)
+    );
+
+    for (i = 0; i < levelDef->levelData->platformSlotCount; ++i) {
+        movingPlatformSlotInit(&slots[i], &levelDef->levelData->platformSlots[i].pos);
+    }
+    
+    movingPlatformJoinSlots(slots, levelDef->levelData->platformSlotCount);
+
+    /////////////////////
+    // platform slots
+
+    struct MovingPlatform* platforms = heapMalloc(
+        ARRAY_SIZE(struct MovingPlatform, levelDef->levelData->platformCount),
+        ALIGNMENT_OF(struct MovingPlatform)
+    );
+
+    for (i = 0; i < levelDef->levelData->platformCount; ++i) {
+        struct LevelPlatformDef* platform = &levelDef->levelData->platforms[i];
+        movingPlatformInit(&platforms[i], &platform->pos, &slots[platform->slotIndex], platform->color);
     }
 
     /////////////////////
