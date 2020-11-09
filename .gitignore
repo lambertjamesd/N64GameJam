@@ -8,8 +8,12 @@ core
 levelbuilder/levelbuilder
 levelbuilder/output/*
 
+sound/clips/*
+
 src/levels/**/*.c
 src/levels/**/*.h
 src/collision/geo/*.inc.c
 
 launch/last_launch.txt
+
+build/*

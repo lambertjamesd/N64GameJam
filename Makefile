@@ -44,7 +44,13 @@ src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
 	@mkdir -p $(@D)
 	levelbuilder/levelbuilder collision $* $< $@
 
-srce/collision/geo/geo.c: $(COLLISION_GEO)
+src/collision/geo/geo.c: $(COLLISION_GEO)
+
+PLAYER_SOUNDS = sound/clips/test.wav
+
+build/audio/player.sounds: $(PLAYER_SOUNDS)
+	@mkdir -p $(@D)
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
