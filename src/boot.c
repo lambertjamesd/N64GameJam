@@ -209,6 +209,6 @@ static void initGame(void)
     graphicsInit(); 
     audioInit();
     playerSoundsInit();
-    levelLoad(&gAllLevels[0]);
+    levelLoad(&gAllLevels[5]);
 }
 

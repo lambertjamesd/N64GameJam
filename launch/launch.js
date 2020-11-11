@@ -33,7 +33,7 @@ if (process.argv[2] == 'cen64') {
     ));
 
     waitFor.push(new Promise((resolve) => {
-        setTimeout(resolve, 2000);
+        setTimeout(resolve, 1000);
     }));
 } else {
     spawned.push(child_process.spawn(

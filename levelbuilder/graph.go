@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 type GraphVertex struct {
 	Id               int
 	AdjacentVertices []*GraphVertex
@@ -43,7 +45,7 @@ func markAdjacentVertices(vertex *GraphVertex, into map[int]int, with int) {
 func findMeshGroups(graph *GraphMesh) map[int]int {
 	var idx = 0
 
-	var result = make(map[int]int)
+	var result = make(map[int]int, len(graph.Vertices))
 
 	for _, vertex := range graph.Vertices {
 		_, alreadyHas := result[vertex.Id]
@@ -87,11 +89,13 @@ func (vertex *GraphVertex) FindFurthestVertex() *GraphVertex {
 
 	var result *GraphVertex = nil
 	var currDistnace = 0
+	var vertexId = 0
 
 	for check, checkDistance := range distance {
-		if checkDistance > currDistnace {
+		if checkDistance > currDistnace || checkDistance == currDistnace && check.Id < vertexId {
 			currDistnace = checkDistance
 			result = check
+			vertexId = check.Id
 		}
 	}
 
@@ -121,12 +125,14 @@ func (graph *GraphMesh) FindStartingVertices() []*GraphVertex {
 
 	var result = make([]*GraphVertex, groupCount+1)
 	var currHitCount = make([]int, groupCount+1)
+	var checkId = make([]int, groupCount+1)
 
 	for check, checkHit := range hitCount {
 		groupId, _ := grouping[check.Id]
 
-		if checkHit > currHitCount[groupId] {
+		if checkHit > currHitCount[groupId] || checkHit == currHitCount[groupId] && check.Id < checkId[groupId] {
 			currHitCount[groupId] = checkHit
+			checkId[groupId] = check.Id
 			result[groupId] = check
 		}
 	}
@@ -185,26 +191,39 @@ func breakupGraphFaceChunks(faces []*GraphFace) [][]*GraphFace {
 	return result
 }
 
-func verticesForFaces(faces []*GraphFace) map[*GraphVertex]bool {
-	var result = make(map[*GraphVertex]bool)
+func verticesForFaces(faces []*GraphFace) []*GraphVertex {
+	var didAdd = make(map[*GraphVertex]bool)
+	var result []*GraphVertex = nil
 
 	for _, face := range faces {
 		for _, vertex := range face.AdjacentVertices {
-			result[vertex] = true
+			_, added := didAdd[vertex]
+
+			if !added {
+				didAdd[vertex] = true
+				result = append(result, vertex)
+			}
 		}
 	}
 
 	return result
 }
 
-func subtractVertices(from map[*GraphVertex]bool, diff map[*GraphVertex]bool) map[*GraphVertex]bool {
-	var result = make(map[*GraphVertex]bool)
+func subtractVertices(from []*GraphVertex, diff []*GraphVertex) []*GraphVertex {
+	var result []*GraphVertex = nil
 
-	for vertex, _ := range from {
-		_, hasDiff := diff[vertex]
+	for _, vertex := range from {
+		var otherHas = false
 
-		if !hasDiff {
-			result[vertex] = true
+		for _, otherCheck := range diff {
+			if otherCheck == vertex {
+				otherHas = true
+				break
+			}
+		}
+
+		if !otherHas {
+			result = append(result, vertex)
 		}
 
 	}
@@ -212,14 +231,21 @@ func subtractVertices(from map[*GraphVertex]bool, diff map[*GraphVertex]bool) ma
 	return result
 }
 
-func intersectVertices(from map[*GraphVertex]bool, inter map[*GraphVertex]bool) map[*GraphVertex]bool {
-	var result = make(map[*GraphVertex]bool)
+func intersectVertices(from []*GraphVertex, inter []*GraphVertex) []*GraphVertex {
+	var result []*GraphVertex = nil
 
-	for vertex, _ := range from {
-		_, hasDiff := inter[vertex]
+	for _, vertex := range from {
+		var otherHas = false
 
-		if hasDiff {
-			result[vertex] = true
+		for _, otherCheck := range inter {
+			if otherCheck == vertex {
+				otherHas = true
+				break
+			}
+		}
+
+		if otherHas {
+			result = append(result, vertex)
 		}
 
 	}
@@ -235,6 +261,8 @@ func extractFaceIndices(from *GraphFace, vertexSlots [VERTEX_BUFFER_SIZE]*GraphV
 			if vertexSlots[vertexIndex] == from.AdjacentVertices[i] {
 				result[i] = vertexIndex
 				break
+			} else if vertexIndex+1 == VERTEX_BUFFER_SIZE {
+				log.Fatal("Couldn't find vertex in vertex buffer")
 			}
 		}
 	}
@@ -244,25 +272,25 @@ func extractFaceIndices(from *GraphFace, vertexSlots [VERTEX_BUFFER_SIZE]*GraphV
 
 func generateDrawOrder(chunks [][]*GraphFace) *GraphDrawOrder {
 	var reuseFront bool = true
-	var reusedVertices map[*GraphVertex]bool = nil
+	var reusedVertices []*GraphVertex = nil
 
 	var currentSlots [VERTEX_BUFFER_SIZE]*GraphVertex
 
 	var result GraphDrawOrder
 
 	for index, chunk := range chunks {
-		var reuseNext map[*GraphVertex]bool = nil
-		var unique map[*GraphVertex]bool = verticesForFaces(chunk)
+		var reuseNext []*GraphVertex = nil
+		var unique []*GraphVertex = verticesForFaces(chunk)
+
+		unique = subtractVertices(unique, reusedVertices)
 
 		if index+1 < len(chunks) {
 			var next = verticesForFaces(chunks[index+1])
 
 			reuseNext = intersectVertices(next, unique)
-			unique = subtractVertices(unique, reuseNext)
-			unique = subtractVertices(unique, reusedVertices)
-		}
 
-		unique = subtractVertices(unique, reusedVertices)
+			unique = subtractVertices(unique, reuseNext)
+		}
 
 		var drawCommand GraphDrawCommand
 
@@ -273,13 +301,13 @@ func generateDrawOrder(chunks [][]*GraphFace) *GraphDrawOrder {
 			drawCommand.VertexBufferStart = 0
 			var vertexIndex = drawCommand.VertexBufferStart
 
-			for vertex, _ := range reuseNext {
+			for _, vertex := range reuseNext {
 				currentSlots[vertexIndex] = vertex
 				result.Vertices = append(result.Vertices, vertex)
 				vertexIndex = vertexIndex + 1
 			}
 
-			for vertex, _ := range unique {
+			for _, vertex := range unique {
 				currentSlots[vertexIndex] = vertex
 				result.Vertices = append(result.Vertices, vertex)
 				vertexIndex = vertexIndex + 1
@@ -288,13 +316,13 @@ func generateDrawOrder(chunks [][]*GraphFace) *GraphDrawOrder {
 			drawCommand.VertexBufferStart = VERTEX_BUFFER_SIZE - drawCommand.VertexCount
 			var vertexIndex = drawCommand.VertexBufferStart
 
-			for vertex, _ := range unique {
+			for _, vertex := range unique {
 				currentSlots[vertexIndex] = vertex
 				result.Vertices = append(result.Vertices, vertex)
 				vertexIndex = vertexIndex + 1
 			}
 
-			for vertex, _ := range reuseNext {
+			for _, vertex := range reuseNext {
 				currentSlots[vertexIndex] = vertex
 				result.Vertices = append(result.Vertices, vertex)
 				vertexIndex = vertexIndex + 1
@@ -350,7 +378,6 @@ func GraphFromMesh(graph *Mesh) *GraphMesh {
 	}
 
 	for index, face := range graph.faces {
-
 		result.Faces = append(result.Faces, GraphFace{
 			index,
 			nil,
