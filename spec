@@ -88,7 +88,19 @@ endseg
 beginseg
 	name "seq"
 	flags RAW
-	include "sound/music/RobotTheme.mid"
+	include "sound/music/spacepiano.mid"
+endseg
+
+beginseg
+	name "player_sounds"
+	flags RAW
+	include "build/audio/player.sounds"
+endseg
+
+beginseg
+	name "player_sounds_table"
+	flags RAW
+	include "build/audio/player.sounds.tbl"
 endseg
 
 beginwave
@@ -105,4 +117,6 @@ beginwave
 	include "table"
 	include "bank"
 	include "seq"
+	include "player_sounds"
+	include "player_sounds_table"
 endwave

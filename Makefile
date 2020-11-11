@@ -46,7 +46,9 @@ src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
 
 src/collision/geo/geo.c: $(COLLISION_GEO)
 
-PLAYER_SOUNDS = sound/clips/test.wav
+PLAYER_SOUNDS = sound/clips/Jump.wav \
+	sound/clips/JumpPeakBeep.wav \
+	sound/clips/Landing.wav
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
@@ -67,6 +69,8 @@ HFILES = $(DEBUGGERHFILES) \
 CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
+	src/audio/soundarray.c \
+	src/audio/playersounds.c \
 	src/cadet/cadet.c   	\
 	src/cadet/geo/model.c \
 	src/collision/collisiondata.c \
@@ -123,7 +127,7 @@ DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 DEPS = $(CODEFILES:.c=.d) $(DATAFILES:.c=.d)
 
-OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
+OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS) build/audio/player.sounds
 
 LCINCS =	-I. -I$(ROOT)/usr/include/PR -I $(ROOT)/usr/include
 LCOPTS =	-mno-shared -G 0

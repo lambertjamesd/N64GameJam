@@ -7,6 +7,8 @@
 #include "geo/model.h"
 #include "src/graphics/dynamic.h"
 #include "src/math/mathf.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
 
 #define MAX_SHADOW_SCALE 0.6f
 #define MIN_SHADOW_SCALE 0.2f
@@ -83,14 +85,42 @@ void cadetWalk(struct Cadet* cadet) {
         if ((gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON)) {
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
+
+            audioPlaySound(
+                gPlayerSoundIds[PlayerSoundsJump],
+                0.5f,
+                1.0f,
+                0.0f,
+                10
+            );
         }
     }
 }
 
 void cadetFreefall(struct Cadet* cadet) {
+    int wasMovingUp = cadet->actor.velocity.y > 0.0f;
+
     cadetMove(cadet);
 
+    if (wasMovingUp && cadet->actor.velocity.y <= 0.0f) {
+        audioPlaySound(
+            gPlayerSoundIds[PlayerSoundsJumpPeak],
+            0.5f,
+            0.75f,
+            0.0f,
+            10
+        );
+    }
+
     if (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) {
+        audioPlaySound(
+            gPlayerSoundIds[PlayerSoundsLand],
+            0.5f,
+            0.8f,
+            0.0f,
+            10
+        );
+
         cadet->state = cadetWalk;
     }
 }

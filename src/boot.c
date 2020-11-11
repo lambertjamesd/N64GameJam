@@ -13,6 +13,7 @@
 #include "src/level/level.h"
 #include "src/levels/levels.h"
 #include "src/robot/robot.h"
+#include "src/audio/playersounds.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -173,8 +174,8 @@ static void layoutMemory(void)
 {
     gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT);
     gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * SCREEN_HT);
-    gAudioHeap = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT - AUDIO_HEAP_SIZE);
-    heapInit((u32)gAudioHeap);
+    gAudioHeapBuffer = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT - AUDIO_HEAP_SIZE);
+    heapInit((u32)gAudioHeapBuffer);
 }
 
 static void initGame(void)
@@ -207,6 +208,7 @@ static void initGame(void)
     layoutMemory();
     graphicsInit(); 
     audioInit();
+    playerSoundsInit();
     levelLoad(&gAllLevels[0]);
 }
 

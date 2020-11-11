@@ -51,7 +51,12 @@ typedef struct {
 void    amCreateAudioMgr(ALSynConfig *c, OSPri priority, amConfig *amc);
 
 extern u64 audYieldBuf[];
-extern u8* gAudioHeap;
+extern u8* gAudioHeapBuffer;
+
+extern ALSndPlayer gSoundPlayer;
+extern ALHeap gAudioHeap;
+
+void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
 
 #endif
 
