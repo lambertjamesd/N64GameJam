@@ -129,8 +129,8 @@ func FullFrontTileTransform(tileX int, tileY int, s int, t int, layer int) Verte
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s + float32(s)
-		input.t = input.t + float32(layer)
+		input.s = input.s - float32(s)
+		input.t = input.t - float32(layer)
 	}
 }
 
@@ -142,8 +142,8 @@ func FullRightTileTransform(tileX int, tileY int, s int, t int, layer int) Verte
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s + float32(t)
-		input.t = input.t + float32(layer)
+		input.s = input.s - float32(t)
+		input.t = input.t - float32(layer)
 	}
 }
 
@@ -155,8 +155,8 @@ func FullBackTileTransform(tileX int, tileY int, s int, t int, layer int) Vertex
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s - float32(s)
-		input.t = input.t + float32(layer)
+		input.s = input.s + float32(s)
+		input.t = input.t - float32(layer)
 	}
 }
 
@@ -168,8 +168,8 @@ func FullLeftTileTransform(tileX int, tileY int, s int, t int, layer int) Vertex
 		input.y = input.y + float32(layer)*2
 		input.z = input.z + float32(tileY)*2
 
-		input.s = input.s - float32(t)
-		input.t = input.t + float32(layer)
+		input.s = input.s + float32(t)
+		input.t = input.t - float32(layer)
 	}
 }
 

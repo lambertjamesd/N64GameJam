@@ -151,6 +151,45 @@ func dissolveEdges(mesh *GraphMesh, normals map[int]Vector3) {
 	}
 }
 
+func dissolveVertex(face *GraphFace, index int) {
+	var next = make([]*GraphVertex, len(face.AdjacentVertices)-1)
+
+	for i := 0; i < index; i++ {
+		next[i] = face.AdjacentVertices[i]
+	}
+
+	for i := index + 1; i < len(face.AdjacentVertices); i++ {
+		next[i-1] = face.AdjacentVertices[i]
+	}
+
+	face.AdjacentVertices = next
+}
+
+func shouldDissolveVertex(face *GraphFace, index int, origMesh *Mesh) bool {
+	var curr = origMesh.vertices[face.AdjacentVertices[index].Id]
+	var next = origMesh.vertices[face.AdjacentVertices[(index+1)%len(face.AdjacentVertices)].Id]
+	var prev = origMesh.vertices[face.AdjacentVertices[(index-1+len(face.AdjacentVertices))%len(face.AdjacentVertices)].Id]
+
+	var dirBack Vector3 = Sub3f(curr.GetPos(), prev.GetPos())
+	var dirForward Vector3 = Sub3f(next.GetPos(), curr.GetPos())
+
+	var check = Cross3f(dirBack, dirForward)
+
+	return Dot3f(check, check) < 0.000001
+}
+
+func dissolveVertices(mesh *GraphMesh, origMesh *Mesh) {
+	for _, face := range mesh.Faces {
+		for index := 0; index < len(face.AdjacentVertices); {
+			if shouldDissolveVertex(face, index, origMesh) {
+				dissolveVertex(face, index)
+			} else {
+				index++
+			}
+		}
+	}
+}
+
 func LimitedDissolve(mesh *Mesh) *Mesh {
 	var graph = GraphFromMesh(mesh)
 	var normals = make(map[int]Vector3)
@@ -160,6 +199,7 @@ func LimitedDissolve(mesh *Mesh) *Mesh {
 	}
 
 	dissolveEdges(graph, normals)
+	dissolveVertices(graph, mesh)
 
 	return MeshFromGraph(graph, mesh)
 }

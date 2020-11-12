@@ -34,7 +34,7 @@ func ExtractTileMeshes(separateMeshes []*Mesh, x int, y int, s int, t int, tile 
 				if !tile.Tile.IsSolidAtHeight(height+1) && block.Top != nil && block.Top.Material == material {
 					separateMeshes = append(
 						separateMeshes,
-						TransformMesh(block.Top.Mesh, FullTopTileTransform(x, y, x, t, height, tile.Rotation)),
+						TransformMesh(block.Top.Mesh, FullTopTileTransform(x, y, s, t, height, tile.Rotation)),
 					)
 				}
 
