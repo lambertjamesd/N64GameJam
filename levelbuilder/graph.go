@@ -11,11 +11,19 @@ type GraphVertex struct {
 type GraphFace struct {
 	Id               int
 	AdjacentVertices []*GraphVertex
+	AdjacentEdges    []*GraphEdge
+}
+
+type GraphEdge struct {
+	Id               int
+	AdjacentFaces    []*GraphFace
+	AdjacentVertices [2]*GraphVertex
 }
 
 type GraphMesh struct {
-	Vertices []GraphVertex
-	Faces    []GraphFace
+	Vertices []*GraphVertex
+	Faces    []*GraphFace
+	Edges    []*GraphEdge
 }
 
 type GraphDrawCommand struct {
@@ -51,7 +59,7 @@ func findMeshGroups(graph *GraphMesh) map[int]int {
 		_, alreadyHas := result[vertex.Id]
 
 		if !alreadyHas {
-			markAdjacentVertices(&vertex, result, idx)
+			markAdjacentVertices(vertex, result, idx)
 			idx = idx + 1
 		}
 	}
@@ -366,11 +374,36 @@ func addAdjacentVertex(into *GraphVertex, adj *GraphVertex) {
 	into.AdjacentVertices = append(into.AdjacentVertices, adj)
 }
 
+func addEdge(mesh *GraphMesh, a *GraphVertex, b *GraphVertex, face *GraphFace) {
+	if a.Id > b.Id {
+		a, b = b, a
+	}
+
+	var edgeId = (a.Id << 16) | (b.Id & 0xffff)
+
+	for _, edge := range mesh.Edges {
+		if edge.Id == edgeId {
+			edge.AdjacentFaces = append(edge.AdjacentFaces, face)
+			face.AdjacentEdges = append(face.AdjacentEdges, edge)
+			return
+		}
+	}
+
+	var result = &GraphEdge{
+		edgeId,
+		[]*GraphFace{face},
+		[2]*GraphVertex{a, b},
+	}
+
+	mesh.Edges = append(mesh.Edges, result)
+	face.AdjacentEdges = append(face.AdjacentEdges, result)
+}
+
 func GraphFromMesh(graph *Mesh) *GraphMesh {
 	var result GraphMesh
 
 	for index, _ := range graph.vertices {
-		result.Vertices = append(result.Vertices, GraphVertex{
+		result.Vertices = append(result.Vertices, &GraphVertex{
 			index,
 			nil,
 			nil,
@@ -378,25 +411,65 @@ func GraphFromMesh(graph *Mesh) *GraphMesh {
 	}
 
 	for index, face := range graph.faces {
-		result.Faces = append(result.Faces, GraphFace{
+		result.Faces = append(result.Faces, &GraphFace{
 			index,
+			nil,
 			nil,
 		})
 
-		var graphFace = &result.Faces[index]
+		var graphFace = result.Faces[index]
 
-		for _, vertexIndex := range face.indices {
-			graphFace.AdjacentVertices = append(graphFace.AdjacentVertices, &result.Vertices[vertexIndex])
+		for i, vertexIndex := range face.indices {
+			graphFace.AdjacentVertices = append(graphFace.AdjacentVertices, result.Vertices[vertexIndex])
 			result.Vertices[vertexIndex].AdjacentFaces = append(result.Vertices[vertexIndex].AdjacentFaces, graphFace)
 
-			for _, otherVertexIndex := range face.indices {
-				if vertexIndex != otherVertexIndex {
-					addAdjacentVertex(&result.Vertices[vertexIndex], &result.Vertices[otherVertexIndex])
-					addAdjacentVertex(&result.Vertices[otherVertexIndex], &result.Vertices[vertexIndex])
-				}
-			}
+			var nextIndex = face.indices[(i+1)%len(face.indices)]
+
+			addEdge(&result, result.Vertices[vertexIndex], result.Vertices[nextIndex], graphFace)
+			addAdjacentVertex(result.Vertices[vertexIndex], result.Vertices[nextIndex])
+			addAdjacentVertex(result.Vertices[nextIndex], result.Vertices[vertexIndex])
 		}
 
+	}
+
+	return &result
+}
+
+func MeshFromGraph(graph *GraphMesh, originalMesh *Mesh) *Mesh {
+	var usedVerts = make(map[int]bool)
+
+	for _, face := range graph.Faces {
+		if len(face.AdjacentVertices) > 0 {
+			for _, vert := range face.AdjacentVertices {
+				usedVerts[vert.Id] = true
+			}
+		}
+	}
+
+	var idMapping = make(map[int]int)
+	var result Mesh
+
+	for _, vertex := range graph.Vertices {
+		_, used := usedVerts[vertex.Id]
+
+		if used {
+			idMapping[vertex.Id] = len(result.vertices)
+			result.vertices = append(result.vertices, originalMesh.vertices[vertex.Id])
+		}
+	}
+
+	for _, face := range graph.Faces {
+		if len(face.AdjacentVertices) > 0 {
+			var newFace MeshFace
+
+			for _, vertex := range face.AdjacentVertices {
+				newId, _ := idMapping[vertex.Id]
+
+				newFace.indices = append(newFace.indices, uint32(newId))
+			}
+
+			result.faces = append(result.faces, newFace)
+		}
 	}
 
 	return &result

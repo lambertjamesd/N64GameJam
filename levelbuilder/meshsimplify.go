@@ -31,12 +31,3 @@ func RemoveDuplicates(mesh *Mesh) *Mesh {
 
 	return &result
 }
-
-type meshDissolveEdge struct {
-	faceA *MeshFace
-	faceB *MeshFace
-}
-
-func DissolveEdges(mesh *Mesh) *Mesh {
-	return mesh
-}
