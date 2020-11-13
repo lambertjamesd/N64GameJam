@@ -8,7 +8,7 @@
 #include "src/effects/shadow.h"
 
 #define CADET_RADIUS    0.2f
-#define CADET_SPEED     3.0f
+#define CADET_SPEED     2.5f
 #define CADET_ACCEL     24.0f
 #define CADET_AIR_ACCEL 8.0f
 

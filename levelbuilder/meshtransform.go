@@ -173,19 +173,112 @@ func FullLeftTileTransform(tileX int, tileY int, s int, t int, layer int) Vertex
 	}
 }
 
+func DoLinesCross(a0 *Vector3, a1 *Vector3, b0 *Vector3, b1 *Vector3) bool {
+	var aDir = Sub3f(*a1, *a0)
+	var bDir = Sub3f(*b1, *b0)
+
+	var normal = Cross3f(aDir, bDir)
+
+	if Dot3f(normal, normal) < 0.000001 {
+		return false
+	}
+
+	var matrix Matrix3x3 = [3][3]float32{
+		[3]float32{-aDir.X, bDir.X, normal.X},
+		[3]float32{-aDir.Y, bDir.Y, normal.Y},
+		[3]float32{-aDir.Z, bDir.Z, normal.Z},
+	}
+
+	inverse, _ := matrix.Inverse()
+
+	var lerpValues = inverse.Mul3f(Sub3f(*a0, *b0))
+
+	return lerpValues.X > 0 && lerpValues.X < 1 && lerpValues.Y > 0 && lerpValues.Y < 1
+}
+
+func CanRemoveTriangleAtVertex(mesh *Mesh, face *MeshFace, vertexIndex int, normal *Vector3) bool {
+	var nextIndex = (vertexIndex + 1) % len(face.indices)
+	var prevIndex = (vertexIndex + len(face.indices) - 1) % len(face.indices)
+
+	var startPos = mesh.vertices[face.indices[vertexIndex]].GetPos()
+
+	var nextVertex = mesh.vertices[face.indices[nextIndex]].GetPos()
+	var prevVertex = mesh.vertices[face.indices[prevIndex]].GetPos()
+
+	var subFaceNormal = Cross3f(Sub3f(nextVertex, startPos), Sub3f(prevVertex, startPos))
+
+	if Dot3f(subFaceNormal, *normal) < 0 {
+		return false
+	}
+
+	for i := nextIndex; i != prevIndex; i = (i + 1) % len(face.indices) {
+		var curr = mesh.vertices[face.indices[i]].GetPos()
+		var nextIndex = (i + 1) % len(face.indices)
+		var next = mesh.vertices[face.indices[nextIndex]].GetPos()
+
+		if DoLinesCross(&prevVertex, &nextVertex, &curr, &next) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func RemoveTriangle(mesh *Mesh, face *MeshFace, index int, newFaces []MeshFace) []MeshFace {
+	var nextIndex = (index + 1) % len(face.indices)
+	var prevIndex = (index + len(face.indices) - 1) % len(face.indices)
+
+	var startPos = mesh.vertices[face.indices[index]].GetPos()
+
+	var nextVertex = mesh.vertices[face.indices[nextIndex]].GetPos()
+	var prevVertex = mesh.vertices[face.indices[prevIndex]].GetPos()
+
+	var subFaceNormal = Cross3f(Sub3f(nextVertex, startPos), Sub3f(prevVertex, startPos))
+
+	if Dot3f(subFaceNormal, subFaceNormal) > 0.000001 {
+		newFaces = append(newFaces, MeshFace{
+			[]uint32{face.indices[prevIndex], face.indices[index], face.indices[nextIndex]},
+		})
+	}
+
+	var nextFaces = make([]uint32, index)
+
+	for i := 0; i < index; i++ {
+		nextFaces[i] = face.indices[i]
+	}
+
+	nextFaces = append(nextFaces, face.indices[index+1:len(face.indices)]...)
+
+	face.indices = nextFaces
+
+	return newFaces
+}
+
+func TriangulateFace(mesh *Mesh, face *MeshFace, newFaces []MeshFace, normal *Vector3) []MeshFace {
+	var currentIndex = 0
+
+	for len(face.indices) > 3 {
+		if CanRemoveTriangleAtVertex(mesh, face, currentIndex, normal) {
+			newFaces = RemoveTriangle(mesh, face, currentIndex, newFaces)
+			currentIndex = (currentIndex + 1) % len(face.indices)
+		} else {
+			currentIndex = (currentIndex + 1) % len(face.indices)
+		}
+	}
+
+	newFaces = append(newFaces, *face)
+
+	return newFaces
+}
+
 func Triangulate(mesh *Mesh) *Mesh {
 	var result Mesh
 
 	result.vertices = mesh.vertices
 
-	for _, face := range mesh.faces {
-		for i := 2; i < len(face.indices); i = i + 1 {
-			result.faces = append(result.faces, MeshFace{[]uint32{
-				face.indices[0],
-				face.indices[i-1],
-				face.indices[i],
-			}})
-		}
+	for faceIndex, face := range mesh.faces {
+		var normal = CalculateNormal(mesh, faceIndex)
+		result.faces = TriangulateFace(mesh, &face, result.faces, &normal)
 	}
 
 	return &result

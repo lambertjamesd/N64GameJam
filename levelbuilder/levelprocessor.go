@@ -102,7 +102,7 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 					mesh = RemoveDuplicates(mesh)
 					mesh = FlipZ(mesh)
 
-					var dissolved = LimitedDissolve(mesh)
+					// mesh = LimitedDissolve(mesh)
 
 					mesh = Triangulate(mesh)
 
@@ -116,7 +116,7 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 					mesh = TransformMesh(mesh, ApplyLighting(0.25, lx, ly, lz))
 
 					debug_mesh, _ := os.OpenFile(filepath.Join(filepath.Dir(outputFile), fmt.Sprintf("_level_%s_geo_%d_%d_%d.ply", levelName, x, y, material)), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
-					dissolved.WritePly(debug_mesh)
+					mesh.WritePly(debug_mesh)
 					defer debug_mesh.Close()
 
 					var gfxName = WriteMeshToC(outputGeo, mesh, fmt.Sprintf("_level_%s_geo_%d_%d_%d", levelName, x, y, material), writeColorVertex)

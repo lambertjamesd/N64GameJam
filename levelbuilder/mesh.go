@@ -21,24 +21,33 @@ func (vertex *MeshVertex) GetPos() Vector3 {
 }
 
 func CalculateNormal(mesh *Mesh, faceIndex int) Vector3 {
+	var result = Vector3{}
 	var face = mesh.faces[faceIndex]
-	var a = mesh.vertices[face.indices[0]].GetPos()
-	var b = mesh.vertices[face.indices[1]].GetPos()
-	var c = mesh.vertices[face.indices[2]].GetPos()
+	var origin = mesh.vertices[face.indices[0]].GetPos()
 
-	var dirA = Vector3{
-		b.X - a.X,
-		b.Y - a.Y,
-		b.Z - a.Z,
+	for i := 1; i+1 < len(face.indices); i++ {
+		var p1 = mesh.vertices[face.indices[i]].GetPos()
+		var p2 = mesh.vertices[face.indices[i+1]].GetPos()
+
+		var dirA = Vector3{
+			p1.X - origin.X,
+			p1.Y - origin.Y,
+			p1.Z - origin.Z,
+		}
+
+		var dirB = Vector3{
+			p2.X - origin.X,
+			p2.Y - origin.Y,
+			p2.Z - origin.Z,
+		}
+
+		var faceCross = Cross3f(dirA, dirB)
+
+		result.X = result.X + faceCross.X
+		result.Y = result.Y + faceCross.Y
+		result.Z = result.Z + faceCross.Z
 	}
 
-	var dirB = Vector3{
-		c.X - a.X,
-		c.Y - a.Y,
-		c.Z - a.Z,
-	}
-
-	var result = Cross3f(dirA, dirB)
 	Normalize3f(&result.X, &result.Y, &result.Z)
 	return result
 }
