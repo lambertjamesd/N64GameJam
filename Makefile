@@ -37,6 +37,10 @@ src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
 	@mkdir -p $(@D)
 	levelbuilder/levelbuilder level $* $< $@
 
+build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA)
+	@mkdir -p build/spec
+	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs build/spec/level_include $(LEVELS)
+
 COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
 
@@ -91,6 +95,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/input/inputfocus.c  \
 	src/level/level.c	\
 	src/levels/levels.c \
+	src/levelthemes/allthemes.c	\
 	src/levelthemes/alienworld/theme.c	\
 	src/math/basictransform.c   	\
 	src/math/mathf.c   	\
@@ -143,6 +148,8 @@ default:	$(TARGETS)
 -include $(DEPS)
 
 include $(COMMONRULES)
+
+spec: build/spec/level_segs build/spec/level_include
 
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)

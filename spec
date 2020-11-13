@@ -24,47 +24,7 @@ beginseg
 	include "src/graphics/init.o"
 endseg
 
-beginseg
-	name "debuglevel"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/debug/geo.o"
-endseg
-
-beginseg
-	name "cadet_intro"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/cadet_intro/geo.o"
-endseg
-
-beginseg
-	name "robot_intro"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/robot_intro/geo.o"
-endseg
-
-beginseg
-	name "switch_tutorial"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/switch_tutorial/geo.o"
-endseg
-
-beginseg
-	name "robot_platform"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/robot_platform/geo.o"
-endseg
-
-beginseg
-	name "lava_platform"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/lava_platform/geo.o"
-endseg
+#include "build/spec/level_segs"
 
 beginseg
 	name "alienworld"
@@ -107,12 +67,7 @@ beginwave
 	name "game"
 	include "code"
 	include "static"
-	include "debuglevel"
-	include "cadet_intro"
-	include "robot_intro"
-	include "switch_tutorial"
-	include "lava_platform"
-	include "robot_platform"
+#include "build/spec/level_include"
 	include "alienworld"
 	include "table"
 	include "bank"

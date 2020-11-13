@@ -19,6 +19,7 @@ struct LevelDefinition* gLoadedLevel;
 static CleanupFunction* gCleanupFn; 
 static void** gCleanupParam;
 static int gCleanupCount;
+int gCurrentLevel;
 
 void levelExpand(struct LevelDefinition* levelDef) {
     /////////////////////
