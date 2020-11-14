@@ -14,8 +14,10 @@ const MAX_INT16 = 32767
 const MIN_INT8 = -128
 const MAX_INT8 = 127
 
+const WORLD_SCALE = 16
+
 func floatToVertexCoord(input float32) int16 {
-	var scaled = math.Round(float64(input * 256))
+	var scaled = math.Round(float64(input * WORLD_SCALE))
 
 	if scaled > MAX_INT16 {
 		scaled = MAX_INT16

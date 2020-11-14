@@ -60,11 +60,11 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     switch (type) {
         case PuzzleSwitchTypeLarge:
             collider = &gLargeSwitchCollider;
-            triggerMask = CollisionLayersLargeSwitch;
+            triggerMask = CollisionLayersRobotSwitch;
             break;
         default:
             collider = &gSmallSwitchCollider;
-            triggerMask = CollisionLayersSmallSwitch;
+            triggerMask = CollisionLayersMutualSwitch;
             break;
     }
     

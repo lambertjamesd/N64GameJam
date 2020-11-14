@@ -14,13 +14,55 @@
 #include "src/puzzle/movingplatform.h"
 #include "src/puzzle/entranceexit.h"
 #include "src/effects/shadow.h"
+#include "src/time/time.h"
+#include "src/input/inputfocus.h"
+#include "src/input/controller.h"
+#include "src/levels/levels.h"
 
 struct LevelDefinition* gLoadedLevel;
+
+#define LEVEL_HAS_CADET 1
+#define LEVEL_HAS_ROBOT 2
 
 static CleanupFunction* gCleanupFn; 
 static void** gCleanupParam;
 static int gCleanupCount;
+int gLevelFlags;
+struct TimeUpdateListener gLevelUpdateListener;
 int gCurrentLevel;
+int gNextLevel;
+
+void levelNext() {
+    if (gCurrentLevel + 1 < _level_group_all_levels_count) {
+        gNextLevel = gCurrentLevel + 1;
+    }
+}
+
+void levelPrev() {
+    if (gCurrentLevel > 0) {
+        gNextLevel = gCurrentLevel - 1;
+    }
+}
+
+void levelUpdate(void* data) {
+    if ((gLevelFlags & LEVEL_HAS_CADET) && (gLevelFlags & LEVEL_HAS_ROBOT) && getButtonDown(0, L_TRIG | Z_TRIG)) {
+        if (gInputMask & InputMaskRobot) {
+            gInputMask = INPUT_MASK_CADET;
+        } else {
+            gInputMask = INPUT_MASK_ROBOT;
+        }
+    }
+
+    if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
+        levelNext();
+    }
+    
+    if (getButtonDown(0, R_JPAD)) {
+        levelNext();
+    } else if (getButtonDown(0, L_JPAD)) {
+        levelPrev();
+    }
+}
 
 void levelExpand(struct LevelDefinition* levelDef) {
     /////////////////////
@@ -147,13 +189,21 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
     collisionSceneUseGrid(levelDef->levelData->collision);
     
+    gLevelFlags = 0;
+
+    gLevelFlags |= LEVEL_HAS_CADET;
     cameraInit(&gScene.camera);
-    robotReset(&levelDef->levelData->robotStart);
     cadetReset(&levelDef->levelData->cadetStart);
     entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
-    entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
+
+    if (levelDef->levelData->robotStart.z < 0.5 && levelDef->levelData->robotStart.x > -0.5) {
+        gLevelFlags |= LEVEL_HAS_ROBOT;
+        robotReset(&levelDef->levelData->robotStart);
+        entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
+    }
 
     levelExpand(levelDef);
+    timeAddListener(&gLevelUpdateListener, levelUpdate, 0);
 
     gLoadedLevel = levelDef;
 

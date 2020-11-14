@@ -134,14 +134,6 @@ void robotUpdate(void* robotPtr) {
             robotAttack(robot);
         }
     }
-
-    if (getButtonDown(0, L_TRIG | Z_TRIG)) {
-        if (gInputMask & InputMaskRobot) {
-            gInputMask = INPUT_MASK_CADET;
-        } else {
-            gInputMask = INPUT_MASK_ROBOT;
-        }
-    }
 }
 
 void robotReset(struct Vector3* startLocation) {
@@ -173,8 +165,8 @@ void robotInit() {
 
     gRobot.actor.collisionMask = 
         CollisionLayersGeometry | 
-        CollisionLayersLargeSwitch |
-        CollisionLayersSmallSwitch |
+        CollisionLayersRobotSwitch |
+        CollisionLayersMutualSwitch |
         CollisionLayersSwamp |
         CollisionLayersKillPlane;
 

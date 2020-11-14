@@ -173,7 +173,8 @@ void cadetInit() {
     gCadet.actor.collisionMask = 
         CollisionLayersGeometry | 
         CollisionLayersRobot | 
-        CollisionLayersSmallSwitch |
+        CollisionLayersMutualSwitch |
+        CollisionLayersCadetSwitch |
         CollisionLayersKillPlane;
     cadetReset(&gZeroVec);
 }

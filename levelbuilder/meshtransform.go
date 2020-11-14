@@ -20,9 +20,9 @@ func TransformMesh(input *Mesh, transform VertexTransform) *Mesh {
 }
 
 func RoundToN64(input *MeshVertex) {
-	input.x = float32(math.Round(float64(input.x)*256) / 256)
-	input.y = float32(math.Round(float64(input.y)*256) / 256)
-	input.z = float32(math.Round(float64(input.z)*256) / 256)
+	input.x = float32(math.Round(float64(input.x)*WORLD_SCALE) / WORLD_SCALE)
+	input.y = float32(math.Round(float64(input.y)*WORLD_SCALE) / WORLD_SCALE)
+	input.z = float32(math.Round(float64(input.z)*WORLD_SCALE) / WORLD_SCALE)
 
 	input.nx = float32(math.Round(float64(input.nx)*128) / 128)
 	input.ny = float32(math.Round(float64(input.ny)*128) / 128)

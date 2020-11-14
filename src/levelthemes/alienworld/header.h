@@ -23,6 +23,7 @@ extern Gfx _alien_moving_platform_material[];
 
 extern Gfx _entrance_exit_material_revert[];
 extern Gfx _entrance_exit_material[];
+extern Gfx _entrance_exit_off_material[];
 extern Gfx _entrance_exit_mesh_tri_0[];
 
 extern Gfx _alien_clearScreen[];

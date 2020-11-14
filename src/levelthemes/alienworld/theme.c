@@ -19,6 +19,7 @@ Gfx* _gAlienWorldDynamicMaterials[] = {
     _alien_breakable_material,
     _alien_moving_platform_material,
     _entrance_exit_material,
+    _entrance_exit_off_material,
 };
 
 Gfx* _gAlienWorldDynamicMaterialCleanup[] = {
@@ -26,6 +27,7 @@ Gfx* _gAlienWorldDynamicMaterialCleanup[] = {
     0,
     0,
     0,
+    _entrance_exit_material_revert,
     _entrance_exit_material_revert,
 };
 

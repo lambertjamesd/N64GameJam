@@ -24,6 +24,7 @@ enum DynamicMaterialType {
     DynamicMaterialTypeBreakable,
 	DynamicMaterialTypeMovingPlatform,
 	DynamicMaterialTypeEntranceExit,
+	DynamicMaterialTypeEntranceExitOff,
 };
 
 enum TransparentMaterialType {

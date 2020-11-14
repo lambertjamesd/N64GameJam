@@ -115,7 +115,7 @@ void createGfxTask(GFXInfo *i) {
     struct BasicTransform cameraInverse;
     transformInvert(&gScene.camera.transform, &cameraInverse);
     transformToMatrixL(&cameraInverse, 1.0f, &dynamicp->viewing);
-    guScale(&dynamicp->worldScale, 1.0f / 256.0f, 1.0f / 256.0f, 1.0f / 256.0f);
+    guScale(&dynamicp->worldScale, 1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f);
 
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 

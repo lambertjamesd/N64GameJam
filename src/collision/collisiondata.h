@@ -15,11 +15,12 @@
 enum CollisionLayers {
     CollisionLayersGeometry = 1 << 0,
     CollisionLayersRobot = 1 << 1,
-    CollisionLayersLargeSwitch = 1 << 2,
-    CollisionLayersSmallSwitch = 1 << 3,
-    CollisionLayersBreakable = 1 << 4,
-    CollisionLayersSwamp = 1 << 5,
-    CollisionLayersKillPlane = 1 << 6,
+    CollisionLayersRobotSwitch = 1 << 2,
+    CollisionLayersMutualSwitch = 1 << 3,
+    CollisionLayersCadetSwitch = 1 << 4,
+    CollisionLayersBreakable = 1 << 5,
+    CollisionLayersSwamp = 1 << 6,
+    CollisionLayersKillPlane = 1 << 7,
 };
 
 struct ContactPoint {

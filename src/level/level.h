@@ -68,6 +68,7 @@ struct LevelDefinition {
 
 extern struct LevelDefinition* gLoadedLevel;
 extern int gCurrentLevel;
+extern int gNextLevel;
 
 void levelLoad(struct LevelDefinition* levelDef);
 

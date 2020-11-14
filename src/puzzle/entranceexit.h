@@ -9,7 +9,9 @@
 struct EntranceExit {
     struct BasicTransform transform;
     struct CollisionTransformedCollider collider;
+    struct CollisionTransformedCollider exitTrigger;
     struct TimeUpdateListener updateListener;
+    int isActive;
 };
 
 void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCadet);

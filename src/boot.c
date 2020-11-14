@@ -103,7 +103,6 @@ static void gameEntryPoint(void *argv)
 {
     u32         drawbuffer = 0;
     u32         pendingGFX = 0;
-    int         nextLevel = 0;
     GFXMsg      *msg = NULL;
 
     initGame();
@@ -114,19 +113,13 @@ static void gameEntryPoint(void *argv)
 
         switch (msg->gen.type) 
         {
-            case (OS_SC_RETRACE_MSG):       
-                if (getButtonDown(0, R_JPAD) && gCurrentLevel + 1 < _level_group_all_levels_count) {
-                    nextLevel = gCurrentLevel + 1;
-                } else if (getButtonDown(0, L_JPAD) && gCurrentLevel > 0) {
-                    nextLevel = gCurrentLevel - 1;
-                }
-
-                if (nextLevel != gCurrentLevel) {
+            case (OS_SC_RETRACE_MSG):   
+                if (gNextLevel != gCurrentLevel) {
                     controllersReadData();
 
                     if (pendingGFX == 0) {
-                        levelLoad(&_level_group_all_levels[nextLevel]);
-                        gCurrentLevel = nextLevel;
+                        levelLoad(&_level_group_all_levels[gNextLevel]);
+                        gCurrentLevel = gNextLevel;
                     }
                 } else {
                     if (pendingGFX < 2) 
@@ -209,6 +202,6 @@ static void initGame(void)
     graphicsInit(); 
     audioInit();
     playerSoundsInit();
-    levelLoad(&_level_group_all_levels[5]);
+    levelLoad(&_level_group_all_levels[0]);
 }
 
