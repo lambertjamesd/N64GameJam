@@ -7,7 +7,7 @@
 
 struct RenderScene gScene;
 
-#define FOLLOW_DISTANCE_START 1
+#define FOLLOW_DISTANCE_START 0
 #define CAMERA_ROTATE_STEP (M_PI * 0.25f)
 
 float gFollowDistances[] = {
@@ -73,9 +73,9 @@ void cameraUpdate(void* cameraPtr) {
 }
 
 
-void cameraInit(struct SceneCamera* camera) {
+void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget) {
     quatAxisAngle(&gRight, -M_PI / 3.0f, &camera->transform.rotation);
-    camera->targetPosition = camera->centerPosition = gZeroVec;
+    camera->targetPosition = camera->centerPosition = *startTarget;
     camera->transform.scale = 1.0f;
     camera->followDistance = gFollowDistances[FOLLOW_DISTANCE_START];
     camera->currentPitch = gFollowPitches[FOLLOW_DISTANCE_START];

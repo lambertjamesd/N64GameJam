@@ -10,8 +10,8 @@ struct CollisionCollider gExitTriggerCollider = {
     ColliderTypeBox,
     0,
     .box = {
-        {-0.8f, 0.0f, -0.8f},
-        {0.8f, 0.5f, 0.8f},
+        {-0.1f, 0.0f, -0.1f},
+        {0.1f, 0.5f, 0.1f},
     }
 };
 

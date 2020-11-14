@@ -4,7 +4,11 @@
 
 #include "collisionscene.h"
 
-#define SPHERE_ACTOR_IS_GROUNDED  (1 << 0)
+#define SPHERE_ACTOR_IS_GROUNDED    (1 << 0)
+#define SPHERE_ACTOR_FLAG_0         (1 << 1)
+#define SPHERE_ACTOR_FLAG_1         (1 << 2)
+#define SPHERE_ACTOR_FLAG_2         (1 << 3)
+#define SPHERE_ACTOR_FLAG_3         (1 << 4)
 
 struct SphereActor {
     struct Vector3 velocity;

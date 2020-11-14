@@ -23,7 +23,7 @@ Gfx _alienFloor_material[] = {
     gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, TEXEL0, 0, SHADE, 0, 0, 0, 0, 1),
 	gsDPPipeSync(),
-	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsSPTexture(32535, 32535, 0, 0, 1),
 	gsDPTileSync(),
 	gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_8b, 32, _alienFloorLum_i4),
 	gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_8b, 4, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0),

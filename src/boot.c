@@ -194,7 +194,7 @@ static void initGame(void)
 
     timeUpdate(osGetTime());
     fastMallocReset();
-    cameraInit(&gScene.camera);
+    cameraInit(&gScene.camera, &gZeroVec);
     cadetInit();
     robotInit();
     controllersInit();

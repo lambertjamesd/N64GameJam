@@ -86,6 +86,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
 	src/effects/shadow.c	\
+	src/effects/teleport.c	\
 	src/graphics/dynamic.c	\
 	src/graphics/graphics.c	\
 	src/graphics/levelgraphics.c	\

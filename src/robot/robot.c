@@ -32,9 +32,20 @@ void robotCalcBB(struct Robot* robot, struct CollisionBox* box) {
 }
 
 void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
+    struct Robot* robot = (struct Robot*)data->data;
+
+    if (robot->actor.stateFlags & ROBOT_IS_INVISIBLE) {
+        return;
+    }
+
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
 
-    transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
+    if (robot->teleport.flags & TELEPORT_FLAG_ACTIVE) {
+        teleportEffectCreateTransform(&robot->teleport, &robot->transform, nextTransfrom);
+    } else {
+        transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
+    }
+
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, _robot_mesh);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
@@ -104,6 +115,25 @@ void robotAttack(struct Robot* robot) {
     collisionSceneCollideSphere(&attackPos, ROBOT_ATTACK_RADIUS, CollisionLayersBreakable);
 }
 
+void robotIdle(struct Robot* robot) {
+
+}
+
+void robotTeleportIn(struct Robot* robot) {
+    if (!teleportEffectUpdate(&gRobot.teleport)) {
+        robot->state = robotWalk;
+        robot->actor.stateFlags &= ~ROBOT_IS_CUTSCENE;
+    }
+}
+
+void robotTeleportOut(struct Robot* robot) {
+    if (!teleportEffectUpdate(&gRobot.teleport)) {
+        robot->state = robotIdle;
+        robot->actor.stateFlags &= ~ROBOT_IS_CUTSCENE;
+        robot->actor.stateFlags |= ROBOT_IS_INVISIBLE;
+    }
+}
+
 void robotUpdate(void* robotPtr) {
     struct Robot* robot = (struct Robot*)robotPtr;
 
@@ -124,12 +154,6 @@ void robotUpdate(void* robotPtr) {
 
 
     if (gInputMask & InputMaskRobot) {
-        gScene.camera.targetPosition = robot->transform.position;
-
-        if (gScene.camera.targetPosition.y < 0.0f) {
-            gScene.camera.targetPosition.y = 0.0f;
-        }
-
         if (getButtonDown(0, B_BUTTON)) {
             robotAttack(robot);
         }
@@ -141,7 +165,7 @@ void robotReset(struct Vector3* startLocation) {
     transformIdentity(&gRobot.transform);
     
     gRobot.transform.position = *startLocation;
-    gRobot.state = robotWalk;
+    gRobot.state = robotTeleportIn;
 
     gRobot.actor.radius = ROBOT_RADIUS;
     gRobot.actor.velocity = gZeroVec;
@@ -151,6 +175,8 @@ void robotReset(struct Vector3* startLocation) {
     gRobot.actor.relativeToAnchor = gZeroVec;
     gRobot.rotation = gUp2;
     gRobot.attackTimer = 0.0f;
+
+    teleportEffectStart(&gRobot.teleport, 1);
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED);
 
@@ -176,4 +202,9 @@ void robotInit() {
     gRobot.shadow.params = &gRobotShadowParams;
 
     robotReset(&gZeroVec);
+}
+
+void robotFinishLevel(struct Robot* robot) {
+    teleportEffectStart(&gRobot.teleport, 0);
+    robot->state = robotTeleportOut;
 }

@@ -23,6 +23,8 @@ struct LevelDefinition* gLoadedLevel;
 
 #define LEVEL_HAS_CADET 1
 #define LEVEL_HAS_ROBOT 2
+#define LEVEL_INTRO_CUTSCENE 4
+#define LEVEL_EXIT_CUTSCENE 8
 
 static CleanupFunction* gCleanupFn; 
 static void** gCleanupParam;
@@ -45,16 +47,46 @@ void levelPrev() {
 }
 
 void levelUpdate(void* data) {
-    if ((gLevelFlags & LEVEL_HAS_CADET) && (gLevelFlags & LEVEL_HAS_ROBOT) && getButtonDown(0, L_TRIG | Z_TRIG)) {
-        if (gInputMask & InputMaskRobot) {
-            gInputMask = INPUT_MASK_CADET;
-        } else {
+    if (gInputMask & InputMaskCadet) {
+        gScene.camera.targetPosition = gCadet.transform.position;
+
+        if (gScene.camera.targetPosition.y < 0.0f) {
+            gScene.camera.targetPosition.y = 0.0f;
+        }
+
+        if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
             gInputMask = INPUT_MASK_ROBOT;
+        }
+    } else if (gInputMask & InputMaskRobot) {
+        gScene.camera.targetPosition = gRobot.transform.position;
+
+        if (gScene.camera.targetPosition.y < 0.0f) {
+            gScene.camera.targetPosition.y = 0.0f;
+        }
+
+        if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
+            gInputMask = INPUT_MASK_CADET;
+        }
+    }
+
+    if (gLevelFlags & LEVEL_INTRO_CUTSCENE) {
+        if (!(gCadet.actor.stateFlags & CADET_IS_CUTSCENE)) {
+            gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
+            gInputMask = INPUT_MASK_CADET;
+            gScene.camera.followDistanceStep = 1;
         }
     }
 
     if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
-        levelNext();
+        cadetFinishLevel(&gCadet);
+        gLevelFlags |= LEVEL_EXIT_CUTSCENE;
+    }
+
+    if (gLevelFlags & LEVEL_EXIT_CUTSCENE) {
+        if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
+            levelNext();
+            gLevelFlags &= ~LEVEL_EXIT_CUTSCENE;
+        }
     }
     
     if (getButtonDown(0, R_JPAD)) {
@@ -189,10 +221,13 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
     collisionSceneUseGrid(levelDef->levelData->collision);
     
-    gLevelFlags = 0;
+    gLevelFlags = LEVEL_INTRO_CUTSCENE;
+
+    gInputMask = INPUT_MASK_CADET;
+    gInputMask = 0;
 
     gLevelFlags |= LEVEL_HAS_CADET;
-    cameraInit(&gScene.camera);
+    cameraInit(&gScene.camera, &levelDef->levelData->cadetStart);
     cadetReset(&levelDef->levelData->cadetStart);
     entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
 

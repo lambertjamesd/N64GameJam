@@ -43,3 +43,7 @@ float ceilf(float input) {
         return result + 1;
     }
 }
+
+float mathfBounceBackLerp(float t) {
+    return -t + t * t;
+}

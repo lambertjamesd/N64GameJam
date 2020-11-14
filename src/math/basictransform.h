@@ -13,6 +13,7 @@ struct BasicTransform {
     float scale;
 };
 
+// result must not equal a nor b 
 void transformConcat(struct BasicTransform* a, struct BasicTransform* b, struct BasicTransform* result);
 void transformPoint(struct BasicTransform* trans, struct Vector3* in, struct Vector3* out);
 void transformPointInverse(struct BasicTransform* trans, struct Vector3* in, struct Vector3* out);
