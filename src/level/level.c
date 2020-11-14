@@ -33,13 +33,13 @@ int gCurrentLevel;
 int gNextLevel;
 
 void levelNext() {
-    if (gCurrentLevel + 1 < _level_group_all_levels_count) {
+    if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
         gNextLevel = gCurrentLevel + 1;
     }
 }
 
 void levelPrev() {
-    if (gCurrentLevel > 0) {
+    if (gNextLevel == gCurrentLevel && gCurrentLevel > 0) {
         gNextLevel = gCurrentLevel - 1;
     }
 }

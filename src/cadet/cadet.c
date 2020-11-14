@@ -16,6 +16,8 @@
 #define MAX_SHADOW_TRANS 168.0f
 #define MIN_SHADOW_TRANS 94.0f
 
+#define COYOTE_TIME 0.1f
+
 struct DropShadowParams gCadetShadowParams = {
     MIN_SHADOW_SCALE,
     MAX_SHADOW_SCALE,
@@ -79,12 +81,20 @@ void cadetMove(struct Cadet* cadet) {
 void cadetWalk(struct Cadet* cadet) {
     cadetMove(cadet);
 
-    if (!(cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED)) {
+    int isGrounded = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED);
+    if (!isGrounded && cadet->coyoteTimer <= 0.0f) {
         cadet->state = cadetFreefall;
     } else {
+        if (isGrounded) {
+            cadet->coyoteTimer = COYOTE_TIME;
+        } else {
+            cadet->coyoteTimer -= gTimeDelta;
+        }
+
         if ((gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON)) {
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
+            cadet->actor.stateFlags |= CADET_IS_JUMPING;
 
             audioPlaySound(
                 gPlayerSoundIds[PlayerSoundsJump],
@@ -94,6 +104,16 @@ void cadetWalk(struct Cadet* cadet) {
                 10
             );
         }
+
+        if (cadet->actor.velocity.x != 0.0f || cadet->actor.velocity.z != 0.0f) {
+            cadet->rotation.x = cadet->actor.velocity.x;
+            cadet->rotation.y = cadet->actor.velocity.z;
+            vector2Normalize(&cadet->rotation, &cadet->rotation);
+            struct Vector2 dir;
+            dir.x = cadet->rotation.y;
+            dir.y = cadet->rotation.x;
+            quatAxisComplex(&gUp, &dir, &cadet->transform.rotation);
+        }
     }
 }
 
@@ -102,7 +122,7 @@ void cadetFreefall(struct Cadet* cadet) {
 
     cadetMove(cadet);
 
-    if (wasMovingUp && cadet->actor.velocity.y <= 0.0f) {
+    if ((cadet->actor.stateFlags & CADET_IS_JUMPING) && wasMovingUp && cadet->actor.velocity.y <= 0.0f) {
         audioPlaySound(
             gPlayerSoundIds[PlayerSoundsJumpPeak],
             0.5f,

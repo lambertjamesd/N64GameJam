@@ -5,12 +5,13 @@
 #include "src/collision/sphereactor.h"
 #include "src/math/basictransform.h"
 #include "src/time/time.h"
+#include "src/math/vector2.h"
 #include "src/effects/shadow.h"
 
 #define CADET_RADIUS    0.2f
 #define CADET_SPEED     2.5f
-#define CADET_ACCEL     24.0f
-#define CADET_AIR_ACCEL 8.0f
+#define CADET_ACCEL     12.0f
+#define CADET_AIR_ACCEL 6.0f
 
 #define CADET_JUMP_IMPULSE  4.0f
 #define CADET_JUMP_ACCEL    4.0f
@@ -26,6 +27,8 @@ struct Cadet {
     struct SphereActor actor;
     CadetState state;
     struct TimeUpdateListener updateListener;
+    struct Vector2 rotation;
+    float coyoteTimer;
     struct DropShadow shadow;
 };
 
