@@ -11,7 +11,7 @@
 #define CADET_RADIUS    0.2f
 #define CADET_SPEED     2.5f
 #define CADET_ACCEL     12.0f
-#define CADET_AIR_ACCEL 6.0f
+#define CADET_AIR_ACCEL 3.0f
 
 #define CADET_JUMP_IMPULSE  4.0f
 #define CADET_JUMP_ACCEL    4.0f

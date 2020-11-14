@@ -42,6 +42,18 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 
+void cadetUpdateRotation(struct Cadet* cadet) {
+    if (cadet->actor.velocity.x != 0.0f || cadet->actor.velocity.z != 0.0f) {
+        cadet->rotation.x = cadet->actor.velocity.x;
+        cadet->rotation.y = cadet->actor.velocity.z;
+        vector2Normalize(&cadet->rotation, &cadet->rotation);
+        struct Vector2 dir;
+        dir.x = cadet->rotation.y;
+        dir.y = cadet->rotation.x;
+        quatAxisComplex(&gUp, &dir, &cadet->transform.rotation);
+    }
+}
+
 void cadetMove(struct Cadet* cadet) {
     struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
@@ -105,15 +117,7 @@ void cadetWalk(struct Cadet* cadet) {
             );
         }
 
-        if (cadet->actor.velocity.x != 0.0f || cadet->actor.velocity.z != 0.0f) {
-            cadet->rotation.x = cadet->actor.velocity.x;
-            cadet->rotation.y = cadet->actor.velocity.z;
-            vector2Normalize(&cadet->rotation, &cadet->rotation);
-            struct Vector2 dir;
-            dir.x = cadet->rotation.y;
-            dir.y = cadet->rotation.x;
-            quatAxisComplex(&gUp, &dir, &cadet->transform.rotation);
-        }
+        cadetUpdateRotation(cadet);
     }
 }
 
@@ -131,6 +135,8 @@ void cadetFreefall(struct Cadet* cadet) {
             10
         );
     }
+
+    cadetUpdateRotation(cadet);
 
     if (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) {
         audioPlaySound(
