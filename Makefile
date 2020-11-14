@@ -41,7 +41,7 @@ build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/le
 	@mkdir -p build/spec
 	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs build/spec/level_include $(LEVELS)
 
-COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block
+COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
 
 src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
@@ -108,6 +108,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/robot/geo/model.c \
 	src/puzzle/breakable.c  \
 	src/puzzle/door.c  \
+	src/puzzle/entranceexit.c  \
 	src/puzzle/movingplatform.c  \
 	src/puzzle/signal.c  \
 	src/puzzle/switch.c  \

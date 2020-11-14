@@ -34,6 +34,7 @@ struct RenderScene {
     struct DynamicActorGroup dynamicActors;
     struct DynamicActorGroup transparentActors;
     Gfx* transparentMaterials[MAX_MATERIAL_GROUPS];
+    Gfx* transparentMaterialCleanup[MAX_MATERIAL_GROUPS];
     struct LevelTileGrid* levelGrid;
     struct LevelThemeGraphics* theme;
 };

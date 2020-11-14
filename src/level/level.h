@@ -39,6 +39,8 @@ struct LevelData {
     struct LevelCollisionGrid* collision;
     struct Vector3 cadetStart;
     struct Vector3 robotStart;
+    struct Vector3 cadetFinish;
+    struct Vector3 robotFinish;
     struct LevelSwitchDef* switches;
     int switchCount;
     struct LevelDoorDef* doors;

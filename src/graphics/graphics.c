@@ -138,12 +138,12 @@ void createGfxTask(GFXInfo *i) {
     state.primColor = 0;
 
     if (gCurrentLevelTheme) {
-        dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCount);
+        dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);
     } else {
-        dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0);
+        dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0, 0);
     }
 
-    dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, MAX_MATERIAL_GROUPS);
+    dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
 
     glistp = state.dl;
 

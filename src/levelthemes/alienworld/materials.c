@@ -13,6 +13,7 @@ Gfx _alienWorldTexAlign[] = {gsSPEndDisplayList()};
 #include "geo/movingplatform.inc.c"
 #include "geo/rocksmall.inc.c"
 #include "geo/rockbig.inc.c"
+#include "geo/entranceexit.inc.c"
 #include "src/defs.h"
 
 Gfx _alienFloor_material[] = {

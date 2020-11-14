@@ -46,7 +46,7 @@ void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color);
 ActorId dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex);
 void dynamicActorRemoveFromGroup(struct DynamicActorGroup* group, ActorId* actorId);
 
-void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsState* state, Gfx** materials, int materialCount);
+void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsState* state, Gfx** materials, Gfx** materialCleanup, int materialCount);
 void dynamicActorGroupReset(struct DynamicActorGroup* group);
 
 #endif

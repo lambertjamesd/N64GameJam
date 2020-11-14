@@ -5,6 +5,7 @@
 #include "tunnel_block.inc.c"
 #include "ramp_block.inc.c"
 #include "stair_block.inc.c"
+#include "entrance_exit.inc.c"
 
 struct CollisionCollider gBasicCollisionBlock = {
     ColliderTypeBox,

@@ -45,6 +45,8 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 			nil,
 			0, 0,
 			0, 0,
+			0, 0,
+			0, 0,
 			nil,
 			nil,
 			nil,
@@ -75,6 +77,12 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 
 	result.RobotPosX = level.RobotPosX - float32(minX)
 	result.RobotPosY = level.RobotPosY - float32(minY)
+
+	result.PlayerFinishPosX = level.PlayerFinishPosX - float32(minX)
+	result.PlayerFinishPosY = level.PlayerFinishPosY - float32(minY)
+
+	result.RobotFinishPosX = level.RobotFinishPosX - float32(minX)
+	result.RobotFinishPosY = level.RobotFinishPosY - float32(minY)
 
 	return &result
 }
@@ -205,6 +213,15 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 
 	binary.Read(file, binary.LittleEndian, &result.RobotPosX)
 	binary.Read(file, binary.LittleEndian, &result.RobotPosY)
+
+	var prefabCount uint32
+	binary.Read(file, binary.LittleEndian, &prefabCount)
+
+	binary.Read(file, binary.LittleEndian, &result.PlayerFinishPosX)
+	binary.Read(file, binary.LittleEndian, &result.PlayerFinishPosY)
+
+	binary.Read(file, binary.LittleEndian, &result.RobotFinishPosX)
+	binary.Read(file, binary.LittleEndian, &result.RobotFinishPosY)
 
 	var trimmed = TrimLevel(&result)
 

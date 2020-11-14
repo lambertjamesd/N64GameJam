@@ -84,7 +84,7 @@ void dynamicActorRenderChain(struct DynamicActor* actor, struct GraphicsState* s
     }
 }
 
-void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsState* state, Gfx** materials, int materialCount) {
+void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsState* state, Gfx** materials, Gfx** materialCleanup, int materialCount) {
     int i;
 
     for (i = 0; i < materialCount && i < MAX_MATERIAL_GROUPS; ++i) {
@@ -94,6 +94,10 @@ void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsSta
             }
 
             dynamicActorRenderChain(group->actorByMaterial[i], state);
+
+            if (materialCleanup[i]) {
+                gSPDisplayList(state->dl++, materialCleanup[i]);
+            }
         }
     }
 

@@ -12,6 +12,7 @@
 #include "src/puzzle/door.h"
 #include "src/puzzle/breakable.h"
 #include "src/puzzle/movingplatform.h"
+#include "src/puzzle/entranceexit.h"
 #include "src/effects/shadow.h"
 
 struct LevelDefinition* gLoadedLevel;
@@ -149,6 +150,8 @@ void levelLoad(struct LevelDefinition* levelDef) {
     cameraInit(&gScene.camera);
     robotReset(&levelDef->levelData->robotStart);
     cadetReset(&levelDef->levelData->cadetStart);
+    entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
+    entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
 
     levelExpand(levelDef);
 

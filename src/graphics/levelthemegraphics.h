@@ -13,6 +13,7 @@ enum LevelThemeMeshes {
 	LevelThemeMeshesBreakPlatform,
 	LevelThemeMeshesBreakBarrier,
 	LevelThemeMeshesMovingPlatform,
+	LevelThemeMeshesEntranceExit,
 	LevelThemeMeshesCount,
 };
 
@@ -22,6 +23,7 @@ enum DynamicMaterialType {
     DynamicMaterialTypeDoor,
     DynamicMaterialTypeBreakable,
 	DynamicMaterialTypeMovingPlatform,
+	DynamicMaterialTypeEntranceExit,
 };
 
 enum TransparentMaterialType {
@@ -49,6 +51,7 @@ struct LevelThemeGraphics {
     Gfx** materials;
     int materialCount;
     Gfx** dynamicMaterials;
+    Gfx** dynamicMaterialCleanup;
     int dynamicMaterialCount;
 	Gfx* clear;
 	Gfx* themeMeshes[LevelThemeMeshesCount];

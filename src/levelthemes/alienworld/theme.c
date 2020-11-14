@@ -18,6 +18,15 @@ Gfx* _gAlienWorldDynamicMaterials[] = {
     _alien_puzzle_door_material,
     _alien_breakable_material,
     _alien_moving_platform_material,
+    _entrance_exit_material,
+};
+
+Gfx* _gAlienWorldDynamicMaterialCleanup[] = {
+    0,
+    0,
+    0,
+    0,
+    _entrance_exit_material_revert,
 };
 
 #define SCROLL_SPEED_X 0.3f
@@ -57,6 +66,7 @@ struct LevelThemeGraphics gAlienWorldLevelTheme = {
     _gAlienWorldMaterials,
     sizeof(_gAlienWorldMaterials) / sizeof(*_gAlienWorldMaterials),
     _gAlienWorldDynamicMaterials,
+    _gAlienWorldDynamicMaterialCleanup,
     sizeof(_gAlienWorldDynamicMaterials) / sizeof(*_gAlienWorldDynamicMaterials),
     _alien_clearScreen,
     {
@@ -68,6 +78,7 @@ struct LevelThemeGraphics gAlienWorldLevelTheme = {
         _alien_rock_small_tri,
         _alien_rock_big_tri,
         _alien_moving_platform_tri_0,
+        _entrance_exit_mesh_tri_0,
     },
     alienWorldAnimate,
 };

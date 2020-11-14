@@ -6,6 +6,7 @@
 #include "src/collision/levelcollisiongrid.h"
 
 extern struct CollisionCollider _solid_block_collider;
+extern struct CollisionCollider _entrance_exit_collider;
 
 extern struct LevelCollisionTile gCollideTileFloor;
 extern struct LevelCollisionTile gCollideHalfPlatform;

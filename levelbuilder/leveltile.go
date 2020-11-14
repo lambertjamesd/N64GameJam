@@ -95,14 +95,16 @@ type LevelPlatformSlotDef struct {
 }
 
 type LevelGrid struct {
-	Tiles                  [][]LevelTileSlot
-	PlayerPosX, PlayerPosY float32
-	RobotPosX, RobotPosY   float32
-	Switches               []LevelSwitchDef
-	Doors                  []LevelDoorDef
-	Breakables             []LevelBreakableDef
-	Platforms              []LevelPlatformDef
-	PlatformSlots          []LevelPlatformSlotDef
+	Tiles                              [][]LevelTileSlot
+	PlayerPosX, PlayerPosY             float32
+	RobotPosX, RobotPosY               float32
+	PlayerFinishPosX, PlayerFinishPosY float32
+	RobotFinishPosX, RobotFinishPosY   float32
+	Switches                           []LevelSwitchDef
+	Doors                              []LevelDoorDef
+	Breakables                         []LevelBreakableDef
+	Platforms                          []LevelPlatformDef
+	PlatformSlots                      []LevelPlatformSlotDef
 }
 
 func (level *LevelGrid) GetSize() (int, int) {
