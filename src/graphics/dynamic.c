@@ -1,6 +1,16 @@
 
 #include "dynamic.h"
 
+LookAt* graphicsStateNextLookat(struct GraphicsState* state) {
+    if (state->usedLookAt < state->lookAtCount) {
+        LookAt* result = &state->lookats[state->usedLookAt];
+        ++state->usedLookAt;
+        return result;
+    }
+
+    return 0;
+}
+
 Mtx* graphicsStateNextMtx(struct GraphicsState* state) {
     if (state->usedMatrices < state->matrixCount) {
         Mtx* result = &state->matrices[state->usedMatrices];

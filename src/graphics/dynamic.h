@@ -15,6 +15,9 @@ struct GraphicsState {
     int usedMatrices;
     int matrixCount;
     unsigned int primColor;
+    LookAt* lookats;
+    short usedLookAt;
+    short lookAtCount;
 };
 
 struct DynamicActor;
@@ -40,6 +43,7 @@ typedef int ActorId;
 
 #define ACTOR_ID_NONE -1
 
+LookAt* graphicsStateNextLookat(struct GraphicsState* state);
 Mtx* graphicsStateNextMtx(struct GraphicsState* state);
 void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color);
 

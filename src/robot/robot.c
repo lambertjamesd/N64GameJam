@@ -39,12 +39,29 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
     }
 
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
+    Mtx* reflectMatrix = graphicsStateNextMtx(state);
+
+    LookAt* nextLookat = graphicsStateNextLookat(state);
+
+    guLookAtReflect(reflectMatrix, nextLookat, 
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+    );
 
     if (robot->teleport.flags & TELEPORT_FLAG_ACTIVE) {
         teleportEffectCreateTransform(&robot->teleport, &robot->transform, nextTransfrom);
     } else {
         transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
     }
+
+    gSPLookAt(state->dl++, K0_TO_PHYS(nextLookat));
 
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, _robot_mesh);

@@ -10,6 +10,7 @@
 
 #define DYANAMIC_LIST_LEN 512
 #define DYNAMIC_MATRIX_COUNT 128
+#define LOOK_AT_COUNT   4
 
 typedef struct {
 	Mtx	projection;
@@ -18,6 +19,7 @@ typedef struct {
     Mtx worldScale;
 	Gfx	glist[DYANAMIC_LIST_LEN];
     Mtx dynamicActors[DYNAMIC_MATRIX_COUNT];
+    LookAt lookats[LOOK_AT_COUNT];
 } Dynamic;
 
 typedef union {    

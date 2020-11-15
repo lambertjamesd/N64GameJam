@@ -79,7 +79,10 @@ void levelUpdate(void* data) {
 
     if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
         cadetFinishLevel(&gCadet);
+        robotFinishLevel(&gRobot);
+        gScene.camera.followDistanceStep = 0;
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;
+        gInputMask = 0;
     }
 
     if (gLevelFlags & LEVEL_EXIT_CUTSCENE) {

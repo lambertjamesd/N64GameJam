@@ -136,6 +136,9 @@ void createGfxTask(GFXInfo *i) {
     state.usedMatrices = 0;
     state.matrixCount = DYNAMIC_MATRIX_COUNT;
     state.primColor = 0;
+    state.lookats = dynamicp->lookats;
+    state.usedLookAt = 0;
+    state.lookAtCount = LOOK_AT_COUNT;
 
     if (gCurrentLevelTheme) {
         dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);
