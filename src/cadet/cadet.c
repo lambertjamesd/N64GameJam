@@ -31,6 +31,7 @@ struct Cadet gCadet;
 void cadetWalk(struct Cadet* cadet);
 void cadetFreefall(struct Cadet* cadet);
 void cadetJump(struct Cadet* cadet);
+void cadetRespawn(struct Cadet* cadet);
 
 void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct Cadet* cadet = (struct Cadet*)data->data;
@@ -82,7 +83,7 @@ void cadetMove(struct Cadet* cadet) {
     cadet->accumTime += gTimeDelta;
 
     while (cadet->accumTime >= MIN_DELTA_TIME) {
-        cadet->actor.velocity.y += GLOBAL_GRAVITY * MIN_DELTA_TIME;
+        cadet->actor.velocity.y += cadet->gravity * MIN_DELTA_TIME;
         struct Vector3 targetVelocity;
 
         float speed = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? CADET_SPEED : CADET_AIR_SPEED;
@@ -104,7 +105,13 @@ void cadetMove(struct Cadet* cadet) {
         cadet->accumTime -= MIN_DELTA_TIME;
     }
 
-    sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
+    enum SphereActorCollideResult colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
+
+    if (colliderResult == SphereActorCollideResultKill) {
+        teleportEffectStart(&cadet->teleport, TELEPORT_FLAG_QUICK);
+        cadet->state = cadetRespawn;
+        cadet->actor.velocity = gZeroVec;
+    }
 }
 
 void cadetWalk(struct Cadet* cadet) {
@@ -170,8 +177,9 @@ void cadetFreefall(struct Cadet* cadet) {
 
 void cadetJump(struct Cadet* cadet) {
     if ((gInputMask & InputMaskCadet) && getButton(0, A_BUTTON)) {
-        cadet->actor.velocity.y += CADET_JUMP_ACCEL * gTimeDelta;
+        cadet->gravity = CADET_JUMP_ACCEL + GLOBAL_GRAVITY;
     } else {
+        cadet->gravity = GLOBAL_GRAVITY;
         cadet->state = cadetFreefall;
     }
 
@@ -197,6 +205,17 @@ void cadetTeleportOut(struct Cadet* cadet) {
     }
 }
 
+void cadetRespawn(struct Cadet* cadet) {
+    if (!teleportEffectUpdate(&cadet->teleport)) {
+        cadet->state = cadetTeleportIn;
+        teleportEffectStart(&cadet->teleport, TELEPORT_FLAG_REVERSE | TELEPORT_FLAG_QUICK);
+
+        cadet->transform.position = cadet->actor.lastStableLocation;
+        cadet->actor.velocity = gZeroVec;
+        cadet->actor.anchor = 0;
+    }
+}
+
 void cadetUpdate(void* cadetPtr) {
     struct Cadet* cadet = (struct Cadet*)cadetPtr;
     cadet->state(cadet);
@@ -213,7 +232,7 @@ void cadetReset(struct Vector3* startLocation) {
 
     gCadet.transform.position.y += 0.5f;
 
-    teleportEffectStart(&gCadet.teleport, 1);
+    teleportEffectStart(&gCadet.teleport, TELEPORT_FLAG_REVERSE);
 
     gCadet.actor.radius = CADET_RADIUS;
     gCadet.actor.velocity = gZeroVec;
@@ -222,6 +241,7 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.actor.anchor = 0;
     gCadet.actor.relativeToAnchor = gZeroVec;
 
+    gCadet.gravity = GLOBAL_GRAVITY;
     gCadet.accumTime = 0.0f;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);

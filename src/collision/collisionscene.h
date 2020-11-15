@@ -8,7 +8,7 @@
 #include "levelcollisiongrid.h"
 #include "sparsecollisiongrid.h"
 
-#define GLOBAL_GRAVITY -9.8f
+#define GLOBAL_GRAVITY -18.8f
 #define KILL_PLANE_HEIGHT -4.0f
 
 extern struct SparseCollisionGrid gSparseCollisionGrid;

@@ -36,19 +36,19 @@ endseg
 beginseg
 	name "bank"
 	flags RAW
-	include "$(ROOT)/usr/lib/soundbanks/GenMidiBank.ctl"
+	include "/home/james/Documents/GameJam/Music/n64ambient/N64_ic.ctl"
 endseg
 
 beginseg
 	name "table"
 	flags RAW
-	include "$(ROOT)/usr/lib/soundbanks/GenMidiBank.tbl"
+	include "/home/james/Documents/GameJam/Music/n64ambient/N64_ic.tbl"
 endseg
 
 beginseg
 	name "seq"
 	flags RAW
-	include "sound/music/spacepiano.mid"
+	include "/home/james/Documents/AudioTools/SongRom/midiplayer/n64ambient_mod.mid"
 endseg
 
 beginseg

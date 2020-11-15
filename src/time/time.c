@@ -1,7 +1,7 @@
 
 #include "time.h"
 
-#define MAX_DELTA_TIME      0.1f
+#define MAX_DELTA_TIME      0.5f
 
 float gTimeDelta = 1.0f / 30.0f;
 OSTime gTimeLast;

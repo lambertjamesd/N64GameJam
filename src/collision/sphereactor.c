@@ -2,9 +2,11 @@
 #include "sphereactor.h"
 #include "src/system/memory.h"
 
-void sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position) {
+enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position) {
     struct Vector3 centerPos = *position;
     centerPos.y += actor->radius;
+
+    enum SphereActorCollideResult result = SphereActorCollideResultNone;
 
     struct CollisionResult* collisionResult = collisionSceneCollideSphere(&centerPos, actor->radius, actor->collisionMask);
 
@@ -26,10 +28,8 @@ void sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position
         }
 
         if (collisionResult->contacts[i].collisionMask & CollisionLayersKillPlane) {
-            *position = actor->lastStableLocation;
-            actor->velocity = gZeroVec;
+            result = SphereActorCollideResultKill;
             nextGrounded = 0;
-            actor->anchor = 0;
         } else if (collisionResult->contacts[i].normal.y > 0.95f) {
             nextGrounded = 1;
             actor->anchor = collisionResult->contacts[i].transform;
@@ -47,4 +47,6 @@ void sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position
     }
 
     fastMallocReset();
+
+    return result;
 }

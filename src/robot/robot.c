@@ -21,6 +21,8 @@ struct Vector2 _gMaxRobotRotate;
 
 struct Vector3 gAttackCenter = {0.0f, 0.0f, ROBOT_ATTACK_DISTANCE};
 
+void robotRespawn(struct Robot* robot);
+
 void robotCalcBB(struct Robot* robot, struct CollisionBox* box) {
     box->min.x = robot->transform.position.x - ROBOT_BB_RADIUS;
     box->min.y = robot->transform.position.y;
@@ -118,7 +120,13 @@ void robotMove(struct Robot* robot) {
 
     vector3AddScaled(&robot->transform.position, &robot->actor.velocity, gTimeDelta, &robot->transform.position);
 
-    sphereActorCollideScene(&robot->actor, &robot->transform.position);
+    enum SphereActorCollideResult colliderResult = sphereActorCollideScene(&robot->actor, &robot->transform.position);
+
+    if (colliderResult == SphereActorCollideResultKill) {
+        teleportEffectStart(&robot->teleport, TELEPORT_FLAG_QUICK);
+        robot->state = robotRespawn;
+        robot->actor.velocity = gZeroVec;
+    }
 }
 
 void robotWalk(struct Robot* robot) {
@@ -148,6 +156,17 @@ void robotTeleportOut(struct Robot* robot) {
         robot->state = robotIdle;
         robot->actor.stateFlags &= ~ROBOT_IS_CUTSCENE;
         robot->actor.stateFlags |= ROBOT_IS_INVISIBLE;
+    }
+}
+
+void robotRespawn(struct Robot* robot) {
+    if (!teleportEffectUpdate(&robot->teleport)) {
+        robot->state = robotTeleportIn;
+        teleportEffectStart(&robot->teleport, TELEPORT_FLAG_REVERSE | TELEPORT_FLAG_QUICK);
+
+        robot->transform.position = robot->actor.lastStableLocation;
+        robot->actor.velocity = gZeroVec;
+        robot->actor.anchor = 0;
     }
 }
 
@@ -193,7 +212,7 @@ void robotReset(struct Vector3* startLocation) {
     gRobot.rotation = gUp2;
     gRobot.attackTimer = 0.0f;
 
-    teleportEffectStart(&gRobot.teleport, 1);
+    teleportEffectStart(&gRobot.teleport, TELEPORT_FLAG_REVERSE);
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED);
 

@@ -8,24 +8,31 @@
 #define ANGULAR_ACCELERATION    5.0f
 #define FALL_ACCEL              0.1f     
 
-#define SCALE_START_TIME        0.125f
+#define SCALE_ANIM_DURATION        0.125f
 #define VERTICAL_SCALE_AMOUNT   2.5f
+#define SCALE_START_TIME        (EFFECT_DURATION - SCALE_ANIM_DURATION)
 
-void teleportEffectStart(struct TeleportEffect* effect, int reverse) {
-    if (reverse) {
+void teleportEffectStart(struct TeleportEffect* effect, int flags) {
+    if (flags & TELEPORT_FLAG_REVERSE) {
         effect->time = EFFECT_DURATION;
-        effect->flags = TELEPORT_FLAG_ACTIVE | TELEPORT_FLAG_REVERSE;
     } else {
-        effect->time = 0.0f;
-        effect->flags = TELEPORT_FLAG_ACTIVE;
+        if (flags & TELEPORT_FLAG_QUICK) {
+            effect->time = SCALE_START_TIME;
+        } else {
+            effect->time = 0.0f;
+        }
     }
+
+    effect->flags = TELEPORT_FLAG_ACTIVE | flags;
 }
 
 int teleportEffectUpdate(struct TeleportEffect* effect) {
     if (effect->flags & TELEPORT_FLAG_ACTIVE) {
         if (effect->flags & TELEPORT_FLAG_REVERSE) {
             effect->time -= gTimeDelta;
-            if (effect->time <= 0.0f) {
+
+            if ((effect->flags & TELEPORT_FLAG_QUICK) && effect->time <= SCALE_START_TIME || 
+                effect->time <= 0.0f) {
                 effect->flags &= ~TELEPORT_FLAG_ACTIVE;
                 return 0;
             }
@@ -42,7 +49,14 @@ int teleportEffectUpdate(struct TeleportEffect* effect) {
 }
 
 void teleportEffectCreateTransform(struct TeleportEffect* effect, struct BasicTransform* transform, Mtx* mtx) {
-    float tSqr = effect->time * effect->time;
+    float tSqr;
+    
+    if (effect->flags & TELEPORT_FLAG_QUICK) {
+        tSqr = 0;
+    } else {
+        tSqr = effect->time * effect->time;
+    }
+
     float angle = tSqr * ANGULAR_ACCELERATION;
     float height = tSqr * FALL_ACCEL;
     
@@ -58,8 +72,8 @@ void teleportEffectCreateTransform(struct TeleportEffect* effect, struct BasicTr
     float fMtx[4][4];
     transformToMatrix(&finalTransform, 1.0f / 256.0f, fMtx);
 
-    if (effect->time > EFFECT_DURATION - SCALE_START_TIME) {
-        float scaleLerp = (effect->time - (EFFECT_DURATION - SCALE_START_TIME)) * (1.0f / SCALE_START_TIME);
+    if (effect->time > SCALE_START_TIME) {
+        float scaleLerp = (effect->time - SCALE_START_TIME) * (1.0f / SCALE_ANIM_DURATION);
 
         float hScale = 1.0f - scaleLerp;
         float vScale = mathfLerp(1.0f, VERTICAL_SCALE_AMOUNT, scaleLerp);

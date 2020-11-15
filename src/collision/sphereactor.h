@@ -10,6 +10,11 @@
 #define SPHERE_ACTOR_FLAG_2         (1 << 3)
 #define SPHERE_ACTOR_FLAG_3         (1 << 4)
 
+enum SphereActorCollideResult {
+    SphereActorCollideResultNone,
+    SphereActorCollideResultKill,
+};
+
 struct SphereActor {
     struct Vector3 velocity;
     struct Vector3 lastStableLocation;
@@ -20,6 +25,6 @@ struct SphereActor {
     int collisionMask;
 };
 
-void sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position);
+enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position);
 
 #endif

@@ -10,13 +10,13 @@
 #include "src/effects/teleport.h"
 
 #define CADET_RADIUS    0.2f
-#define CADET_SPEED     2.8f
-#define CADET_AIR_SPEED 2.0f
+#define CADET_SPEED     3.5f
+#define CADET_AIR_SPEED 2.8f
 #define CADET_ACCEL     12.0f
 #define CADET_AIR_ACCEL 2.0f
 
-#define CADET_JUMP_IMPULSE  4.5f
-#define CADET_JUMP_ACCEL    3.0f
+#define CADET_JUMP_IMPULSE  5.5f
+#define CADET_JUMP_ACCEL    8.0f
 
 struct Cadet;
 
@@ -34,6 +34,7 @@ struct Cadet {
     struct Vector2 rotation;
     struct DropShadow shadow;
     float accumTime;
+    float gravity;
     // state sepecific
     float coyoteTimer;
     struct TeleportEffect teleport;
