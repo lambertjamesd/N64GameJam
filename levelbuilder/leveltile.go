@@ -64,8 +64,10 @@ type LevelTileSlot struct {
 }
 
 const (
-	LevelSwitchTypeLarge = 0
-	LevelSwitchTypeSmall = 1
+	LevelSwitchTypeLarge          = 0
+	LevelSwitchTypeSmall          = 1
+	LevelSwitchTypeLargePermanant = 2
+	LevelSwitchTypeSmallPermanant = 3
 )
 
 type LevelSwitchDef struct {
@@ -75,8 +77,9 @@ type LevelSwitchDef struct {
 }
 
 type LevelDoorDef struct {
-	Pos   Vector3
-	Color int
+	Pos      Vector3
+	Color    int
+	Inverted bool
 }
 
 type LevelBreakableDef struct {
@@ -137,6 +140,16 @@ func (tile *LevelTileSlot) ParamAsInt(name string, defaultVal int) int {
 	}
 
 	return int(asInt)
+}
+
+func (tile *LevelTileSlot) ParamAsBool(name string, defaultVal bool) bool {
+	asString, ok := tile.TileData[name]
+
+	if !ok {
+		return defaultVal
+	}
+
+	return asString == "true"
 }
 
 func (level *LevelGrid) IsSolid(x, y, height int) bool {

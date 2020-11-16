@@ -10,7 +10,12 @@
 enum PuzzleSwitchType {
     PuzzleSwitchTypeLarge,
     PuzzleSwitchTypeSmall,
+    PuzzleSwitchTypeLargePermanant,
+    PuzzleSwitchTypeSmallPermanant,
 };
+
+#define PUZZLE_SWITCH_SIZE      1
+#define PUZZLE_SWITCH_PERMANANT 2
 
 struct PuzzleSwitch {
     struct BasicTransform transform;

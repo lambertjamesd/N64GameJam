@@ -18,6 +18,7 @@ enum SphereActorCollideResult {
 struct SphereActor {
     struct Vector3 velocity;
     struct Vector3 lastStableLocation;
+    struct BasicTransform* lastStableAnchor;
     struct BasicTransform* anchor;
     struct Vector3 relativeToAnchor;
     float radius;

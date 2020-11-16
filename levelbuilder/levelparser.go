@@ -113,27 +113,55 @@ func findSwitches(level *LevelGrid) {
 
 			switch cell.Tile.DynamicType {
 			case DynamicTypeLargeSwitch:
-				level.Switches = append(level.Switches, LevelSwitchDef{
-					Vector3{float32(x * 2), 0, float32(-y * 2)},
-					LevelSwitchTypeLarge,
-					cell.ParamAsInt("color", 0),
-				})
+				if cell.ParamAsInt("variant", 0) == 1 {
+					level.Switches = append(level.Switches, LevelSwitchDef{
+						Vector3{float32(x * 2), 0, float32(-y * 2)},
+						LevelSwitchTypeLargePermanant,
+						cell.ParamAsInt("color", 0),
+					})
+
+				} else {
+					level.Switches = append(level.Switches, LevelSwitchDef{
+						Vector3{float32(x * 2), 0, float32(-y * 2)},
+						LevelSwitchTypeLarge,
+						cell.ParamAsInt("color", 0),
+					})
+				}
 			case DynamicTypeSmallSwitch:
-				level.Switches = append(level.Switches, LevelSwitchDef{
-					Vector3{float32(x * 2), 0, float32(-y * 2)},
-					LevelSwitchTypeSmall,
-					cell.ParamAsInt("color", 0),
-				})
+				if cell.ParamAsInt("variant", 0) == 1 {
+					level.Switches = append(level.Switches, LevelSwitchDef{
+						Vector3{float32(x * 2), 0, float32(-y * 2)},
+						LevelSwitchTypeSmallPermanant,
+						cell.ParamAsInt("color", 0),
+					})
+
+				} else {
+					level.Switches = append(level.Switches, LevelSwitchDef{
+						Vector3{float32(x * 2), 0, float32(-y * 2)},
+						LevelSwitchTypeSmall,
+						cell.ParamAsInt("color", 0),
+					})
+				}
 			case DynamicTypePlatformSwitch:
-				level.Switches = append(level.Switches, LevelSwitchDef{
-					Vector3{float32(x * 2), 1, float32(-y * 2)},
-					LevelSwitchTypeSmall,
-					cell.ParamAsInt("color", 0),
-				})
+				if cell.ParamAsInt("variant", 0) == 1 {
+					level.Switches = append(level.Switches, LevelSwitchDef{
+						Vector3{float32(x * 2), 1, float32(-y * 2)},
+						LevelSwitchTypeSmallPermanant,
+						cell.ParamAsInt("color", 0),
+					})
+
+				} else {
+					level.Switches = append(level.Switches, LevelSwitchDef{
+						Vector3{float32(x * 2), 1, float32(-y * 2)},
+						LevelSwitchTypeSmall,
+						cell.ParamAsInt("color", 0),
+					})
+				}
 			case DynamicTypeDoor:
 				level.Doors = append(level.Doors, LevelDoorDef{
 					Vector3{float32(x * 2), 0, float32(-y * 2)},
 					cell.ParamAsInt("color", 0),
+					cell.ParamAsBool("invert", false),
 				})
 			case DynamicTypeBreakablePlatform:
 				level.Breakables = append(level.Breakables, LevelBreakableDef{

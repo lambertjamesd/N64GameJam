@@ -33,7 +33,13 @@ enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor,
         } else if (collisionResult->contacts[i].normal.y > 0.95f) {
             nextGrounded = 1;
             actor->anchor = collisionResult->contacts[i].transform;
-            actor->lastStableLocation = *position;
+
+            if (actor->anchor) {
+                actor->lastStableAnchor = actor->anchor;
+                transformPointInverse(actor->anchor, position, &actor->lastStableLocation);
+            } else {
+                actor->lastStableLocation = *position;
+            }
         }
     }
 

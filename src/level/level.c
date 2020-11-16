@@ -124,7 +124,7 @@ void levelExpand(struct LevelDefinition* levelDef) {
 
     for (i = 0; i < levelDef->levelData->doorCount; ++i) {
         struct LevelDoorDef* def = &levelDef->levelData->doors[i];
-        doorInit(&doors[i], &def->pos, def->color);
+        doorInit(&doors[i], &def->pos, def->color, def->inverted);
     }
 
     /////////////////////

@@ -39,12 +39,12 @@ void doorUpdate(void* data) {
 
     door->transform.position.y = mathfMoveTowards(
         door->transform.position.y,
-        door->closedPosition.y + (gCurrentSignal[door->signalIndex] ? -2.0f : 0.0f),
+        door->closedPosition.y + ((gCurrentSignal[door->signalIndex] ^ door->inverted) ? -2.0f : 0.0f),
         DOOR_MOVE_SPEED * gTimeDelta
     );
 }
 
-void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color) {
+void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int inverted) {
     transformIdentity(&door->transform);
     door->transform.position = *position;
 
@@ -58,6 +58,9 @@ void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color) {
 
     door->signalIndex = color;
     door->closedPosition = *position;
+    door->inverted = inverted;
+
+    door->transform.position.y = door->closedPosition.y + (door->inverted ? -2.0f : 0.0f);
 
     struct CollisionBox bb;
     vector3Add(&gDoorCollider.box.min, position, &bb.min);

@@ -17,6 +17,7 @@ struct LevelSwitchDef {
 struct LevelDoorDef {
     struct Vector3 pos;
     short color;
+    short inverted;
 };
 
 struct LevelBreakableDef {

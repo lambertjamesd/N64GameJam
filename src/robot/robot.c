@@ -145,6 +145,10 @@ void robotIdle(struct Robot* robot) {
 }
 
 void robotTeleportIn(struct Robot* robot) {
+    if (robot->actor.lastStableAnchor) {
+        transformPoint(robot->actor.lastStableAnchor, &robot->actor.lastStableLocation, &robot->transform.position);
+    }
+
     if (!teleportEffectUpdate(&gRobot.teleport)) {
         robot->state = robotWalk;
         robot->actor.stateFlags &= ~ROBOT_IS_CUTSCENE;
@@ -164,7 +168,11 @@ void robotRespawn(struct Robot* robot) {
         robot->state = robotTeleportIn;
         teleportEffectStart(&robot->teleport, TELEPORT_FLAG_REVERSE | TELEPORT_FLAG_QUICK);
 
-        robot->transform.position = robot->actor.lastStableLocation;
+        if (robot->actor.lastStableAnchor) {
+            transformPoint(robot->actor.lastStableAnchor, &robot->actor.lastStableLocation, &robot->transform.position);
+        } else {
+            robot->transform.position = robot->actor.lastStableLocation;
+        }
         robot->actor.velocity = gZeroVec;
         robot->actor.anchor = 0;
     }
@@ -208,6 +216,7 @@ void robotReset(struct Vector3* startLocation) {
     gRobot.actor.lastStableLocation = *startLocation;
     gRobot.actor.stateFlags = 0;
     gRobot.actor.anchor = 0;
+    gRobot.actor.lastStableAnchor = 0;
     gRobot.actor.relativeToAnchor = gZeroVec;
     gRobot.rotation = gUp2;
     gRobot.attackTimer = 0.0f;

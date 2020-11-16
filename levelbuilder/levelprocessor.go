@@ -185,7 +185,13 @@ struct LevelDoorDef _level_%s_levelDoors[] = {
 `, levelName))
 
 	for _, door := range tileMap.Doors {
-		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}, %d},\n", door.Pos.X, door.Pos.Y, door.Pos.Z, door.Color))
+		var invertAsInt int = 0
+
+		if door.Inverted {
+			invertAsInt = 1
+		}
+
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}, %d, %d},\n", door.Pos.X, door.Pos.Y, door.Pos.Z, door.Color, invertAsInt))
 	}
 
 	outputLevel.WriteString("};\n")

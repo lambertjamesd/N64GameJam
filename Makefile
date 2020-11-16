@@ -28,6 +28,11 @@ LEVELS = cadet_intro \
 	robot_platform \
 	lava_platform \
 	switch_tutorial \
+	loop_around \
+	double_crossing \
+	raised_platform \
+	moving_platforms \
+	switch_mania \
 	debug
 	
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)

@@ -11,10 +11,11 @@ struct PuzzleDoor {
     struct BasicTransform transform;
     struct CollisionTransformedCollider collider;
     struct TimeUpdateListener updateListener;
-    int signalIndex;
+    short signalIndex;
+    short inverted;
     struct Vector3 closedPosition;
 };
 
-void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color);
+void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int inverted);
 
 #endif

@@ -191,6 +191,10 @@ void cadetIdle(struct Cadet* cadet) {
 }
 
 void cadetTeleportIn(struct Cadet* cadet) {
+    if (cadet->actor.lastStableAnchor) {
+        transformPoint(cadet->actor.lastStableAnchor, &cadet->actor.lastStableLocation, &cadet->transform.position);
+    }
+
     if (!teleportEffectUpdate(&gCadet.teleport)) {
         cadet->state = cadetFreefall;
         cadet->actor.stateFlags &= ~CADET_IS_CUTSCENE;
@@ -210,7 +214,12 @@ void cadetRespawn(struct Cadet* cadet) {
         cadet->state = cadetTeleportIn;
         teleportEffectStart(&cadet->teleport, TELEPORT_FLAG_REVERSE | TELEPORT_FLAG_QUICK);
 
-        cadet->transform.position = cadet->actor.lastStableLocation;
+        if (cadet->actor.lastStableAnchor) {
+            transformPoint(cadet->actor.lastStableAnchor, &cadet->actor.lastStableLocation, &cadet->transform.position);
+        } else {
+            cadet->transform.position = cadet->actor.lastStableLocation;
+        }
+
         cadet->actor.velocity = gZeroVec;
         cadet->actor.anchor = 0;
     }
@@ -239,6 +248,7 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.actor.lastStableLocation = *startLocation;
     gCadet.actor.stateFlags = CADET_IS_CUTSCENE;
     gCadet.actor.anchor = 0;
+    gCadet.actor.lastStableAnchor = 0;
     gCadet.actor.relativeToAnchor = gZeroVec;
 
     gCadet.gravity = GLOBAL_GRAVITY;
