@@ -7,6 +7,7 @@
 #include "levelthemegraphics.h"
 #include "renderscene.h"
 #include "src/defs.h"
+#include "src/font/fontrenderer.h"
 
 #define DYANAMIC_LIST_LEN 512
 #define DYNAMIC_MATRIX_COUNT 128
@@ -20,6 +21,7 @@ typedef struct {
 	Gfx	glist[DYANAMIC_LIST_LEN];
     Mtx dynamicActors[DYNAMIC_MATRIX_COUNT];
     LookAt lookats[LOOK_AT_COUNT];
+    struct FontRenderer fontRenderer;
 } Dynamic;
 
 typedef union {    

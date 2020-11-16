@@ -14,6 +14,7 @@
 #include "src/levels/levels.h"
 #include "src/robot/robot.h"
 #include "src/audio/playersounds.h"
+#include "src/font/endlessbossbattle/endlessbossbattle.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -180,7 +181,7 @@ static void initGame(void)
     osCreateScheduler(&gScheduler, (void *)(scheduleStack + OS_SC_STACKSIZE/8),
                       SCHEDULER_PRIORITY, OS_VI_NTSC_LAN1, NUM_FIELDS);
 
-    osScAddClient(&gScheduler, &gfxClient, &gGfxFrameMsgQ);  
+    osScAddClient(&gScheduler, &gfxClient, &gGfxFrameMsgQ);
 
 #if DEBUG
     OSThread* threadPtr[1];
@@ -202,6 +203,9 @@ static void initGame(void)
     graphicsInit(); 
     audioInit();
     playerSoundsInit();
+
+    fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, _endless_boss_battle_ia4, G_IM_FMT_I, G_IM_SIZ_4b, 64, 128, 11);
+
     levelLoad(&_level_group_all_levels[0]);
 }
 

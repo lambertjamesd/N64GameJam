@@ -92,6 +92,9 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/sparsecollisiongrid.c \
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
+	src/font/font.c	\
+	src/font/fontrenderer.c	\
+	src/font/endlessbossbattle/endlessbossbattle.c	\
 	src/graphics/dynamic.c	\
 	src/graphics/graphics.c	\
 	src/graphics/levelgraphics.c	\
@@ -110,6 +113,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
 	src/math/vector2.c   	\
+	src/menu/menu.c   	\
 	src/robot/robot.c \
 	src/robot/geo/model.c \
 	src/puzzle/breakable.c  \

@@ -13,6 +13,7 @@
 #include "src/math/basictransform.h"
 #include "src/level/level.h"
 #include "renderscene.h"
+#include "src/font/endlessbossbattle/endlessbossbattle.h"
 
 extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
@@ -29,6 +30,11 @@ struct LevelGraphics* gCurrentLevelGraphics;
 struct LevelThemeGraphics* gCurrentLevelTheme;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 int gFrameNumber;
+
+// static Vp smallVP = {
+//     SCREEN_WD, SCREEN_HT, G_MAXZ/2, 0,
+//     418 * 2, 210 * 2, G_MAXZ/2, 0,
+// };
 
 void graphicsInit(void) 
 {
@@ -109,6 +115,9 @@ void createGfxTask(GFXInfo *i) {
     gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
 	gDPSetTextureLUT(glistp++, G_TT_NONE);
 
+    // gDPSetScissor(glistp++, G_SC_NON_INTERLACE, 60, 60, 259, 179);
+    // gSPViewport(glistp++, &smallVP);
+
     guPerspective(&dynamicp->projection, &dynamicp->perspectiveCorrect, 70.0f, 4.0f / 3.0f, 1.0f, 128.0f, 1.0f);
     gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
 
@@ -149,6 +158,15 @@ void createGfxTask(GFXInfo *i) {
     dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
 
     glistp = state.dl;
+
+    fontRendererBeginFrame(&dynamicp->fontRenderer);
+
+    spInit(&glistp);
+
+    // glistp = fontRendererDrawCharacters(&dynamicp->fontRenderer, &gEndlessBossBattle, glistp, "Hello World!", 0, 0);
+
+    spFinish(&glistp);
+    --glistp;/* Don't use final EndDisplayList() */
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);
