@@ -45,7 +45,6 @@ static OSMesg           gDMAMessageBuf;
 /**** Graphics variables used in this file ****/
 OSMesgQueue     gGfxFrameMsgQ;
 OSMesg          gGfxFrameMsgBuf[MAX_MESGS];
-Gfx             *glistp;
 GFXInfo         gInfo[2];
 
 /**** Scheduler globals ****/

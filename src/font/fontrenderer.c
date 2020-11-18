@@ -1,4 +1,5 @@
 
+#include <ultra64.h>
 #include "fontrenderer.h"
 
 void fontRendererBeginFrame(struct FontRenderer* renderer) {
@@ -32,6 +33,26 @@ void fontRendererBeginFrame(struct FontRenderer* renderer) {
     renderer->sprite.rsp_dl_next = renderer->dl;
     renderer->sprite.frac_s = 0;
     renderer->sprite.frac_t = 0;
+
+    renderer->sx = 1.0f;
+    renderer->sy = 1.0f;
+
+    renderer->r = 255;
+    renderer->g = 255;
+    renderer->b = 255;
+    renderer->a = 255;
+}
+
+void fontRendererSetScale(struct FontRenderer* fontRenderer, float x, float y) {
+    fontRenderer->sx = x;
+    fontRenderer->sy = y;
+}
+
+void fontRendererSetColor(struct FontRenderer* fontRenderer, u8 red, u8 green, u8 blue, u8 alpha) {
+    fontRenderer->r = red;
+    fontRenderer->g = green;
+    fontRenderer->b = blue;
+    fontRenderer->a = alpha;
 }
 
 Gfx* fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font* font, Gfx* dl, char* string, int x, int y) {
@@ -69,7 +90,25 @@ Gfx* fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font* 
     fontRenderer->sprite.width = width;
 
     spMove(&fontRenderer->sprite, x, y);
+    spScale(&fontRenderer->sprite, fontRenderer->sx, fontRenderer->sy);
+    spColor(&fontRenderer->sprite, fontRenderer->r, fontRenderer->g, fontRenderer->b, fontRenderer->a);
     Gfx* renderBatch = spDraw(&fontRenderer->sprite);
     gSPDisplayList(dl++, renderBatch);
     return dl;
+}
+
+float fontRendererMeasureWidth(struct Font* font, char* string) {
+    float result = 0.0f;
+
+    while (*string) {
+        struct FontCharacter* character = font->ansiiLookup[*string];
+
+        if (character) {
+            result += character->w;
+        }
+
+        ++string;
+    }
+
+    return result;
 }

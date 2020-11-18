@@ -5,13 +5,24 @@
 #include "src/graphics/renderscene.h"
 #include "src/level/level.h"
 #include "src/math/mathf.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
 
 struct CollisionCollider gExitTriggerCollider = {
     ColliderTypeBox,
     0,
     .box = {
-        {-0.1f, 0.0f, -0.1f},
-        {0.1f, 0.5f, 0.1f},
+        {-0.05f, 0.0f, -0.05f},
+        {0.05f, 0.5f, 0.05f},
+    }
+};
+
+struct CollisionCollider gExitTriggerSmallCollider = {
+    ColliderTypeBox,
+    0,
+    .box = {
+        {-0.3f, 0.0f, -0.3f},
+        {0.3f, 0.5f, 0.3f},
     }
 };
 
@@ -21,7 +32,7 @@ void exitEntranceRender(struct DynamicActor* data, struct GraphicsState* state) 
 
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
 
-    if (entranceExit->isActive) {
+    if (entranceExit->isActive || (gLevelFlags & LEVEL_EXIT_CUTSCENE)) {
         gSPDisplayList(state->dl++, gLoadedLevel->theme->theme->dynamicMaterials[DynamicMaterialTypeEntranceExit]);
     } else {
         gSPDisplayList(state->dl++, gLoadedLevel->theme->theme->dynamicMaterials[DynamicMaterialTypeEntranceExitOff]);
@@ -36,6 +47,18 @@ void exitEntranceRender(struct DynamicActor* data, struct GraphicsState* state) 
 
 void entraceExitTrigger(void* data) {
     struct EntranceExit* exit = (struct EntranceExit*)data;
+
+    if (!exit->isActive) {
+        audioPlaySound(
+            gPlayerSoundIds[(exit->exitTrigger.triggerMask & CollisionLayersCadetSwitch) ?
+                GoalTouchSmall : GoalTouchBig],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
+    }
+
     exit->isActive = 2;
 }
 
@@ -52,8 +75,10 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
     
     if (isCadet) {
         exit->transform.scale = 0.5f;
+        exit->exitTrigger.collider = &gExitTriggerSmallCollider;
     } else {
         exit->transform.scale = 1.0f;
+        exit->exitTrigger.collider = &gExitTriggerCollider;
     }
 
     timeAddListener(&exit->updateListener, entranceExitUpdate, exit);
@@ -74,7 +99,6 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
     bb.max.z = pos->z + 0.8f;
     sparseCollisionReindex(&gSparseCollisionGrid, &exit->collider, &bb, 0);
 
-    exit->exitTrigger.collider = &gExitTriggerCollider;
     exit->exitTrigger.transform = &exit->transform;
     exit->exitTrigger.data = exit;
     exit->exitTrigger.trigger = entraceExitTrigger;

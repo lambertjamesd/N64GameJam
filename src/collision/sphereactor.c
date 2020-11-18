@@ -33,12 +33,25 @@ enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor,
         } else if (collisionResult->contacts[i].normal.y > 0.95f) {
             nextGrounded = 1;
             actor->anchor = collisionResult->contacts[i].transform;
+            actor->groundCollisionMask = collisionResult->contacts[i].collisionMask;
+
+            struct Vector3* normal = &collisionResult->contacts[i].normal;
+            struct Vector3 adjustedPos = *position;
+
+            if (normal->x != 0.0f || normal->z != 0.0f) {
+                struct Vector2 offsetAmount;
+                offsetAmount.x = -normal->x;
+                offsetAmount.y = -normal->z;
+                vector2Normalize(&offsetAmount, &offsetAmount);
+                adjustedPos.x += offsetAmount.x * 0.5f;
+                adjustedPos.z += offsetAmount.y * 0.5f;
+            }
 
             if (actor->anchor) {
                 actor->lastStableAnchor = actor->anchor;
-                transformPointInverse(actor->anchor, position, &actor->lastStableLocation);
+                transformPointInverse(actor->anchor, &adjustedPos, &actor->lastStableLocation);
             } else {
-                actor->lastStableLocation = *position;
+                actor->lastStableLocation = adjustedPos;
             }
         }
     }
@@ -55,4 +68,12 @@ enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor,
     fastMallocReset();
 
     return result;
+}
+
+void sphereActorQueryScene(struct SphereActor* actor, struct Vector3* position) {
+    struct Vector3 centerPos = *position;
+    centerPos.y += actor->radius;
+    collisionSceneCollideSphere(&centerPos, actor->radius, actor->collisionMask);
+    fastMallocReset();
+
 }

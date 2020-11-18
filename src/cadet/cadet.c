@@ -9,6 +9,7 @@
 #include "src/math/mathf.h"
 #include "src/audio/playersounds.h"
 #include "src/audio/audio.h"
+#include "src/puzzle/entranceexit.h"
 
 #define MAX_SHADOW_SCALE 0.6f
 #define MIN_SHADOW_SCALE 0.2f
@@ -65,6 +66,50 @@ void cadetUpdateRotation(struct Cadet* cadet) {
     }
 }
 
+void cadetUpdatefootstepSound(struct Cadet* cadet) {
+    int isGrounded = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED);
+    int isOnGround = isGrounded && cadet->coyoteTimer > 0.0f;
+
+    int nextSound = -1;
+    float soundVolume = 0.0f;
+
+    if (isOnGround) {
+        struct Vector2 horzVel;
+        horzVel.x = cadet->actor.velocity.x;
+        horzVel.y = cadet->actor.velocity.z;
+
+        float moveSpeed = vector2Dot(&horzVel, &horzVel);
+        int playingState = audioPlayState(gPlayerSoundIds[PlayerSoundsFootsteps]);
+
+        if (moveSpeed != 0.0f) {
+            if (cadet->actor.groundCollisionMask & CollisionLayersRobot) {
+                nextSound = PlayerSoundsFootstepsMetal;
+            } else {
+                nextSound = PlayerSoundsFootsteps;
+            }
+            soundVolume = sqrtf(moveSpeed) / CADET_SPEED;
+        }
+    }
+
+    if (nextSound != cadet->footstepSound) {
+        if (cadet->footstepSound != -1) {
+            audioStopSound(gPlayerSoundIds[cadet->footstepSound]);
+        }
+
+        cadet->footstepSound = nextSound;
+    }
+
+    if (cadet->footstepSound != -1) {
+        audioPlaySound(
+            cadet->footstepSound,
+            0.5f,
+            soundVolume,
+            0.0f,
+            10
+        );
+    }
+}
+
 void cadetMove(struct Cadet* cadet) {
     struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
@@ -108,6 +153,14 @@ void cadetMove(struct Cadet* cadet) {
     enum SphereActorCollideResult colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
 
     if (colliderResult == SphereActorCollideResultKill) {
+        audioPlaySound(
+            gPlayerSoundIds[PlayerCadetFall],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
+
         teleportEffectStart(&cadet->teleport, TELEPORT_FLAG_QUICK);
         cadet->state = cadetRespawn;
         cadet->actor.velocity = gZeroVec;
@@ -164,7 +217,10 @@ void cadetFreefall(struct Cadet* cadet) {
 
     if (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) {
         audioPlaySound(
-            gPlayerSoundIds[PlayerSoundsLand],
+            gPlayerSoundIds[(cadet->actor.groundCollisionMask & CollisionLayersRobot) ? 
+                PlayerSoundsLandMetal :
+                PlayerSoundsLand
+            ],
             0.5f,
             0.8f,
             0.0f,
@@ -202,6 +258,14 @@ void cadetTeleportIn(struct Cadet* cadet) {
 }
 
 void cadetTeleportOut(struct Cadet* cadet) {
+    struct Vector3 targetCenter;
+
+    targetCenter.x = gCadetExit.transform.position.x;
+    targetCenter.y = cadet->transform.position.y;
+    targetCenter.z = gCadetExit.transform.position.z;
+
+    vector3MoveTowards(&cadet->transform.position, &targetCenter, gTimeDelta * 0.5f, &cadet->transform.position);
+
     if (!teleportEffectUpdate(&gCadet.teleport)) {
         cadet->state = cadetIdle;
         cadet->actor.stateFlags &= ~CADET_IS_CUTSCENE;
@@ -229,6 +293,8 @@ void cadetUpdate(void* cadetPtr) {
     struct Cadet* cadet = (struct Cadet*)cadetPtr;
     cadet->state(cadet);
 
+    cadetUpdatefootstepSound(cadet);
+
     dropShadowCalculate(&cadet->shadow, cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &cadet->transform.position);
 }
 
@@ -253,6 +319,7 @@ void cadetReset(struct Vector3* startLocation) {
 
     gCadet.gravity = GLOBAL_GRAVITY;
     gCadet.accumTime = 0.0f;
+    gCadet.footstepSound = -1;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
     dynamicActorAddToGroup(&gScene.transparentActors, &gCadet.transform, &gCadet.shadow, dropShadowRender, TransparentMaterialTypeShadow);

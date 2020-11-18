@@ -13,6 +13,13 @@
 #define DYNAMIC_MATRIX_COUNT 128
 #define LOOK_AT_COUNT   4
 
+enum MenuRenderPass {
+    MenuRenderPassBasic,
+    MenuRenderPassSprite,
+};
+
+typedef void (*MenuRenderCallback)(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer, enum MenuRenderPass pass);
+
 typedef struct {
 	Mtx	projection;
     u16 perspectiveCorrect;
@@ -50,8 +57,6 @@ extern Gfx	setup_rspstate[];
 extern Gfx 	logo_dl[];
 extern Gfx 	bg_dl[];
 
-extern Gfx	*glistp;
-
 extern unsigned short* gColorBuffer[2];
 extern unsigned short	gZBuffer[];
 
@@ -68,5 +73,9 @@ void graphicsInitLevel(
     struct LevelGraphics* levelGraphics, 
     struct LevelThemeGraphics* theme
 );
+
+void graphicsAddMenu(MenuRenderCallback renderCallback, void* data);
+void graphicsRemoveMenu(MenuRenderCallback renderCallback, void* data);
+void graphicsClearMenus();
 
 #endif /* _RENDER_RENDER_H */

@@ -89,6 +89,23 @@ void audioInit()
     soundPlayerInit();
 }
 
+int audioPlayState(ALSndId snd) {
+    alSndpSetSound(&gSoundPlayer, snd);
+    return alSndpGetState(&gSoundPlayer);
+}
+
+void audioStopSound(ALSndId snd) {
+    alSndpSetSound(&gSoundPlayer, snd);
+    alSndpStop(&gSoundPlayer);
+}
+
+void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority) {
+    alSndpSetSound(&gSoundPlayer, snd);
+    if (alSndpGetState(&gSoundPlayer) != AL_STOPPED) {
+        alSndpStop(&gSoundPlayer);
+    }
+    audioPlaySound(snd, pitch, volume, pan, priority);
+}
 
 void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority) {
     if (volume > 0.0f && snd != -1) {
@@ -107,6 +124,9 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
             alSndpSetPan(&gSoundPlayer, (u8)((pan + 1.0f) * 127));
         }
         alSndpSetPriority(&gSoundPlayer, snd, 10);
-        alSndpPlay(&gSoundPlayer);
+
+        if (alSndpGetState(&gSoundPlayer) == AL_STOPPED) {
+            alSndpPlay(&gSoundPlayer);
+        }
     }
 }

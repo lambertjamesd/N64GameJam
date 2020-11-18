@@ -21,11 +21,13 @@ struct SphereActor {
     struct BasicTransform* lastStableAnchor;
     struct BasicTransform* anchor;
     struct Vector3 relativeToAnchor;
+    int groundCollisionMask;
     float radius;
     int stateFlags;
     int collisionMask;
 };
 
 enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor, struct Vector3* position);
+void sphereActorQueryScene(struct SphereActor* actor, struct Vector3* position);
 
 #endif

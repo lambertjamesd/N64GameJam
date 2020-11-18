@@ -226,6 +226,12 @@ struct LevelPlatformSlotDef _level_%s_platformSlots[] = {
 
 	outputLevel.WriteString("};\n")
 
+	var humanName = tileMap.Name
+
+	if humanName == "" {
+		humanName = levelName
+	}
+
 	outputLevel.WriteString(fmt.Sprintf(`
 struct LevelData _level_%s_levelData = {
 	&_level_%s_levelGraphics,
@@ -244,6 +250,7 @@ struct LevelData _level_%s_levelData = {
 	%d,
 	_level_%s_platformSlots,
 	%d,
+	"%s",
 };
 `, levelName, levelName, levelName,
 		tileMap.PlayerPosX, 0.1, -tileMap.PlayerPosY,
@@ -255,6 +262,7 @@ struct LevelData _level_%s_levelData = {
 		levelName, len(tileMap.Breakables),
 		levelName, len(tileMap.Platforms),
 		levelName, len(tileMap.PlatformSlots),
+		humanName,
 	))
 
 	geoSources = append(geoSources, tileIncFile)

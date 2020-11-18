@@ -5,6 +5,9 @@
 #include "src/collision/collisionscene.h"
 #include "src/graphics/renderscene.h"
 #include "geo/model.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
+#include "src/puzzle/entranceexit.h"
 
 #include "src/collision/geo/robot_collision.inc.c"
 
@@ -123,6 +126,14 @@ void robotMove(struct Robot* robot) {
     enum SphereActorCollideResult colliderResult = sphereActorCollideScene(&robot->actor, &robot->transform.position);
 
     if (colliderResult == SphereActorCollideResultKill) {
+        audioPlaySound(
+            gPlayerSoundIds[PlayerRobotFall],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
+
         teleportEffectStart(&robot->teleport, TELEPORT_FLAG_QUICK);
         robot->state = robotRespawn;
         robot->actor.velocity = gZeroVec;
@@ -135,6 +146,15 @@ void robotWalk(struct Robot* robot) {
 
 void robotAttack(struct Robot* robot) {
     struct Vector3 attackPos;
+
+    audioPlaySound(
+        gPlayerSoundIds[PlayerRobotAttack],
+        0.5f,
+        1.0f,
+        0.0f,
+        10
+    );
+
     transformPoint(&robot->transform, &gAttackCenter, &attackPos);
     attackPos.y += ROBOT_ATTACK_RADIUS;
     collisionSceneCollideSphere(&attackPos, ROBOT_ATTACK_RADIUS, CollisionLayersBreakable);
@@ -156,6 +176,14 @@ void robotTeleportIn(struct Robot* robot) {
 }
 
 void robotTeleportOut(struct Robot* robot) {
+    struct Vector3 targetCenter;
+
+    targetCenter.x = gRobotExit.transform.position.x;
+    targetCenter.y = robot->transform.position.y;
+    targetCenter.z = gRobotExit.transform.position.z;
+
+    vector3MoveTowards(&robot->transform.position, &targetCenter, gTimeDelta * 0.5f, &robot->transform.position);
+
     if (!teleportEffectUpdate(&gRobot.teleport)) {
         robot->state = robotIdle;
         robot->actor.stateFlags &= ~ROBOT_IS_CUTSCENE;

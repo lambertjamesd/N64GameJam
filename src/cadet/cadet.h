@@ -38,6 +38,7 @@ struct Cadet {
     // state sepecific
     float coyoteTimer;
     struct TeleportEffect teleport;
+    short footstepSound;
 };
 
 extern struct Cadet gCadet;

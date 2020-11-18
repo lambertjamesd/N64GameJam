@@ -15,6 +15,8 @@
 #include "renderscene.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 
+#define MAX_MENUS   8
+
 extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
 extern GFXInfo         gInfo[];
@@ -30,6 +32,8 @@ struct LevelGraphics* gCurrentLevelGraphics;
 struct LevelThemeGraphics* gCurrentLevelTheme;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
 int gFrameNumber;
+MenuRenderCallback gMenuGraphics[MAX_MENUS];
+void* gMenuGraphicsData[MAX_MENUS];
 
 // static Vp smallVP = {
 //     SCREEN_WD, SCREEN_HT, G_MAXZ/2, 0,
@@ -73,7 +77,7 @@ void createGfxTask(GFXInfo *i) {
     OSScTask *t;
     
     dynamicp = &i->dp;
-    glistp   = i->dp.glist;
+    Gfx* glistp   = i->dp.glist;
 
     gSPSegment(glistp++, 0, 0);
     gSPSegment(glistp++, STATIC_SEGMENT,  osVirtualToPhysical(gStaticSegmentBuffer));
@@ -113,6 +117,7 @@ void createGfxTask(GFXInfo *i) {
 
     gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
     gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
+    gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
 	gDPSetTextureLUT(glistp++, G_TT_NONE);
 
     // gDPSetScissor(glistp++, G_SC_NON_INTERLACE, 60, 60, 259, 179);
@@ -157,13 +162,28 @@ void createGfxTask(GFXInfo *i) {
 
     dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
 
+    int index;
+    for (index = 0; index < MAX_MENUS; ++index) {
+        if (gMenuGraphics[index]) {
+            gMenuGraphics[index](gMenuGraphicsData[index], &state, 0, MenuRenderPassBasic);
+        }
+    }
+
     glistp = state.dl;
 
     fontRendererBeginFrame(&dynamicp->fontRenderer);
 
     spInit(&glistp);
 
-    // glistp = fontRendererDrawCharacters(&dynamicp->fontRenderer, &gEndlessBossBattle, glistp, "Hello World!", 0, 0);
+    state.dl = glistp;
+
+    for (index = 0; index < MAX_MENUS; ++index) {
+        if (gMenuGraphics[index]) {
+            gMenuGraphics[index](gMenuGraphicsData[index], &state, &dynamicp->fontRenderer, MenuRenderPassSprite);
+        }
+    }
+
+    glistp = state.dl;
 
     spFinish(&glistp);
     --glistp;/* Don't use final EndDisplayList() */
@@ -202,4 +222,34 @@ void createGfxTask(GFXInfo *i) {
     t->framebuffer = (void *)i->cfb;
     osSendMesg(gSchedulerCommandQ, (OSMesg) t, OS_MESG_BLOCK); 
     ++gFrameNumber;
+}
+
+void graphicsAddMenu(MenuRenderCallback renderCallback, void* data) {
+    int i;
+    for (i = 0; i < MAX_MENUS; ++i) {
+        if (!gMenuGraphics[i]) {
+            gMenuGraphics[i] = renderCallback;
+            gMenuGraphicsData[i] = data;
+            break;
+        }
+    }
+}
+
+void graphicsRemoveMenu(MenuRenderCallback renderCallback, void* data) {
+    int i;
+    for (i = 0; i < MAX_MENUS; ++i) {
+        if (gMenuGraphics[i] == renderCallback && gMenuGraphicsData[i] == data) {
+            gMenuGraphics[i] = 0;
+            gMenuGraphicsData[i] = 0;
+            break;
+        }
+    }
+}
+
+void graphicsClearMenus() {
+    int i;
+    for (i = 0; i < MAX_MENUS; ++i) {
+        gMenuGraphics[i] = 0;
+        gMenuGraphicsData[i] = 0;
+    }
 }

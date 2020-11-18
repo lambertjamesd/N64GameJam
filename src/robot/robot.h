@@ -9,7 +9,7 @@
 #include "src/effects/shadow.h"
 #include "src/effects/teleport.h"
 
-#define ROBOT_ACCEL 8.0f
+#define ROBOT_ACCEL 16.0f
 #define ROBOT_SPEED 2.0f
 
 #define ROBOT_RADIUS 0.8f

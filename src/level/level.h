@@ -8,6 +8,11 @@
 
 typedef void (*CleanupFunction)(void*);
 
+#define LEVEL_HAS_CADET 1
+#define LEVEL_HAS_ROBOT 2
+#define LEVEL_INTRO_CUTSCENE 4
+#define LEVEL_EXIT_CUTSCENE 8
+
 struct LevelSwitchDef {
     struct Vector3 pos;
     short type;
@@ -52,6 +57,7 @@ struct LevelData {
     int platformCount;
     struct LevelPlatformSlotDef* platformSlots;
     int platformSlotCount;
+    char* name;
 };
 
 struct LevelThemeDefinition {
@@ -70,6 +76,7 @@ struct LevelDefinition {
 extern struct LevelDefinition* gLoadedLevel;
 extern int gCurrentLevel;
 extern int gNextLevel;
+extern int gLevelFlags;
 
 void levelLoad(struct LevelDefinition* levelDef);
 

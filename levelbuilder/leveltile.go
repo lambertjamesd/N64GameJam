@@ -108,6 +108,7 @@ type LevelGrid struct {
 	Breakables                         []LevelBreakableDef
 	Platforms                          []LevelPlatformDef
 	PlatformSlots                      []LevelPlatformSlotDef
+	Name                               string
 }
 
 func (level *LevelGrid) GetSize() (int, int) {

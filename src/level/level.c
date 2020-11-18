@@ -18,13 +18,11 @@
 #include "src/input/inputfocus.h"
 #include "src/input/controller.h"
 #include "src/levels/levels.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
+#include "src/effects/leveltitle.h"
 
 struct LevelDefinition* gLoadedLevel;
-
-#define LEVEL_HAS_CADET 1
-#define LEVEL_HAS_ROBOT 2
-#define LEVEL_INTRO_CUTSCENE 4
-#define LEVEL_EXIT_CUTSCENE 8
 
 static CleanupFunction* gCleanupFn; 
 static void** gCleanupParam;
@@ -56,6 +54,14 @@ void levelUpdate(void* data) {
 
         if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
             gInputMask = INPUT_MASK_ROBOT;
+
+            audioRestartPlaySound(
+                gPlayerSoundIds[PlayerSwitch],
+                0.5f,
+                1.0f,
+                0.0f,
+                10
+            );
         }
     } else if (gInputMask & InputMaskRobot) {
         gScene.camera.targetPosition = gRobot.transform.position;
@@ -66,6 +72,14 @@ void levelUpdate(void* data) {
 
         if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
             gInputMask = INPUT_MASK_CADET;
+
+            audioRestartPlaySound(
+                gPlayerSoundIds[PlayerSwitchBack],
+                0.5f,
+                1.0f,
+                0.0f,
+                10
+            );
         }
     }
 
@@ -83,6 +97,22 @@ void levelUpdate(void* data) {
         gScene.camera.followDistanceStep = 0;
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;
         gInputMask = 0;
+
+        enum PlayerSounds exitSound = PlayerSoundsBothWarp;
+
+        if (!(gLevelFlags & LEVEL_HAS_ROBOT)) {
+            exitSound = PlayerSoundsCadetWarp;
+        } else if (!(gLevelFlags & LEVEL_HAS_CADET)) {
+            exitSound = PlayerSoundsRobotWarp;
+        }
+
+        audioPlaySound(
+            gPlayerSoundIds[exitSound],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
     }
 
     if (gLevelFlags & LEVEL_EXIT_CUTSCENE) {
@@ -211,6 +241,7 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
     timeResetListeners();
     signalResetAll();
+    graphicsClearMenus();
 
     graphicsInitLevel(
         staticSegment, 
@@ -246,4 +277,6 @@ void levelLoad(struct LevelDefinition* levelDef) {
     gLoadedLevel = levelDef;
 
     gScene.transparentMaterials[TransparentMaterialTypeShadow] = _drop_shadow_material;
+
+    levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
 }

@@ -33,12 +33,13 @@ LEVELS = cadet_intro \
 	raised_platform \
 	moving_platforms \
 	switch_mania \
+	raise_robot \
 	debug
 	
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
 LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
 
-src/levels/%/geo.c: levels/%.level levelbuilder/levelbuilder
+src/levels/%/geo.c: levels/%.level levels/%.meta levelbuilder/levelbuilder
 	@mkdir -p $(@D)
 	levelbuilder/levelbuilder level $* $< $@
 
@@ -57,7 +58,26 @@ src/collision/geo/geo.c: $(COLLISION_GEO)
 
 PLAYER_SOUNDS = sound/clips/Jump.wav \
 	sound/clips/JumpPeakBeep.wav \
-	sound/clips/Landing.wav
+	sound/clips/Landing.wav \
+	sound/clips/AstronautFootsteps.aif \
+	sound/clips/AstronautSlide1.aif \
+	sound/clips/AstronautSlide2.aif \
+	sound/clips/WarpAstronautOnly.aif \
+	sound/clips/WarpRobotOnly.aif \
+	sound/clips/WarpBoth.aif \
+	sound/clips/AstronautDeath_Fall.wav \
+	sound/clips/RobotDeath_Fall.wav \
+	sound/clips/Land_onRobotHead.aif \
+	sound/clips/MetalFootsteps_RoboHead.aif \
+	sound/clips/RobotDestroy.aif \
+	sound/clips/RobotMovement.aif \
+	sound/clips/SwitchBackChar.wav \
+	sound/clips/SwitchChar.wav \
+	sound/clips/BigButton.aif \
+	sound/clips/SmallButton.aif \
+	sound/clips/WarpGoGreen_Big.wav \
+	sound/clips/WarpGoGreen_Small.aif
+
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
@@ -90,6 +110,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/meshcollision.c \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
+	src/effects/leveltitle.c	\
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
 	src/font/font.c	\
