@@ -7,19 +7,16 @@
 #define MAX_FONT_CHARACTERS     512 
 
 struct FontRenderer {
-    Bitmap bitmaps[MAX_FONT_CHARACTERS];
-    Gfx dl[NUM_DL(MAX_FONT_CHARACTERS)];
-    Sprite sprite;
+    Gfx dl[MAX_FONT_CHARACTERS];
+    Gfx* nextDL;
     float sx, sy;
-    u8 r, g, b, a;
 };
 
 void fontRendererBeginFrame(struct FontRenderer* renderer);
 
 void fontRendererSetScale(struct FontRenderer* fontRenderer, float x, float y);
-void fontRendererSetColor(struct FontRenderer* fontRenderer, u8 red, u8 green, u8 blue, u8 alpha);
 
-Gfx* fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font* font, Gfx* dl, char* string, int x, int y);
+float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font* font, Gfx** dlPtr, char* string, int x, int y);
 float fontRendererMeasureWidth(struct Font* font, char* string);
 
 

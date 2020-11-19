@@ -21,6 +21,7 @@
 #include "src/audio/playersounds.h"
 #include "src/audio/audio.h"
 #include "src/effects/leveltitle.h"
+#include "src/effects/tutorial.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -81,6 +82,10 @@ void levelUpdate(void* data) {
                 10
             );
         }
+    }
+
+    if ((gInputMask & (InputMaskCadet | InputMaskRobot)) && !(gLevelFlags & LEVEL_INTRO_CUTSCENE)) {
+        tutorialMenuCheck();
     }
 
     if (gLevelFlags & LEVEL_INTRO_CUTSCENE) {

@@ -111,10 +111,12 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
 	src/effects/leveltitle.c	\
+	src/effects/tutorial.c	\
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
 	src/font/font.c	\
 	src/font/fontrenderer.c	\
+	src/font/buttons/buttons.c	\
 	src/font/endlessbossbattle/endlessbossbattle.c	\
 	src/graphics/dynamic.c	\
 	src/graphics/graphics.c	\
@@ -144,6 +146,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/puzzle/signal.c  \
 	src/puzzle/switch.c  \
 	src/system/assert.c		\
+	src/save/savefile.c	\
 	src/time/time.c		\
 	src/boot.c				\
 	src/game.c				\

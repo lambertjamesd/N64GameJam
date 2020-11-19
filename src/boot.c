@@ -15,6 +15,7 @@
 #include "src/robot/robot.h"
 #include "src/audio/playersounds.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
+#include "src/font/buttons/buttons.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -203,7 +204,8 @@ static void initGame(void)
     audioInit();
     playerSoundsInit();
 
-    fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, _endless_boss_battle_ia4, G_IM_FMT_I, G_IM_SIZ_4b, 64, 128, 11);
+    fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
+    fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);
 
     levelLoad(&_level_group_all_levels[0]);
 }

@@ -13,14 +13,10 @@ struct FontCharacter {
 
 struct Font {
     struct FontCharacter* ansiiLookup[FONT_CHARACTER_COUNT];
-    u8* fontImage;
-	u8	bitmapFormat;
-	u8	texelSize;
-    u8 imageWidth;
-    u8 imageHeight;
+    Gfx* setupFontMaterial;
     u8 lineHeight;
 };
 
-void fontInit(struct Font* font, struct FontCharacter* characters, u8* image, u8 bitmapFormat, u8 texelSize, u8 imageWidth, u8 imageHeight, u8 lineHeight);
+void fontInit(struct Font* font, struct FontCharacter* characters, Gfx* setupFontMaterial, u8 lineHeight);
 
 #endif

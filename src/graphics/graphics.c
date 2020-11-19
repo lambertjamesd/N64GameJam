@@ -162,31 +162,19 @@ void createGfxTask(GFXInfo *i) {
 
     dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
 
+    fontRendererBeginFrame(&dynamicp->fontRenderer);
+
+    gSPClearGeometryMode(state.dl++, G_ZBUFFER|G_CULL_BACK);
+    gDPSetRenderMode(state.dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+
     int index;
     for (index = 0; index < MAX_MENUS; ++index) {
         if (gMenuGraphics[index]) {
-            gMenuGraphics[index](gMenuGraphicsData[index], &state, 0, MenuRenderPassBasic);
+            gMenuGraphics[index](gMenuGraphicsData[index], &state, &dynamicp->fontRenderer);
         }
     }
 
     glistp = state.dl;
-
-    fontRendererBeginFrame(&dynamicp->fontRenderer);
-
-    spInit(&glistp);
-
-    state.dl = glistp;
-
-    for (index = 0; index < MAX_MENUS; ++index) {
-        if (gMenuGraphics[index]) {
-            gMenuGraphics[index](gMenuGraphicsData[index], &state, &dynamicp->fontRenderer, MenuRenderPassSprite);
-        }
-    }
-
-    glistp = state.dl;
-
-    spFinish(&glistp);
-    --glistp;/* Don't use final EndDisplayList() */
 
     gDPFullSync(glistp++);
     gSPEndDisplayList(glistp++);

@@ -4,6 +4,7 @@
 #include "src/graphics/graphics.h"
 #include "src/font/fontrenderer.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
+#include "src/font/buttons/buttons.h"
 #include "src/defs.h"
 
 #define MESSAGE_SCALE   2.0f
@@ -20,34 +21,30 @@
 
 struct LevelTitleEffect gLevelTitleEffect;
 
-void levelTitleEffectRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer, enum MenuRenderPass pass) {
+void levelTitleEffectRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     struct LevelTitleEffect* titleEffect = (struct LevelTitleEffect*)data;
     
-    if (pass == MenuRenderPassBasic) {
-        int barHeight = 0;
+    int barHeight = 0;
 
-        if (titleEffect->currTime < BAR_SCALE_TIME) {
-            barHeight = (int)(BAR_HEIGHT * (titleEffect->currTime / BAR_SCALE_TIME));
-        } else if (titleEffect->currTime > MESSAGE_TOTAL_TIME - BAR_SCALE_TIME) {
-            float lerpTime = titleEffect->currTime - MESSAGE_TOTAL_TIME + BAR_SCALE_TIME;
-            lerpTime = 1.0f - lerpTime/ BAR_SCALE_TIME;
-            barHeight = (int)(BAR_HEIGHT * lerpTime);
-        } else {
-            barHeight = BAR_HEIGHT;
-        }
+    if (titleEffect->currTime < BAR_SCALE_TIME) {
+        barHeight = (int)(BAR_HEIGHT * (titleEffect->currTime / BAR_SCALE_TIME));
+    } else if (titleEffect->currTime > MESSAGE_TOTAL_TIME - BAR_SCALE_TIME) {
+        float lerpTime = titleEffect->currTime - MESSAGE_TOTAL_TIME + BAR_SCALE_TIME;
+        lerpTime = 1.0f - lerpTime/ BAR_SCALE_TIME;
+        barHeight = (int)(BAR_HEIGHT * lerpTime);
+    } else {
+        barHeight = BAR_HEIGHT;
+    }
 
-        if (barHeight > 0) {
-            gDPPipeSync(state->dl++);
-            gSPClearGeometryMode(state->dl++, G_ZBUFFER);
-            gDPSetRenderMode(state->dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-            gDPSetCycleType(state->dl++, G_CYC_FILL);
-            gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
-                        GPACK_RGBA5551(0, 0, 0, 1)));
-            gDPFillRectangle(state->dl++, 0, 160-(barHeight>>1), SCREEN_WD-1, 160+(barHeight>>1));
-            gDPPipeSync(state->dl++);
-            gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
-        }
-    } else if (pass == MenuRenderPassSprite) {
+    if (barHeight > 0) {
+        gDPPipeSync(state->dl++);
+        gDPSetCycleType(state->dl++, G_CYC_FILL);
+        gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
+                    GPACK_RGBA5551(0, 0, 0, 1)));
+        gDPFillRectangle(state->dl++, 0, 160-(barHeight>>1), SCREEN_WD-1, 160+(barHeight>>1));
+        gDPPipeSync(state->dl++);
+
+
         float centerOffset = (titleEffect->currTime - MESSAGE_TOTAL_TIME*0.5f) * MESSAGE_SLIDE_VELOCITY;
 
         if (titleEffect->currTime < MESSAGE_ENTER_TIME) {
@@ -58,15 +55,18 @@ void levelTitleEffectRender(void* data, struct GraphicsState* state, struct Font
             centerOffset -= titleEffect->edgeAccel * accelTime * accelTime;
         }
 
+        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
         fontRendererSetScale(fontRenderer, MESSAGE_SCALE, MESSAGE_SCALE);
-
-        state->dl = fontRendererDrawCharacters(
+        fontRendererDrawCharacters(
             fontRenderer, 
             &gEndlessBossBattle, 
-            state->dl, 
-            titleEffect->message,
-            -titleEffect->titleWidth * 0.5f + SCREEN_WD*0.5f+centerOffset, 160-8
+            &state->dl, 
+            titleEffect->message, 
+            -titleEffect->titleWidth * 0.5f + SCREEN_WD*0.5f+centerOffset, 
+            160-8
         );
+
+        gDPPipeSync(state->dl++);
     }
 }
 

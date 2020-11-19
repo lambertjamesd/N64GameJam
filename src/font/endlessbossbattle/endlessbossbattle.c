@@ -101,3 +101,24 @@ struct FontCharacter gEndlessBossBattleCharacters[] = {
 };
 
 struct Font gEndlessBossBattle;
+
+Gfx gEndlessBossBattleUse[] = {
+    gsDPPipeSync(),
+    gsSPClearGeometryMode(G_ZBUFFER),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsDPSetTextureFilter(G_TF_POINT),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureLUT(G_TT_NONE),
+	gsSPTexture(65535, 65535, 0, 0, 1),
+	gsDPTileSync(),
+	gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_8b, 32, _endless_boss_battle_ia4),
+	gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b, 4, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0),
+	gsDPLoadSync(),
+	gsDPLoadTile(7, 0, 0, 126, 508),
+	gsDPPipeSync(),
+	gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_4b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0),
+	gsDPSetTileSize(0, 0, 0, 252, 508),
+    gsSPEndDisplayList(),
+};
