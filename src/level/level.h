@@ -8,10 +8,12 @@
 
 typedef void (*CleanupFunction)(void*);
 
-#define LEVEL_HAS_CADET 1
-#define LEVEL_HAS_ROBOT 2
-#define LEVEL_INTRO_CUTSCENE 4
-#define LEVEL_EXIT_CUTSCENE 8
+#define LEVEL_HAS_CADET         0x1
+#define LEVEL_HAS_ROBOT         0x2
+#define LEVEL_INTRO_CUTSCENE    0x4
+#define LEVEL_EXIT_CUTSCENE     0x8
+#define LEVEL_INTRO_ROBOT       0x10
+#define LEVEL_FOCUS_CUTSCENE    0x20
 
 struct LevelSwitchDef {
     struct Vector3 pos;
@@ -79,5 +81,9 @@ extern int gNextLevel;
 extern int gLevelFlags;
 
 void levelLoad(struct LevelDefinition* levelDef);
+void levelSwitchToCadet();
+void levelSwitchToRobot();
+
+void levelFocusCutscene(struct Vector3* target, float time);
 
 #endif

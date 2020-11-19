@@ -13,4 +13,7 @@ enum InputMask {
 
 extern int gInputMask;
 
+void inputMaskPush(int state);
+void inputMaskPop();
+
 #endif

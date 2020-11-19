@@ -22,6 +22,7 @@
 #include "src/audio/audio.h"
 #include "src/effects/leveltitle.h"
 #include "src/effects/tutorial.h"
+#include "src/save/savefile.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -32,6 +33,7 @@ int gLevelFlags;
 struct TimeUpdateListener gLevelUpdateListener;
 int gCurrentLevel;
 int gNextLevel;
+float gLevelCutsceneTimer;
 
 void levelNext() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
@@ -45,6 +47,38 @@ void levelPrev() {
     }
 }
 
+void levelSwitchToCadet() {
+    gInputMask = INPUT_MASK_CADET;
+
+    audioRestartPlaySound(
+        gPlayerSoundIds[PlayerSwitchBack],
+        0.5f,
+        1.0f,
+        0.0f,
+        10
+    );
+}
+
+void levelSwitchToRobot() {
+    gInputMask = INPUT_MASK_ROBOT;
+
+    audioRestartPlaySound(
+        gPlayerSoundIds[PlayerSwitch],
+        0.5f,
+        1.0f,
+        0.0f,
+        10
+    );
+}
+
+void levelFocusCutscene(struct Vector3* target, float time) {
+    gLevelCutsceneTimer = time;
+    inputMaskPush(0);
+    gLevelFlags |= LEVEL_FOCUS_CUTSCENE;
+    gScene.camera.targetPosition = *target;
+    gScene.camera.followDistanceStep = 0;
+}
+
 void levelUpdate(void* data) {
     if (gInputMask & InputMaskCadet) {
         gScene.camera.targetPosition = gCadet.transform.position;
@@ -54,15 +88,7 @@ void levelUpdate(void* data) {
         }
 
         if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
-            gInputMask = INPUT_MASK_ROBOT;
-
-            audioRestartPlaySound(
-                gPlayerSoundIds[PlayerSwitch],
-                0.5f,
-                1.0f,
-                0.0f,
-                10
-            );
+            levelSwitchToRobot();
         }
     } else if (gInputMask & InputMaskRobot) {
         gScene.camera.targetPosition = gRobot.transform.position;
@@ -72,19 +98,12 @@ void levelUpdate(void* data) {
         }
 
         if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
-            gInputMask = INPUT_MASK_CADET;
-
-            audioRestartPlaySound(
-                gPlayerSoundIds[PlayerSwitchBack],
-                0.5f,
-                1.0f,
-                0.0f,
-                10
-            );
+            levelSwitchToCadet();
         }
     }
 
-    if ((gInputMask & (InputMaskCadet | InputMaskRobot)) && !(gLevelFlags & LEVEL_INTRO_CUTSCENE)) {
+    if ((gInputMask & (InputMaskCadet | InputMaskRobot)) && 
+        !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
         tutorialMenuCheck();
     }
 
@@ -92,6 +111,16 @@ void levelUpdate(void* data) {
         if (!(gCadet.actor.stateFlags & CADET_IS_CUTSCENE)) {
             gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
             gInputMask = INPUT_MASK_CADET;
+            gScene.camera.followDistanceStep = 1;
+        }
+    }
+
+    if (gLevelFlags & LEVEL_FOCUS_CUTSCENE) {
+        gLevelCutsceneTimer -= gTimeDelta;
+
+        if (gLevelCutsceneTimer < 0.0f) {
+            gLevelFlags &= ~LEVEL_FOCUS_CUTSCENE;
+            inputMaskPop();
             gScene.camera.followDistanceStep = 1;
         }
     }
@@ -271,7 +300,12 @@ void levelLoad(struct LevelDefinition* levelDef) {
     entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
 
     if (levelDef->levelData->robotStart.z < 0.5 && levelDef->levelData->robotStart.x > -0.5) {
-        gLevelFlags |= LEVEL_HAS_ROBOT;
+        if (gSaveFile.tutorialFlags & SAVEFILE_LEARNED_FOUND_ROBOT) {
+            gLevelFlags |= LEVEL_HAS_ROBOT;
+        } else {
+            gLevelFlags |= LEVEL_INTRO_ROBOT;
+        }
+
         robotReset(&levelDef->levelData->robotStart);
         entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
     }
