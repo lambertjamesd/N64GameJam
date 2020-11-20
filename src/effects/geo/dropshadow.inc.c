@@ -120,7 +120,6 @@ Gfx _drop_shadow_material[] = {
 	gsDPPipeSync(),
 	gsDPSetRenderMode(G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2),
     gsDPSetCombineLERP(0, 0, 0, ENVIRONMENT, ENVIRONMENT, 0, TEXEL0, 0, 0, 0, 0, ENVIRONMENT, ENVIRONMENT, 0, TEXEL0, 0),
-	gsSPClearGeometryMode(G_CULL_BACK),
 	gsDPSetTextureLUT(G_TT_NONE),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPTileSync(),
@@ -135,10 +134,10 @@ Gfx _drop_shadow_material[] = {
 };
 
 Vtx _quad_mesh_vtx[4] = {
-	{{{-213, 0, 213},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{213, 0, 213},0, {1008, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
-	{{{213, 0, -213},0, {1008, -16},{0x0, 0x7F, 0x0, 0xFF}}},
 	{{{-213, 0, -213},0, {-16, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{213, 0, -213},0, {1008, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{213, 0, 213},0, {1008, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{-213, 0, 213},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
 };
 
 Gfx _quad_mesh_tri_0[] = {

@@ -42,6 +42,10 @@ struct LevelPlatformSlotDef {
     struct Vector3 pos;
 };
 
+struct LevelGemDef {
+    struct Vector3 pos;
+};
+
 struct LevelData {
     struct LevelGraphics* graphics;
     struct LevelCollisionGrid* collision;
@@ -59,6 +63,8 @@ struct LevelData {
     int platformCount;
     struct LevelPlatformSlotDef* platformSlots;
     int platformSlotCount;
+    struct LevelGemDef* gems;
+    int gemCount;
     char* name;
 };
 

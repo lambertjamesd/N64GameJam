@@ -13,6 +13,7 @@
 #include "src/puzzle/breakable.h"
 #include "src/puzzle/movingplatform.h"
 #include "src/puzzle/entranceexit.h"
+#include "src/puzzle/gem.h"
 #include "src/effects/shadow.h"
 #include "src/time/time.h"
 #include "src/input/inputfocus.h"
@@ -231,6 +232,16 @@ void levelExpand(struct LevelDefinition* levelDef) {
         movingPlatformInit(&platforms[i], &platform->pos, &slots[platform->slotIndex], platform->color);
     }
 
+    struct Gem* gems = heapMalloc(
+        ARRAY_SIZE(struct Gem, levelDef->levelData->gemCount),
+        ALIGNMENT_OF(struct Gem)
+    );
+
+    for (i = 0; i < levelDef->levelData->gemCount; ++i) {
+        struct LevelGemDef* gem = &levelDef->levelData->gems[i];
+        gemInit(&gems[i], &gem->pos, 0, i);
+    }
+
     /////////////////////
     // cleanup
     
@@ -316,6 +327,7 @@ void levelLoad(struct LevelDefinition* levelDef) {
     gLoadedLevel = levelDef;
 
     gScene.transparentMaterials[TransparentMaterialTypeShadow] = _drop_shadow_material;
+    gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
 
     levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
 }

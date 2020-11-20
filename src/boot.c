@@ -207,6 +207,6 @@ static void initGame(void)
     fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
     fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);
 
-    levelLoad(&_level_group_all_levels[0]);
+    levelLoad(&_level_group_all_levels[11]);
 }
 

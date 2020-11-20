@@ -97,6 +97,10 @@ type LevelPlatformSlotDef struct {
 	Pos Vector3
 }
 
+type LevelGemDef struct {
+	Pos Vector3
+}
+
 type LevelGrid struct {
 	Tiles                              [][]LevelTileSlot
 	PlayerPosX, PlayerPosY             float32
@@ -108,6 +112,7 @@ type LevelGrid struct {
 	Breakables                         []LevelBreakableDef
 	Platforms                          []LevelPlatformDef
 	PlatformSlots                      []LevelPlatformSlotDef
+	Gems                               []LevelGemDef
 	Name                               string
 }
 

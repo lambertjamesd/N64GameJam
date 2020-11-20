@@ -226,6 +226,16 @@ struct LevelPlatformSlotDef _level_%s_platformSlots[] = {
 
 	outputLevel.WriteString("};\n")
 
+	outputLevel.WriteString(fmt.Sprintf(`
+struct LevelGemDef _level_%s_gems[] = {
+`, levelName))
+
+	for _, slot := range tileMap.Gems {
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}},\n", slot.Pos.X, slot.Pos.Y, slot.Pos.Z))
+	}
+
+	outputLevel.WriteString("};\n")
+
 	var humanName = tileMap.Name
 
 	if humanName == "" {
@@ -250,6 +260,8 @@ struct LevelData _level_%s_levelData = {
 	%d,
 	_level_%s_platformSlots,
 	%d,
+	_level_%s_gems,
+	%d,
 	"%s",
 };
 `, levelName, levelName, levelName,
@@ -262,6 +274,7 @@ struct LevelData _level_%s_levelData = {
 		levelName, len(tileMap.Breakables),
 		levelName, len(tileMap.Platforms),
 		levelName, len(tileMap.PlatformSlots),
+		levelName, len(tileMap.Gems),
 		humanName,
 	))
 

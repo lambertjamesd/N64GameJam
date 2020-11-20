@@ -117,5 +117,6 @@ void renderSceneReset(struct RenderScene* scene) {
     int i;
     for (i = 0; i < MAX_MATERIAL_GROUPS; ++i) {
         scene->transparentMaterials[i] = 0;
+        scene->transparentMaterialCleanup[i] = 0;
     }
 }

@@ -142,6 +142,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/puzzle/breakable.c  \
 	src/puzzle/door.c  \
 	src/puzzle/entranceexit.c  \
+	src/puzzle/gem.c  \
 	src/puzzle/movingplatform.c  \
 	src/puzzle/signal.c  \
 	src/puzzle/switch.c  \
