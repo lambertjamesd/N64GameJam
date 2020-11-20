@@ -113,6 +113,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     gem->collider.triggerMask = CollisionLayersMutualSwitch;
 
     gem->index = index;
+    gem->flags = 0;
 
     timeAddListener(&gem->updateListener, gemUpdate, gem);
 
