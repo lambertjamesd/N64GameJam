@@ -16,9 +16,10 @@ struct Gem {
     struct TimeUpdateListener updateListener;
     short flags;
     short index;
+    float animationTimer;
 };
 
-void gemInit(struct Gem* gem, struct Vector3* pos, short didCollect, short index);
+void gemInit(struct Gem* gem, struct Vector3* pos, short index);
 
 extern Gfx _gem_mat[];
 extern Gfx _gem_mesh_tri_0[];

@@ -3,6 +3,8 @@
 #include "geo/gem.inc.c"
 #include "src/collision/collisionscene.h"
 #include "src/graphics/renderscene.h"
+#include "src/level/level.h"
+#include "src/save/savefile.h"
 
 struct CollisionCollider gGemCollider = {
     ColliderTypeBox,
@@ -20,35 +22,71 @@ struct Quaternion gGemRotationPerFrame = {
     0.999847695,
 };
 
+#define GEM_COLLECTED_ANIMATION_DURATION 1.5f
+#define GEM_RAISE_TIME                   0.25f
+#define GEM_FALL_TIME                    1.25f
+
+#define GEM_RAISE_HEIGHT                 1.5f
+
 void gemRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct Gem* gem = (struct Gem*)data->data;
-
-    if (gem->flags & GEM_FLAGS_PREVIOUSLY_COLLECTED) {
-        gDPSetEnvColor(state->dl++, 0, 0, 0, 98);
-    } else {
-        gDPSetEnvColor(state->dl++, 255, 255, 255, 196);
-    }
 
     if (gem->flags & GEM_FLAGS_COLLECT_ANIM) {
         gDPSetRenderMode(state->dl++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
     }
     
-    Mtx* nextTransfrom = graphicsStateNextMtx(state);
-    transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
-    gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    gSPDisplayList(state->dl++, _gem_mesh_tri_0);
-    gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
+    if (!(gem->flags & GEM_FLAGS_COLLECTED)) {
+        if (gem->flags & GEM_FLAGS_PREVIOUSLY_COLLECTED) {
+            gDPSetEnvColor(state->dl++, 0, 0, 0, 98);
+        } else {
+            gDPSetEnvColor(state->dl++, 255, 255, 255, 196);
+        }
 
-    if (gem->flags & GEM_FLAGS_COLLECT_ANIM) {
-        gDPSetRenderMode(state->dl++, G_RM_ZB_XLU_SURF, G_RM_ZB_XLU_SURF2);
+        
+        Mtx* nextTransfrom = graphicsStateNextMtx(state);
+        transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
+        gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
+        gSPDisplayList(state->dl++, _gem_mesh_tri_0);
+        gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
+
+        if (gem->flags & GEM_FLAGS_COLLECT_ANIM) {
+            gDPSetRenderMode(state->dl++, G_RM_ZB_XLU_SURF, G_RM_ZB_XLU_SURF2);
+        }
     }
 }
 
+
 void gemUpdate(void* data) {
     struct Gem* gem = (struct Gem*)data;
-    struct Quaternion combined;
-    quatMultiply(&gem->transform.rotation, &gGemRotationPerFrame, &combined);
-    gem->transform.rotation = combined;
+
+    if (gem->flags & GEM_FLAGS_COLLECT_ANIM) {
+        if (gem->animationTimer < GEM_RAISE_TIME) {
+            float accelTime = (GEM_RAISE_TIME - gem->animationTimer);
+            accelTime = 0.5f * accelTime * accelTime;
+
+            gem->transform.position.y += accelTime * (GEM_RAISE_HEIGHT / GEM_RAISE_TIME);
+        }
+
+        if (gem->animationTimer > GEM_FALL_TIME) {
+            float relativeTime = (GEM_COLLECTED_ANIMATION_DURATION - gem->animationTimer) *
+                (1.0f / (GEM_COLLECTED_ANIMATION_DURATION - GEM_FALL_TIME));
+
+            gem->transform.position.y += (1.0f - relativeTime * relativeTime) * 0.25f;
+
+            gem->transform.scale = relativeTime;
+        }
+
+        gem->animationTimer += gTimeDelta;
+
+        if (gem->animationTimer >= GEM_COLLECTED_ANIMATION_DURATION) {
+            gem->flags &= ~GEM_FLAGS_COLLECT_ANIM;
+            gem->flags |= GEM_FLAGS_COLLECTED;
+        }
+    } else {
+        struct Quaternion combined;
+        quatMultiply(&gem->transform.rotation, &gGemRotationPerFrame, &combined);
+        gem->transform.rotation = combined;
+    }
 }
 
 void gemTrigger(void* data) {
@@ -58,11 +96,13 @@ void gemTrigger(void* data) {
     vector3Add(&gGemCollider.box.min, &gem->transform.position, &bb.min);
     vector3Add(&gGemCollider.box.max, &gem->transform.position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, 0, &bb);
+    saveFileMarkCollectedGem(gCurrentLevel, gem->index);
 
-    gem->flags |= GEM_FLAGS_COLLECT_ANIM | GEM_FLAGS_COLLECTED;
+    gem->flags |= GEM_FLAGS_COLLECT_ANIM;
+    gem->animationTimer = 0.0f;
 }
 
-void gemInit(struct Gem* gem, struct Vector3* pos, short didCollect, short index) {
+void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     transformIdentity(&gem->transform);
     gem->transform.position = *pos;
 
@@ -72,6 +112,8 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short didCollect, short index
     gem->collider.trigger = gemTrigger;
     gem->collider.triggerMask = CollisionLayersMutualSwitch;
 
+    gem->index = index;
+
     timeAddListener(&gem->updateListener, gemUpdate, gem);
 
     struct CollisionBox bb;
@@ -80,4 +122,8 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short didCollect, short index
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, &bb, 0);
 
     dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, gem, gemRender, TransparentMaterialTypeGem);
+
+    if (saveFileDidCollectGem(gCurrentLevel, index)) {
+        gem->flags |= GEM_FLAGS_PREVIOUSLY_COLLECTED;
+    }
 }

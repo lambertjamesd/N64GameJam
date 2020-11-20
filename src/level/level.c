@@ -239,7 +239,7 @@ void levelExpand(struct LevelDefinition* levelDef) {
 
     for (i = 0; i < levelDef->levelData->gemCount; ++i) {
         struct LevelGemDef* gem = &levelDef->levelData->gems[i];
-        gemInit(&gems[i], &gem->pos, 0, i);
+        gemInit(&gems[i], &gem->pos, i);
     }
 
     /////////////////////
