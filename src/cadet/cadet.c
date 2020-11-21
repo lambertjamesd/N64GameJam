@@ -1,14 +1,14 @@
 
 #include "cadet.h"
+#include "geo/model.h"
+#include "src/audio/audio.h"
+#include "src/audio/playersounds.h"
+#include "src/collision/collisionscene.h"
+#include "src/graphics/dynamic.h"
+#include "src/graphics/renderscene.h"
 #include "src/input/controller.h"
 #include "src/input/inputfocus.h"
-#include "src/graphics/renderscene.h"
-#include "src/collision/collisionscene.h"
-#include "geo/model.h"
-#include "src/graphics/dynamic.h"
 #include "src/math/mathf.h"
-#include "src/audio/playersounds.h"
-#include "src/audio/audio.h"
 #include "src/puzzle/entranceexit.h"
 
 #define MAX_SHADOW_SCALE 0.6f
@@ -17,7 +17,13 @@
 #define MAX_SHADOW_TRANS 168.0f
 #define MIN_SHADOW_TRANS 94.0f
 
+#define WALK_CYCLE_DUR      0.25f
+#define WALK_JUMP_HEIGHT    0.15f
+#define WALK_SWAY_ANGLE     (M_PI * 0.05f)
+
 #define COYOTE_TIME 0.1f
+
+#define CADET_TURN_RATE     (M_PI * 3.0f)
 
 struct DropShadowParams gCadetShadowParams = {
     MIN_SHADOW_SCALE,
@@ -28,6 +34,8 @@ struct DropShadowParams gCadetShadowParams = {
 };
 
 struct Cadet gCadet;
+
+struct Vector2 gCadetMaxRotation;
 
 void cadetWalk(struct Cadet* cadet);
 void cadetFreefall(struct Cadet* cadet);
@@ -41,14 +49,34 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
         return;
     }
 
+    Mtx* reflectMatrix = graphicsStateNextMtx(state);
+    LookAt* nextLookat = graphicsStateNextLookat(state);
+
+    guLookAtReflect(reflectMatrix, nextLookat, 
+        0,
+        gScene.camera.transform.position.y,
+        0,
+        0,
+        cadet->transform.position.y,
+        2,
+        0,
+        1,
+        0
+    );
+
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
 
     if (cadet->teleport.flags & TELEPORT_FLAG_ACTIVE) {
         teleportEffectCreateTransform(&cadet->teleport, &cadet->transform, nextTransfrom);
     } else {
-        transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
+        struct BasicTransform walkTransform;
+        struct BasicTransform combined;
+        walkAnimRelativeTransform(&cadet->walkAnim, &walkTransform);
+        transformConcat(data->transform, &walkTransform, &combined);
+        transformToMatrixL(&combined, 1.0f / 256.0f, nextTransfrom);
     }
 
+    gSPLookAt(state->dl++, K0_TO_PHYS(nextLookat));
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, Cadet_Cadet_mesh);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
@@ -56,9 +84,12 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
 
 void cadetUpdateRotation(struct Cadet* cadet) {
     if (cadet->actor.velocity.x != 0.0f || cadet->actor.velocity.z != 0.0f) {
-        cadet->rotation.x = cadet->actor.velocity.x;
-        cadet->rotation.y = cadet->actor.velocity.z;
-        vector2Normalize(&cadet->rotation, &cadet->rotation);
+        struct Vector2 targetRotation;
+        targetRotation.x = cadet->actor.velocity.x;
+        targetRotation.y = cadet->actor.velocity.z;
+        vector2Normalize(&targetRotation, &targetRotation);
+        vector2RotateTowards(&cadet->rotation, &targetRotation, &gCadetMaxRotation, &cadet->rotation);
+
         struct Vector2 dir;
         dir.x = cadet->rotation.y;
         dir.y = cadet->rotation.x;
@@ -173,6 +204,7 @@ void cadetWalk(struct Cadet* cadet) {
     int isGrounded = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED);
     if (!isGrounded && cadet->coyoteTimer <= 0.0f) {
         cadet->state = cadetFreefall;
+        walkAnimUpdate(&cadet->walkAnim, 0.0f);
     } else {
         if (isGrounded) {
             cadet->coyoteTimer = COYOTE_TIME;
@@ -183,6 +215,7 @@ void cadetWalk(struct Cadet* cadet) {
         if ((gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON)) {
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
+            walkAnimUpdate(&cadet->walkAnim, 0.0f);
             cadet->actor.stateFlags |= CADET_IS_JUMPING;
 
             audioPlaySound(
@@ -192,6 +225,11 @@ void cadetWalk(struct Cadet* cadet) {
                 0.0f,
                 10
             );
+        } else {
+            walkAnimUpdate(&cadet->walkAnim, sqrtf(
+                cadet->actor.velocity.x * cadet->actor.velocity.x +
+                cadet->actor.velocity.z * cadet->actor.velocity.z
+            ));
         }
 
         cadetUpdateRotation(cadet);
@@ -305,9 +343,18 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.transform.position = *startLocation;
     gCadet.state = cadetTeleportIn;
 
+    gCadet.rotation.x = 1.0f;
+    gCadet.rotation.y = 0.0f;
+
     gCadet.transform.position.y += 0.5f;
 
     teleportEffectStart(&gCadet.teleport, TELEPORT_FLAG_REVERSE);
+    walkAnimInit(&gCadet.walkAnim, 
+        WALK_CYCLE_DUR, 
+        CADET_SPEED, 
+        WALK_JUMP_HEIGHT, 
+        WALK_SWAY_ANGLE
+    );
 
     gCadet.actor.radius = CADET_RADIUS;
     gCadet.actor.velocity = gZeroVec;
@@ -333,6 +380,9 @@ void cadetInit() {
         CollisionLayersMutualSwitch |
         CollisionLayersCadetSwitch |
         CollisionLayersKillPlane;
+
+    gCadetMaxRotation.x = cosf(MIN_DELTA_TIME * CADET_TURN_RATE);
+    gCadetMaxRotation.y = sinf(MIN_DELTA_TIME * CADET_TURN_RATE);
     cadetReset(&gZeroVec);
 }
 

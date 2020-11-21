@@ -114,6 +114,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/effects/tutorial.c	\
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
+	src/effects/walkanim.c \
 	src/font/font.c	\
 	src/font/fontrenderer.c	\
 	src/font/buttons/buttons.c	\

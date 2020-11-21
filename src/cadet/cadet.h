@@ -3,11 +3,12 @@
 #define _CADET_CADET_C
 
 #include "src/collision/sphereactor.h"
-#include "src/math/basictransform.h"
-#include "src/time/time.h"
-#include "src/math/vector2.h"
 #include "src/effects/shadow.h"
 #include "src/effects/teleport.h"
+#include "src/effects/walkanim.h"
+#include "src/math/basictransform.h"
+#include "src/math/vector2.h"
+#include "src/time/time.h"
 
 #define CADET_RADIUS    0.2f
 #define CADET_SPEED     3.5f
@@ -35,6 +36,7 @@ struct Cadet {
     struct DropShadow shadow;
     float accumTime;
     float gravity;
+    struct WalkAnim walkAnim;
     // state sepecific
     float coyoteTimer;
     struct TeleportEffect teleport;
