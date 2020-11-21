@@ -51,6 +51,7 @@ enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor,
                 actor->lastStableAnchor = actor->anchor;
                 transformPointInverse(actor->anchor, &adjustedPos, &actor->lastStableLocation);
             } else {
+                actor->lastStableAnchor = 0;
                 actor->lastStableLocation = adjustedPos;
             }
         }
