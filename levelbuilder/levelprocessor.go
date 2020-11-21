@@ -231,7 +231,7 @@ struct LevelGemDef _level_%s_gems[] = {
 `, levelName))
 
 	for _, slot := range tileMap.Gems {
-		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}},\n", slot.Pos.X, slot.Pos.Y, slot.Pos.Z))
+		outputLevel.WriteString(fmt.Sprintf("    {{%.6f, %.6f, %.6f}},\n", slot.Pos.X, slot.Pos.Y, -slot.Pos.Z))
 	}
 
 	outputLevel.WriteString("};\n")

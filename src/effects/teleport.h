@@ -17,6 +17,7 @@ struct TeleportEffect {
 void teleportEffectStart(struct TeleportEffect* effect, int flags);
 
 int teleportEffectUpdate(struct TeleportEffect* effect);
+float teleportEffectGetHeight(float time);
 void teleportEffectCreateTransform(struct TeleportEffect* effect, struct BasicTransform* transform, Mtx* mtx);
 
 #endif

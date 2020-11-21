@@ -48,6 +48,10 @@ int teleportEffectUpdate(struct TeleportEffect* effect) {
     return 1;
 }
 
+float teleportEffectGetHeight(float time) {
+    return time * time * FALL_ACCEL;
+}
+
 void teleportEffectCreateTransform(struct TeleportEffect* effect, struct BasicTransform* transform, Mtx* mtx) {
     float tSqr;
     

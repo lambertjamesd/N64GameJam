@@ -1,10 +1,13 @@
 
+#include <math.h>
+
 #include "gem.h"
 #include "geo/gem.inc.c"
 #include "src/collision/collisionscene.h"
 #include "src/graphics/renderscene.h"
 #include "src/level/level.h"
 #include "src/save/savefile.h"
+#include "src/effects/teleport.h"
 
 struct CollisionCollider gGemCollider = {
     ColliderTypeBox,
@@ -22,11 +25,17 @@ struct Quaternion gGemRotationPerFrame = {
     0.999847695,
 };
 
-#define GEM_COLLECTED_ANIMATION_DURATION 1.5f
-#define GEM_RAISE_TIME                   0.25f
-#define GEM_FALL_TIME                    1.25f
+#define GEM_COLLECTED_ANIMATION_DURATION    1.5f
+#define GEM_RAISE_TIME                      0.25f
+#define GEM_FALL_TIME                       1.25f
 
-#define GEM_RAISE_HEIGHT                 1.5f
+#define GEM_RAISE_HEIGHT                    1.5f
+
+#define GEM_END_ANIM_DURATION               2.0f
+#define GEM_ORBIT_RADIUS                    0.8f
+#define GEM_RADIUS_TIME                     0.5f
+#define GEM_RAD_PER_SEC                     (M_PI * 1.8f)
+#define GEM_TIME_OFFSET                     ((M_PI * 2.0f) / (GEM_RAD_PER_SEC * 3.0f))
 
 void gemRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct Gem* gem = (struct Gem*)data->data;
@@ -82,6 +91,36 @@ void gemUpdate(void* data) {
             gem->flags &= ~GEM_FLAGS_COLLECT_ANIM;
             gem->flags |= GEM_FLAGS_COLLECTED;
         }
+    } else if (gem->flags & GEM_FLAGS_END_ANIM) {
+        float timeOffset = gem->animationTimer - gem->index * GEM_TIME_OFFSET;
+        float radius = GEM_ORBIT_RADIUS;
+
+        if (timeOffset < 0.0f) {
+            timeOffset = 0.0f;
+        }
+
+        float angle = timeOffset * GEM_RAD_PER_SEC;
+
+        if (timeOffset < GEM_RADIUS_TIME) {
+            gem->transform.scale = timeOffset / GEM_RADIUS_TIME;
+        }
+
+        if (timeOffset > GEM_END_ANIM_DURATION) {
+            gem->flags &= ~GEM_FLAGS_END_ANIM;
+            gem->flags |= GEM_FLAGS_COLLECTED;
+        } else if (timeOffset > GEM_END_ANIM_DURATION - GEM_RADIUS_TIME) {
+            gem->transform.scale = (GEM_END_ANIM_DURATION - timeOffset) / GEM_RADIUS_TIME;
+        }
+
+        radius = gem->transform.scale * GEM_ORBIT_RADIUS;
+
+        gem->transform.position.x = gem->cadetPos->x + radius * cosf(angle);
+        gem->transform.position.y = gem->cadetPos->y + teleportEffectGetHeight(timeOffset) + 0.2f;
+        gem->transform.position.z = gem->cadetPos->z + radius * sinf(angle);
+
+        quatAxisAngle(&gUp, angle * 1.0f, &gem->transform.rotation);
+
+        gem->animationTimer += gTimeDelta;
     } else {
         struct Quaternion combined;
         quatMultiply(&gem->transform.rotation, &gGemRotationPerFrame, &combined);
@@ -126,5 +165,21 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
 
     if (saveFileDidCollectGem(gCurrentLevel, index)) {
         gem->flags |= GEM_FLAGS_PREVIOUSLY_COLLECTED;
+    }
+}
+
+void gemEndCutscene(struct Gem* gem, struct Vector3* cadetPos) {
+    if (gem->flags & GEM_FLAGS_COLLECT_ANIM) {
+        gem->flags &= ~GEM_FLAGS_COLLECT_ANIM;
+        gem->flags |= GEM_FLAGS_COLLECTED;
+    }
+
+    if (gem->flags & (GEM_FLAGS_COLLECTED | GEM_FLAGS_PREVIOUSLY_COLLECTED)) {
+        gem->flags = GEM_FLAGS_END_ANIM;
+        gem->animationTimer = 0.0f;
+        gem->transform.position = *cadetPos;
+        gem->transform.scale = 1.0f;
+        gem->cadetPos = cadetPos;
+        quatIdent(&gem->transform.rotation);
     }
 }

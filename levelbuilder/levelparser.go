@@ -67,14 +67,19 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 	result.Tiles = make([][]LevelTileSlot, maxX-minX+1)
 
 	for x, row := range level.Tiles {
-		if maxY <= len(row) {
-			result.Tiles[x-minX] = row[minY:maxY]
-		} else if minY < len(row) {
-			result.Tiles[x-minX] = row[minY:len(row)]
-		} else {
-			result.Tiles[x-minX] = nil
+		if x >= minX {
+			if maxY <= len(row) {
+				result.Tiles[x-minX] = row[minY:maxY]
+			} else if minY < len(row) {
+				result.Tiles[x-minX] = row[minY:len(row)]
+			} else {
+				result.Tiles[x-minX] = nil
+			}
 		}
 	}
+
+	minX = minX * 2
+	minY = minY * 2
 
 	result.PlayerPosX = level.PlayerPosX - float32(minX)
 	result.PlayerPosY = level.PlayerPosY - float32(minY)
@@ -283,8 +288,6 @@ func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {
 		binary.Read(file, binary.LittleEndian, &pos.X)
 		binary.Read(file, binary.LittleEndian, &pos.Y)
 		binary.Read(file, binary.LittleEndian, &pos.Z)
-
-		pos.Z = -pos.Z
 
 		if name == "Gem" {
 			result.Gems = append(result.Gems, LevelGemDef{pos})

@@ -27,9 +27,16 @@
 
 struct LevelDefinition* gLoadedLevel;
 
-static CleanupFunction* gCleanupFn; 
-static void** gCleanupParam;
-static int gCleanupCount;
+struct ExpandedLevel {
+    struct Gem* gems;
+    int gemCount;
+    CleanupFunction* cleanupFns; 
+    void** cleanupParams;
+    int cleanupCount;
+};
+
+struct ExpandedLevel gExpandedLevel;
+
 int gLevelFlags;
 struct TimeUpdateListener gLevelUpdateListener;
 int gCurrentLevel;
@@ -133,6 +140,12 @@ void levelUpdate(void* data) {
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;
         gInputMask = 0;
 
+        int i;
+
+        for (i = 0; i < gExpandedLevel.gemCount; ++i) {
+            gemEndCutscene(&gExpandedLevel.gems[i], &gCadet.transform.position);
+        }
+
         enum PlayerSounds exitSound = PlayerSoundsBothWarp;
 
         if (!(gLevelFlags & LEVEL_HAS_ROBOT)) {
@@ -232,6 +245,9 @@ void levelExpand(struct LevelDefinition* levelDef) {
         movingPlatformInit(&platforms[i], &platform->pos, &slots[platform->slotIndex], platform->color);
     }
 
+    /////////////////////
+    // gems
+
     struct Gem* gems = heapMalloc(
         ARRAY_SIZE(struct Gem, levelDef->levelData->gemCount),
         ALIGNMENT_OF(struct Gem)
@@ -242,19 +258,22 @@ void levelExpand(struct LevelDefinition* levelDef) {
         gemInit(&gems[i], &gem->pos, i);
     }
 
+    gExpandedLevel.gems = gems;
+    gExpandedLevel.gemCount = levelDef->levelData->gemCount;
+
     /////////////////////
     // cleanup
     
-    gCleanupCount = 0;
-    gCleanupFn = 0;
-    gCleanupParam = 0;
+    gExpandedLevel.cleanupFns = 0;
+    gExpandedLevel.cleanupParams = 0;
+    gExpandedLevel.cleanupCount = 0;
 }
 
 void levelCleanup(struct LevelDefinition* levelDef) {
     int i;
 
-    for (i = 0; i < gCleanupCount; ++i) {
-        gCleanupFn[i](gCleanupParam[i]);
+    for (i = 0; i < gExpandedLevel.cleanupCount; ++i) {
+        gExpandedLevel.cleanupFns[i](gExpandedLevel.cleanupParams[i]);
     }
 }
 
