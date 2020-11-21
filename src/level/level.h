@@ -87,6 +87,7 @@ extern int gNextLevel;
 extern int gLevelFlags;
 
 void levelLoad(struct LevelDefinition* levelDef);
+void restartLevel();
 void levelSwitchToCadet();
 void levelSwitchToRobot();
 

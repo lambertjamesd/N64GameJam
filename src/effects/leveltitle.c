@@ -75,7 +75,7 @@ void levelTitleEffectUpdate(void* data) {
     titleEffect->currTime += gTimeDelta;
 
     if (titleEffect->currTime > MESSAGE_TOTAL_TIME) {
-        timeRemoveListener(&titleEffect->updateListener);
+        timeRemoveListener(&titleEffect->updateListener, TimeUpdateGroupWorld);
         graphicsRemoveMenu(levelTitleEffectRender, titleEffect);
     }
 }
@@ -91,6 +91,6 @@ void levelTitleEffectInit(struct LevelTitleEffect* titleEffect, char* message) {
 
     titleEffect->edgeAccel = (MESSAGE_ENTER_TIME*MESSAGE_SLIDE_VELOCITY-dx)/(MESSAGE_ENTER_TIME*MESSAGE_ENTER_TIME);
 
-    graphicsAddMenu(levelTitleEffectRender, titleEffect);
-    timeAddListener(&titleEffect->updateListener, levelTitleEffectUpdate, titleEffect);
+    graphicsAddMenu(levelTitleEffectRender, titleEffect, 0);
+    timeAddListener(&titleEffect->updateListener, levelTitleEffectUpdate, titleEffect, TimeUpdateGroupWorld);
 }

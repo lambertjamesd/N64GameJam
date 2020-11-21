@@ -233,7 +233,7 @@ void robotUpdate(void* robotPtr) {
 }
 
 void robotReset(struct Vector3* startLocation) {
-    timeAddListener(&gRobot.updateListener, robotUpdate, &gRobot);
+    timeAddListener(&gRobot.updateListener, robotUpdate, &gRobot, TimeUpdateGroupWorld);
     transformIdentity(&gRobot.transform);
     
     gRobot.transform.position = *startLocation;

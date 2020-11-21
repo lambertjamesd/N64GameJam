@@ -6,6 +6,7 @@ enum InputMask {
     InputMaskCamera = 1 << 0,
     InputMaskCadet = 1 << 1,
     InputMaskRobot = 1 << 2,
+    InputMaskPauseMenu = 1 << 3,
 };
 
 #define INPUT_MASK_CADET (InputMaskCamera | InputMaskCadet)

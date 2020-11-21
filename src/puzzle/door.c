@@ -54,7 +54,7 @@ void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int 
     door->collider.trigger = 0;
     door->collider.triggerMask = 0;
 
-    timeAddListener(&door->updateListener, doorUpdate, door);
+    timeAddListener(&door->updateListener, doorUpdate, door, TimeUpdateGroupWorld);
 
     door->signalIndex = color;
     door->closedPosition = *position;

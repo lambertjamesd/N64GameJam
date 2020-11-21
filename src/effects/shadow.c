@@ -68,7 +68,7 @@ void dropShadowCalculate(struct DropShadow* shadow, int isGrounded, struct Vecto
         shadow->shadowUp = gUp;
         shadow->shadowScale = 1.0f;
         shadow->shadowPosition.y += 0.1f;
-    } else {
+    } else if (from) {
         struct ContactPoint hit;
         struct Vector3 down = {0.0f, -1.0f, 0.0f};
 
@@ -91,5 +91,7 @@ void dropShadowCalculate(struct DropShadow* shadow, int isGrounded, struct Vecto
                 shadow->shadowScale = 1.0f - result * (1.0f / MAX_SHADOW_DISTANCE); 
             }
         }
+    } else {
+        shadow->shadowPosition.y = SHADOW_HIDE;
     }
 } 

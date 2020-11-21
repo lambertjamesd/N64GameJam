@@ -81,7 +81,7 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
         exit->exitTrigger.collider = &gExitTriggerCollider;
     }
 
-    timeAddListener(&exit->updateListener, entranceExitUpdate, exit);
+    timeAddListener(&exit->updateListener, entranceExitUpdate, exit, TimeUpdateGroupWorld);
     
     exit->collider.collider = &_entrance_exit_collider;
     exit->collider.transform = &exit->transform;

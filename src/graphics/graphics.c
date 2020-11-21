@@ -212,13 +212,23 @@ void createGfxTask(GFXInfo *i) {
     ++gFrameNumber;
 }
 
-void graphicsAddMenu(MenuRenderCallback renderCallback, void* data) {
+void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority) {
     int i;
-    for (i = 0; i < MAX_MENUS; ++i) {
-        if (!gMenuGraphics[i]) {
-            gMenuGraphics[i] = renderCallback;
-            gMenuGraphicsData[i] = data;
-            break;
+    if (priority) {
+        for (i = 0; i < MAX_MENUS; ++i) {
+            if (!gMenuGraphics[i]) {
+                gMenuGraphics[i] = renderCallback;
+                gMenuGraphicsData[i] = data;
+                break;
+            }
+        }
+    } else {
+        for (i = MAX_MENUS-1; i >= 0; --i) {
+            if (!gMenuGraphics[i]) {
+                gMenuGraphics[i] = renderCallback;
+                gMenuGraphicsData[i] = data;
+                break;
+            }
         }
     }
 }

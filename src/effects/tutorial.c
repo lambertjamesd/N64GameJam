@@ -118,7 +118,7 @@ void tutorialMenuUpdate(void* data) {
 
         if (menu->currTime >= ANIMATION_DURATION) {
             graphicsRemoveMenu(tutorialRender, menu);
-            timeRemoveListener(&menu->updateListener);
+            timeRemoveListener(&menu->updateListener, TimeUpdateGroupWorld);
             menu->state = 0;
         }
     }
@@ -129,8 +129,8 @@ void tutorialMenuInit(struct TutorialMenu* tutorial, enum TutorialMenuType type)
     tutorial->type = type;
     tutorial->state = 1;
     
-    graphicsAddMenu(tutorialRender, tutorial);
-    timeAddListener(&tutorial->updateListener, tutorialMenuUpdate, tutorial);
+    graphicsAddMenu(tutorialRender, tutorial, 0);
+    timeAddListener(&tutorial->updateListener, tutorialMenuUpdate, tutorial, TimeUpdateGroupWorld);
 }
 
 

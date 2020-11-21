@@ -69,7 +69,7 @@ void graphicsInitLevel(
     struct LevelThemeGraphics* theme
 );
 
-void graphicsAddMenu(MenuRenderCallback renderCallback, void* data);
+void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority);
 void graphicsRemoveMenu(MenuRenderCallback renderCallback, void* data);
 void graphicsClearMenus();
 

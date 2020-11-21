@@ -175,7 +175,7 @@ void movingPlatformInit(struct MovingPlatform* platform, struct Vector3* positio
     platform->collider.trigger = 0;
     platform->collider.triggerMask = 0;
 
-    timeAddListener(&platform->updateListener, movingPlatformUpdate, platform);
+    timeAddListener(&platform->updateListener, movingPlatformUpdate, platform, TimeUpdateGroupWorld);
 
     platform->signalIndex = color;
     platform->lastSignalValue = 0;

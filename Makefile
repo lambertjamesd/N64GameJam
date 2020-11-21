@@ -137,6 +137,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/vector.c   	\
 	src/math/vector2.c   	\
 	src/menu/menu.c   	\
+	src/menu/pausemenu.c   	\
 	src/robot/robot.c \
 	src/robot/geo/model.c \
 	src/puzzle/breakable.c  \

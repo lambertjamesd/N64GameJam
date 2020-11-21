@@ -6,4 +6,6 @@ struct Menu {
     
 };
 
+int menuGetInputDir(char axis, char* lastAxis);
+
 #endif

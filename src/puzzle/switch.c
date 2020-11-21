@@ -141,7 +141,7 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     puzzleSwitch->sender.currentSignal = 0;
     puzzleSwitch->sender.signalIndex = color;
 
-    timeAddListener(&puzzleSwitch->updateListener, switchUpdate, puzzleSwitch);
+    timeAddListener(&puzzleSwitch->updateListener, switchUpdate, puzzleSwitch, TimeUpdateGroupWorld);
 
     puzzleSwitch->didTrigger = 0;
     puzzleSwitch->switchType = type;

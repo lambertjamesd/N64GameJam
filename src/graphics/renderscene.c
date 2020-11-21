@@ -86,11 +86,11 @@ void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget) {
 
     cameraCalculatePos(&camera->transform.rotation, &camera->targetPosition, camera->followDistance, &camera->transform.position);
 
-    timeAddListener(&camera->updateListener, cameraUpdate, camera);
+    timeAddListener(&camera->updateListener, cameraUpdate, camera, TimeUpdateGroupWorld);
 }
 
 void cameraCleanup(struct SceneCamera* camera) {
-    timeRemoveListener(&camera->updateListener);
+    timeRemoveListener(&camera->updateListener, TimeUpdateGroupWorld);
 }
 
 void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct Vector2* out) {

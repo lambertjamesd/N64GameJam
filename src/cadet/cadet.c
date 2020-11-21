@@ -299,7 +299,7 @@ void cadetUpdate(void* cadetPtr) {
 }
 
 void cadetReset(struct Vector3* startLocation) {
-    timeAddListener(&gCadet.updateListener, cadetUpdate, &gCadet);
+    timeAddListener(&gCadet.updateListener, cadetUpdate, &gCadet, TimeUpdateGroupWorld);
     transformIdentity(&gCadet.transform);
     
     gCadet.transform.position = *startLocation;

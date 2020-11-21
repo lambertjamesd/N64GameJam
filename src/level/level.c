@@ -1,29 +1,30 @@
 
 #include "level.h"
 
+#include "src/audio/audio.h"
+#include "src/audio/playersounds.h"
 #include "src/boot.h"
-#include "src/collision/collisionscene.h"
-#include "src/graphics/graphics.h"
-#include "src/graphics/dynamic.h"
-#include "src/system/memory.h"
 #include "src/cadet/cadet.h"
-#include "src/robot/robot.h"
-#include "src/puzzle/switch.h"
-#include "src/puzzle/door.h"
+#include "src/collision/collisionscene.h"
+#include "src/effects/leveltitle.h"
+#include "src/effects/shadow.h"
+#include "src/effects/tutorial.h"
+#include "src/graphics/dynamic.h"
+#include "src/graphics/graphics.h"
+#include "src/input/controller.h"
+#include "src/input/inputfocus.h"
+#include "src/levels/levels.h"
+#include "src/menu/pausemenu.h"
 #include "src/puzzle/breakable.h"
-#include "src/puzzle/movingplatform.h"
+#include "src/puzzle/door.h"
 #include "src/puzzle/entranceexit.h"
 #include "src/puzzle/gem.h"
-#include "src/effects/shadow.h"
-#include "src/time/time.h"
-#include "src/input/inputfocus.h"
-#include "src/input/controller.h"
-#include "src/levels/levels.h"
-#include "src/audio/playersounds.h"
-#include "src/audio/audio.h"
-#include "src/effects/leveltitle.h"
-#include "src/effects/tutorial.h"
+#include "src/puzzle/movingplatform.h"
+#include "src/puzzle/switch.h"
+#include "src/robot/robot.h"
 #include "src/save/savefile.h"
+#include "src/system/memory.h"
+#include "src/time/time.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -53,6 +54,11 @@ void levelPrev() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel > 0) {
         gNextLevel = gCurrentLevel - 1;
     }
+}
+
+void restartLevel() {
+    gNextLevel = gCurrentLevel;
+    gCurrentLevel = -1;
 }
 
 void levelSwitchToCadet() {
@@ -131,6 +137,10 @@ void levelUpdate(void* data) {
             inputMaskPop();
             gScene.camera.followDistanceStep = 1;
         }
+    }
+
+    if (!(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE)) && getButtonDown(0, START_BUTTON)) {
+        pauseMenuShow(&gPauseMenu);
     }
 
     if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
@@ -341,7 +351,7 @@ void levelLoad(struct LevelDefinition* levelDef) {
     }
 
     levelExpand(levelDef);
-    timeAddListener(&gLevelUpdateListener, levelUpdate, 0);
+    timeAddListener(&gLevelUpdateListener, levelUpdate, 0, TimeUpdateGroupWorld);
 
     gLoadedLevel = levelDef;
 

@@ -9,6 +9,14 @@
 #include "src/save/savefile.h"
 #include "src/effects/teleport.h"
 
+struct DropShadowParams gGemShadowParams = {
+    0.15,
+    0.5f,
+    84.0f,
+    150.0f,
+    CollisionLayersGeometry | CollisionLayersRobot | CollisionLayersSwamp,
+};
+
 struct CollisionCollider gGemCollider = {
     ColliderTypeBox,
     0,
@@ -67,6 +75,17 @@ void gemRender(struct DynamicActor* data, struct GraphicsState* state) {
 
 void gemUpdate(void* data) {
     struct Gem* gem = (struct Gem*)data;
+
+    if (!(gem->flags & GEM_FLAGS_COLLECTED)) {
+        struct Vector3 raycastOrigin;
+        raycastOrigin.x = gem->transform.position.x;
+        raycastOrigin.y = gem->transform.position.y + 0.1f;
+        raycastOrigin.z = gem->transform.position.z;
+
+        dropShadowCalculate(&gem->shadow, 0, &gem->transform.position);
+    } else {
+        dropShadowCalculate(&gem->shadow, 0, 0);
+    }
 
     if (gem->flags & GEM_FLAGS_COLLECT_ANIM) {
         if (gem->animationTimer < GEM_RAISE_TIME) {
@@ -145,6 +164,8 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     transformIdentity(&gem->transform);
     gem->transform.position = *pos;
 
+    gem->shadow.params = &gGemShadowParams;
+
     gem->collider.collider= &gGemCollider;
     gem->collider.transform= &gem->transform;
     gem->collider.data = gem;
@@ -154,7 +175,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     gem->index = index;
     gem->flags = 0;
 
-    timeAddListener(&gem->updateListener, gemUpdate, gem);
+    timeAddListener(&gem->updateListener, gemUpdate, gem, TimeUpdateGroupWorld);
 
     struct CollisionBox bb;
     vector3Add(&gGemCollider.box.min, pos, &bb.min);
@@ -162,6 +183,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, &bb, 0);
 
     dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, gem, gemRender, TransparentMaterialTypeGem);
+    dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, &gem->shadow, dropShadowRender, TransparentMaterialTypeShadow);
 
     if (saveFileDidCollectGem(gCurrentLevel, index)) {
         gem->flags |= GEM_FLAGS_PREVIOUSLY_COLLECTED;

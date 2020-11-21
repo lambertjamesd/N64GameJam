@@ -6,6 +6,12 @@
 
 typedef void (*UpdateCallback)(void* data);
 
+enum TimeUpdateGroup {
+    TimeUpdateGroupWorld,
+    TimeUpdateGroupMenu,
+    TimeUpdateGroupCount,
+};
+
 struct TimeUpdateListener {
     struct TimeUpdateListener* prev;
     struct TimeUpdateListener* next;
@@ -18,8 +24,10 @@ extern float gTimeDelta;
 #define MIN_DELTA_TIME (1.0f / 60.0f)
 
 void timeUpdate(OSTime time);
-void timeAddListener(struct TimeUpdateListener* listener, UpdateCallback callback, void* data);
-void timeRemoveListener(struct TimeUpdateListener* listener);
+void timeAddListener(struct TimeUpdateListener* listener, UpdateCallback callback, void* data, enum TimeUpdateGroup group);
+void timeRemoveListener(struct TimeUpdateListener* listener, enum TimeUpdateGroup group);
 void timeResetListeners();
+
+void timeSetGroupDisabled(enum TimeUpdateGroup group, int value);
 
 #endif

@@ -5,7 +5,8 @@
 
 float gTimeDelta = 1.0f / 30.0f;
 OSTime gTimeLast;
-struct TimeUpdateListener* gTimeListenerHead;
+struct TimeUpdateListener* gTimeListenerHead[TimeUpdateGroupCount];
+char gTimeGroupDisabled[TimeUpdateGroupCount];
 
 void timeUpdate(OSTime currTime) {
     OSTime timeDelta = currTime - gTimeLast;
@@ -17,35 +18,41 @@ void timeUpdate(OSTime currTime) {
 
     gTimeLast = currTime;
 
-    struct TimeUpdateListener* currListener = gTimeListenerHead;
+    int i;
 
-    while (currListener) {
-        // get next listener here in case this one gets removed in the callback
-        struct TimeUpdateListener* nextListener = currListener->next;
+    for (i = 0; i < TimeUpdateGroupCount; ++i) {
+        if (!gTimeGroupDisabled[i]) {
+            struct TimeUpdateListener* currListener = gTimeListenerHead[i];
 
-        currListener->callback(currListener->data);
+            while (currListener) {
+                // get next listener here in case this one gets removed in the callback
+                struct TimeUpdateListener* nextListener = currListener->next;
 
-        currListener = nextListener;
+                currListener->callback(currListener->data);
+
+                currListener = nextListener;
+            }
+        }
     }
 }
 
-void timeAddListener(struct TimeUpdateListener* listener, UpdateCallback callback, void* data) {
-    if (gTimeListenerHead) {
-        gTimeListenerHead->prev = listener;
+void timeAddListener(struct TimeUpdateListener* listener, UpdateCallback callback, void* data, enum TimeUpdateGroup group) {
+    if (gTimeListenerHead[group]) {
+        gTimeListenerHead[group]->prev = listener;
     }
-    listener->next = gTimeListenerHead;
+    listener->next = gTimeListenerHead[group];
     listener->prev = 0;
     listener->data = data;
     listener->callback = callback;
-    gTimeListenerHead = listener;
+    gTimeListenerHead[group] = listener;
 }
 
-void timeRemoveListener(struct TimeUpdateListener* listener) {
-    if (listener == gTimeListenerHead) {
-        gTimeListenerHead = listener->next;
+void timeRemoveListener(struct TimeUpdateListener* listener, enum TimeUpdateGroup group) {
+    if (listener == gTimeListenerHead[group]) {
+        gTimeListenerHead[group] = listener->next;
 
-        if (gTimeListenerHead) {
-            gTimeListenerHead->prev = 0;
+        if (gTimeListenerHead[group]) {
+            gTimeListenerHead[group]->prev = 0;
         }
         
         listener->next = 0;
@@ -62,5 +69,14 @@ void timeRemoveListener(struct TimeUpdateListener* listener) {
 }
 
 void timeResetListeners() {
-    gTimeListenerHead = 0;
+    int i;
+
+    for (i = 0; i < TimeUpdateGroupCount; ++i) {
+        gTimeListenerHead[i] = 0;
+        gTimeGroupDisabled[i] = 0;
+    }
+}
+
+void timeSetGroupDisabled(enum TimeUpdateGroup group, int value) {
+    gTimeGroupDisabled[group] = value;
 }
