@@ -37,6 +37,16 @@ void matrixSitAt(struct Vector3* at, struct Vector3* forward, struct Vector3* up
     mtx[3][3] = 1.0f;
 }
 
+void dropShadowInit(struct DropShadow* shadow, struct BasicTransform* transform, struct DropShadowParams* params) {
+    shadow->shadowPosition.x = 0.0f;
+    shadow->shadowPosition.y = SHADOW_HIDE;
+    shadow->shadowPosition.z = 0.0f;
+    shadow->shadowUp = gUp;
+    shadow->params = params;
+    shadow->shadowScale = 1.0f;
+    dynamicActorAddToGroup(&gScene.transparentActors, transform, shadow, dropShadowRender, TransparentMaterialTypeShadow);
+}
+
 void dropShadowRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct DropShadow* shadow = (struct DropShadow*)data->data;
     struct DropShadowParams* params = shadow->params;

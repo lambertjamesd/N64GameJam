@@ -355,6 +355,7 @@ void cadetReset(struct Vector3* startLocation) {
         WALK_JUMP_HEIGHT, 
         WALK_SWAY_ANGLE
     );
+    dropShadowInit(&gCadet.shadow, &gCadet.transform, &gCadetShadowParams);
 
     gCadet.actor.radius = CADET_RADIUS;
     gCadet.actor.velocity = gZeroVec;
@@ -369,11 +370,9 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.footstepSound = -1;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
-    dynamicActorAddToGroup(&gScene.transparentActors, &gCadet.transform, &gCadet.shadow, dropShadowRender, TransparentMaterialTypeShadow);
 }
 
 void cadetInit() {
-    gCadet.shadow.params = &gCadetShadowParams;
     gCadet.actor.collisionMask = 
         CollisionLayersGeometry | 
         CollisionLayersRobot | 

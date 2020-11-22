@@ -49,12 +49,12 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
     LookAt* nextLookat = graphicsStateNextLookat(state);
 
     guLookAtReflect(reflectMatrix, nextLookat, 
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
+        gScene.camera.transform.position.x,
+        gScene.camera.transform.position.y,
+        gScene.camera.transform.position.z,
+        robot->transform.position.x,
+        robot->transform.position.y,
+        robot->transform.position.z,
         0,
         1,
         0
@@ -236,6 +236,8 @@ void robotReset(struct Vector3* startLocation) {
     timeAddListener(&gRobot.updateListener, robotUpdate, &gRobot, TimeUpdateGroupWorld);
     transformIdentity(&gRobot.transform);
     
+    dropShadowInit(&gRobot.shadow, &gRobot.transform, &gRobotShadowParams);
+
     gRobot.transform.position = *startLocation;
     gRobot.state = robotTeleportIn;
 
@@ -255,7 +257,6 @@ void robotReset(struct Vector3* startLocation) {
 
     robotCalcBB(&gRobot, &gRobot.lastBB);
     sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &gRobot.lastBB, 0);
-    dynamicActorAddToGroup(&gScene.transparentActors, &gRobot.transform, &gRobot.shadow, dropShadowRender, TransparentMaterialTypeShadow);
 }
 
 void robotInit() {

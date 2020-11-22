@@ -164,7 +164,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     transformIdentity(&gem->transform);
     gem->transform.position = *pos;
 
-    gem->shadow.params = &gGemShadowParams;
+    dropShadowInit(&gem->shadow, &gem->transform, &gGemShadowParams);
 
     gem->collider.collider= &gGemCollider;
     gem->collider.transform= &gem->transform;
@@ -183,7 +183,6 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, &bb, 0);
 
     dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, gem, gemRender, TransparentMaterialTypeGem);
-    dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, &gem->shadow, dropShadowRender, TransparentMaterialTypeShadow);
 
     if (saveFileDidCollectGem(gCurrentLevel, index)) {
         gem->flags |= GEM_FLAGS_PREVIOUSLY_COLLECTED;

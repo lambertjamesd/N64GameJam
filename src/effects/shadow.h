@@ -5,6 +5,7 @@
 #include <ultra64.h>
 #include "src/math/vector.h"
 #include "src/graphics/dynamic.h"
+#include "src/math/basictransform.h"
 
 extern Gfx _drop_shadow_material[];
 extern Gfx _quad_mesh_tri_0[];
@@ -24,6 +25,7 @@ struct DropShadow {
     float shadowScale;
 };
 
+void dropShadowInit(struct DropShadow* shadow, struct BasicTransform* transform, struct DropShadowParams* params);
 void dropShadowRender(struct DynamicActor* data, struct GraphicsState* state);
 void dropShadowCalculate(struct DropShadow* shadow, int isGrounded, struct Vector3* from);
 
