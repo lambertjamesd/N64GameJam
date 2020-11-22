@@ -63,6 +63,7 @@ int collisionTransColliderCollideSphere(struct Vector3* center, float radius, st
         int i;
         for (i = startCount; i < result->contactCount; ++i) {
             result->contacts[i].transform = collider->transform;
+            transformDirection(collider->transform, &result->contacts[i].normal, &result->contacts[i].normal);
         }
 
         return 1;

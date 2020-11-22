@@ -69,6 +69,7 @@ void dropShadowRender(struct DynamicActor* data, struct GraphicsState* state) {
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(shadowTransform), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
 	gDPSetEnvColor(state->dl++, 0, 0, 0, (u8)mathfLerp(params->minTrans, params->maxTrans, shadow->shadowScale));
     gSPDisplayList(state->dl++, _quad_mesh_tri_0);
+    gDPPipeSync(state->dl++);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 

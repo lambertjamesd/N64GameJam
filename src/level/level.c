@@ -6,6 +6,7 @@
 #include "src/boot.h"
 #include "src/cadet/cadet.h"
 #include "src/collision/collisionscene.h"
+#include "src/effects/explosion.h"
 #include "src/effects/leveltitle.h"
 #include "src/effects/shadow.h"
 #include "src/effects/tutorial.h"
@@ -357,6 +358,7 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
     gScene.transparentMaterials[TransparentMaterialTypeShadow] = _drop_shadow_material;
     gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
+    gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
 
     levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
 }

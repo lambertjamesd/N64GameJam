@@ -29,6 +29,7 @@ LEVELS = cadet_intro \
 	lava_platform \
 	switch_tutorial \
 	loop_around \
+	radioactive_river \
 	double_crossing \
 	raised_platform \
 	moving_platforms \
@@ -110,6 +111,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/meshcollision.c \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
+	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
 	src/effects/tutorial.c	\
 	src/effects/shadow.c	\

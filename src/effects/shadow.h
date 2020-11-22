@@ -8,7 +8,7 @@
 #include "src/math/basictransform.h"
 
 extern Gfx _drop_shadow_material[];
-extern Gfx _quad_mesh_tri_0[];
+extern Gfx _shockwave_mesh_tri_0[];
 
 struct DropShadowParams {
     float minSize;

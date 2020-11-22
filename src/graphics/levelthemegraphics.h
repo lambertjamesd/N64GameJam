@@ -30,6 +30,7 @@ enum DynamicMaterialType {
 enum TransparentMaterialType {
 	TransparentMaterialTypeShadow,
 	TransparentMaterialTypeGem,
+	TransparentMaterialTypeShockwave,
 };
 
 #define SWITCH_COLOR_COUNT	5
