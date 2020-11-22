@@ -147,7 +147,7 @@ void robotWalk(struct Robot* robot) {
 void robotAttack(struct Robot* robot) {
     struct Vector3 attackPos;
 
-    audioPlaySound(
+    audioRestartPlaySound(
         gPlayerSoundIds[PlayerRobotAttack],
         0.5f,
         1.0f,
@@ -158,6 +158,10 @@ void robotAttack(struct Robot* robot) {
     transformPoint(&robot->transform, &gAttackCenter, &attackPos);
     attackPos.y += ROBOT_ATTACK_RADIUS;
     collisionSceneCollideSphere(&attackPos, ROBOT_ATTACK_RADIUS, CollisionLayersBreakable);
+
+    explosionInit(&robot->explosions[robot->nextExplosion], &attackPos);
+
+    robot->nextExplosion = (robot->nextExplosion + 1) % ROBOT_MAX_EXPLOSIONS;
 }
 
 void robotIdle(struct Robot* robot) {
@@ -250,6 +254,13 @@ void robotReset(struct Vector3* startLocation) {
     gRobot.actor.relativeToAnchor = gZeroVec;
     gRobot.rotation = gUp2;
     gRobot.attackTimer = 0.0f;
+
+    int i;
+
+    for (i = 0; i < ROBOT_MAX_EXPLOSIONS; ++i) {
+        explosionReset(&gRobot.explosions[i]);
+    }
+    gRobot.nextExplosion = 0;
 
     teleportEffectStart(&gRobot.teleport, TELEPORT_FLAG_REVERSE);
 

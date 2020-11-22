@@ -8,6 +8,7 @@
 
 extern Gfx _shockwave_mat[];
 extern Gfx _shockwave_mesh_tri_0[];
+extern Gfx _explosion_spike_mesh_tri_0[];
 
 struct Explosion {
     struct BasicTransform transform;
@@ -16,6 +17,8 @@ struct Explosion {
     int renderId;
 };
 
+void explosionReset(struct Explosion* explosion);
 void explosionInit(struct Explosion* explosion, struct Vector3* position);
+int explosionIsActive(struct Explosion* explosion);
 
 #endif

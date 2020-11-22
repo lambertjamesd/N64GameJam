@@ -17,6 +17,19 @@ static ALSeqMarker seqEnd;
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
 
+#define MAX_PENDING_SOUNDS  4
+#define UNUSED_PENDING_SOUND -1
+
+struct PendingSound {
+    ALSndId snd;
+    float pitch;
+    float volume;
+    float pan;
+    int priority;
+};
+
+struct PendingSound gPendingSounds[MAX_PENDING_SOUNDS];
+
 #define MAX_SOUNDS 40
 
 void soundPlayerInit() {
@@ -87,6 +100,11 @@ void audioInit()
     alSeqpPlay(seqp);
 
     soundPlayerInit();
+
+    int i;
+    for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
+        gPendingSounds[i].snd = UNUSED_PENDING_SOUND;
+    }
 }
 
 int audioPlayState(ALSndId snd) {
@@ -99,16 +117,43 @@ void audioStopSound(ALSndId snd) {
     alSndpStop(&gSoundPlayer);
 }
 
+int audioPendsound(ALSndId snd, float pitch, float volume, float pan, int priority) {
+    int i;
+
+    for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
+        if (gPendingSounds[i].snd == UNUSED_PENDING_SOUND) {
+            gPendingSounds[i].snd = snd;
+            gPendingSounds[i].pitch = pitch;
+            gPendingSounds[i].priority = priority;
+            return 1;
+        }
+    }
+
+    for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
+        if (gPendingSounds[i].priority < priority) {
+            gPendingSounds[i].snd = snd;
+            gPendingSounds[i].pitch = pitch;
+            gPendingSounds[i].priority = priority;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority) {
     alSndpSetSound(&gSoundPlayer, snd);
     if (alSndpGetState(&gSoundPlayer) != AL_STOPPED) {
-        alSndpStop(&gSoundPlayer);
+        if (audioPendsound(snd, pitch, volume, pan, priority)) {
+            alSndpStop(&gSoundPlayer);
+        }
+    } else {
+        audioPlaySound(snd, pitch, volume, pan, priority);
     }
-    audioPlaySound(snd, pitch, volume, pan, priority);
 }
 
 void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority) {
-    if (volume > 0.0f && snd != -1) {
+    if (volume > 0.0f && snd != UNUSED_PENDING_SOUND) {
         alSndpSetSound(&gSoundPlayer, snd);
         alSndpSetPitch(&gSoundPlayer, pitch);
         if (volume > 1.0f) {
@@ -127,6 +172,26 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
 
         if (alSndpGetState(&gSoundPlayer) == AL_STOPPED) {
             alSndpPlay(&gSoundPlayer);
+        }
+    }
+}
+
+void audioUpdate() {
+    int i;
+
+    for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
+        if (gPendingSounds[i].snd != UNUSED_PENDING_SOUND) {
+            if (audioPlayState(gPendingSounds[i].snd) == AL_STOPPED) {
+                audioPlaySound(
+                    gPendingSounds[i].snd, 
+                    gPendingSounds[i].pitch, 
+                    gPendingSounds[i].priority, 
+                    gPendingSounds[i].pan, 
+                    gPendingSounds[i].priority
+                );
+
+                gPendingSounds[i].snd = UNUSED_PENDING_SOUND;
+            }
         }
     }
 }

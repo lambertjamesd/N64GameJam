@@ -27,6 +27,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index);
 void gemEndCutscene(struct Gem* gem, struct Vector3* cadetPos);
 
 extern Gfx _gem_mat[];
+extern Gfx _gem_cleanup_mat[];
 extern Gfx _gem_mesh_tri_0[];
 
 #endif

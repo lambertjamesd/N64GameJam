@@ -358,6 +358,7 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
     gScene.transparentMaterials[TransparentMaterialTypeShadow] = _drop_shadow_material;
     gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
+    gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = _gem_cleanup_mat;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
 
     levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);

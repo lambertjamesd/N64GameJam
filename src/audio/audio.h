@@ -61,5 +61,7 @@ void audioStopSound(ALSndId snd);
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
 void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
 
+void audioUpdate();
+
 #endif
 

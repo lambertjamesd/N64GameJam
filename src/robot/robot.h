@@ -8,6 +8,7 @@
 #include "src/math/vector2.h"
 #include "src/effects/shadow.h"
 #include "src/effects/teleport.h"
+#include "src/effects/explosion.h"
 
 #define ROBOT_ACCEL 16.0f
 #define ROBOT_SPEED 2.0f
@@ -20,6 +21,8 @@
 #define ROBOT_ATTACK_DISTANCE   1.4f
 #define ROBOT_ATTACK_RADIUS     0.25f
 #define ROBOT_ATTACK_DELAY      1.0f
+
+#define ROBOT_MAX_EXPLOSIONS    2
 
 #define ROBOT_IS_CUTSCENE  SPHERE_ACTOR_FLAG_1
 #define ROBOT_IS_INVISIBLE  SPHERE_ACTOR_FLAG_2
@@ -36,10 +39,12 @@ struct Robot {
     struct Vector2 rotation;
     struct CollisionBox lastBB;
     struct CollisionTransformedCollider collider;
+    struct Explosion explosions[ROBOT_MAX_EXPLOSIONS];
     float attackTimer;
     // state sepecific
     struct DropShadow shadow;
     struct TeleportEffect teleport;
+    short nextExplosion;
 };
 
 extern struct Robot gRobot;

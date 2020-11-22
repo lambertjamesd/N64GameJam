@@ -123,6 +123,18 @@ Vtx _shockwave_mesh_vtx_0[4] = {
 	{{{-256, 0, -256},0, {-16, -16},{0x0, 0x7F, 0x0, 0xFF}}},
 };
 
+Vtx _explosion_spike_mesh_vtx_0[9] = {
+	{{{-128, 0, 128},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{0, 0, 181},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{128, 0, 128},0, {1008, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{181, 0, 0},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{128, 0, -128},0, {1008, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{0, 0, -181},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{-128, 0, -128},0, {-16, -16},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{-181, 0, 0},0, {-16, 1008},{0x0, 0x7F, 0x0, 0xFF}}},
+	{{{0, 512, 0},0, {496, 496},{0x0, 0x7F, 0x0, 0xFF}}},
+};
+
 Gfx _shockwave_mesh_tri_0[] = {
 	gsSPVertex(_shockwave_mesh_vtx_0 + 0, 4, 0),
 	gsSP1Triangle(0, 1, 2, 0),
@@ -130,10 +142,23 @@ Gfx _shockwave_mesh_tri_0[] = {
 	gsSPEndDisplayList(),
 };
 
+Gfx _explosion_spike_mesh_tri_0[] = {
+	gsSPVertex(_explosion_spike_mesh_vtx_0 + 0, 9, 0),
+	gsSP1Triangle(0, 1, 8, 0),
+	gsSP1Triangle(1, 2, 8, 0),
+	gsSP1Triangle(2, 3, 8, 0),
+	gsSP1Triangle(3, 4, 8, 0),
+	gsSP1Triangle(4, 5, 8, 0),
+	gsSP1Triangle(5, 6, 8, 0),
+	gsSP1Triangle(6, 7, 8, 0),
+	gsSP1Triangle(7, 0, 8, 0),
+	gsSPEndDisplayList(),
+};
+
 
 Gfx _shockwave_mat[] = {
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(0, 0, 0, TEXEL0, TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, ENVIRONMENT, 0),
+	gsDPSetCombineLERP(TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPTileSync(),
 	gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_8b, 32, ExplosionShockwave_ExplosionShockwave_ia8),

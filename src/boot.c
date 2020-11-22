@@ -16,6 +16,7 @@
 #include "src/audio/playersounds.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 #include "src/font/buttons/buttons.h"
+#include "src/save/savefile.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -112,7 +113,7 @@ static void gameEntryPoint(void *argv)
     {
         (void) osRecvMesg(&gGfxFrameMsgQ, (OSMesg *)&msg, OS_MESG_BLOCK);
 
-        switch (msg->gen.type) 
+        switch (msg->gen.type)
         {
             case (OS_SC_RETRACE_MSG):   
                 if (gNextLevel != gCurrentLevel) {
@@ -133,6 +134,7 @@ static void gameEntryPoint(void *argv)
                     controllersReadData();
 
                     timeUpdate(osGetTime());
+                    audioUpdate();
                 }
                 break;
 
@@ -207,6 +209,7 @@ static void initGame(void)
     fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
     fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);
 
-    levelLoad(&_level_group_all_levels[0]);
+    gSaveFile.tutorialFlags = ~0;
+    levelLoad(&_level_group_all_levels[2]);
 }
 

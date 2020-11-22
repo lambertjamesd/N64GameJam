@@ -471,4 +471,7 @@ Gfx _gem_mat[] = {
 	gsSPEndDisplayList(),
 };
 
-
+Gfx _gem_cleanup_mat[] = {
+	gsSPClearGeometryMode(G_TEXTURE_GEN),
+	gsSPEndDisplayList(),
+};
