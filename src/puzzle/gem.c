@@ -148,7 +148,7 @@ void gemUpdate(void* data) {
     }
 }
 
-void gemTrigger(void* data) {
+void gemTrigger(void* data, struct Vector3* origin) {
     struct Gem* gem = (struct Gem*)data;
 
     struct CollisionBox bb;

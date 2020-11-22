@@ -12,6 +12,7 @@ enum LevelThemeMeshes {
 	LevelThemeMeshesDoor,
 	LevelThemeMeshesBreakPlatform,
 	LevelThemeMeshesBreakBarrier,
+	LevelThemeMeshesBreakFragment,
 	LevelThemeMeshesMovingPlatform,
 	LevelThemeMeshesEntranceExit,
 	LevelThemeMeshesCount,

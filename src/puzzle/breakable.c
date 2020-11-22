@@ -23,7 +23,7 @@ struct CollisionCollider gBreakableBarrierCollider = {
     }
 };
 
-void breakableTrigger(void* data) {
+void breakableTrigger(void* data, struct Vector3* origin) {
     struct Breakable* breakable = (struct Breakable*)data;
     if (breakable->renderActorId != ACTOR_ID_NONE) {
         dynamicActorRemoveFromGroup(&gScene.dynamicActors, &breakable->renderActorId);
@@ -32,6 +32,8 @@ void breakableTrigger(void* data) {
         vector3Add(&breakable->collider.collider->box.min, &breakable->transform.position, &bb.min);
         vector3Add(&breakable->collider.collider->box.max, &breakable->transform.position, &bb.max);
         sparseCollisionReindex(&gSparseCollisionGrid, &breakable->collider, 0, &bb);
+
+        rockFragmentsInit(&breakable->breakEffect, &breakable->transform.position, breakable->type ? 3 : 2, origin);
     }
 }
 

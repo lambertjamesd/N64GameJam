@@ -86,7 +86,7 @@ struct CollisionCollider {
     };
 };
 
-typedef void (*TriggerCallback)(void* data);
+typedef void (*TriggerCallback)(void* data, struct Vector3* origin);
 
 struct CollisionTransformedCollider {
     struct CollisionCollider* collider;

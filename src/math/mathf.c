@@ -2,6 +2,12 @@
 #include "mathf.h"
 #include <math.h>
 
+unsigned int gRandomSeed = 1;
+
+int randomInt() {
+    gRandomSeed = gRandomSeed * 22695477 + 1;
+    return (gRandomSeed >> 16) & 0x7fff;
+}
 
 float fsign(float in) {
     if (in > 0.0f) {
@@ -46,4 +52,8 @@ float ceilf(float input) {
 
 float mathfBounceBackLerp(float t) {
     return -t + t * t;
+}
+
+float mathfRandomFloat() {
+    return (float)randomInt() / (float)0x7fff;
 }

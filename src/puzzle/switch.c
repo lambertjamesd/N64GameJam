@@ -90,7 +90,7 @@ void switchRender(struct DynamicActor* data, struct GraphicsState* state) {
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 
-void switchTrigger(void* data) {
+void switchTrigger(void* data, struct Vector3* origin) {
     struct PuzzleSwitch* puzzleSwitch = (struct PuzzleSwitch*)data;
 
     if (!puzzleSwitch->didTrigger) {

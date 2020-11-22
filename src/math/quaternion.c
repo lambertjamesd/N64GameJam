@@ -2,6 +2,7 @@
 #include "quaternion.h"
 #include <ultra64.h>
 #include "src/system/assert.h"
+#include "mathf.h"
 
 void quatIdent(struct Quaternion* q) {
     q->x = 0.0f;
@@ -109,4 +110,30 @@ void quatToMatrix(struct Quaternion* q, float out[4][4]) {
     out[3][1] = 0.0f;
     out[3][2] = 0.0f;
     out[3][3] = 1.0f;
+}
+
+void quatNormalize(struct Quaternion* q, struct Quaternion* out) {
+    float magSqr = q->x * q->x + q->y * q->y + q->z * q->z + q->w * q->w;
+
+    if (magSqr < 0.00001f) {
+        out->w = 1.0f;
+        out->x = 0.0f;
+        out->y = 0.0f;
+        out->z = 0.0f;
+    } else {
+        magSqr = 1.0f / sqrtf(magSqr);
+
+        out->x = q->x * magSqr;
+        out->y = q->y * magSqr;
+        out->z = q->z * magSqr;
+        out->w = q->w * magSqr;
+    }
+}
+
+void quatRandom(struct Quaternion* q) {
+    q->x = mathfRandomFloat() - 0.5f;
+    q->y = mathfRandomFloat() - 0.5f;
+    q->z = mathfRandomFloat() - 0.5f;
+    q->w = mathfRandomFloat() - 0.5f;
+    quatNormalize(q, q);
 }

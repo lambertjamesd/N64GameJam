@@ -45,7 +45,7 @@ void exitEntranceRender(struct DynamicActor* data, struct GraphicsState* state) 
     gSPDisplayList(state->dl++, gLoadedLevel->theme->theme->dynamicMaterialCleanup[DynamicMaterialTypeEntranceExit]);
 }
 
-void entraceExitTrigger(void* data) {
+void entraceExitTrigger(void* data, struct Vector3* origin) {
     struct EntranceExit* exit = (struct EntranceExit*)data;
 
     if (!exit->isActive) {

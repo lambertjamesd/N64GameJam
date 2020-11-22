@@ -124,9 +124,14 @@ u8 _alien_breakable_tex_ci8_pal_rgba16[] = {
 	0x59, 0x73, 0x63, 0x73, 0x61, 0x73, 0x21, 
 };
 
+Lights1 _alien_breakable_lights = gdSPDefLights1(
+	0x7F, 0x7F, 0x7F,
+	0xFE, 0xFE, 0xFE, 0x28, 0x28, 0x28);
+
 Gfx _alien_breakable_material[] = {
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT),
+	gsSPSetGeometryMode(G_LIGHTING|G_SHADE),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT, TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetTextureLUT(G_TT_RGBA16),
 	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, _alien_breakable_tex_ci8_pal_rgba16),
@@ -143,11 +148,13 @@ Gfx _alien_breakable_material[] = {
 	gsDPPipeSync(),
 	gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0),
 	gsDPSetTileSize(0, 0, 0, 124, 124),
+	gsSPSetLights1(_alien_breakable_lights),
 	gsSPEndDisplayList(),
 };
 
 Gfx _alien_breakable_material_revert[] = {
 	gsDPPipeSync(),
+	gsSPClearGeometryMode(G_LIGHTING|G_SHADE),
 	gsDPSetTextureLUT(G_TT_NONE),
 	gsSPEndDisplayList(),
 };

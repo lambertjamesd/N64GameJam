@@ -114,6 +114,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
 	src/effects/tutorial.c	\
+	src/effects/rockfragments.c	\
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
 	src/effects/walkanim.c \

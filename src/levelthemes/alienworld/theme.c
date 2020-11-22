@@ -25,7 +25,7 @@ Gfx* _gAlienWorldDynamicMaterials[] = {
 Gfx* _gAlienWorldDynamicMaterialCleanup[] = {
     0,
     0,
-    0,
+    _alien_breakable_material_revert,
     0,
     _entrance_exit_material_revert,
     _entrance_exit_material_revert,
@@ -79,6 +79,7 @@ struct LevelThemeGraphics gAlienWorldLevelTheme = {
         _alien_puzzle_door_mesh_tri_0,
         _alien_rock_small_tri,
         _alien_rock_big_tri,
+        _alien_rock_fragment_tri,
         _alien_moving_platform_tri_0,
         _entrance_exit_mesh_tri_0,
     },

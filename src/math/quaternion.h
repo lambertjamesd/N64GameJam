@@ -16,5 +16,7 @@ void quatConjugate(struct Quaternion* in, struct Quaternion* out);
 void quatMultVector(struct Quaternion* q, struct Vector3* a, struct Vector3* out);
 void quatMultiply(struct Quaternion* a, struct Quaternion* b, struct Quaternion* out);
 void quatToMatrix(struct Quaternion* q, float out[4][4]);
+void quatNormalize(struct Quaternion* q, struct Quaternion* out);
+void quatRandom(struct Quaternion* q);
 
 #endif

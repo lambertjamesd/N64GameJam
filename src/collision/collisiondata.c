@@ -47,7 +47,7 @@ int collisionTransColliderCollideSphere(struct Vector3* center, float radius, st
 
     if ((collider->triggerMask & collisionMask) && collider->trigger) {
         if (collisionColliderOverlapSphere(collider->collider, &transformedCenter, radius)) {
-            collider->trigger(collider->data);
+            collider->trigger(collider->data, center);
         }
     }
 

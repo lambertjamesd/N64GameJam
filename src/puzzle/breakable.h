@@ -5,6 +5,7 @@
 #include "src/math/basictransform.h"
 #include "src/collision/sparsecollisiongrid.h"
 #include "src/graphics/dynamic.h"
+#include "src/effects/rockfragments.h"
 
 enum BreakableType {
     BreakableTypePlatform,
@@ -14,6 +15,7 @@ enum BreakableType {
 struct Breakable {
     struct BasicTransform transform;
     struct CollisionTransformedCollider collider;
+    struct RockFragments breakEffect;
     int type;
     ActorId renderActorId;
 };
