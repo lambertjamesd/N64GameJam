@@ -3,7 +3,7 @@
 
 #define MAX_INPUT_STACK 4
 
-int gInputMask = INPUT_MASK_CADET;
+int gInputMask = INPUT_MASK_PLAY;
 int gCurrStackPos;
 
 int gInputMaskStack[MAX_INPUT_STACK];

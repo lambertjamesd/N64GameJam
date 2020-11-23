@@ -135,22 +135,22 @@ void tutorialMenuInit(struct TutorialMenu* tutorial, enum TutorialMenuType type)
 
 
 int tutorialDidPlayerMove() {
-    return (gInputMask & InputMaskCadet) &&
+    return (gInputMask & InputMaskPlayer) && gCadet.controllerIndex != -1 &&
             (gControllerState[0].stick_x != 0 ||
             gControllerState[0].stick_y != 0);
 }
 
 int tutorialDidPlayerJump() {
-    return (gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON);
+    return (gInputMask & InputMaskPlayer) && gCadet.controllerIndex != -1 && getButtonDown(0, A_BUTTON);
 }
 
 int tutorialDidPlayerAttack() {
-    return (gInputMask & InputMaskRobot) && getButtonDown(0, B_BUTTON);
+    return (gInputMask & InputMaskPlayer) && gRobot.controllerIndex != -1 && getButtonDown(0, B_BUTTON);
 }
 
 int tutorialDidPlayerSwitch() {
     return (gLevelFlags & LEVEL_HAS_ROBOT) &&
-        (gInputMask & (InputMaskRobot | InputMaskCadet)) && 
+        (gInputMask & InputMaskPlayer) && 
         getButtonDown(0, Z_TRIG | R_TRIG);
 }
 
@@ -226,13 +226,13 @@ void tutorialMenuCheck() {
                     gTutorialMenu.delay = 0.0f;
                     gLevelFlags |= LEVEL_HAS_ROBOT;
             }
-        } else if ((gInputMask & InputMaskRobot) && !(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_ATTACK)) {
+        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex != -1 && !(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_ATTACK)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuRobot);
             }
-        } else if ((gInputMask & (InputMaskRobot | InputMaskCadet)) && !(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_SWITCH)) {
+        } else if ((gInputMask & InputMaskPlayer) && !(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_SWITCH)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {

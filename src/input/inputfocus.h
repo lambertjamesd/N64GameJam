@@ -4,13 +4,11 @@
 
 enum InputMask {
     InputMaskCamera = 1 << 0,
-    InputMaskCadet = 1 << 1,
-    InputMaskRobot = 1 << 2,
+    InputMaskPlayer = 1 << 1,
     InputMaskPauseMenu = 1 << 3,
 };
 
-#define INPUT_MASK_CADET (InputMaskCamera | InputMaskCadet)
-#define INPUT_MASK_ROBOT (InputMaskCamera | InputMaskRobot)
+#define INPUT_MASK_PLAY (InputMaskCamera | InputMaskPlayer)
 
 extern int gInputMask;
 

@@ -43,19 +43,37 @@ void controllersReadData() {
 }
 
 int getButton(int controller, int mask) {
+    if (controller == -1) {
+        return 0;
+    }
+
     return gControllerState[0].button & mask;
 }
 
 int getButtonDown(int controller, int mask) {
+    if (controller == -1) {
+        return 0;
+    }
+
     return gControllerState[0].button & ~gControllerLastButton[controller] & mask;
 }
 
 int getButtonUp(int controller, int mask) {
+    if (controller == -1) {
+        return 0;
+    }
+
     return ~gControllerState[0].button & gControllerLastButton[controller] & mask;
 }
 
 extern struct Vector2 getJoystick(int controller) {
     struct Vector2 result;
+
+    if (controller == -1) {
+        result.x = 0;
+        result.y = 0;
+        return result;
+    }
     
     s8 rawX = gControllerState[0].stick_x;
 

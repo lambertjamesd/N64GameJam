@@ -64,7 +64,10 @@ void restartLevel() {
 }
 
 void levelSwitchToCadet() {
-    gInputMask = INPUT_MASK_CADET;
+    if (gCurrentPlayMode == LevelPlayModeSingle) {
+        gCadet.controllerIndex = 0;
+        gRobot.controllerIndex = -1;
+    }
 
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerSwitchBack],
@@ -78,10 +81,11 @@ void levelSwitchToCadet() {
 void levelSwitchToRobot() {
     if (gCurrentPlayMode == LevelPlayModeCoOp) {
         renderSceneSetTargetViewportSplit(SCREEN_WD/2);
+        gRobot.controllerIndex = 1;
     } else {
-        
+        gCadet.controllerIndex = -1;
+        gRobot.controllerIndex = 0;
     }
-    gInputMask = INPUT_MASK_ROBOT;
 
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerSwitch],
@@ -101,29 +105,45 @@ void levelFocusCutscene(struct Vector3* target, float time) {
 }
 
 void levelUpdate(void* data) {
-    if (gInputMask & InputMaskCadet) {
-        gScene.camera[0].targetPosition = gCadet.transform.position;
+    if (gCurrentPlayMode == LevelPlayModeCoOp) {
+        if (gInputMask & InputMaskPlayer) {
+            gScene.camera[0].targetPosition = gCadet.transform.position;
+            gScene.camera[1].targetPosition = gRobot.transform.position;
 
-        if (gScene.camera[0].targetPosition.y < 0.0f) {
-            gScene.camera[0].targetPosition.y = 0.0f;
+            if (gScene.camera[0].targetPosition.y < 0.0f) {
+                gScene.camera[0].targetPosition.y = 0.0f;
+            }
+
+            if (gScene.camera[1].targetPosition.y < 0.0f) {
+                gScene.camera[1].targetPosition.y = 0.0f;
+            }
         }
+    } else {
+        if (gInputMask & InputMaskPlayer && gCadet.controllerIndex != -1) {
+            gScene.camera[0].targetPosition = gCadet.transform.position;
 
-        if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
-            levelSwitchToRobot();
-        }
-    } else if (gInputMask & InputMaskRobot) {
-        gScene.camera[0].targetPosition = gRobot.transform.position;
+            if (gScene.camera[0].targetPosition.y < 0.0f) {
+                gScene.camera[0].targetPosition.y = 0.0f;
+            }
 
-        if (gScene.camera[0].targetPosition.y < 0.0f) {
-            gScene.camera[0].targetPosition.y = 0.0f;
-        }
+            if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
+                levelSwitchToRobot();
+            }
+        } else if (gInputMask & InputMaskPlayer && gRobot.controllerIndex != -1) {
+            gScene.camera[0].targetPosition = gRobot.transform.position;
 
-        if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
-            levelSwitchToCadet();
+            if (gScene.camera[0].targetPosition.y < 0.0f) {
+                gScene.camera[0].targetPosition.y = 0.0f;
+            }
+
+            if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
+                levelSwitchToCadet();
+            }
         }
     }
 
-    if ((gInputMask & (InputMaskCadet | InputMaskRobot)) && 
+
+    if ((gInputMask & InputMaskPlayer) && 
         !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
         tutorialMenuCheck();
     }
@@ -131,7 +151,7 @@ void levelUpdate(void* data) {
     if (gLevelFlags & LEVEL_INTRO_CUTSCENE) {
         if (!(gCadet.actor.stateFlags & CADET_IS_CUTSCENE)) {
             gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
-            gInputMask = INPUT_MASK_CADET;
+            gInputMask = INPUT_MASK_PLAY;
             gScene.camera[0].followDistanceStep = 1;
         }
     }
@@ -338,7 +358,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     
     gLevelFlags = LEVEL_INTRO_CUTSCENE;
 
-    gInputMask = INPUT_MASK_CADET;
+    gInputMask = INPUT_MASK_PLAY;
     gInputMask = 0;
 
     gCurrentPlayMode = playMode;
@@ -359,6 +379,8 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
     }
 
+    gCadet.controllerIndex = 0;
+
     if (gCurrentPlayMode == LevelPlayModeCoOp && gLevelFlags & (LEVEL_HAS_ROBOT | LEVEL_INTRO_ROBOT)) {
         gScene.activeViewportCount = 2;
         cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
@@ -377,6 +399,8 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         if (gLevelFlags & LEVEL_INTRO_ROBOT) {
             renderSceneSetViewportSplit(SCREEN_WD);
             renderSceneSetTargetViewportSplit(SCREEN_WD);
+        } else {
+            gRobot.controllerIndex = 1;
         }
     } else {
         gScene.activeViewportCount = 1;

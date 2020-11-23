@@ -77,11 +77,11 @@ void robotMove(struct Robot* robot) {
     struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
 
-    if (gInputMask & InputMaskRobot) {
-        input2d = getJoystick(0);
+    if (gInputMask & InputMaskPlayer && robot->controllerIndex != -1) {
+        input2d = getJoystick(robot->controllerIndex);
+        cameraGetMoveDir(&gScene.camera[robot->controllerIndex], &input2d, &rotatedInput);
     }
 
-    cameraGetMoveDir(&gScene.camera[0], &input2d, &rotatedInput);
 
     robot->actor.velocity.y += GLOBAL_GRAVITY * gTimeDelta;
     struct Vector3 targetVelocity;
@@ -228,8 +228,8 @@ void robotUpdate(void* robotPtr) {
     dropShadowCalculate(&robot->shadow, robot->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &robot->transform.position);
 
 
-    if (gInputMask & InputMaskRobot) {
-        if (getButtonDown(0, B_BUTTON)) {
+    if (gInputMask & InputMaskPlayer) {
+        if (getButtonDown(robot->controllerIndex, B_BUTTON)) {
             robotAttack(robot);
         }
     }

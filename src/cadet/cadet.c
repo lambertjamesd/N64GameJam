@@ -145,11 +145,10 @@ void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
     struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
 
-    if (gInputMask & InputMaskCadet) {
-        input2d = getJoystick(0);
+    if (gInputMask & InputMaskPlayer && cadet->controllerIndex != -1) {
+        input2d = getJoystick(cadet->controllerIndex);
+        cameraGetMoveDir(&gScene.camera[cadet->controllerIndex], &input2d, &rotatedInput);
     }
-
-    cameraGetMoveDir(&gScene.camera[0], &input2d, &rotatedInput);
 
     float speed = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? CADET_SPEED : CADET_AIR_SPEED;
 
@@ -159,19 +158,6 @@ void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
 }
 
 void cadetMove(struct Cadet* cadet) {
-    struct Vector2 input2d = {0.0f, 0.0f};
-    struct Vector2 rotatedInput;
-
-    if (gInputMask & InputMaskCadet) {
-        input2d = getJoystick(0);
-    }
-
-    if (cadet->actor.anchor) {
-        transformPoint(cadet->actor.anchor, &cadet->actor.relativeToAnchor, &cadet->transform.position);
-    }
-
-    cameraGetMoveDir(&gScene.camera[0], &input2d, &rotatedInput);
-
     cadet->accumTime += gTimeDelta;
 
     struct Vector3 targetVelocity;
@@ -240,7 +226,7 @@ void cadetWalk(struct Cadet* cadet) {
             cadet->coyoteTimer -= gTimeDelta;
         }
 
-        if ((gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON)) {
+        if ((gInputMask & InputMaskPlayer) && getButtonDown(cadet->controllerIndex, A_BUTTON)) {
             struct Vector3 targetVelocity;
             cadetTargetVelocity(cadet, &targetVelocity);
 
@@ -303,7 +289,7 @@ void cadetFreefall(struct Cadet* cadet) {
 }
 
 void cadetJump(struct Cadet* cadet) {
-    if ((gInputMask & InputMaskCadet) && getButton(0, A_BUTTON)) {
+    if ((gInputMask & InputMaskPlayer) && getButton(cadet->controllerIndex, A_BUTTON)) {
         cadet->gravity = CADET_JUMP_ACCEL + GLOBAL_GRAVITY;
     } else {
         cadet->gravity = GLOBAL_GRAVITY;
