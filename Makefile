@@ -28,6 +28,8 @@ LEVELS = cadet_intro \
 	robot_platform \
 	lava_platform \
 	switch_tutorial \
+	inverted_doors \
+	switch_tagteam \
 	loop_around \
 	radioactive_river \
 	double_crossing \

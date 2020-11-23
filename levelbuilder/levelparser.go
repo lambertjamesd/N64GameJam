@@ -67,7 +67,7 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 	result.Tiles = make([][]LevelTileSlot, maxX-minX+1)
 
 	for x, row := range level.Tiles {
-		if x >= minX {
+		if x >= minX && x < maxX {
 			if maxY <= len(row) {
 				result.Tiles[x-minX] = row[minY:maxY]
 			} else if minY < len(row) {
