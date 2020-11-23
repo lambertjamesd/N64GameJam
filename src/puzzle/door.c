@@ -22,7 +22,7 @@ void doorRender(struct DynamicActor* data, struct GraphicsState* state) {
 
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
 
-    if (gCurrentSignal[door->signalIndex]) {
+    if (gCurrentSignal[door->signalIndex] ^ door->inverted) {
         graphicsStateSetPrimitiveColor(state, gSwitchColors[door->signalIndex]);
     } else {
         graphicsStateSetPrimitiveColor(state, gSwitchDarkColors[door->signalIndex]);

@@ -156,6 +156,11 @@ void gemTrigger(void* data, struct Vector3* origin) {
     vector3Add(&gGemCollider.box.max, &gem->transform.position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, 0, &bb);
     saveFileMarkCollectedGem(gCurrentLevel, gem->index);
+    struct Vector3 collectPos;
+    collectPos.x = gem->transform.position.x;
+    collectPos.y = gem->transform.position.y + 0.5f;
+    collectPos.z = gem->transform.position.z;
+    explosionInit(&gem->explosion, &gem->transform.position, ExplosionTypeGemCollect);
 
     gem->flags |= GEM_FLAGS_COLLECT_ANIM;
     gem->animationTimer = 0.0f;
@@ -177,6 +182,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     gem->flags = 0;
 
     timeAddListener(&gem->updateListener, gemUpdate, gem, TimeUpdateGroupWorld);
+    explosionReset(&gem->explosion);
 
     struct CollisionBox bb;
     vector3Add(&gGemCollider.box.min, pos, &bb.min);

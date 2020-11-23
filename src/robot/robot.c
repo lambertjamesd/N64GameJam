@@ -78,8 +78,7 @@ void robotMove(struct Robot* robot) {
     struct Vector2 rotatedInput;
 
     if (gInputMask & InputMaskRobot) {
-        input2d.x = gControllerState[0].stick_x / 80.0f;
-        input2d.y = -gControllerState[0].stick_y / 80.0f;
+        input2d = getJoystick(0);
     }
 
     cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
@@ -159,7 +158,7 @@ void robotAttack(struct Robot* robot) {
     attackPos.y += ROBOT_ATTACK_RADIUS;
     collisionSceneCollideSphere(&attackPos, ROBOT_ATTACK_RADIUS, CollisionLayersBreakable);
 
-    explosionInit(&robot->explosions[robot->nextExplosion], &attackPos);
+    explosionInit(&robot->explosions[robot->nextExplosion], &attackPos, ExplosionTypeRobot);
 
     robot->nextExplosion = (robot->nextExplosion + 1) % ROBOT_MAX_EXPLOSIONS;
 }

@@ -10,12 +10,15 @@
 #include "src/math/vector2.h"
 #include "src/time/time.h"
 
-#define CADET_RADIUS    0.2f
-#define CADET_SPEED     3.5f
-#define CADET_AIR_SPEED 2.8f
-#define CADET_ACCEL     12.0f
-#define CADET_AIR_ACCEL 2.0f
+#define CADET_RADIUS        0.2f
+#define CADET_SPEED         5.6f
+#define CADET_AIR_SPEED     4.48f
+#define CADET_BACKACCEL     24.0f
+#define CADET_ACCEL         12.0f
+#define CADET_AIR_ACCEL     2.0f
+#define CADET_AIR_BACKACCEL 8.0f
 
+#define CADET_HORZ_IMPULSE  1.2f
 #define CADET_JUMP_IMPULSE  5.5f
 #define CADET_JUMP_ACCEL    8.0f
 

@@ -141,13 +141,29 @@ void cadetUpdatefootstepSound(struct Cadet* cadet) {
     }
 }
 
+void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
+    struct Vector2 input2d = {0.0f, 0.0f};
+    struct Vector2 rotatedInput;
+
+    if (gInputMask & InputMaskCadet) {
+        input2d = getJoystick(0);
+    }
+
+    cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
+
+    float speed = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? CADET_SPEED : CADET_AIR_SPEED;
+
+    output->x = speed * rotatedInput.x;
+    output->y = cadet->actor.velocity.y;
+    output->z = speed * rotatedInput.y;
+}
+
 void cadetMove(struct Cadet* cadet) {
     struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
 
     if (gInputMask & InputMaskCadet) {
-        input2d.x = gControllerState[0].stick_x / 80.0f;
-        input2d.y = -gControllerState[0].stick_y / 80.0f;
+        input2d = getJoystick(0);
     }
 
     if (cadet->actor.anchor) {
@@ -158,22 +174,34 @@ void cadetMove(struct Cadet* cadet) {
 
     cadet->accumTime += gTimeDelta;
 
+    struct Vector3 targetVelocity;
+    cadetTargetVelocity(cadet, &targetVelocity);
+
     while (cadet->accumTime >= MIN_DELTA_TIME) {
         cadet->actor.velocity.y += cadet->gravity * MIN_DELTA_TIME;
-        struct Vector3 targetVelocity;
-
-        float speed = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? CADET_SPEED : CADET_AIR_SPEED;
-
-        targetVelocity.x = speed * rotatedInput.x;
         targetVelocity.y = cadet->actor.velocity.y;
-        targetVelocity.z = speed * rotatedInput.y;
+
+        float accel;
+        int isBackwards = vector3Dot(&cadet->actor.velocity, &targetVelocity);
+
+        if (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) {
+            if (isBackwards <= 0.0f) {
+                accel = CADET_BACKACCEL * MIN_DELTA_TIME;
+            } else {
+                accel = CADET_ACCEL * MIN_DELTA_TIME;
+            }
+        } else {
+            if (isBackwards) {
+                accel = CADET_AIR_BACKACCEL * MIN_DELTA_TIME;
+            } else {
+                accel = CADET_AIR_ACCEL * MIN_DELTA_TIME;
+            }
+        }
 
         vector3MoveTowards(
             &cadet->actor.velocity, 
             &targetVelocity, 
-            (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? 
-                CADET_ACCEL * MIN_DELTA_TIME :
-                CADET_AIR_ACCEL * MIN_DELTA_TIME,
+            accel,
             &cadet->actor.velocity
         );
 
@@ -213,6 +241,11 @@ void cadetWalk(struct Cadet* cadet) {
         }
 
         if ((gInputMask & InputMaskCadet) && getButtonDown(0, A_BUTTON)) {
+            struct Vector3 targetVelocity;
+            cadetTargetVelocity(cadet, &targetVelocity);
+
+            vector3MoveTowards(&cadet->actor.velocity, &targetVelocity, CADET_HORZ_IMPULSE, &cadet->actor.velocity);
+
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
             walkAnimUpdate(&cadet->walkAnim, 0.0f);

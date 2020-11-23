@@ -8,6 +8,15 @@ OSContStatus gControllerStatus[MAXCONTROLLERS];
 OSContPad gControllerState[MAXCONTROLLERS];
 u16 gControllerLastButton[MAXCONTROLLERS];
 
+#define OUTER_DEAD_ZONE     10
+
+int gInputRange[MAXCONTROLLERS] = {
+    64,
+    64,
+    64,
+    64,
+};
+
 void controllersInit() {
     u8 pattern;
     osCreateMesgQueue(&gContMessageQ, &gDummyMessage, 1);
@@ -43,4 +52,43 @@ int getButtonDown(int controller, int mask) {
 
 int getButtonUp(int controller, int mask) {
     return ~gControllerState[0].button & gControllerLastButton[controller] & mask;
+}
+
+extern struct Vector2 getJoystick(int controller) {
+    struct Vector2 result;
+    
+    s8 rawX = gControllerState[0].stick_x;
+
+    if (rawX > gInputRange[controller]) {
+        gInputRange[controller] = rawX;
+    } else if (rawX < -gInputRange[controller]) {
+        gInputRange[controller] = -rawX;
+    }
+
+    s8 rawY = gControllerState[0].stick_y;
+
+    if (rawY > gInputRange[controller]) {
+        gInputRange[controller] = rawY;
+    } else if (rawY < -gInputRange[controller]) {
+        gInputRange[controller] = -rawY;
+    }
+
+    float scale = 1.0f / (float)(gInputRange[controller] - OUTER_DEAD_ZONE);
+
+    result.x = rawX * scale;
+    result.y = -rawY * scale;
+
+    if (result.x < -1.0f) {
+        result.x = -1.0f;
+    } else if (result.x > 1.0f) {
+        result.x = 1.0f;
+    }
+
+    if (result.y < -1.0f) {
+        result.y = -1.0f;
+    } else if (result.y > 1.0f) {
+        result.y = 1.0f;
+    }
+
+    return result;
 }

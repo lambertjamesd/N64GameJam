@@ -6,6 +6,7 @@
 #include "src/collision/sparsecollisiongrid.h"
 #include "src/time/time.h"
 #include "src/effects/shadow.h"
+#include "src/effects/explosion.h"
 
 #define GEM_FLAGS_PREVIOUSLY_COLLECTED  0x1
 #define GEM_FLAGS_COLLECT_ANIM          0x2
@@ -17,6 +18,7 @@ struct Gem {
     struct CollisionTransformedCollider collider;
     struct TimeUpdateListener updateListener;
     struct DropShadow shadow;
+    struct Explosion explosion;
     short flags;
     short index;
     float animationTimer;

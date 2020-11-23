@@ -56,7 +56,7 @@ void signalResetAll() {
     int i;
 
     for (i = 0; i < MAX_SIGNAL_SLOTS; ++i) {
-        gCurrentSignal[0] = 0;
-        gSignalRecievers[0] = 0;
+        gCurrentSignal[i] = 0;
+        gSignalRecievers[i] = 0;
     }
 }

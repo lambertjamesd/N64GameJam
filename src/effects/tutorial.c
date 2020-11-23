@@ -181,7 +181,7 @@ void tutorialMenuCheck() {
 
     if (tutorialDidPlayerAttack()) {
         if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_ATTACK)) {
-            gTutorialMenu.delay = 0.0f;
+            gTutorialMenu.delay = -10.0f;
         }
 
         gSaveFile.tutorialFlags |= SAVEFILE_LEARNED_ATTACK;
