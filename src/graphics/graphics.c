@@ -112,38 +112,6 @@ void createGfxTask(GFXInfo *i) {
         gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
     }
 
-    gDPPipeSync(glistp++);
-    gDPSetCycleType(glistp++, G_CYC_1CYCLE);
-
-    gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
-    gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
-    gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-	gDPSetTextureLUT(glistp++, G_TT_NONE);
-
-    // gDPSetScissor(glistp++, G_SC_NON_INTERLACE, 60, 60, 259, 179);
-    // gSPViewport(glistp++, &smallVP);
-
-    guPerspective(&dynamicp->projection, &dynamicp->perspectiveCorrect, 70.0f, 4.0f / 3.0f, 1.0f, 128.0f, 1.0f);
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
-
-    struct BasicTransform cameraInverse;
-    transformInvert(&gScene.camera.transform, &cameraInverse);
-    transformToMatrixL(&cameraInverse, 1.0f, &dynamicp->viewing);
-    guScale(&dynamicp->worldScale, 1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f);
-
-    gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
-
-    if (gCurrentLevelGraphics && gCurrentLevelTheme) {
-        gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-        glistp = graphicsRenderLevelTileGrid(&gCurrentLevelGraphics->grid, gCurrentLevelTheme->materials, gCurrentLevelTheme->materialCount, glistp);
-        gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
-
-        gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
-        gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
-        gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-	    gDPSetTextureLUT(glistp++, G_TT_NONE);
-    }
-
     struct GraphicsState state;
     state.dl = glistp;
     state.matrices = dynamicp->dynamicActors;
@@ -154,20 +122,70 @@ void createGfxTask(GFXInfo *i) {
     state.usedLookAt = 0;
     state.lookAtCount = LOOK_AT_COUNT;
 
-    if (gCurrentLevelTheme) {
-        dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);
-    } else {
-        dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0, 0);
-    }
+    int index;
+    for (index = 0; index < gScene.activeViewportCount && index < MAX_VIEWPORTS; ++index) {
+        gDPPipeSync(glistp++);
+        gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 
-    dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
+        gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
+        gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
+        gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+        gDPSetTextureLUT(glistp++, G_TT_NONE);
+
+        struct SceneViewport* vp = &gScene.viewports[index];
+
+        viewportConvert(vp, &dynamicp->viewports[index]);
+
+        // gDPSetScissor(glistp++, G_SC_NON_INTERLACE, 60, 60, 259, 179);
+        gSPViewport(glistp++, &dynamicp->viewports[index]);
+
+        guPerspective(
+            &dynamicp->projection[index], 
+            &dynamicp->perspectiveCorrect[index], 
+            70.0f, 
+            (float)(vp->maxx - vp->minx) / (float)(vp->maxy - vp->miny),
+            1.0f, 
+            128.0f, 
+            1.0f
+        );
+        gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->projection[index]), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
+
+        struct BasicTransform cameraInverse;
+        transformInvert(&gScene.camera[index].transform, &cameraInverse);
+        transformToMatrixL(&cameraInverse, 1.0f, &dynamicp->viewing[index]);
+        guScale(&dynamicp->worldScale[index], 1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f);
+
+        gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->viewing[index]), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
+
+        if (gCurrentLevelGraphics && gCurrentLevelTheme) {
+            gSPMatrix(glistp++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale[index]), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
+            glistp = graphicsRenderLevelTileGrid(&gCurrentLevelGraphics->grid, gCurrentLevelTheme->materials, gCurrentLevelTheme->materialCount, glistp);
+            gSPPopMatrix(glistp++, G_MTX_MODELVIEW);
+
+            gSPClearGeometryMode(glistp++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
+            gSPSetGeometryMode(glistp++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
+            gDPSetRenderMode(glistp++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+            gDPSetTextureLUT(glistp++, G_TT_NONE);
+        }
+
+        state.dl = glistp;
+
+        if (gCurrentLevelTheme) {
+            dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);
+        } else {
+            dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0, 0);
+        }
+
+        dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
+
+        glistp = state.dl;
+    }
 
     fontRendererBeginFrame(&dynamicp->fontRenderer);
 
     gSPClearGeometryMode(state.dl++, G_ZBUFFER|G_CULL_BACK);
     gDPSetRenderMode(state.dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
 
-    int index;
     for (index = 0; index < MAX_MENUS; ++index) {
         if (gMenuGraphics[index]) {
             gMenuGraphics[index](gMenuGraphicsData[index], &state, &dynamicp->fontRenderer);

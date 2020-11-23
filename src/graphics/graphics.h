@@ -16,10 +16,11 @@
 typedef void (*MenuRenderCallback)(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer);
 
 typedef struct {
-	Mtx	projection;
-    u16 perspectiveCorrect;
-	Mtx	viewing;
-    Mtx worldScale;
+	Mtx	projection[MAX_VIEWPORTS];
+    u16 perspectiveCorrect[MAX_VIEWPORTS];
+	Mtx	viewing[MAX_VIEWPORTS];
+    Mtx worldScale[MAX_VIEWPORTS];
+    Vp viewports[MAX_VIEWPORTS];
 	Gfx	glist[DYANAMIC_LIST_LEN];
     Mtx dynamicActors[DYNAMIC_MATRIX_COUNT];
     LookAt lookats[LOOK_AT_COUNT];

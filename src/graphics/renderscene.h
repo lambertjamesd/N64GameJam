@@ -12,6 +12,14 @@
 #define START_FOLLOW_DISTANCE 10.0f
 #define CAMERA_MAX_SPEED 20.0f
 
+#define MAX_VIEWPORTS    2
+
+struct SceneViewport {
+    int minx, maxx, miny, maxy;
+};
+
+void viewportConvert(struct SceneViewport* input, Vp* output);
+
 struct SceneCamera {
     struct BasicTransform transform;
     struct Vector3 centerPosition;
@@ -30,7 +38,10 @@ void cameraCleanup(struct SceneCamera* camera);
 void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct Vector2* out);
 
 struct RenderScene {
-    struct SceneCamera camera;
+    struct SceneCamera camera[MAX_VIEWPORTS];
+    struct SceneViewport viewports[MAX_VIEWPORTS];
+    int activeViewportCount;
+    
     struct DynamicActorGroup dynamicActors;
     struct DynamicActorGroup transparentActors;
     Gfx* transparentMaterials[MAX_MATERIAL_GROUPS];

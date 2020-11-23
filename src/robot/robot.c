@@ -49,9 +49,9 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
     LookAt* nextLookat = graphicsStateNextLookat(state);
 
     guLookAtReflect(reflectMatrix, nextLookat, 
-        gScene.camera.transform.position.x,
-        gScene.camera.transform.position.y,
-        gScene.camera.transform.position.z,
+        gScene.camera[0].transform.position.x,
+        gScene.camera[0].transform.position.y,
+        gScene.camera[0].transform.position.z,
         robot->transform.position.x,
         robot->transform.position.y,
         robot->transform.position.z,
@@ -81,7 +81,7 @@ void robotMove(struct Robot* robot) {
         input2d = getJoystick(0);
     }
 
-    cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
+    cameraGetMoveDir(&gScene.camera[0], &input2d, &rotatedInput);
 
     robot->actor.velocity.y += GLOBAL_GRAVITY * gTimeDelta;
     struct Vector3 targetVelocity;

@@ -54,7 +54,7 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
 
     guLookAtReflect(reflectMatrix, nextLookat, 
         0,
-        gScene.camera.transform.position.y,
+        gScene.camera[0].transform.position.y,
         0,
         0,
         cadet->transform.position.y,
@@ -149,7 +149,7 @@ void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
         input2d = getJoystick(0);
     }
 
-    cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
+    cameraGetMoveDir(&gScene.camera[0], &input2d, &rotatedInput);
 
     float speed = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? CADET_SPEED : CADET_AIR_SPEED;
 
@@ -170,7 +170,7 @@ void cadetMove(struct Cadet* cadet) {
         transformPoint(cadet->actor.anchor, &cadet->actor.relativeToAnchor, &cadet->transform.position);
     }
 
-    cameraGetMoveDir(&gScene.camera, &input2d, &rotatedInput);
+    cameraGetMoveDir(&gScene.camera[0], &input2d, &rotatedInput);
 
     cadet->accumTime += gTimeDelta;
 

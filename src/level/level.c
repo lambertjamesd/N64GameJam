@@ -90,26 +90,26 @@ void levelFocusCutscene(struct Vector3* target, float time) {
     gLevelCutsceneTimer = time;
     inputMaskPush(0);
     gLevelFlags |= LEVEL_FOCUS_CUTSCENE;
-    gScene.camera.targetPosition = *target;
-    gScene.camera.followDistanceStep = 0;
+    gScene.camera[0].targetPosition = *target;
+    gScene.camera[0].followDistanceStep = 0;
 }
 
 void levelUpdate(void* data) {
     if (gInputMask & InputMaskCadet) {
-        gScene.camera.targetPosition = gCadet.transform.position;
+        gScene.camera[0].targetPosition = gCadet.transform.position;
 
-        if (gScene.camera.targetPosition.y < 0.0f) {
-            gScene.camera.targetPosition.y = 0.0f;
+        if (gScene.camera[0].targetPosition.y < 0.0f) {
+            gScene.camera[0].targetPosition.y = 0.0f;
         }
 
         if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
             levelSwitchToRobot();
         }
     } else if (gInputMask & InputMaskRobot) {
-        gScene.camera.targetPosition = gRobot.transform.position;
+        gScene.camera[0].targetPosition = gRobot.transform.position;
 
-        if (gScene.camera.targetPosition.y < 0.0f) {
-            gScene.camera.targetPosition.y = 0.0f;
+        if (gScene.camera[0].targetPosition.y < 0.0f) {
+            gScene.camera[0].targetPosition.y = 0.0f;
         }
 
         if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
@@ -126,7 +126,7 @@ void levelUpdate(void* data) {
         if (!(gCadet.actor.stateFlags & CADET_IS_CUTSCENE)) {
             gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
             gInputMask = INPUT_MASK_CADET;
-            gScene.camera.followDistanceStep = 1;
+            gScene.camera[0].followDistanceStep = 1;
         }
     }
 
@@ -136,7 +136,7 @@ void levelUpdate(void* data) {
         if (gLevelCutsceneTimer < 0.0f) {
             gLevelFlags &= ~LEVEL_FOCUS_CUTSCENE;
             inputMaskPop();
-            gScene.camera.followDistanceStep = 1;
+            gScene.camera[0].followDistanceStep = 1;
         }
     }
 
@@ -147,7 +147,7 @@ void levelUpdate(void* data) {
     if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
         cadetFinishLevel(&gCadet);
         robotFinishLevel(&gRobot);
-        gScene.camera.followDistanceStep = 0;
+        gScene.camera[0].followDistanceStep = 0;
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;
         gInputMask = 0;
 
@@ -336,7 +336,20 @@ void levelLoad(struct LevelDefinition* levelDef) {
     gInputMask = 0;
 
     gLevelFlags |= LEVEL_HAS_CADET;
-    cameraInit(&gScene.camera, &levelDef->levelData->cadetStart);
+    gScene.activeViewportCount = 2;
+    cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
+    cameraInit(&gScene.camera[1], &levelDef->levelData->robotStart);
+
+    gScene.viewports[0].minx = 0;
+    gScene.viewports[0].maxx = SCREEN_WD/2-1;
+    gScene.viewports[0].miny = 0;
+    gScene.viewports[0].maxy = SCREEN_HT;
+
+    gScene.viewports[1].minx = SCREEN_WD/2+1;
+    gScene.viewports[1].maxx = SCREEN_WD;
+    gScene.viewports[1].miny = 0;
+    gScene.viewports[1].maxy = SCREEN_HT;
+
     cadetReset(&levelDef->levelData->cadetStart);
     entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
 

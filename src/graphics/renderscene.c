@@ -4,6 +4,7 @@
 #include "src/math/mathf.h"
 #include "src/input/controller.h"
 #include "src/input/inputfocus.h"
+#include "src/defs.h"
 
 struct RenderScene gScene;
 
@@ -23,6 +24,18 @@ float gFollowPitches[] = {
 };
 
 #define FOLLOW_STEP_COUNT (sizeof(gFollowDistances) / sizeof(float))
+
+void viewportConvert(struct SceneViewport* input, Vp* output) {
+    output->vp.vscale[0] = (input->maxx - input->minx) * 2;
+    output->vp.vscale[1] = (input->maxy - input->miny) * 2;
+    output->vp.vscale[2] = G_MAXZ/2;
+    output->vp.vscale[3] = 0;
+
+    output->vp.vtrans[0] = (input->maxx + input->minx) * 2;
+    output->vp.vtrans[1] = (input->maxy + input->miny) * 2;
+    output->vp.vtrans[2] = G_MAXZ/2;
+    output->vp.vtrans[3] = 0;
+}
 
 void cameraCalculatePos(struct Quaternion* rotation, struct Vector3* target, float distance, struct Vector3* out) {
     quatMultVector(rotation, &gForward, out);

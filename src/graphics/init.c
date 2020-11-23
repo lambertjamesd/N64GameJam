@@ -56,7 +56,7 @@ Gfx rdpstateinit_dl[] = {
 
 /* intialize the RSP state: */
 Gfx setup_rspstate[] = {
-    gsSPViewport(&vp),
+    // gsSPViewport(&vp),
     gsSPClearGeometryMode((G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH | 
 			   G_CULL_BOTH | G_FOG | G_LIGHTING)),
     gsSPSetGeometryMode(G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH | G_CULL_BACK),
