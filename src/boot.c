@@ -121,7 +121,7 @@ static void gameEntryPoint(void *argv)
 
                     if (pendingGFX == 0) {
                         gCurrentLevel = gNextLevel;
-                        levelLoad(&_level_group_all_levels[gNextLevel]);
+                        levelLoad(&_level_group_all_levels[gNextLevel], gCurrentPlayMode);
                     }
                 } else {
                     if (pendingGFX < 2) 
@@ -135,6 +135,7 @@ static void gameEntryPoint(void *argv)
 
                     timeUpdate(osGetTime());
                     audioUpdate();
+                    renderSceneUpdateSplit();
                 }
                 break;
 
@@ -210,6 +211,6 @@ static void initGame(void)
     fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
     fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);
 
-    levelLoad(&_level_group_all_levels[0]);
+    levelLoad(&_level_group_all_levels[0], LevelPlayModeCoOp);
 }
 

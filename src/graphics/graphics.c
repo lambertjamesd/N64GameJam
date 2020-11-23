@@ -124,6 +124,11 @@ void createGfxTask(GFXInfo *i) {
 
     int index;
     for (index = 0; index < gScene.activeViewportCount && index < MAX_VIEWPORTS; ++index) {
+        if (gScene.viewports[index].minx >= gScene.viewports[index].maxx || 
+            gScene.viewports[index].miny >= gScene.viewports[index].maxy) {
+            continue;
+        }
+
         gDPPipeSync(glistp++);
         gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 

@@ -45,6 +45,7 @@ struct Robot {
     struct DropShadow shadow;
     struct TeleportEffect teleport;
     short nextExplosion;
+    short controllerIndex;
 };
 
 extern struct Robot gRobot;

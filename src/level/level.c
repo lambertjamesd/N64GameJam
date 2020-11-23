@@ -44,6 +44,7 @@ struct TimeUpdateListener gLevelUpdateListener;
 int gCurrentLevel;
 int gNextLevel;
 float gLevelCutsceneTimer;
+enum LevelPlayMode gCurrentPlayMode;
 
 void levelNext() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
@@ -75,6 +76,11 @@ void levelSwitchToCadet() {
 }
 
 void levelSwitchToRobot() {
+    if (gCurrentPlayMode == LevelPlayModeCoOp) {
+        renderSceneSetTargetViewportSplit(SCREEN_WD/2);
+    } else {
+        
+    }
     gInputMask = INPUT_MASK_ROBOT;
 
     audioRestartPlaySound(
@@ -288,7 +294,7 @@ void levelCleanup(struct LevelDefinition* levelDef) {
     }
 }
 
-void levelLoad(struct LevelDefinition* levelDef) {
+void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     if (gLoadedLevel) {
         levelCleanup(gLoadedLevel);
     }
@@ -335,20 +341,9 @@ void levelLoad(struct LevelDefinition* levelDef) {
     gInputMask = INPUT_MASK_CADET;
     gInputMask = 0;
 
+    gCurrentPlayMode = playMode;
+
     gLevelFlags |= LEVEL_HAS_CADET;
-    gScene.activeViewportCount = 2;
-    cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
-    cameraInit(&gScene.camera[1], &levelDef->levelData->robotStart);
-
-    gScene.viewports[0].minx = 0;
-    gScene.viewports[0].maxx = SCREEN_WD/2-1;
-    gScene.viewports[0].miny = 0;
-    gScene.viewports[0].maxy = SCREEN_HT;
-
-    gScene.viewports[1].minx = SCREEN_WD/2+1;
-    gScene.viewports[1].maxx = SCREEN_WD;
-    gScene.viewports[1].miny = 0;
-    gScene.viewports[1].maxy = SCREEN_HT;
 
     cadetReset(&levelDef->levelData->cadetStart);
     entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
@@ -362,6 +357,35 @@ void levelLoad(struct LevelDefinition* levelDef) {
 
         robotReset(&levelDef->levelData->robotStart);
         entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
+    }
+
+    if (gCurrentPlayMode == LevelPlayModeCoOp && gLevelFlags & (LEVEL_HAS_ROBOT | LEVEL_INTRO_ROBOT)) {
+        gScene.activeViewportCount = 2;
+        cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
+        cameraInit(&gScene.camera[1], &levelDef->levelData->robotStart);
+
+        gScene.viewports[0].minx = 0;
+        gScene.viewports[0].maxx = SCREEN_WD/2-1;
+        gScene.viewports[0].miny = 0;
+        gScene.viewports[0].maxy = SCREEN_HT;
+
+        gScene.viewports[1].minx = SCREEN_WD/2+1;
+        gScene.viewports[1].maxx = SCREEN_WD;
+        gScene.viewports[1].miny = 0;
+        gScene.viewports[1].maxy = SCREEN_HT;
+
+        if (gLevelFlags & LEVEL_INTRO_ROBOT) {
+            renderSceneSetViewportSplit(SCREEN_WD);
+            renderSceneSetTargetViewportSplit(SCREEN_WD);
+        }
+    } else {
+        gScene.activeViewportCount = 1;
+        cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
+
+        gScene.viewports[0].minx = 0;
+        gScene.viewports[0].maxx = SCREEN_WD;
+        gScene.viewports[0].miny = 0;
+        gScene.viewports[0].maxy = SCREEN_HT;
     }
 
     levelExpand(levelDef);

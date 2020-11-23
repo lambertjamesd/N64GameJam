@@ -260,6 +260,7 @@ void robotReset(struct Vector3* startLocation) {
         explosionReset(&gRobot.explosions[i]);
     }
     gRobot.nextExplosion = 0;
+    gRobot.controllerIndex = -1;
 
     teleportEffectStart(&gRobot.teleport, TELEPORT_FLAG_REVERSE);
 

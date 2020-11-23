@@ -401,6 +401,7 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.gravity = GLOBAL_GRAVITY;
     gCadet.accumTime = 0.0f;
     gCadet.footstepSound = -1;
+    gCadet.controllerIndex = -1;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
 }

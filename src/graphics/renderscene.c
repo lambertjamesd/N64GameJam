@@ -6,7 +6,12 @@
 #include "src/input/inputfocus.h"
 #include "src/defs.h"
 
+#define SPLIT_MOVE_SPEED    2
+
 struct RenderScene gScene;
+
+short gTargetSplit;
+short gCurrentSplit;
 
 #define FOLLOW_DISTANCE_START 0
 #define CAMERA_ROTATE_STEP (M_PI * 0.25f)
@@ -132,4 +137,41 @@ void renderSceneReset(struct RenderScene* scene) {
         scene->transparentMaterials[i] = 0;
         scene->transparentMaterialCleanup[i] = 0;
     }
+}
+
+void renderSceneSetViewportSplit(int target) {
+    gCurrentSplit = target;
+
+    if (target <= 0) {
+        target = -SPLIT_SCREEN_BORDER_SIZE / 2;
+    } else if (target >= SCREEN_WD) {
+        target = SCREEN_WD + SPLIT_SCREEN_BORDER_SIZE / 2;
+    }
+
+    gScene.viewports[0].maxx = target - SPLIT_SCREEN_BORDER_SIZE / 2;
+    gScene.viewports[1].minx = target + SPLIT_SCREEN_BORDER_SIZE / 2;
+}
+
+void renderSceneSetTargetViewportSplit(int target) {
+    gTargetSplit = target;
+}
+
+void renderSceneUpdateSplit() {
+    int offset = gTargetSplit - gCurrentSplit;
+
+    if (offset == 0) {
+        return;
+    }
+
+    int currSplit = gCurrentSplit;
+
+    if (offset < -SPLIT_MOVE_SPEED) {
+        currSplit -= SPLIT_MOVE_SPEED;
+    } else if (offset > SPLIT_MOVE_SPEED) {
+        currSplit += SPLIT_MOVE_SPEED;
+    } else {
+        currSplit = gTargetSplit;
+    }
+
+    renderSceneSetViewportSplit(currSplit);
 }

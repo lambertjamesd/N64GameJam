@@ -44,6 +44,7 @@ struct Cadet {
     float coyoteTimer;
     struct TeleportEffect teleport;
     short footstepSound;
+    short controllerIndex;
 };
 
 extern struct Cadet gCadet;

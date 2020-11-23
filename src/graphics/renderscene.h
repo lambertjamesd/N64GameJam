@@ -11,6 +11,7 @@
 
 #define START_FOLLOW_DISTANCE 10.0f
 #define CAMERA_MAX_SPEED 20.0f
+#define SPLIT_SCREEN_BORDER_SIZE 2
 
 #define MAX_VIEWPORTS    2
 
@@ -53,5 +54,9 @@ struct RenderScene {
 extern struct RenderScene gScene;
 
 void renderSceneReset(struct RenderScene* scene);
+void renderSceneSetViewportSplit(int target);
+void renderSceneSetTargetViewportSplit(int target);
+void renderSceneUpdateSplit();
+void renderSceneMoveViewportSplit(int target, int maxMove, int isVert);
 
 #endif

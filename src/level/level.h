@@ -81,12 +81,18 @@ struct LevelDefinition {
     struct LevelThemeDefinition* theme;
 };
 
+enum LevelPlayMode {
+    LevelPlayModeSingle,
+    LevelPlayModeCoOp,
+};
+
 extern struct LevelDefinition* gLoadedLevel;
 extern int gCurrentLevel;
 extern int gNextLevel;
 extern int gLevelFlags;
+extern enum LevelPlayMode gCurrentPlayMode;
 
-void levelLoad(struct LevelDefinition* levelDef);
+void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode);
 void restartLevel();
 void levelSwitchToCadet();
 void levelSwitchToRobot();
