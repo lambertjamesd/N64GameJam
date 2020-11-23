@@ -35,24 +35,26 @@ enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor,
             actor->anchor = collisionResult->contacts[i].transform;
             actor->groundCollisionMask = collisionResult->contacts[i].collisionMask;
 
-            struct Vector3* normal = &collisionResult->contacts[i].normal;
-            struct Vector3 adjustedPos = *position;
+            if (!(actor->groundCollisionMask & CollisionLayersRobot)) {
+                struct Vector3* normal = &collisionResult->contacts[i].normal;
+                struct Vector3 adjustedPos = *position;
 
-            if (normal->x != 0.0f || normal->z != 0.0f) {
-                struct Vector2 offsetAmount;
-                offsetAmount.x = -normal->x;
-                offsetAmount.y = -normal->z;
-                vector2Normalize(&offsetAmount, &offsetAmount);
-                adjustedPos.x += offsetAmount.x * 0.5f;
-                adjustedPos.z += offsetAmount.y * 0.5f;
-            }
+                if (normal->x != 0.0f || normal->z != 0.0f) {
+                    struct Vector2 offsetAmount;
+                    offsetAmount.x = -normal->x;
+                    offsetAmount.y = -normal->z;
+                    vector2Normalize(&offsetAmount, &offsetAmount);
+                    adjustedPos.x += offsetAmount.x * 0.5f;
+                    adjustedPos.z += offsetAmount.y * 0.5f;
+                }
 
-            if (actor->anchor) {
-                actor->lastStableAnchor = actor->anchor;
-                transformPointInverse(actor->anchor, &adjustedPos, &actor->lastStableLocation);
-            } else {
-                actor->lastStableAnchor = 0;
-                actor->lastStableLocation = adjustedPos;
+                if (actor->anchor) {
+                    actor->lastStableAnchor = actor->anchor;
+                    transformPointInverse(actor->anchor, &adjustedPos, &actor->lastStableLocation);
+                } else {
+                    actor->lastStableAnchor = 0;
+                    actor->lastStableLocation = adjustedPos;
+                }
             }
         }
     }
