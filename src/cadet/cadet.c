@@ -142,12 +142,14 @@ void cadetUpdatefootstepSound(struct Cadet* cadet) {
 }
 
 void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
-    struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
 
     if (gInputMask & InputMaskPlayer && cadet->controllerIndex != -1) {
-        input2d = getJoystick(cadet->controllerIndex);
+        struct Vector2 input2d = getJoystick(cadet->controllerIndex);
         cameraGetMoveDir(&gScene.camera[cadet->controllerIndex], &input2d, &rotatedInput);
+    } else {
+        rotatedInput.x = 0.0f;
+        rotatedInput.y = 0.0f;
     }
 
     float speed = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) ? CADET_SPEED : CADET_AIR_SPEED;

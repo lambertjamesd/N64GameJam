@@ -95,8 +95,8 @@ extern enum LevelPlayMode gCurrentPlayMode;
 void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode);
 void restartLevel();
 void levelSwitchToCadet();
-void levelSwitchToRobot();
+int levelSwitchToRobot();
 
-void levelFocusCutscene(struct Vector3* target, float time);
+void levelFocusCutscene(struct Vector3* target, float time, int viewportIndex);
 
 #endif

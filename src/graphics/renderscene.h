@@ -32,9 +32,10 @@ struct SceneCamera {
     float currentPitch;
     short followDistanceStep;
     short targetDistanceStep;
+    int controllerIndex;
 };
 
-void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget);
+void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget, int controllerIndex);
 void cameraCleanup(struct SceneCamera* camera);
 void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct Vector2* out);
 

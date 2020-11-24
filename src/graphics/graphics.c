@@ -35,10 +35,10 @@ int gFrameNumber;
 MenuRenderCallback gMenuGraphics[MAX_MENUS];
 void* gMenuGraphicsData[MAX_MENUS];
 
-// static Vp smallVP = {
-//     SCREEN_WD, SCREEN_HT, G_MAXZ/2, 0,
-//     418 * 2, 210 * 2, G_MAXZ/2, 0,
-// };
+static Vp gFullVP = {
+    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0,
+    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0,
+};
 
 void graphicsInit(void) 
 {
@@ -186,10 +186,32 @@ void createGfxTask(GFXInfo *i) {
         glistp = state.dl;
     }
 
-    fontRendererBeginFrame(&dynamicp->fontRenderer);
+    gDPPipeSync(glistp++);
+    gSPViewport(glistp++, &gFullVP);
 
     gSPClearGeometryMode(state.dl++, G_ZBUFFER|G_CULL_BACK);
     gDPSetRenderMode(state.dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+
+    if (gScene.activeViewportCount == 2 && 
+        gScene.viewports[0].maxx < gScene.viewports[1].minx &&
+        gScene.viewports[0].maxx >=0 && gScene.viewports[1].minx <= SCREEN_WD) {
+        gDPSetCycleType(glistp++, G_CYC_FILL);
+        gDPSetFillColor(glistp++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
+                    GPACK_RGBA5551(0, 0, 0, 1)));
+        gDPFillRectangle(
+            glistp++, 
+            gScene.viewports[0].maxx,
+            0,
+            gScene.viewports[1].minx-1,
+            SCREEN_HT-1
+        );
+        gDPPipeSync(glistp++);
+        gDPSetCycleType(glistp++, G_CYC_1CYCLE);
+    }
+
+    state.dl = glistp;
+
+    fontRendererBeginFrame(&dynamicp->fontRenderer);
 
     for (index = 0; index < MAX_MENUS; ++index) {
         if (gMenuGraphics[index]) {

@@ -74,12 +74,14 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
 }
 
 void robotMove(struct Robot* robot) {
-    struct Vector2 input2d = {0.0f, 0.0f};
     struct Vector2 rotatedInput;
 
     if (gInputMask & InputMaskPlayer && robot->controllerIndex != -1) {
-        input2d = getJoystick(robot->controllerIndex);
+        struct Vector2 input2d = getJoystick(robot->controllerIndex);
         cameraGetMoveDir(&gScene.camera[robot->controllerIndex], &input2d, &rotatedInput);
+    } else {
+        rotatedInput.x = 0.0f;
+        rotatedInput.y = 0.0f;
     }
 
 

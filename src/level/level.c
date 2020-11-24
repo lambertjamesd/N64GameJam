@@ -45,6 +45,7 @@ int gCurrentLevel;
 int gNextLevel;
 float gLevelCutsceneTimer;
 enum LevelPlayMode gCurrentPlayMode;
+short gFocusCamera;
 
 void levelNext() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
@@ -78,7 +79,7 @@ void levelSwitchToCadet() {
     );
 }
 
-void levelSwitchToRobot() {
+int levelSwitchToRobot() {
     if (gCurrentPlayMode == LevelPlayModeCoOp) {
         renderSceneSetTargetViewportSplit(SCREEN_WD/2);
         gRobot.controllerIndex = 1;
@@ -94,14 +95,18 @@ void levelSwitchToRobot() {
         0.0f,
         10
     );
+
+    return gRobot.controllerIndex;
 }
 
-void levelFocusCutscene(struct Vector3* target, float time) {
+void levelFocusCutscene(struct Vector3* target, float time, int viewportIndex) {
     gLevelCutsceneTimer = time;
     inputMaskPush(0);
     gLevelFlags |= LEVEL_FOCUS_CUTSCENE;
-    gScene.camera[0].targetPosition = *target;
-    gScene.camera[0].followDistanceStep = 0;
+
+    gFocusCamera = viewportIndex;
+    gScene.camera[viewportIndex].targetPosition = *target;
+    gScene.camera[viewportIndex].followDistanceStep = 0;
 }
 
 void levelUpdate(void* data) {
@@ -153,6 +158,7 @@ void levelUpdate(void* data) {
             gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
             gInputMask = INPUT_MASK_PLAY;
             gScene.camera[0].followDistanceStep = 1;
+            gScene.camera[1].followDistanceStep = 1;
         }
     }
 
@@ -162,7 +168,7 @@ void levelUpdate(void* data) {
         if (gLevelCutsceneTimer < 0.0f) {
             gLevelFlags &= ~LEVEL_FOCUS_CUTSCENE;
             inputMaskPop();
-            gScene.camera[0].followDistanceStep = 1;
+            gScene.camera[gFocusCamera].followDistanceStep = 1;
         }
     }
 
@@ -174,6 +180,7 @@ void levelUpdate(void* data) {
         cadetFinishLevel(&gCadet);
         robotFinishLevel(&gRobot);
         gScene.camera[0].followDistanceStep = 0;
+        gScene.camera[1].followDistanceStep = 0;
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;
         gInputMask = 0;
 
@@ -383,8 +390,8 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
 
     if (gCurrentPlayMode == LevelPlayModeCoOp && gLevelFlags & (LEVEL_HAS_ROBOT | LEVEL_INTRO_ROBOT)) {
         gScene.activeViewportCount = 2;
-        cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
-        cameraInit(&gScene.camera[1], &levelDef->levelData->robotStart);
+        cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart, 0);
+        cameraInit(&gScene.camera[1], &levelDef->levelData->robotStart, 1);
 
         gScene.viewports[0].minx = 0;
         gScene.viewports[0].maxx = SCREEN_WD/2-1;
@@ -404,7 +411,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         }
     } else {
         gScene.activeViewportCount = 1;
-        cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart);
+        cameraInit(&gScene.camera[0], &levelDef->levelData->cadetStart, 0);
 
         gScene.viewports[0].minx = 0;
         gScene.viewports[0].maxx = SCREEN_WD;

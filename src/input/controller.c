@@ -47,7 +47,7 @@ int getButton(int controller, int mask) {
         return 0;
     }
 
-    return gControllerState[0].button & mask;
+    return gControllerState[controller].button & mask;
 }
 
 int getButtonDown(int controller, int mask) {
@@ -55,7 +55,7 @@ int getButtonDown(int controller, int mask) {
         return 0;
     }
 
-    return gControllerState[0].button & ~gControllerLastButton[controller] & mask;
+    return gControllerState[controller].button & ~gControllerLastButton[controller] & mask;
 }
 
 int getButtonUp(int controller, int mask) {
@@ -63,7 +63,7 @@ int getButtonUp(int controller, int mask) {
         return 0;
     }
 
-    return ~gControllerState[0].button & gControllerLastButton[controller] & mask;
+    return ~gControllerState[controller].button & gControllerLastButton[controller] & mask;
 }
 
 extern struct Vector2 getJoystick(int controller) {
@@ -75,7 +75,7 @@ extern struct Vector2 getJoystick(int controller) {
         return result;
     }
     
-    s8 rawX = gControllerState[0].stick_x;
+    s8 rawX = gControllerState[controller].stick_x;
 
     if (rawX > gInputRange[controller]) {
         gInputRange[controller] = rawX;
@@ -83,7 +83,7 @@ extern struct Vector2 getJoystick(int controller) {
         gInputRange[controller] = -rawX;
     }
 
-    s8 rawY = gControllerState[0].stick_y;
+    s8 rawY = gControllerState[controller].stick_y;
 
     if (rawY > gInputRange[controller]) {
         gInputRange[controller] = rawY;

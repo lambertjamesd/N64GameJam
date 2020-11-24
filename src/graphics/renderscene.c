@@ -54,23 +54,23 @@ void cameraUpdate(void* cameraPtr) {
     struct SceneCamera* camera = cameraPtr;
 
     if (gInputMask & InputMaskCamera) {
-        if (getButtonDown(0, D_CBUTTONS)) {
+        if (getButtonDown(camera->controllerIndex, D_CBUTTONS)) {
             if (camera->followDistanceStep + 1 < FOLLOW_STEP_COUNT) {
                 ++camera->followDistanceStep;
             }
         }
 
-        if (getButtonDown(0, U_CBUTTONS)) {
+        if (getButtonDown(camera->controllerIndex, U_CBUTTONS)) {
             if (camera->followDistanceStep > 0) {
                 --camera->followDistanceStep;
             }
         }
 
-        if (getButtonDown(0, R_CBUTTONS)) {
+        if (getButtonDown(camera->controllerIndex, R_CBUTTONS)) {
             camera->targetRotation += CAMERA_ROTATE_STEP;
         }
 
-        if (getButtonDown(0, L_CBUTTONS)) {
+        if (getButtonDown(camera->controllerIndex, L_CBUTTONS)) {
             camera->targetRotation -= CAMERA_ROTATE_STEP;
         }
     }
@@ -91,7 +91,7 @@ void cameraUpdate(void* cameraPtr) {
 }
 
 
-void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget) {
+void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget, int controllerIndex) {
     quatAxisAngle(&gRight, -M_PI / 3.0f, &camera->transform.rotation);
     camera->targetPosition = camera->centerPosition = *startTarget;
     camera->transform.scale = 1.0f;
@@ -101,6 +101,7 @@ void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget) {
 
     camera->followDistanceStep = FOLLOW_DISTANCE_START;
     camera->currentRotation = 0.0f;
+    camera->controllerIndex = controllerIndex;
 
     cameraCalculatePos(&camera->transform.rotation, &camera->targetPosition, camera->followDistance, &camera->transform.position);
 

@@ -83,10 +83,6 @@ void dropShadowCalculate(struct DropShadow* shadow, int isGrounded, struct Vecto
         struct ContactPoint hit;
         struct Vector3 down = {0.0f, -1.0f, 0.0f};
 
-        if (getButtonDown(0, B_BUTTON)) {
-            hit.collisionMask = 0;
-        }
-
         float result = collisionSceneRaycast(from, &down, shadow->params->collisionMask, MAX_SHADOW_DISTANCE, &hit);
 
         if (result == RAYCAST_NO_HIT) {
