@@ -3,6 +3,7 @@
 #define _GRAPHICS_LEVELGRAPHICS_H
 
 #include <ultra64.h>
+#include "dynamic.h"
 
 struct LevelTileGrid {
     // Gfx* tiles[x][y][materialIndex]

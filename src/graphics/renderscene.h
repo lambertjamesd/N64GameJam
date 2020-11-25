@@ -42,6 +42,7 @@ void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct 
 struct RenderScene {
     struct SceneCamera camera[MAX_VIEWPORTS];
     struct SceneViewport viewports[MAX_VIEWPORTS];
+    float fov[MAX_VIEWPORTS];
     int activeViewportCount;
     
     struct DynamicActorGroup dynamicActors;

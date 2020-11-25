@@ -54,7 +54,7 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state) {
 
     guLookAtReflect(reflectMatrix, nextLookat, 
         0,
-        gScene.camera[0].transform.position.y,
+        state->cameraPos->y,
         0,
         0,
         cadet->transform.position.y,

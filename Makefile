@@ -135,6 +135,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/levels/levels.c \
 	src/levelthemes/allthemes.c	\
 	src/levelthemes/alienworld/theme.c	\
+	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
 	src/math/mathf.c   	\
 	src/math/plane.c		\
@@ -142,10 +143,14 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/math/ray.c   		\
 	src/math/vector.c   	\
 	src/math/vector2.c   	\
+	src/menu/mainmenu.c   	\
 	src/menu/menu.c   	\
 	src/menu/pausemenu.c   	\
+	src/menu/spinninglogo.c   	\
 	src/robot/robot.c \
 	src/robot/geo/model.c \
+	src/rocket/geo/model.c \
+	src/rocket/rocket.c \
 	src/puzzle/breakable.c  \
 	src/puzzle/door.c  \
 	src/puzzle/entranceexit.c  \
@@ -169,6 +174,7 @@ CODESEGMENT =	codesegment.o
 DATAFILES =	$(LEVEL_GEO) \
 	src/graphics/init.c \
 	src/levelthemes/alienworld/materials.c \
+	src/menu/geo/spinninglogo.c \
 	src/system/heapstart.c
 
 DATAOBJECTS =	$(DATAFILES:.c=.o)

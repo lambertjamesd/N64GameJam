@@ -50,6 +50,7 @@ struct Robot {
 
 extern struct Robot gRobot;
 
+void robotRender(struct DynamicActor* data, struct GraphicsState* state);
 void robotInit();
 void robotReset(struct Vector3* startLocation);
 void robotFinishLevel(struct Robot* cadet);

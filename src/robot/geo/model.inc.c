@@ -1,10 +1,10 @@
 Lights1 _robotSide_lights = gdSPDefLights1(
 	0x4B, 0x53, 0x54,
-	0x96, 0xA6, 0xA8, -40, -40, -40);
+	0x96, 0xA6, 0xA8, -40, 40, 40);
 
 Lights1 _robotTop_lights = gdSPDefLights1(
 	0x3D, 0x70, 0x7F,
-	0x7A, 0xE1, 0xFE, -40, -40, -40);
+	0x7A, 0xE1, 0xFE, -40, 40, 40);
 
 Gfx Robot_EnvironmentMap_ci8_aligner[] = {gsSPEndDisplayList()};
 u8 Robot_EnvironmentMap_ci8[] = {

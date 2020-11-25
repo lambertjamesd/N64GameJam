@@ -49,9 +49,9 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
     LookAt* nextLookat = graphicsStateNextLookat(state);
 
     guLookAtReflect(reflectMatrix, nextLookat, 
-        gScene.camera[0].transform.position.x,
-        gScene.camera[0].transform.position.y,
-        gScene.camera[0].transform.position.z,
+        state->cameraPos->x,
+        state->cameraPos->y,
+        state->cameraPos->z,
         robot->transform.position.x,
         robot->transform.position.y,
         robot->transform.position.z,

@@ -11,7 +11,7 @@
 
 #define DYANAMIC_LIST_LEN 512
 #define DYNAMIC_MATRIX_COUNT 128
-#define LOOK_AT_COUNT   4
+#define LOOK_AT_COUNT   8
 
 typedef void (*MenuRenderCallback)(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer);
 

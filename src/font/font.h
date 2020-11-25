@@ -9,6 +9,7 @@
 struct FontCharacter {
     char character;
     char left, top, w;
+    char kerning;
 };
 
 struct Font {

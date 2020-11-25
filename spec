@@ -34,6 +34,13 @@ beginseg
 endseg
 
 beginseg
+	name "spinning_logo"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/menu/geo/spinninglogo.o"
+endseg
+
+beginseg
 	name "bank"
 	flags RAW
 	include "/home/james/Documents/GameJam/Music/n64ambient/N64_ic.ctl"
@@ -69,6 +76,7 @@ beginwave
 	include "static"
 #include "build/spec/level_include"
 	include "alienworld"
+	include "spinning_logo"
 	include "table"
 	include "bank"
 	include "seq"

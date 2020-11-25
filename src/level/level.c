@@ -397,11 +397,13 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gScene.viewports[0].maxx = SCREEN_WD/2-1;
         gScene.viewports[0].miny = 0;
         gScene.viewports[0].maxy = SCREEN_HT;
+        gScene.fov[0] = 70.0f;
 
         gScene.viewports[1].minx = SCREEN_WD/2+1;
         gScene.viewports[1].maxx = SCREEN_WD;
         gScene.viewports[1].miny = 0;
         gScene.viewports[1].maxy = SCREEN_HT;
+        gScene.fov[1] = 70.0f;
 
         if (gLevelFlags & LEVEL_INTRO_ROBOT) {
             renderSceneSetViewportSplit(SCREEN_WD);
@@ -417,6 +419,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gScene.viewports[0].maxx = SCREEN_WD;
         gScene.viewports[0].miny = 0;
         gScene.viewports[0].maxy = SCREEN_HT;
+        gScene.fov[0] = 70.0f;
     }
 
     levelExpand(levelDef);

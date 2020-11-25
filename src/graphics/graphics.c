@@ -80,10 +80,16 @@ void createGfxTask(GFXInfo *i) {
     Gfx* glistp   = i->dp.glist;
 
     gSPSegment(glistp++, 0, 0);
-    gSPSegment(glistp++, STATIC_SEGMENT,  osVirtualToPhysical(gStaticSegmentBuffer));
+    if (gStaticSegmentBuffer) {
+        gSPSegment(glistp++, STATIC_SEGMENT,  osVirtualToPhysical(gStaticSegmentBuffer));
+    }
     gSPSegment(glistp++, DYNAMIC_SEGMENT, osVirtualToPhysical(dynamicp));
-    gSPSegment(glistp++, LEVEL_SEGMENT, osVirtualToPhysical(gLevelSegmentBuffer));
-    gSPSegment(glistp++, LEVEL_THEME_SEGMENT, osVirtualToPhysical(gLevelThemeSegmentBuffer));
+    if (gLevelSegmentBuffer) {
+        gSPSegment(glistp++, LEVEL_SEGMENT, osVirtualToPhysical(gLevelSegmentBuffer));
+    }
+    if (gLevelThemeSegmentBuffer) {
+        gSPSegment(glistp++, LEVEL_THEME_SEGMENT, osVirtualToPhysical(gLevelThemeSegmentBuffer));
+    }
 
     gSPDisplayList(glistp++, setup_rspstate);
     if (firsttime) {
@@ -129,6 +135,8 @@ void createGfxTask(GFXInfo *i) {
             continue;
         }
 
+        state.cameraPos = &gScene.camera[index].transform.position;
+
         gDPPipeSync(glistp++);
         gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 
@@ -147,7 +155,7 @@ void createGfxTask(GFXInfo *i) {
         guPerspective(
             &dynamicp->projection[index], 
             &dynamicp->perspectiveCorrect[index], 
-            70.0f, 
+            gScene.fov[index], 
             (float)(vp->maxx - vp->minx) / (float)(vp->maxy - vp->miny),
             1.0f, 
             128.0f, 

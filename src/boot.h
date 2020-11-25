@@ -9,6 +9,11 @@
 extern OSThread gGameThread;
 extern OSThread gInitThread;
 
+enum SceneIndex {
+    SceneIndexSpinningLogo = -1,
+    SceneIndexMainMenu = -2,
+};
+
 #define MAX_MESGS	8
 #define DMA_QUEUE_SIZE  200
 #define NUM_FIELDS      1       /* 1 = 60 Hz video interrupts, 2 = 30 Hz, etc */

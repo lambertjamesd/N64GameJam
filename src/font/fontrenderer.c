@@ -73,7 +73,7 @@ float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font*
                 );
             }
 
-            currX += character->w * fontRenderer->sx;
+            currX += (character->w + character->kerning) * fontRenderer->sx;
         }
 
         ++string;

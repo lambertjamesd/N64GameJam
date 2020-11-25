@@ -49,6 +49,7 @@ struct Cadet {
 
 extern struct Cadet gCadet;
 
+void cadetRender(struct DynamicActor* data, struct GraphicsState* state);
 void cadetInit();
 void cadetReset(struct Vector3* startLocation);
 void cadetFinishLevel(struct Cadet* cadet);
