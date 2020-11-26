@@ -26,7 +26,7 @@ extern struct SaveFile gSaveFile;
 int saveFileDidCollectGem(int level, int gemIndex);
 void saveFileMarkCollectedGem(int level, int gemIndex);
 
-int saveFileDidCompleteLevel(int level);
+int saveFileIsLevelComplete(int level);
 void saveFileMarkDidCompleteLevel(int level);
 void saveFileErase();
 

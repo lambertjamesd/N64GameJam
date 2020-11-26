@@ -12,7 +12,7 @@ void saveFileMarkCollectedGem(int level, int gemIndex) {
     gSaveFile.levelData[level] |= SAVEFILE_LEVEL_GEMS << gemIndex;
 }
 
-int saveFileDidCompleteLevel(int level) {
+int saveFileIsLevelComplete(int level) {
     return gSaveFile.levelData[level] & SAVEFILE_LEVEL_BEAT;
 }
 

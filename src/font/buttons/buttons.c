@@ -16,8 +16,8 @@ struct FontCharacter gButtonFontCharacters[] = {
     {ButtonFontMappingZ, 60, 0, 9},
 
     {ButtonFontMappingJoystick, 70, 0, 9},
-    {ButtonFontMappingCoin, 80, 0, 9},
-    {ButtonFontMappingStar, 90, 0, 9},
+    {ButtonFontMappingGemGone, 80, 0, 9, 3},
+    {ButtonFontMappingGem, 90, 0, 9, 3},
 
     {ButtonFontMappingStart, 100, 0, 9},
     {ButtonFontMappingR, 110, 0, 9},

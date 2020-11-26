@@ -219,6 +219,11 @@ static void initGame(void)
     fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
     fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);
 
+    saveFileMarkDidCompleteLevel(0);
+    saveFileMarkCollectedGem(0, 1);
+    saveFileMarkCollectedGem(1, 0);
+    saveFileMarkCollectedGem(1, 2);
+
     // spinningLogoInit();
     // gCurrentLevel = SceneIndexSpinningLogo;
     // gNextLevel = SceneIndexSpinningLogo;

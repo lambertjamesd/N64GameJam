@@ -10,6 +10,8 @@ struct Menu;
 
 typedef void (*MenuItemActionCallback)(struct Menu* menu, void* data);
 
+typedef void (*MenuItemAdditionalRender)(void* data, int x, int y, int selected, struct GraphicsState* state, struct FontRenderer* fontRenderer);
+
 enum MenuItemType {
     MenuItemMenu,
     MenuItemBack,
@@ -25,6 +27,7 @@ struct MenuItem {
         int popDistance;
     };
     void* data;
+    MenuItemAdditionalRender renderMore;
     short inputShortcutMask;
 };
 
@@ -33,11 +36,16 @@ enum MenuType {
     MenuTypeList,
 };
 
+struct MenuItemGroup;
+
+typedef void (*MenuItemGroupAdditionalRender)(struct MenuItemGroup* group, struct GraphicsState* state, struct FontRenderer* fontRenderer);
+
 struct MenuItemGroup {
     char *title;
     struct MenuItem* items;
     int itemCount;
     enum MenuType type;
+    MenuItemGroupAdditionalRender renderMore;
 };
 
 struct Menu {

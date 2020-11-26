@@ -16,6 +16,7 @@
 #include "src/menu/menu.h"
 #include "src/levels/levels.h"
 #include "src/save/savefile.h"
+#include "src/font/buttons/buttons.h"
 
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
@@ -28,6 +29,7 @@ float gMainMenuTime;
 
 struct Menu gMainMenu;
 int gMainMenuSelectedLevel;
+int gMainMenuTotalGems;
 
 struct MenuItemGroup gNewGameGroup;
 
@@ -62,7 +64,7 @@ struct MenuItem gSelectCoopItems[] = {
         (void*)1,
     },
     {
-        "Cancel",
+        "Back",
         MenuItemBack,
         .popDistance = 1,
         0
@@ -94,17 +96,17 @@ void eraseMenuConfirm(struct Menu* menu, void* data) {
 
 struct MenuItem gEraseConfirmMenuItems[] = {
     {
+        "Cancel",
+        MenuItemBack,
+        .popDistance = 1,
+        0
+    },
+    {
         "Erase",
         MenuItemAction,
         .action = eraseMenuConfirm,
         0,
     },
-    {
-        "Cancel",
-        MenuItemBack,
-        .popDistance = 1,
-        0
-    }
 };
 
 struct MenuItemGroup gEraseMenuItemGroup = {
@@ -167,6 +169,34 @@ struct MenuItemGroup gMainMenuGroup = {
     3,
 };
 
+void levelSelectPrepGems(struct MenuItemGroup* group, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
+    gDPPipeSync(state->dl++);
+    gSPDisplayList(state->dl++, gButtonFontUse);
+}
+
+void levelSelectRenderGems(void* data, int x, int y, int selected, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
+    char gemString[4];
+    int levelIndex = (int)data;
+    int i;
+    for (i = 0; i < 3; ++i) {
+        if (saveFileDidCollectGem(levelIndex, i)) {
+            gemString[i] = ButtonFontMappingGem;
+        } else {
+            gemString[i] = ButtonFontMappingGemGone;
+        }
+    }
+    gemString[3] = 0;
+
+    fontRendererDrawCharacters(
+        fontRenderer,
+        &gButtonFont,
+        &state->dl,
+        gemString,
+        x - 39,
+        y - 2
+    );
+}
+
 void mainMenuRocketPosition(float time, struct Vector3* out, struct Vector3* eulerAngles) {
     out->x = -2.98266f;
     out->y = 1.18541f;
@@ -185,6 +215,48 @@ void mainMenuRocketPosition(float time, struct Vector3* out, struct Vector3* eul
     eulerAngles->x = (s1 + s2) * 0.2f;
     eulerAngles->y = M_PI * 0.5f + (s1 + s4);
     eulerAngles->z = -M_PI * 0.5f + (s0 + s3) * 0.2f;
+}
+
+#define GEM_COUNT_X     280
+#define GEM_COUNT_Y     200
+
+void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
+    menuRender(data, state, fontRenderer);
+
+    if (gMainMenuTotalGems && gMainMenu.itemStackDepth != 0) {
+        gDPPipeSync(state->dl++);
+        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+        char buffer[16];
+        sprintf(buffer, "%d/%d", gMainMenuTotalGems, 3 * _level_group_all_levels_count);
+        fontRendererSetScale(fontRenderer, 1.0f, 1.0f);
+
+        float w = fontRendererMeasureWidth(&gEndlessBossBattle, buffer);
+        
+        fontRendererDrawCharacters(
+            fontRenderer,
+            &gEndlessBossBattle,
+            &state->dl,
+            buffer,
+            GEM_COUNT_X - (int)w,
+            GEM_COUNT_Y
+        );
+
+        gDPPipeSync(state->dl++);
+        gSPDisplayList(state->dl++, gButtonFontUse);
+
+        buffer[0] = ButtonFontMappingGem;
+        buffer[1] = '\0';
+
+        fontRendererDrawCharacters(
+            fontRenderer,
+            &gButtonFont,
+            &state->dl,
+            buffer,
+            GEM_COUNT_X + 3,
+            GEM_COUNT_Y - 2
+        );
+        gDPPipeSync(state->dl++);
+    }
 }
 
 void mainMenuUpdate(void* data) {
@@ -219,20 +291,38 @@ void mainMenuUpdate(void* data) {
     }
 }
 
+void calculateGemsCollected() {
+    int i;
+    gMainMenuTotalGems = 0;
+
+    for (i = 0; i < MAX_LEVELS; ++i) {
+        int j;
+        for (j = 0; j < 3; ++j) {
+            if (saveFileDidCollectGem(i, j)) {
+                gMainMenuTotalGems++;
+            }
+        }
+    }
+}
+
 int mainMenuBuildLevelSelect() {
     struct MenuItem* lastItem = 0;
 
     int completeLevels = 0;
 
-    while (saveFileDidCompleteLevel(completeLevels) && completeLevels < _level_group_all_levels_count) {
+    while (saveFileIsLevelComplete(completeLevels) && completeLevels < _level_group_all_levels_count) {
         ++completeLevels;
+    }
+
+    if (completeLevels < _level_group_all_levels_count) {
+        completeLevels++;
     }
 
     gLevelSelectGroup.itemCount = 0;
 
     int itemIndex;
 
-    for (itemIndex = 0; itemIndex <= completeLevels && itemIndex < _level_group_all_levels_count; itemIndex += MAX_LEVELS_PER_PAGE) {
+    for (itemIndex = 0; itemIndex < completeLevels; itemIndex += MAX_LEVELS_PER_PAGE) {
         int count = 0;
         int hasNext = 0;
 
@@ -252,6 +342,7 @@ int mainMenuBuildLevelSelect() {
         items[0].targetMenu = 0;
         items[0].type = MenuItemBack;
         items[0].data = 0;
+        items[0].renderMore = 0;
 
         int i;
         for (i = 1; i <= count; ++i) {
@@ -259,11 +350,13 @@ int mainMenuBuildLevelSelect() {
             items[i].action = mainMenuSelectLevel;
             items[i].data = (void*)(itemIndex+i-1);
             items[i].type = MenuItemAction;
+            items[i].renderMore = levelSelectRenderGems;
         }
 
         if (itemIndex == 0) {
             gLevelSelectGroup.items = items;
             gLevelSelectGroup.itemCount = count+1+hasNext;
+            gLevelSelectGroup.renderMore = levelSelectPrepGems;
         } else {
             struct MenuItemGroup* selectGroup = heapMalloc(
                 sizeof(struct MenuItemGroup),
@@ -275,12 +368,14 @@ int mainMenuBuildLevelSelect() {
                 lastItem->targetMenu = selectGroup;
                 lastItem->type = MenuItemMenu;
                 lastItem->data = 0;
+                lastItem->renderMore = 0;
             }
 
             selectGroup->title = gLevelSelectGroup.title;
             selectGroup->items = items;
             selectGroup->itemCount = count+1+hasNext;
             selectGroup->type = MenuTypeList;
+            selectGroup->renderMore = levelSelectPrepGems;
         }
 
         if (hasNext) {
@@ -358,9 +453,10 @@ void mainMenuInit() {
 
     timeAddListener(&gMainMenuUpdate, mainMenuUpdate, 0, TimeUpdateGroupWorld);
 
+    calculateGemsCollected();
     int levelsBeaten = mainMenuBuildLevelSelect();
-    graphicsAddMenu(menuRender, &gMainMenu, 1);
-    if (levelsBeaten) {
+    graphicsAddMenu(mainMenuRender, &gMainMenu, 1);
+    if (levelsBeaten > 1) {
         menuInit(&gMainMenu, &gMainMenuGroup);
     } else {
         menuInit(&gMainMenu, &gNewGameGroup);

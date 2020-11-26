@@ -14,8 +14,8 @@ enum ButtonFontMapping {
     ButtonFontMappingC_D,
     ButtonFontMappingZ,
     ButtonFontMappingJoystick,
-    ButtonFontMappingCoin,
-    ButtonFontMappingStar,
+    ButtonFontMappingGemGone,
+    ButtonFontMappingGem,
     ButtonFontMappingStart,
     ButtonFontMappingR,
 };

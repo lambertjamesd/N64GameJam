@@ -8,6 +8,8 @@
 void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRenderer, struct MenuItemGroup* group, int selected, int xOffset) {
     float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, group->title);
     
+    gDPPipeSync(state->dl++);
+    gSPDisplayList(state->dl++, gEndlessBossBattleUse);
     gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f);
     fontRendererDrawCharacters(
@@ -47,6 +49,9 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
         }
     }
 
+    int yStart = y;
+    x += xOffset;
+
     for (i = 0; i < group->itemCount; i++) {
         if (selected == i) {
             gDPSetEnvColor(state->dl++, 255, 0, 255, 255);
@@ -59,8 +64,29 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
             &gEndlessBossBattle,
             &state->dl,
             group->items[i].text,
-            x + xOffset, y
+            x, y
         );
+
+        y += yStep;
+    }
+
+    if (group->renderMore) {
+        group->renderMore(group, state, fontRenderer);
+    }
+
+    y = yStart;
+
+    for (i = 0; i < group->itemCount; i++) {
+        if (group->items[i].renderMore) {
+            group->items[i].renderMore(
+                group->items[i].data, 
+                x, 
+                y,
+                selected == i,
+                state,
+                fontRenderer
+            );
+        }
 
         y += yStep;
     }
@@ -68,9 +94,6 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
 
 void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     struct Menu* menu = (struct Menu*)data;
-
-    gDPPipeSync(state->dl++);
-    gSPDisplayList(state->dl++, gEndlessBossBattleUse);
 
     if (menu->exitAnimationLevel != menu->insertAnimationLevel) {
         int offset = (int)(menu->animationTime * (SCREEN_WD / ANIMATE_DURATION));
