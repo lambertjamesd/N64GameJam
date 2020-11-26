@@ -11,3 +11,20 @@ int saveFileDidCollectGem(int level, int gemIndex) {
 void saveFileMarkCollectedGem(int level, int gemIndex) {
     gSaveFile.levelData[level] |= SAVEFILE_LEVEL_GEMS << gemIndex;
 }
+
+int saveFileDidCompleteLevel(int level) {
+    return gSaveFile.levelData[level] & SAVEFILE_LEVEL_BEAT;
+}
+
+void saveFileMarkDidCompleteLevel(int level) {
+    gSaveFile.levelData[level] |= SAVEFILE_LEVEL_BEAT;
+}
+
+void saveFileErase() {
+    gSaveFile.header = SAVEFILE_HEADER;
+    gSaveFile.tutorialFlags = 0;
+    int i;
+    for (i = 0; i < MAX_LEVELS; ++i) {
+        gSaveFile.levelData[i] = 0;
+    }
+}

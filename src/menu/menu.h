@@ -22,14 +22,22 @@ struct MenuItem {
     union {
         struct MenuItemGroup* targetMenu;
         MenuItemActionCallback action;
+        int popDistance;
     };
     void* data;
+    short inputShortcutMask;
+};
+
+enum MenuType {
+    MenuTypeLarge,
+    MenuTypeList,
 };
 
 struct MenuItemGroup {
     char *title;
     struct MenuItem* items;
     int itemCount;
+    enum MenuType type;
 };
 
 struct Menu {

@@ -179,6 +179,7 @@ void levelUpdate(void* data) {
     if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
         cadetFinishLevel(&gCadet);
         robotFinishLevel(&gRobot);
+        saveFileMarkDidCompleteLevel(gCurrentLevel);
         gScene.camera[0].followDistanceStep = 0;
         gScene.camera[1].followDistanceStep = 0;
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;

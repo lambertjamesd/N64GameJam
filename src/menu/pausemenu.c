@@ -7,6 +7,7 @@
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 #include "menu.h"
 #include "src/level/level.h"
+#include "src/boot.h"
 
 #define PAUSE_MENU_WIDTH    120
 #define PAUSE_MENU_HEIGHT   160
@@ -115,7 +116,7 @@ void pauseMenuUpdate(void* data) {
                 // TODO
                 break;
             case PauseMenuItemMainMenu:
-                // TODO
+                gNextLevel = SceneIndexMainMenu;
                 break;
         }
     }

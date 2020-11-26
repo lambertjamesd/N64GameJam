@@ -219,12 +219,12 @@ static void initGame(void)
     fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
     fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);
 
-    spinningLogoInit();
-    gCurrentLevel = SceneIndexSpinningLogo;
-    gNextLevel = SceneIndexSpinningLogo;
+    // spinningLogoInit();
+    // gCurrentLevel = SceneIndexSpinningLogo;
+    // gNextLevel = SceneIndexSpinningLogo;
 
-    // mainMenuInit();
-    // gCurrentLevel = SceneIndexMainMenu;
-    // gNextLevel = SceneIndexMainMenu;
+    mainMenuInit();
+    gCurrentLevel = SceneIndexMainMenu;
+    gNextLevel = SceneIndexMainMenu;
 }
 

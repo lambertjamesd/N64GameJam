@@ -15,6 +15,7 @@
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 #include "src/menu/menu.h"
 #include "src/levels/levels.h"
+#include "src/save/savefile.h"
 
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
@@ -27,6 +28,8 @@ float gMainMenuTime;
 
 struct Menu gMainMenu;
 int gMainMenuSelectedLevel;
+
+struct MenuItemGroup gNewGameGroup;
 
 
 ////////////////////
@@ -61,7 +64,7 @@ struct MenuItem gSelectCoopItems[] = {
     {
         "Cancel",
         MenuItemBack,
-        .targetMenu = 0,
+        .popDistance = 1,
         0
     }
 };
@@ -81,6 +84,9 @@ void mainMenuSelectLevel(struct Menu* menu, void* data) {
 }
 
 void eraseMenuConfirm(struct Menu* menu, void* data) {
+    saveFileErase();
+    gMainMenu.current[0] = &gNewGameGroup;
+    gMainMenu.selected[0] = 0;
     menuGoBack(menu);
 }
 
@@ -96,7 +102,7 @@ struct MenuItem gEraseConfirmMenuItems[] = {
     {
         "Cancel",
         MenuItemBack,
-        .targetMenu = 0,
+        .popDistance = 1,
         0
     }
 };
@@ -113,9 +119,26 @@ struct MenuItemGroup gLevelSelectGroup = {
     "Level Select",
     0,
     6,
+    MenuTypeList,
 };
 
 ////////////////////
+
+
+struct MenuItem gNewGameItems[] = {
+    {
+        "New Game",
+        MenuItemAction,
+        .action = mainMenuSelectLevel,
+        0,
+    },
+};
+
+struct MenuItemGroup gNewGameGroup = {
+    "Telelocation: Gemini",
+    gNewGameItems,
+    1,
+};
 
 struct MenuItem gMainMenuItems[] = {
     {
@@ -196,20 +219,28 @@ void mainMenuUpdate(void* data) {
     }
 }
 
-void mainMenuBuildLevelSelect() {
+int mainMenuBuildLevelSelect() {
     struct MenuItem* lastItem = 0;
+
+    int completeLevels = 0;
+
+    while (saveFileDidCompleteLevel(completeLevels) && completeLevels < _level_group_all_levels_count) {
+        ++completeLevels;
+    }
+
+    gLevelSelectGroup.itemCount = 0;
 
     int itemIndex;
 
-    for (itemIndex = 0; itemIndex < _level_group_all_levels_count; itemIndex += MAX_LEVELS_PER_PAGE) {
+    for (itemIndex = 0; itemIndex <= completeLevels && itemIndex < _level_group_all_levels_count; itemIndex += MAX_LEVELS_PER_PAGE) {
         int count = 0;
         int hasNext = 0;
 
-        if (itemIndex + MAX_LEVELS_PER_PAGE < _level_group_all_levels_count) {
+        if (itemIndex + MAX_LEVELS_PER_PAGE < completeLevels) {
             hasNext = 1;
             count = MAX_LEVELS_PER_PAGE;
         } else {
-            count = _level_group_all_levels_count - itemIndex;
+            count = completeLevels - itemIndex;
         }
 
         struct MenuItem* items = heapMalloc(
@@ -246,9 +277,10 @@ void mainMenuBuildLevelSelect() {
                 lastItem->data = 0;
             }
 
-            selectGroup->title = selectGroup->title;
+            selectGroup->title = gLevelSelectGroup.title;
             selectGroup->items = items;
             selectGroup->itemCount = count+1+hasNext;
+            selectGroup->type = MenuTypeList;
         }
 
         if (hasNext) {
@@ -257,6 +289,8 @@ void mainMenuBuildLevelSelect() {
             lastItem = 0;
         }
     }
+
+    return completeLevels;
 }
 
 void mainMenuInit() {
@@ -324,7 +358,11 @@ void mainMenuInit() {
 
     timeAddListener(&gMainMenuUpdate, mainMenuUpdate, 0, TimeUpdateGroupWorld);
 
-    mainMenuBuildLevelSelect();
+    int levelsBeaten = mainMenuBuildLevelSelect();
     graphicsAddMenu(menuRender, &gMainMenu, 1);
-    menuInit(&gMainMenu, &gMainMenuGroup);
+    if (levelsBeaten) {
+        menuInit(&gMainMenu, &gMainMenuGroup);
+    } else {
+        menuInit(&gMainMenu, &gNewGameGroup);
+    }
 }

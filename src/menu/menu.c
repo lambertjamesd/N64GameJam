@@ -8,6 +8,7 @@
 void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRenderer, struct MenuItemGroup* group, int selected, int xOffset) {
     float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, group->title);
     
+    gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f);
     fontRendererDrawCharacters(
         fontRenderer,
@@ -22,10 +23,12 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
     int x = SCREEN_WD/2;
     float scale = 2.0f;
 
-    if (group->itemCount > 3) {
+    if (group->itemCount > 3 || group->type == MenuTypeList) {
         fontRendererSetScale(fontRenderer, 2.0f, 2.0f);
         yStep = 12;
         scale = 1.0f;
+    } else if (group->itemCount == 1) {
+        y += 40;
     }
 
     fontRendererSetScale(fontRenderer, scale, scale);
