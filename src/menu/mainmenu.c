@@ -29,6 +29,7 @@ float gMainMenuTime;
 
 struct Menu gMainMenu;
 int gMainMenuSelectedLevel;
+int gMainMenuUnlockedLevels;
 int gMainMenuTotalGems;
 
 struct MenuItemGroup gNewGameGroup;
@@ -147,7 +148,7 @@ struct MenuItem gMainMenuItems[] = {
         "Continue",
         MenuItemAction,
         .action = mainMenuSelectLevel,
-        0,
+        (void*)-1,
     },
     {
         "Level Select",
@@ -271,8 +272,12 @@ void mainMenuUpdate(void* data) {
         menuUpdate(&gMainMenu);
         menuHandleInput(&gMainMenu, 0);
 
-        if (gMainMenu.exitAnimationLevel == -1 && gMainMenuSelectedLevel != -1) {
-            gNextLevel = gMainMenuSelectedLevel;
+        if (gMainMenu.exitAnimationLevel == -1 && gMainMenuSelectedLevel != -2) {
+            if (gMainMenuSelectedLevel == -1) {
+                gNextLevel = gMainMenuUnlockedLevels - 1;
+            } else {
+                gNextLevel = gMainMenuSelectedLevel;
+            }
         }
     }
 
@@ -316,74 +321,32 @@ int mainMenuBuildLevelSelect() {
 
     if (completeLevels < _level_group_all_levels_count) {
         completeLevels++;
+        completeLevels = _level_group_all_levels_count;
     }
 
-    gLevelSelectGroup.itemCount = 0;
+    struct MenuItem* items = heapMalloc(
+        (completeLevels+1) * sizeof(struct MenuItem), 
+        ALIGNMENT_OF(struct MenuItem)
+    );
 
-    int itemIndex;
+    items[0].text = "Back";
+    items[0].targetMenu = 0;
+    items[0].type = MenuItemBack;
+    items[0].data = 0;
+    items[0].renderMore = 0;
 
-    for (itemIndex = 0; itemIndex < completeLevels; itemIndex += MAX_LEVELS_PER_PAGE) {
-        int count = 0;
-        int hasNext = 0;
-
-        if (itemIndex + MAX_LEVELS_PER_PAGE < completeLevels) {
-            hasNext = 1;
-            count = MAX_LEVELS_PER_PAGE;
-        } else {
-            count = completeLevels - itemIndex;
-        }
-
-        struct MenuItem* items = heapMalloc(
-            (count+1+hasNext) * sizeof(struct MenuItem), 
-            ALIGNMENT_OF(struct MenuItem)
-        );
-
-        items[0].text = "<";
-        items[0].targetMenu = 0;
-        items[0].type = MenuItemBack;
-        items[0].data = 0;
-        items[0].renderMore = 0;
-
-        int i;
-        for (i = 1; i <= count; ++i) {
-            items[i].text = _level_group_all_levels[itemIndex+i-1].name;
-            items[i].action = mainMenuSelectLevel;
-            items[i].data = (void*)(itemIndex+i-1);
-            items[i].type = MenuItemAction;
-            items[i].renderMore = levelSelectRenderGems;
-        }
-
-        if (itemIndex == 0) {
-            gLevelSelectGroup.items = items;
-            gLevelSelectGroup.itemCount = count+1+hasNext;
-            gLevelSelectGroup.renderMore = levelSelectPrepGems;
-        } else {
-            struct MenuItemGroup* selectGroup = heapMalloc(
-                sizeof(struct MenuItemGroup),
-                ALIGNMENT_OF(struct MenuItemGroup)
-            );
-
-            if (lastItem) {
-                lastItem->text = ">";
-                lastItem->targetMenu = selectGroup;
-                lastItem->type = MenuItemMenu;
-                lastItem->data = 0;
-                lastItem->renderMore = 0;
-            }
-
-            selectGroup->title = gLevelSelectGroup.title;
-            selectGroup->items = items;
-            selectGroup->itemCount = count+1+hasNext;
-            selectGroup->type = MenuTypeList;
-            selectGroup->renderMore = levelSelectPrepGems;
-        }
-
-        if (hasNext) {
-            lastItem = &items[count+1];
-        } else {
-            lastItem = 0;
-        }
+    int i;
+    for (i = 1; i <= completeLevels; ++i) {
+        items[i].text = _level_group_all_levels[i-1].name;
+        items[i].action = mainMenuSelectLevel;
+        items[i].data = (void*)(i-1);
+        items[i].type = MenuItemAction;
+        items[i].renderMore = levelSelectRenderGems;
     }
+
+    gLevelSelectGroup.items = items;
+    gLevelSelectGroup.itemCount = completeLevels+1;
+    gLevelSelectGroup.renderMore = levelSelectPrepGems;
 
     return completeLevels;
 }
@@ -447,16 +410,16 @@ void mainMenuInit() {
     gRocket.color.b = 255;
     gRocket.color.a = 255;
     
-    gMainMenuSelectedLevel = -1;
+    gMainMenuSelectedLevel = -2;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRocket.transform, &gRocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED);
 
     timeAddListener(&gMainMenuUpdate, mainMenuUpdate, 0, TimeUpdateGroupWorld);
 
     calculateGemsCollected();
-    int levelsBeaten = mainMenuBuildLevelSelect();
+    gMainMenuUnlockedLevels = mainMenuBuildLevelSelect();
     graphicsAddMenu(mainMenuRender, &gMainMenu, 1);
-    if (levelsBeaten > 1) {
+    if (gMainMenuUnlockedLevels > 1) {
         menuInit(&gMainMenu, &gMainMenuGroup);
     } else {
         menuInit(&gMainMenu, &gNewGameGroup);

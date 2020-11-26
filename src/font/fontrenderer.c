@@ -81,6 +81,7 @@ float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font*
         ++string;
     }
 
+    assert((nextDL-fontRenderer->dl) < MAX_FONT_CHARACTERS);
     gSPEndDisplayList(nextDL++);
     gSPDisplayList((*dlPtr)++, fontRenderer->nextDL);
 

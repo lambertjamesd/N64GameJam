@@ -4,7 +4,7 @@
 
 #include "font.h"
 
-#define MAX_FONT_CHARACTERS     512 
+#define MAX_FONT_CHARACTERS     576 
 
 struct FontRenderer {
     Gfx dl[MAX_FONT_CHARACTERS];

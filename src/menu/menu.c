@@ -4,8 +4,13 @@
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 
 #define ANIMATE_DURATION     0.5f
+#define MAX_LIST_DISPLAY      8
 
-void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRenderer, struct MenuItemGroup* group, int selected, int xOffset) {
+void menuListGetPage(struct MenuItemGroup* group, int selected) {
+
+}
+
+void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRenderer, struct MenuItemGroup* group, int selected, int scrollOffset, int xOffset) {
     float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, group->title);
     
     gDPPipeSync(state->dl++);
@@ -41,9 +46,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
             &gEndlessBossBattle, 
             group->items[i].text
         ) * scale);
-
         int currentX = ((SCREEN_WD - sectionWidth)/2);
-
         if (currentX < x) {
             x = currentX;
         }
@@ -52,8 +55,35 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
     int yStart = y;
     x += xOffset;
 
-    for (i = 0; i < group->itemCount; i++) {
-        if (selected == i) {
+    if (group->type == MenuTypeList) {
+        char buffer[2];
+        if (scrollOffset > 0) {
+            buffer[0] = EBBUpArrow;
+            buffer[1] = '\0';
+            fontRendererDrawCharacters(
+                fontRenderer,
+                &gEndlessBossBattle,
+                &state->dl,
+                buffer,
+                x, y - 11
+            );
+        }
+
+        if (scrollOffset + MAX_LIST_DISPLAY < group->itemCount) {
+            buffer[0] = EBBDownArrow;
+            buffer[1] = '\0';
+            fontRendererDrawCharacters(
+                fontRenderer,
+                &gEndlessBossBattle,
+                &state->dl,
+                buffer,
+                x, y + MAX_LIST_DISPLAY * yStep
+            );
+        }
+    }
+
+    for (i = 0; i+scrollOffset < group->itemCount && i < MAX_LIST_DISPLAY; i++) {
+        if (selected == i+scrollOffset) {
             gDPSetEnvColor(state->dl++, 255, 0, 255, 255);
         } else {
             gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
@@ -63,7 +93,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
             fontRenderer,
             &gEndlessBossBattle,
             &state->dl,
-            group->items[i].text,
+            group->items[i+scrollOffset].text,
             x, y
         );
 
@@ -76,13 +106,13 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
 
     y = yStart;
 
-    for (i = 0; i < group->itemCount; i++) {
-        if (group->items[i].renderMore) {
-            group->items[i].renderMore(
-                group->items[i].data, 
+    for (i = 0; i+scrollOffset < group->itemCount && i < MAX_LIST_DISPLAY; i++) {
+        if (group->items[i+scrollOffset].renderMore) {
+            group->items[i+scrollOffset].renderMore(
+                group->items[i+scrollOffset].data, 
                 x, 
                 y,
-                selected == i,
+                selected == i+scrollOffset,
                 state,
                 fontRenderer
             );
@@ -104,6 +134,7 @@ void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fo
                     fontRenderer, 
                     menu->current[menu->exitAnimationLevel], 
                     menu->selected[menu->exitAnimationLevel], 
+                    menu->scrollOffset[menu->exitAnimationLevel],
                     offset
                 );
             }
@@ -114,6 +145,7 @@ void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fo
                     fontRenderer, 
                     menu->current[menu->insertAnimationLevel], 
                     menu->selected[menu->insertAnimationLevel], 
+                    menu->scrollOffset[menu->insertAnimationLevel],
                     offset - SCREEN_WD
                 );
             }
@@ -124,6 +156,7 @@ void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fo
                     fontRenderer, 
                     menu->current[menu->exitAnimationLevel], 
                     menu->selected[menu->exitAnimationLevel], 
+                    menu->scrollOffset[menu->exitAnimationLevel],
                     -offset
                 );
             }
@@ -134,12 +167,20 @@ void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fo
                     fontRenderer, 
                     menu->current[menu->insertAnimationLevel], 
                     menu->selected[menu->insertAnimationLevel], 
+                    menu->scrollOffset[menu->insertAnimationLevel],
                     -offset + SCREEN_WD
                 );
             }
         }
     } else if (menu->itemStackDepth != -1) {
-        menuGroupRender(state, fontRenderer, menu->current[menu->itemStackDepth], menu->selected[menu->itemStackDepth], 0);
+        menuGroupRender(
+            state, 
+            fontRenderer, 
+            menu->current[menu->itemStackDepth], 
+            menu->selected[menu->itemStackDepth], 
+            menu->scrollOffset[menu->itemStackDepth],
+            0
+        );
     }
 
     gDPPipeSync(state->dl++);
@@ -160,6 +201,7 @@ void menuInit(struct Menu* menu, struct MenuItemGroup* rootMenu) {
     menu->itemStackDepth = 0;
     menu->selected[0] = 0;
     menu->current[0] = rootMenu;
+    menu->scrollOffset[0] = 0;
     menu->lastAxis = 0;
     menu->insertAnimationLevel = 0;
     menu->exitAnimationLevel = -1;
@@ -175,6 +217,7 @@ void menuPush(struct Menu* menu, struct MenuItemGroup* items) {
         menu->itemStackDepth = depth;
         menu->current[depth] = items;
         menu->selected[depth] = 0;
+        menu->scrollOffset[depth] = 0;
         menu->animationTime = 0.0f;
     }
 }
@@ -196,7 +239,7 @@ void menuHandleInput(struct Menu* menu, int controllerIndex) {
         return;
     }
 
-    int menuDir = menuGetInputDir(gControllerState[controllerIndex].stick_y, &menu->lastAxis);
+    int menuDir = menuGetInputDir(gControllerState[controllerIndex].stick_y, &menu->lastAxis, &menu->lastTimer);
 
     int depth = menu->itemStackDepth;
 
@@ -220,24 +263,77 @@ void menuHandleInput(struct Menu* menu, int controllerIndex) {
         depth = menu->itemStackDepth;
     }
 
+    struct MenuItemGroup* current = menu->current[depth];
+
     if (menuDir > 0) {
         if (menu->selected[depth] > 0) {
             menu->selected[depth]--;
+
+            int relativePosition = menu->selected[depth] - menu->scrollOffset[depth];
+
+            if (current->type == MenuTypeList && 
+                menu->scrollOffset[depth] > 0 && 
+                relativePosition <= 0) {
+                relativePosition = 1;
+                menu->scrollOffset[depth] = menu->selected[depth] - relativePosition;
+            } else if (relativePosition < 0) {
+                relativePosition = 0;
+                menu->scrollOffset[depth] = menu->selected[depth] - relativePosition;
+            }
         }
     } else if (menuDir < 0) {
-        if (menu->selected[depth] + 1 < menu->current[depth]->itemCount) {
+        if (menu->selected[depth] + 1 < current->itemCount) {
             menu->selected[depth]++;
+
+            int relativePosition = menu->selected[depth] - menu->scrollOffset[depth];
+
+            if (current->type == MenuTypeList &&
+                menu->scrollOffset[depth] + MAX_LIST_DISPLAY <= current->itemCount &&
+                relativePosition > (MAX_LIST_DISPLAY - 2)) {
+                relativePosition = MAX_LIST_DISPLAY - 2;
+                menu->scrollOffset[depth] = menu->selected[depth] - relativePosition;
+            }
         }
     }
+
 }
 
-int menuGetInputDir(char axis, char* lastAxis) {
+int menuCheckRepeartTimer(char* timer) {
+    if (timer) {
+        if (*timer == 0) {
+            *timer = 8;
+            return 1;
+        } else {
+            (*timer)--;
+        }
+    }
+
+    return 0;
+}
+
+int menuGetInputDir(char axis, char* lastAxis, char* lastTimer) {
     int result = 0;
 
-    if (axis < -32 && *lastAxis >= -32) {
-        result = -1;
-    } else if (axis > 32 && *lastAxis <= 32) {
-        result = 1;
+    if (axis < -32) {
+        if (*lastAxis >= -32) {
+            result = -1;
+
+            if (lastTimer) {
+                *lastTimer = 15;
+            }
+        } else if (menuCheckRepeartTimer(lastTimer)) {
+            result = -1;
+        }
+    } else if (axis > 32) {
+        if (*lastAxis <= 32) {
+            result = 1;
+
+            if (lastTimer) {
+                *lastTimer = 15;
+            }
+        } else if (menuCheckRepeartTimer(lastTimer)) {
+            result = 1;
+        }
     }
 
     *lastAxis = axis;

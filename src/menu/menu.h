@@ -51,8 +51,10 @@ struct MenuItemGroup {
 struct Menu {
     struct MenuItemGroup* current[MAX_MENU_DEPTH];
     char selected[MAX_MENU_DEPTH];
+    char scrollOffset[MAX_MENU_DEPTH];
     char itemStackDepth;
     char lastAxis;
+    char lastTimer;
     char insertAnimationLevel;
     char exitAnimationLevel;
     float animationTime;
@@ -66,6 +68,6 @@ void menuHandleInput(struct Menu* menu, int controllerIndex);
 void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer);
 void menuUpdate(struct Menu* menu);
 
-int menuGetInputDir(char axis, char* lastAxis);
+int menuGetInputDir(char axis, char* lastAxis, char* lastTimer);
 
 #endif

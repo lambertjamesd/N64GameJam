@@ -92,7 +92,7 @@ void pauseMenuExit(struct PauseMenu* pauseMenu) {
 void pauseMenuUpdate(void* data) {
     struct PauseMenu* pauseMenu =  (struct PauseMenu*)data;
 
-    int inputDir = menuGetInputDir(-gControllerState[0].stick_y, &pauseMenu->lastVerticalInput);
+    int inputDir = menuGetInputDir(-gControllerState[0].stick_y, &pauseMenu->lastVerticalInput, 0);
 
     if (inputDir < 0 && pauseMenu->selectedItem > 0) {
         pauseMenu->selectedItem--;
