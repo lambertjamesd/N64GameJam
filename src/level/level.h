@@ -75,6 +75,7 @@ struct LevelThemeDefinition {
 };
 
 struct LevelDefinition {
+    char* name;
     char* levelRomStart;
     char* levelRomEnd;
     struct LevelData* levelData;

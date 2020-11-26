@@ -268,7 +268,7 @@ void createGfxTask(GFXInfo *i) {
 void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority) {
     int i;
     if (priority) {
-        for (i = 0; i < MAX_MENUS; ++i) {
+        for (i = MAX_MENUS-1; i >= 0; --i) {
             if (!gMenuGraphics[i]) {
                 gMenuGraphics[i] = renderCallback;
                 gMenuGraphicsData[i] = data;
@@ -276,7 +276,7 @@ void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority
             }
         }
     } else {
-        for (i = MAX_MENUS-1; i >= 0; --i) {
+        for (i = 0; i < MAX_MENUS; ++i) {
             if (!gMenuGraphics[i]) {
                 gMenuGraphics[i] = renderCallback;
                 gMenuGraphicsData[i] = data;

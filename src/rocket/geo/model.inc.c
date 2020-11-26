@@ -635,7 +635,7 @@ Gfx Rocket_Rocket_mesh_tri_0[] = {
 
 Gfx mat_Rocket_Rocket[] = {
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT),
+	gsDPSetCombineLERP(TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0, ENVIRONMENT),
 	gsSPSetGeometryMode(G_TEXTURE_GEN|G_SHADE|G_LIGHTING),
 	gsSPTexture(1983, 1983, 0, 0, 1),
 	gsDPSetTextureLUT(G_TT_RGBA16),

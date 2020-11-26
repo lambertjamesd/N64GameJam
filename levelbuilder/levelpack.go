@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
@@ -44,6 +45,20 @@ endseg
 	return nil
 }
 
+func getLevelName(cName string) string {
+	metadataFile, err := ioutil.ReadFile(fmt.Sprintf("levels/%s.meta", cName))
+
+	if err == nil {
+		metadata := ReadMetadata(string(metadataFile))
+		name, nameCheck := metadata["name"]
+		if nameCheck {
+			return name
+		}
+	}
+
+	return cName
+}
+
 func writeLevelPack(cName string, themeIndex string, geoOutput string, levels []string) error {
 	output, err := os.OpenFile(geoOutput, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
 
@@ -73,7 +88,8 @@ struct LevelDefinition _level_group_%s[] = {
 `, cName))
 
 	for _, level := range levels {
-		output.WriteString(fmt.Sprintf("    {_%sSegmentRomStart, _%sSegmentRomEnd, &_level_%s_levelData, &gAllThemes[%s]},\n", level, level, level, themeIndex))
+		name := getLevelName(level)
+		output.WriteString(fmt.Sprintf("    {\"%s\", _%sSegmentRomStart, _%sSegmentRomEnd, &_level_%s_levelData, &gAllThemes[%s]},\n", name, level, level, level, themeIndex))
 	}
 
 	output.WriteString(fmt.Sprintf("};\n\nint _level_group_%s_count = sizeof(_level_group_%s) / sizeof(*_level_group_%s);\n", cName, cName, cName))

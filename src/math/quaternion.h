@@ -18,5 +18,6 @@ void quatMultiply(struct Quaternion* a, struct Quaternion* b, struct Quaternion*
 void quatToMatrix(struct Quaternion* q, float out[4][4]);
 void quatNormalize(struct Quaternion* q, struct Quaternion* out);
 void quatRandom(struct Quaternion* q);
+void quatEulerAngles(struct Vector3* angles, struct Quaternion* out);
 
 #endif

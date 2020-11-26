@@ -206,24 +206,33 @@ func findSwitches(level *LevelGrid) {
 	}
 }
 
+func ReadMetadata(content string) map[string]string {
+	var result = make(map[string]string)
+
+	lines := strings.Split(content, "\n")
+
+	for _, line := range lines {
+		parts := strings.SplitN(line, "=", 2)
+
+		var attrName = strings.TrimSpace(parts[0])
+
+		if len(parts) == 2 {
+			result[attrName] = strings.TrimSpace(parts[1])
+		}
+	}
+
+	return result
+}
+
 func AppendMetadata(filename string, target *LevelGrid) {
 	metadataFile, err := ioutil.ReadFile(filename[0:len(filename)-len(filepath.Ext(filename))] + ".meta")
 
 	if err == nil {
-		content := string(metadataFile)
+		metadata := ReadMetadata(string(metadataFile))
 
-		lines := strings.Split(content, "\n")
-
-		for _, line := range lines {
-			parts := strings.SplitN(line, "=", 2)
-
-			var attrName = strings.TrimSpace(parts[0])
-
-			if len(parts) == 2 {
-				if attrName == "name" {
-					target.Name = strings.TrimSpace(parts[1])
-				}
-			}
+		name, nameCheck := metadata["name"]
+		if nameCheck {
+			target.Name = name
 		}
 	}
 }

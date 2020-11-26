@@ -21,6 +21,17 @@ void quatAxisAngle(struct Vector3* axis, float angle, struct Quaternion* out) {
     out->w = cosTheta;
 }
 
+void quatEulerAngles(struct Vector3* angles, struct Quaternion* out) {
+    struct Quaternion angle;
+    struct Quaternion tmp;
+
+    quatAxisAngle(&gRight, angles->x, &angle);
+    quatAxisAngle(&gUp, angles->y, out);
+    quatMultiply(out, &angle, &tmp);
+    quatAxisAngle(&gForward, angles->z, &angle);
+    quatMultiply(&angle, &tmp, out);
+}
+
 void quatAxisComplex(struct Vector3* axis, struct Vector2* complex, struct Quaternion* out) {
     float sinTheta = 0.5f - complex->x * 0.5f;
 

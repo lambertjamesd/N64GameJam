@@ -44,6 +44,8 @@ void spinningLogoText(void* data, struct GraphicsState* state, struct FontRender
         alpha = 0;
     } else if (gSpinningLogoTimer < DELAY_TIME + FADE_TIME) {
         alpha = (u8)(255 * (gSpinningLogoTimer - DELAY_TIME) / FADE_TIME);
+    } else if (gSpinningLogoTimer >= SPINNING_LOGO_TIME) {
+        alpha = 0;
     } else if (gSpinningLogoTimer > SPINNING_LOGO_TIME - FADE_TIME) {
         alpha = (u8)(255 * (SPINNING_LOGO_TIME - gSpinningLogoTimer) / FADE_TIME);
     }

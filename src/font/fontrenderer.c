@@ -2,6 +2,7 @@
 #include <ultra64.h>
 #include "fontrenderer.h"
 #include "src/defs.h"
+#include "src/system/assert.h"
 
 void fontRendererBeginFrame(struct FontRenderer* renderer) {
     renderer->nextDL = renderer->dl;
@@ -63,6 +64,7 @@ float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font*
             int renderRightInt = (int)(renderRight * 4.0f);
 
             if (renderXInt < renderRightInt) {
+                assert((nextDL-fontRenderer->dl) < MAX_FONT_CHARACTERS);
                 gSPTextureRectangle(
                     nextDL++,
                     renderXInt, shiftedY,
