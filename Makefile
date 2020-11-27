@@ -56,14 +56,22 @@ build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/le
 	@mkdir -p build/spec
 	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs build/spec/level_include $(LEVELS)
 
-IMAGE_SLIDES = _00_open
+IMAGE_SLIDES = _00_rocket \
+	_01_insidecockpit \
+	_02_fuelgauge \
+	_03_mapcloseup \
+	_04_seebutton \
+	_05_pushbutton \
+	_06_mapchanged \
+	_08_rocket_turn \
+	_09_see_planet
 
 SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).png)
-SLIDE_FILES = $(foreach slide, $(IMAGE_SLIDES), build/imageslides/$(slide).inc.c)
+SLIDE_FILES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide)_0x0.551)
 
-build/imageslides/%.inc.c: imageslides/%.png
+imageslides/%_0x0.551: imageslides/%.png
 	@mkdir -p $(@D)
-	png2c -a -o $@ $<
+	tools/png2n64.py $<
 
 src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include: slidebuilder/slidebuilder $(SLIDE_IMAGES)
 	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include $(IMAGE_SLIDES)
@@ -132,6 +140,8 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
 	src/cutscene/slides.c \
+	src/cutscene/cutscene.c \
+	src/cutscene/introcutscene.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
 	src/effects/tutorial.c	\
@@ -154,6 +164,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/levels/levels.c \
 	src/levelthemes/allthemes.c	\
 	src/levelthemes/alienworld/theme.c	\
+	src/levelthemes/cutscene/theme.c \
 	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
 	src/math/mathf.c   	\
@@ -190,7 +201,7 @@ CODESEGMENT =	codesegment.o
 
 # Data files that have thier own segments:
 
-DATAFILES =	$(LEVEL_GEO) $(SLIDE_FILES) \
+DATAFILES =	$(LEVEL_GEO) \
 	src/graphics/init.c \
 	src/levelthemes/alienworld/materials.c \
 	src/menu/geo/spinninglogo.c \
@@ -217,7 +228,7 @@ default:	$(TARGETS)
 
 include $(COMMONRULES)
 
-spec: build/spec/level_segs build/spec/level_include build/spec/slide_segs build/spec/slide_include
+spec: build/spec/level_segs build/spec/level_include build/spec/slide_segs build/spec/slide_include $(SLIDE_FILES)
 
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)

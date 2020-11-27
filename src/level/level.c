@@ -26,6 +26,7 @@
 #include "src/save/savefile.h"
 #include "src/system/memory.h"
 #include "src/time/time.h"
+#include "src/rocket/rocket.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -144,6 +145,17 @@ void levelUpdate(void* data) {
             if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
                 levelSwitchToCadet();
             }
+        }
+    }
+
+    if (gCurrentLevel == 0) {
+        if (gRocket.animationTiming > 0.0f) {
+            gScene.camera[0].targetPosition = gRocket.landingSpot;
+        } else if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
+            gCadet.actor.stateFlags &= ~CADET_IS_INVISIBLE;
+            levelTitleEffectInit(&gLevelTitleEffect, gLoadedLevel->levelData->name);
+            gScene.camera[0].targetPosition = gCadet.transform.position;
+            gScene.camera[0].followDistanceStep = 0;
         }
     }
 
@@ -433,5 +445,15 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = _gem_cleanup_mat;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
 
-    levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
+    if (gCurrentLevel == 0) {
+        struct Vector3 rocketPos;
+        vector3AddScaled(&levelDef->levelData->cadetStart, &gRight, -2.0f, &rocketPos);
+        gScene.camera[0].targetPosition = rocketPos;
+        gScene.camera[0].centerPosition = rocketPos;
+        cameraSetFollowDistance(&gScene.camera[0], 1);
+        rocketLandAt(&gRocket, &rocketPos);
+        gCadet.actor.stateFlags |= CADET_IS_INVISIBLE;
+    } else {
+        levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
+    }
 }

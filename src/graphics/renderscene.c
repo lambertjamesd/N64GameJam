@@ -90,6 +90,10 @@ void cameraUpdate(void* cameraPtr) {
     cameraCalculatePos(&camera->transform.rotation, &camera->centerPosition, camera->followDistance, &camera->transform.position);
 }
 
+void cameraSetFollowDistance(struct SceneCamera* camera, int followDistance) {
+    camera->followDistanceStep = followDistance;
+    camera->followDistance = gFollowDistances[followDistance];
+}
 
 void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget, int controllerIndex) {
     quatAxisAngle(&gRight, -M_PI / 3.0f, &camera->transform.rotation);

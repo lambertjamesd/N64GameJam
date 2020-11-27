@@ -127,6 +127,7 @@ void createGfxTask(GFXInfo *i) {
     state.lookats = dynamicp->lookats;
     state.usedLookAt = 0;
     state.lookAtCount = LOOK_AT_COUNT;
+    state.cfb = i->cfb;
 
     int index;
     for (index = 0; index < gScene.activeViewportCount && index < MAX_VIEWPORTS; ++index) {

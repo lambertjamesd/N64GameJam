@@ -12,6 +12,7 @@ extern OSThread gInitThread;
 enum SceneIndex {
     SceneIndexSpinningLogo = -1,
     SceneIndexMainMenu = -2,
+    SceneIndexIntroCutscene = -3,
 };
 
 #define MAX_MESGS	8

@@ -278,6 +278,10 @@ void mainMenuUpdate(void* data) {
             } else {
                 gNextLevel = gMainMenuSelectedLevel;
             }
+
+            if (gNextLevel == 0) {
+                gNextLevel = SceneIndexIntroCutscene;
+            }
         }
     }
 
@@ -290,10 +294,6 @@ void mainMenuUpdate(void* data) {
     quatEulerAngles(&eulerAngles, &gRocket.transform.rotation);
 
     vector3Lerp(&gRocket.transform.position, &position, 0.01f, & gRocket.transform.position);
-
-    if (getButtonDown(0, START_BUTTON)) {
-        gNextLevel = 0;
-    }
 }
 
 void calculateGemsCollected() {

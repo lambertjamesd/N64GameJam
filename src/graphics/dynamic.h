@@ -19,6 +19,7 @@ struct GraphicsState {
     short usedLookAt;
     short lookAtCount;
     struct Vector3* cameraPos;
+    void* cfb;
 };
 
 struct DynamicActor;

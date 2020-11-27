@@ -15,6 +15,7 @@
 #include "src/robot/robot.h"
 #include "src/audio/playersounds.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
+#include "src/cutscene/introcutscene.h"
 #include "src/font/buttons/buttons.h"
 #include "src/save/savefile.h"
 #include "src/menu/spinninglogo.h"
@@ -127,6 +128,8 @@ static void gameEntryPoint(void *argv)
                             spinningLogoInit();
                         } else if (gCurrentLevel == SceneIndexMainMenu) {
                             mainMenuInit();
+                        } else if (gCurrentLevel == SceneIndexIntroCutscene) {
+                            cutScenePlay(&gIntroCutscene, 0);
                         } else {
                             levelLoad(&_level_group_all_levels[gNextLevel], gCurrentPlayMode);
                         }
@@ -221,10 +224,7 @@ static void initGame(void)
 
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
-    gNextLevel = SceneIndexSpinningLogo;
-
-    // mainMenuInit();
-    // gCurrentLevel = SceneIndexMainMenu;
-    // gNextLevel = SceneIndexMainMenu;
+    // gNextLevel = SceneIndexSpinningLogo;
+    gNextLevel = 0;
 }
 

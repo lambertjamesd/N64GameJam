@@ -35,6 +35,7 @@ struct SceneCamera {
     int controllerIndex;
 };
 
+void cameraSetFollowDistance(struct SceneCamera* camera, int followDistance);
 void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget, int controllerIndex);
 void cameraCleanup(struct SceneCamera* camera);
 void cameraGetMoveDir(struct SceneCamera* camera, struct Vector2* input, struct Vector2* out);

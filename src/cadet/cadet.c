@@ -354,6 +354,10 @@ void cadetRespawn(struct Cadet* cadet) {
 
 void cadetUpdate(void* cadetPtr) {
     struct Cadet* cadet = (struct Cadet*)cadetPtr;
+    if (cadet->actor.stateFlags & CADET_IS_INVISIBLE) {
+        return;
+    }
+
     cadet->state(cadet);
 
     cadetUpdatefootstepSound(cadet);
