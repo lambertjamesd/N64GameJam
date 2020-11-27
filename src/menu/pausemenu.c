@@ -63,11 +63,18 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
     int i;
 
     for (i = 0; i < PauseMenuItemCount; ++i) {
-        halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, gPauseMenuText[i]) * 0.5f;
+        int isSaved = i == 2 && !saveFileNeedsSave();
+        char* text = isSaved ? "Saved" : gPauseMenuText[i];
+        halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, text) * 0.5f;
         int yOffset = 20 + i * LINE_HEIGHT - (int)((LINE_HEIGHT * PauseMenuItemCount) >> 1);
 
+
         if (pauseMenu->selectedItem == i) {
-            gDPSetEnvColor(state->dl++, 255, 0, 255, 255);
+            if (isSaved) {
+                gDPSetEnvColor(state->dl++, 0, 255, 0, 255);
+            } else {
+                gDPSetEnvColor(state->dl++, 255, 0, 255, 255);
+            }
         } else {
             gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
         }
@@ -76,7 +83,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
             fontRenderer,
             &gEndlessBossBattle,
             &state->dl,
-            gPauseMenuText[i],
+            text,
             (SCREEN_WD >> 1) - (int)(halfWidth),
             (SCREEN_HT >> 1) + yOffset
         );

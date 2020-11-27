@@ -6,6 +6,7 @@
 struct SaveFile gSaveFile;
 extern OSMesgQueue gContMessageQ;
 int gEepromProbe;
+int gNeedsSave;
 
 void saveFileNew() {
     gSaveFile.header = SAVEFILE_HEADER;
@@ -27,6 +28,8 @@ void saveFileLoad() {
     } else {
         saveFileNew();
     }
+
+    gNeedsSave = 0;
 }
 
 void saveFileSave() {
@@ -35,6 +38,7 @@ void saveFileSave() {
         (void)osRecvMesg(&gContMessageQ, &dummy, OS_MESG_BLOCK);
         osEepromLongWrite(&gContMessageQ, 0, (char*)&gSaveFile, sizeof(struct SaveFile));
         osContStartReadData(&gContMessageQ);
+        gNeedsSave = 0;
     }
 }
 
@@ -44,6 +48,7 @@ int saveFileDidCollectGem(int level, int gemIndex) {
 
 void saveFileMarkCollectedGem(int level, int gemIndex) {
     gSaveFile.levelData[level] |= SAVEFILE_LEVEL_GEMS << gemIndex;
+    gNeedsSave = 1;
 }
 
 int saveFileIsLevelComplete(int level) {
@@ -52,9 +57,23 @@ int saveFileIsLevelComplete(int level) {
 
 void saveFileMarkDidCompleteLevel(int level) {
     gSaveFile.levelData[level] |= SAVEFILE_LEVEL_BEAT;
+    gNeedsSave = 1;
 }
 
 void saveFileErase() {
     saveFileNew();
     saveFileSave();
+}
+
+int saveFileCheckTutorial(int flags) {
+    return gSaveFile.tutorialFlags & flags;
+}
+
+void saveFileMarkTutorial(int flags) {
+    gSaveFile.tutorialFlags |= flags;
+    gNeedsSave = 1;
+}
+
+int saveFileNeedsSave() {
+    return gNeedsSave;
 }

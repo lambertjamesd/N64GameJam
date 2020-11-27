@@ -21,8 +21,6 @@ struct SaveFile {
     char levelData[MAX_LEVELS];
 };
 
-extern struct SaveFile gSaveFile;
-
 int saveFileDidCollectGem(int level, int gemIndex);
 void saveFileMarkCollectedGem(int level, int gemIndex);
 
@@ -32,5 +30,10 @@ void saveFileSave();
 int saveFileIsLevelComplete(int level);
 void saveFileMarkDidCompleteLevel(int level);
 void saveFileErase();
+
+int saveFileCheckTutorial(int flags);
+void saveFileMarkTutorial(int flags);
+
+int saveFileNeedsSave();
 
 #endif

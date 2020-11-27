@@ -377,7 +377,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     entranceExitInit(&gCadetExit, &levelDef->levelData->cadetFinish, 1);
 
     if (levelDef->levelData->robotStart.z < 0.5 && levelDef->levelData->robotStart.x > -0.5) {
-        if (gSaveFile.tutorialFlags & SAVEFILE_LEARNED_FOUND_ROBOT) {
+        if (saveFileCheckTutorial(SAVEFILE_LEARNED_FOUND_ROBOT)) {
             gLevelFlags |= LEVEL_HAS_ROBOT;
         } else {
             gLevelFlags |= LEVEL_INTRO_ROBOT;

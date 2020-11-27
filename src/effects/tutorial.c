@@ -156,11 +156,11 @@ int tutorialDidPlayerSwitch() {
 
 void tutorialMenuCheck() {
     if (tutorialDidPlayerMove()) {
-        if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_MOVE)) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_MOVE)) {
             gTutorialMenu.delay = 0.0f;
         }
 
-        gSaveFile.tutorialFlags |= SAVEFILE_LEARNED_MOVE;
+        saveFileMarkTutorial(SAVEFILE_LEARNED_MOVE);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuMove) {
             gTutorialMenu.state = 2;
@@ -168,11 +168,11 @@ void tutorialMenuCheck() {
     }
 
     if (tutorialDidPlayerJump()) {
-        if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_JUMP)) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_JUMP)) {
             gTutorialMenu.delay = 0.0f;
         }
 
-        gSaveFile.tutorialFlags |= SAVEFILE_LEARNED_JUMP;
+        saveFileMarkTutorial(SAVEFILE_LEARNED_JUMP);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuJump) {
             gTutorialMenu.state = 2;
@@ -180,11 +180,11 @@ void tutorialMenuCheck() {
     }
 
     if (tutorialDidPlayerAttack()) {
-        if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_ATTACK)) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_ATTACK)) {
             gTutorialMenu.delay = -10.0f;
         }
 
-        gSaveFile.tutorialFlags |= SAVEFILE_LEARNED_ATTACK;
+        saveFileMarkTutorial(SAVEFILE_LEARNED_ATTACK);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuRobot) {
             gTutorialMenu.state = 2;
@@ -192,11 +192,11 @@ void tutorialMenuCheck() {
     }
 
     if (tutorialDidPlayerSwitch()) {
-        if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_SWITCH)) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_SWITCH)) {
             gTutorialMenu.delay == 0.0f;
         }
 
-        gSaveFile.tutorialFlags |= SAVEFILE_LEARNED_SWITCH;
+        saveFileMarkTutorial(SAVEFILE_LEARNED_SWITCH);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuSwitch) {
             gTutorialMenu.state = 2;
@@ -204,35 +204,35 @@ void tutorialMenuCheck() {
     }
 
     if (!gTutorialMenu.state) {
-        if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_MOVE)) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_MOVE)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuMove);
             }
-        } else if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_JUMP)) {
+        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_JUMP)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuJump);
             }
-        } else if (!(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_FOUND_ROBOT)) {
+        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_FOUND_ROBOT)) {
             if ((gLevelFlags & LEVEL_INTRO_ROBOT) && 
                 fabsf(gRobot.transform.position.x - gCadet.transform.position.x) < DISCOVER_RADIUS &&
                 fabsf(gRobot.transform.position.z - gCadet.transform.position.z) < DISCOVER_RADIUS) {
                     int robotController = levelSwitchToRobot();
                     levelFocusCutscene(&gRobot.transform.position, 2.0f, robotController);
-                    gSaveFile.tutorialFlags |= SAVEFILE_LEARNED_FOUND_ROBOT;
+                    saveFileMarkTutorial(SAVEFILE_LEARNED_FOUND_ROBOT);
                     gTutorialMenu.delay = 0.0f;
                     gLevelFlags |= LEVEL_HAS_ROBOT;
             }
-        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex != -1 && !(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_ATTACK)) {
+        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex != -1 && !saveFileCheckTutorial(SAVEFILE_LEARNED_ATTACK)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuRobot);
             }
-        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex == 0 && !(gSaveFile.tutorialFlags & SAVEFILE_LEARNED_SWITCH)) {
+        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex == 0 && !saveFileCheckTutorial(SAVEFILE_LEARNED_SWITCH)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {

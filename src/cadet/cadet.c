@@ -160,6 +160,10 @@ void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
 }
 
 void cadetMove(struct Cadet* cadet) {
+    if (cadet->actor.anchor) {
+        transformPoint(cadet->actor.anchor, &cadet->actor.relativeToAnchor, &cadet->transform.position);
+    }
+
     cadet->accumTime += gTimeDelta;
 
     struct Vector3 targetVelocity;
