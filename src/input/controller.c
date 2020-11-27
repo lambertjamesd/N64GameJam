@@ -1,6 +1,7 @@
 
 #include "controller.h"
 #include "src/system/assert.h"
+#include "src/save/savefile.h"
 
 static OSMesg gDummyMessage;
 OSMesgQueue gContMessageQ;
@@ -24,6 +25,8 @@ void controllersInit() {
 
     osContInit(&gContMessageQ, &pattern, &gControllerStatus[0]);
 
+    saveFileLoad();
+
     assert((pattern & 1) && !(gControllerStatus[0].errno & CONT_NO_RESPONSE_ERROR));
 
     osContStartReadData(&gContMessageQ);
@@ -31,12 +34,12 @@ void controllersInit() {
 
 void controllersReadData() {
     int i;
-    
-    for (i = 0; i < MAXCONTROLLERS; ++i) {
-        gControllerLastButton[i] = gControllerState[i].button;
-    }
 
     if (osRecvMesg(&gContMessageQ, &gDummyMessage, OS_MESG_NOBLOCK) == 0) {
+        for (i = 0; i < MAXCONTROLLERS; ++i) {
+            gControllerLastButton[i] = gControllerState[i].button;
+        }
+
         osContGetReadData(gControllerState);
         osContStartReadData(&gContMessageQ);
     }

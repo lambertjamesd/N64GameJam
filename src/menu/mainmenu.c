@@ -321,7 +321,6 @@ int mainMenuBuildLevelSelect() {
 
     if (completeLevels < _level_group_all_levels_count) {
         completeLevels++;
-        completeLevels = _level_group_all_levels_count;
     }
 
     struct MenuItem* items = heapMalloc(

@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "src/level/level.h"
 #include "src/boot.h"
+#include "src/save/savefile.h"
 
 #define PAUSE_MENU_WIDTH    120
 #define PAUSE_MENU_HEIGHT   160
@@ -20,7 +21,7 @@ char* gPauseMenuText[PauseMenuItemCount] = {
     "Resume",
     "Restart Level",
     "Save",
-    "Main Menu",
+    "Save and Quit",
 };
 
 struct PauseMenu gPauseMenu;
@@ -113,9 +114,10 @@ void pauseMenuUpdate(void* data) {
                 restartLevel();
                 break;
             case PauseMenuItemSave:
-                // TODO
+                saveFileSave();
                 break;
             case PauseMenuItemMainMenu:
+                saveFileSave();
                 gNextLevel = SceneIndexMainMenu;
                 break;
         }

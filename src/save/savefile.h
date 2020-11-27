@@ -2,7 +2,7 @@
 #ifndef _SAVE_SAVEFILE_H
 #define _SAVE_SAVEFILE_H
 
-#define MAX_LEVELS  64
+#define MAX_LEVELS  27
 
 #define SAVEFILE_LEARNED_MOVE           (1 << 0)
 #define SAVEFILE_LEARNED_JUMP           (1 << 1)
@@ -17,14 +17,17 @@
 
 struct SaveFile {
     int header;
-    int tutorialFlags;
-    int levelData[MAX_LEVELS];
+    char tutorialFlags;
+    char levelData[MAX_LEVELS];
 };
 
 extern struct SaveFile gSaveFile;
 
 int saveFileDidCollectGem(int level, int gemIndex);
 void saveFileMarkCollectedGem(int level, int gemIndex);
+
+void saveFileLoad();
+void saveFileSave();
 
 int saveFileIsLevelComplete(int level);
 void saveFileMarkDidCompleteLevel(int level);
