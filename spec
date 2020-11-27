@@ -25,6 +25,7 @@ beginseg
 endseg
 
 #include "build/spec/level_segs"
+#include "build/spec/slide_segs"
 
 beginseg
 	name "alienworld"
@@ -75,6 +76,7 @@ beginwave
 	include "code"
 	include "static"
 #include "build/spec/level_include"
+#include "build/spec/slide_include"
 	include "alienworld"
 	include "spinning_logo"
 	include "table"

@@ -23,6 +23,11 @@ GO_SOURCE = $(wildcard ./levelbuilder/*.go)
 levelbuilder/levelbuilder: $(GO_SOURCE)
 	go build -o levelbuilder/levelbuilder ./levelbuilder/
 
+SLIDE_BUILDER_SOURCE = $(wildcard ./slidebuilder/*.go)
+
+slidebuilder/slidebuilder: $(SLIDE_BUILDER_SOURCE)
+	go build -o slidebuilder/slidebuilder ./slidebuilder/
+
 LEVELS = cadet_intro \
 	robot_intro \
 	robot_platform \
@@ -38,6 +43,7 @@ LEVELS = cadet_intro \
 	switch_mania \
 	raise_robot \
 	debug
+
 	
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
 LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
@@ -49,6 +55,18 @@ src/levels/%/geo.c: levels/%.level levels/%.meta levelbuilder/levelbuilder
 build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA)
 	@mkdir -p build/spec
 	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs build/spec/level_include $(LEVELS)
+
+IMAGE_SLIDES = _00_open
+
+SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).png)
+SLIDE_FILES = $(foreach slide, $(IMAGE_SLIDES), build/imageslides/$(slide).inc.c)
+
+build/imageslides/%.inc.c: imageslides/%.png
+	@mkdir -p $(@D)
+	png2c -a -o $@ $<
+
+src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include: slidebuilder/slidebuilder $(SLIDE_IMAGES)
+	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include $(IMAGE_SLIDES)
 
 COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
@@ -113,6 +131,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/collision/meshcollision.c \
 	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
+	src/cutscene/slides.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
 	src/effects/tutorial.c	\
@@ -171,7 +190,7 @@ CODESEGMENT =	codesegment.o
 
 # Data files that have thier own segments:
 
-DATAFILES =	$(LEVEL_GEO) \
+DATAFILES =	$(LEVEL_GEO) $(SLIDE_FILES) \
 	src/graphics/init.c \
 	src/levelthemes/alienworld/materials.c \
 	src/menu/geo/spinninglogo.c \
@@ -198,7 +217,7 @@ default:	$(TARGETS)
 
 include $(COMMONRULES)
 
-spec: build/spec/level_segs build/spec/level_include
+spec: build/spec/level_segs build/spec/level_include build/spec/slide_segs build/spec/slide_include
 
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
