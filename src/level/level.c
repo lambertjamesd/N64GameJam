@@ -187,9 +187,16 @@ void levelUpdate(void* data) {
         pauseMenuShow(&gPauseMenu);
     }
 
-    if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive)) {
+    if ((!(gLevelFlags & LEVEL_HAS_CADET) || gCadetExit.isActive) && 
+        (!(gLevelFlags & LEVEL_HAS_ROBOT) || gRobotExit.isActive || (gLevelFlags & LEVEL_IS_FINAL))) {
         cadetFinishLevel(&gCadet);
-        robotFinishLevel(&gRobot);
+        if ((gLevelFlags & LEVEL_IS_FINAL)) {
+            if (gCurrentPlayMode == LevelPlayModeCoOp) {
+                renderSceneSetTargetViewportSplit(SCREEN_WD);
+            }
+        } else {
+            robotFinishLevel(&gRobot);
+        }
         saveFileMarkDidCompleteLevel(gCurrentLevel);
         gScene.camera[0].followDistanceStep = 0;
         gScene.camera[1].followDistanceStep = 0;
@@ -204,7 +211,7 @@ void levelUpdate(void* data) {
 
         enum PlayerSounds exitSound = PlayerSoundsBothWarp;
 
-        if (!(gLevelFlags & LEVEL_HAS_ROBOT)) {
+        if (!(gLevelFlags & LEVEL_HAS_ROBOT) || (gLevelFlags & LEVEL_IS_FINAL)) {
             exitSound = PlayerSoundsCadetWarp;
         } else if (!(gLevelFlags & LEVEL_HAS_CADET)) {
             exitSound = PlayerSoundsRobotWarp;
@@ -221,8 +228,18 @@ void levelUpdate(void* data) {
 
     if (gLevelFlags & LEVEL_EXIT_CUTSCENE) {
         if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
-            levelNext();
-            gLevelFlags &= ~LEVEL_EXIT_CUTSCENE;
+            if (gLevelFlags & LEVEL_IS_FINAL) {
+                if (gRocket.rocketFlags & ROCKET_FLAGS_ANIMATION_DONE) {
+                    gNextLevel = SceneIndexMainMenu;
+                } else if (!(gRocket.rocketFlags & ROCKET_FLAGS_LAUNCHING)) {
+                    rocketLaunch(&gRocket);
+                    gScene.camera[0].targetPosition = gRocket.transform.position;
+                    gScene.camera[0].followDistanceStep = 1;
+                }
+            } else {
+                levelNext();
+                gLevelFlags &= ~LEVEL_EXIT_CUTSCENE;
+            }
         }
     }
     
@@ -377,6 +394,10 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     
     gLevelFlags = LEVEL_INTRO_CUTSCENE;
 
+    if (gCurrentLevel == _level_group_all_levels_count-1) {
+        gLevelFlags |= LEVEL_IS_FINAL;
+    }
+
     gInputMask = INPUT_MASK_PLAY;
     gInputMask = 0;
 
@@ -395,7 +416,14 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         }
 
         robotReset(&levelDef->levelData->robotStart);
-        entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
+
+        if (gLevelFlags & LEVEL_IS_FINAL) {
+            struct Vector3 rocketPos;
+            vector3AddScaled(&levelDef->levelData->cadetStart, &gRight, -2.0f, &rocketPos);
+            rocketStartAt(&gRocket, &rocketPos);
+        } else {
+            entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
+        }
     }
 
     gCadet.controllerIndex = 0;

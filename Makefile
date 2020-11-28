@@ -42,7 +42,8 @@ LEVELS = cadet_intro \
 	moving_platforms \
 	switch_mania \
 	raise_robot \
-	final
+	final \
+	debug
 
 	
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)

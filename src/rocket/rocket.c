@@ -6,6 +6,7 @@
 
 #define LANDING_TIME    3.0f
 #define LANDING_ACCEL   2.0f
+#define LAUNCH_DELAY    2.0f
 
 struct Rocket gRocket;
 
@@ -42,18 +43,35 @@ void rocketRender(struct DynamicActor* data, struct GraphicsState* state) {
 void rocketUpdate(void* data) {
     struct Rocket* rocket = (struct Rocket*)data;
 
-    vector3AddScaled(&rocket->landingSpot, &gUp, rocket->animationTiming*rocket->animationTiming*LANDING_ACCEL, &rocket->transform.position);
-    rocket->animationTiming -= gTimeDelta;
+    if (rocket->animationTiming >= 0.0f) {
+        vector3AddScaled(&rocket->landingSpot, &gUp, rocket->animationTiming*rocket->animationTiming*LANDING_ACCEL, &rocket->transform.position);
+    }
+    
+    if (rocket->rocketFlags & ROCKET_FLAGS_LAUNCHING) {
+        rocket->animationTiming += gTimeDelta;
 
-    if (rocket->animationTiming <= 0.0f) {
-        rocket->transform.position = rocket->landingSpot;
-        timeRemoveListener(&rocket->updateListener, TimeUpdateGroupWorld);
+        if (rocket->animationTiming >= 0.0f) {
+            rocket->rocketFlags = ROCKET_FLAGS_ANIMATION_DONE;
+            timeRemoveListener(&rocket->updateListener, TimeUpdateGroupWorld);
+        }
+    } else {
+        rocket->animationTiming -= gTimeDelta;
+
+        if (rocket->animationTiming <= 0.0f) {
+            rocket->transform.position = rocket->landingSpot;
+            timeRemoveListener(&rocket->updateListener, TimeUpdateGroupWorld);
+        }
     }
 }
 
 void rocketLandAt(struct Rocket* rocket, struct Vector3* location) {
+    rocketStartAt(rocket, location);
+    rocket->animationTiming = LANDING_TIME;
     timeAddListener(&rocket->updateListener, rocketUpdate, rocket, TimeUpdateGroupWorld);
+    vector3AddScaled(location, &gUp, LANDING_TIME*LANDING_TIME*LANDING_ACCEL, &rocket->transform.position);
+}
 
+void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
     rocket->color.r = 255;
     rocket->color.g = 255;
     rocket->color.b = 255;
@@ -62,8 +80,15 @@ void rocketLandAt(struct Rocket* rocket, struct Vector3* location) {
     rocket->landingSpot = *location;
     quatIdent(&rocket->transform.rotation);
     rocket->transform.scale = 1.0f;
-    vector3AddScaled(location, &gUp, LANDING_TIME*LANDING_TIME*LANDING_ACCEL, &rocket->transform.position);
-    rocket->animationTiming = LANDING_TIME;
+    rocket->transform.position = *location;
+    rocket->animationTiming = 0.0f;
+    rocket->rocketFlags = 0;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &rocket->transform, rocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 4.3f);
+}
+
+void rocketLaunch(struct Rocket* rocket) {
+    rocket->rocketFlags |= ROCKET_FLAGS_LAUNCHING;
+    rocket->animationTiming = -LAUNCH_DELAY;
+    timeAddListener(&rocket->updateListener, rocketUpdate, rocket, TimeUpdateGroupWorld);
 }

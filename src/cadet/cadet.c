@@ -351,6 +351,7 @@ void cadetTeleportOut(struct Cadet* cadet) {
         cadet->state = cadetIdle;
         cadet->actor.stateFlags &= ~CADET_IS_CUTSCENE;
         cadet->actor.stateFlags |= CADET_IS_INVISIBLE;
+        dropShadowCalculate(&cadet->shadow, 0, 0);
     }
 }
 

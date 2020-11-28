@@ -14,6 +14,7 @@ typedef void (*CleanupFunction)(void*);
 #define LEVEL_EXIT_CUTSCENE     0x8
 #define LEVEL_INTRO_ROBOT       0x10
 #define LEVEL_FOCUS_CUTSCENE    0x20
+#define LEVEL_IS_FINAL          0x40
 
 struct LevelSwitchDef {
     struct Vector3 pos;
