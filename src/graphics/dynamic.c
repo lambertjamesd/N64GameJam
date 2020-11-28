@@ -28,7 +28,7 @@ void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color) {
     }
 }
 
-int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex) {
+int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex, float radius) {
     int result = group->nextActorId;
 
     while (group->actors[result].render) {
@@ -48,6 +48,7 @@ int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransfor
     actor->data = data;
     actor->render = render;
     actor->materialIndex = materialIndex;
+    actor->radius = radius;
 
     return result;
 }
@@ -87,10 +88,41 @@ void dynamicActorRemoveFromGroup(struct DynamicActorGroup* group, ActorId* actor
     *actorId = ACTOR_ID_NONE;
 }
 
-void dynamicActorRenderChain(struct DynamicActor* actor, struct GraphicsState* state) {
+void dynamicActorRenderChain(struct DynamicActor* actor, struct GraphicsState* state, Gfx* mat, Gfx* matCleanup) {
+    int usedMaterial = 0;
+
     while (actor) {
-        actor->render(actor, state);
+        int isVisible = !planeIsSphereBehind(
+            &state->frustumPlanes[0], 
+            &actor->transform->position,
+            actor->radius
+        ) && !planeIsSphereBehind(
+            &state->frustumPlanes[1], 
+            &actor->transform->position,
+            actor->radius
+        ) && !planeIsSphereBehind(
+            &state->frustumPlanes[2], 
+            &actor->transform->position,
+            actor->radius
+        ) && !planeIsSphereBehind(
+            &state->frustumPlanes[3], 
+            &actor->transform->position,
+            actor->radius
+        );
+
+        if (isVisible) {
+            if (!usedMaterial && mat) {
+                gSPDisplayList(state->dl++, mat);
+                usedMaterial = 1;
+            }
+            actor->render(actor, state);
+        }
+
         actor = actor->next;
+    }
+
+    if (usedMaterial && matCleanup) {
+        gSPDisplayList(state->dl++, matCleanup);
     }
 }
 
@@ -98,20 +130,10 @@ void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsSta
     int i;
 
     for (i = 0; i < materialCount && i < MAX_MATERIAL_GROUPS; ++i) {
-        if (group->actorByMaterial[i]) {
-            if (materials[i]) {
-                gSPDisplayList(state->dl++, materials[i]);
-            }
-
-            dynamicActorRenderChain(group->actorByMaterial[i], state);
-
-            if (materialCleanup[i]) {
-                gSPDisplayList(state->dl++, materialCleanup[i]);
-            }
-        }
+        dynamicActorRenderChain(group->actorByMaterial[i], state, materials[i], materialCleanup[i]);
     }
 
-    dynamicActorRenderChain(group->actorByMaterial[MATERIAL_INDEX_NOT_BATCHED], state);
+    dynamicActorRenderChain(group->actorByMaterial[MATERIAL_INDEX_NOT_BATCHED], state, 0, 0);
 }
 
 void dynamicActorGroupReset(struct DynamicActorGroup* group) {

@@ -67,5 +67,5 @@ void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int 
     vector3Add(&gDoorCollider.box.max, position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &door->collider, &bb, 0);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &door->transform, door, doorRender, DynamicMaterialTypeDoor);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &door->transform, door, doorRender, DynamicMaterialTypeDoor, 2.0f);
 }

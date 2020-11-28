@@ -189,7 +189,7 @@ void movingPlatformInit(struct MovingPlatform* platform, struct Vector3* positio
     vector3Add(&gMovingPlatformCollider.box.max, position, &platform->prevBB.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &platform->collider, &platform->prevBB, 0);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform, 1.0f);
 }
 
 void movingPlatformJoinSlots(struct MovingPlatformSlot* platform, int count) {

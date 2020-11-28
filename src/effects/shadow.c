@@ -44,7 +44,7 @@ void dropShadowInit(struct DropShadow* shadow, struct BasicTransform* transform,
     shadow->shadowUp = gUp;
     shadow->params = params;
     shadow->shadowScale = 1.0f;
-    dynamicActorAddToGroup(&gScene.transparentActors, transform, shadow, dropShadowRender, TransparentMaterialTypeShadow);
+    dynamicActorAddToGroup(&gScene.transparentActors, transform, shadow, dropShadowRender, TransparentMaterialTypeShadow, params->maxSize);
 }
 
 void dropShadowRender(struct DynamicActor* data, struct GraphicsState* state) {

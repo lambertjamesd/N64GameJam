@@ -137,7 +137,7 @@ void spinningLogoInit() {
 
     timeAddListener(&gSpinningLogoUpdate, spinningLogoUpdate, 0, TimeUpdateGroupWorld);
     
-    dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, 0, spinningLogoRender, MATERIAL_INDEX_NOT_BATCHED);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, 0, spinningLogoRender, MATERIAL_INDEX_NOT_BATCHED, 1.0f);
 
     graphicsAddMenu(spinningLogoText, 0, 1);
 }

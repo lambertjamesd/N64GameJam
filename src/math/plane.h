@@ -23,6 +23,8 @@ void planeFromNormalPoint(struct Vector3* normal, struct Vector3* point, struct 
 void planeProjectOnto(struct Plane* plane, struct Vector3* point, struct Vector3* out);
 float planeDistanceFromPoint(struct Plane* plane, struct Vector3* point);
 void planeFrustumExtractFromMtx(float mtx[4][4], struct Plane planes[4]);
+void planeNormalize(struct Plane* plane);
 int planeIsBoxBehind(struct Plane* plane, struct Box* box);
+int planeIsSphereBehind(struct Plane* plane, struct Vector3* origin, float radius);
 
 #endif

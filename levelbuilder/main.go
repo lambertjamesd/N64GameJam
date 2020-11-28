@@ -19,7 +19,7 @@ func main() {
 		printUsage()
 	} else if os.Args[1] == "level" {
 		if len(os.Args) == 5 {
-			processLevel(os.Args[2], os.Args[3], os.Args[4], 8)
+			processLevel(os.Args[2], os.Args[3], os.Args[4], 4)
 		} else {
 			printUsage()
 		}

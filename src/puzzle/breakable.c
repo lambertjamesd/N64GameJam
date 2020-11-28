@@ -78,6 +78,6 @@ void breakableInit(struct Breakable* breakable, struct Vector3* position, int ty
     vector3Add(&collider->box.max, position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &breakable->collider, &bb, 0);
 
-    breakable->renderActorId = dynamicActorAddToGroup(&gScene.dynamicActors, &breakable->transform, breakable, breakableRender, DynamicMaterialTypeBreakable);
+    breakable->renderActorId = dynamicActorAddToGroup(&gScene.dynamicActors, &breakable->transform, breakable, breakableRender, DynamicMaterialTypeBreakable, 2.0f);
 
 }

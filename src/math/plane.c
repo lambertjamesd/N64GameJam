@@ -39,6 +39,15 @@ void planeFrustumExtractFromMtx(float mtx[4][4], struct Plane planes[4]) {
     planes[3].b = mtx[1][3] + mtx[1][1];
     planes[3].c = mtx[2][3] + mtx[2][1];
     planes[3].d = mtx[3][3] + mtx[3][1];
+
+    planeNormalize(&planes[0]);
+    planeNormalize(&planes[1]);
+    planeNormalize(&planes[2]);
+    planeNormalize(&planes[3]);
+}
+
+void planeNormalize(struct Plane* plane) {
+
 }
 
 int planeIsBoxBehind(struct Plane* plane, struct Box* box) {
@@ -54,4 +63,8 @@ int planeIsBoxBehind(struct Plane* plane, struct Box* box) {
     }
 
     return planeDistanceFromPoint(plane, &pointToUse) < 0.0f;
+}
+
+int planeIsSphereBehind(struct Plane* plane, struct Vector3* origin, float radius) {
+    return planeDistanceFromPoint(plane, origin) < -radius;
 }

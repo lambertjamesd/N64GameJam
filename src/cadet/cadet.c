@@ -399,7 +399,7 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.footstepSound = -1;
     gCadet.controllerIndex = -1;
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED, 0.5f);
 }
 
 void cadetInit() {

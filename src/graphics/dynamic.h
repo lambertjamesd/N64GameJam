@@ -34,6 +34,7 @@ struct DynamicActor {
     void* data;
     RenderCallback render;
     int materialIndex;
+    float radius;
 };
 
 struct DynamicActorGroup {
@@ -51,7 +52,7 @@ LookAt* graphicsStateNextLookat(struct GraphicsState* state);
 Mtx* graphicsStateNextMtx(struct GraphicsState* state);
 void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color);
 
-ActorId dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex);
+ActorId dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex, float radius);
 void dynamicActorRemoveFromGroup(struct DynamicActorGroup* group, ActorId* actorId);
 
 void dynamicActorGroupRender(struct DynamicActorGroup* group, struct GraphicsState* state, Gfx** materials, Gfx** materialCleanup, int materialCount);

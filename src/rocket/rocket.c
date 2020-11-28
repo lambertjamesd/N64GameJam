@@ -65,5 +65,5 @@ void rocketLandAt(struct Rocket* rocket, struct Vector3* location) {
     vector3AddScaled(location, &gUp, LANDING_TIME*LANDING_TIME*LANDING_ACCEL, &rocket->transform.position);
     rocket->animationTiming = LANDING_TIME;
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &rocket->transform, rocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &rocket->transform, rocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 4.3f);
 }

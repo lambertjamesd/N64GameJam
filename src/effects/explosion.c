@@ -105,7 +105,7 @@ void explosionInit(struct Explosion* explosion, struct Vector3* position, enum E
 
     timeAddListener(&explosion->updateListener, explosionUpdate, explosion, TimeUpdateGroupWorld);
 
-    explosion->renderId = dynamicActorAddToGroup(&gScene.transparentActors, &explosion->transform, explosion, explosionRender, TransparentMaterialTypeShockwave);
+    explosion->renderId = dynamicActorAddToGroup(&gScene.transparentActors, &explosion->transform, explosion, explosionRender, TransparentMaterialTypeShockwave, 1.0f);
 }
 
 

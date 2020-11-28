@@ -266,7 +266,7 @@ void robotReset(struct Vector3* startLocation) {
 
     teleportEffectStart(&gRobot.teleport, TELEPORT_FLAG_REVERSE);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED, 2.0f);
 
     robotCalcBB(&gRobot, &gRobot.lastBB);
     sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &gRobot.lastBB, 0);

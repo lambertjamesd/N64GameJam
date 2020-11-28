@@ -189,7 +189,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     vector3Add(&gGemCollider.box.max, pos, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, &bb, 0);
 
-    dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, gem, gemRender, TransparentMaterialTypeGem);
+    dynamicActorAddToGroup(&gScene.transparentActors, &gem->transform, gem, gemRender, TransparentMaterialTypeGem, 0.5f);
 
     if (saveFileDidCollectGem(gCurrentLevel, index)) {
         gem->flags |= GEM_FLAGS_PREVIOUSLY_COLLECTED;

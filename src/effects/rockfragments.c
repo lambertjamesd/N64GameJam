@@ -106,5 +106,5 @@ void rockFragmentsInit(struct RockFragments* fragments, struct Vector3* stackPos
     fragments->timer = 0.0f;
 
     timeAddListener(&fragments->updateListener, rockFragmentUpdate, fragments, TimeUpdateGroupWorld);
-    fragments->renderActorId = dynamicActorAddToGroup(&gScene.dynamicActors, &fragments->transforms[0], fragments, rockFragmentsRender, DynamicMaterialTypeBreakable);
+    fragments->renderActorId = dynamicActorAddToGroup(&gScene.dynamicActors, &fragments->transforms[0], fragments, rockFragmentsRender, DynamicMaterialTypeBreakable, 2.0f);
 }
