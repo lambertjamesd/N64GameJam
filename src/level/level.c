@@ -419,7 +419,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
 
         if (gLevelFlags & LEVEL_IS_FINAL) {
             struct Vector3 rocketPos;
-            vector3AddScaled(&levelDef->levelData->cadetStart, &gRight, -2.0f, &rocketPos);
+            vector3AddScaled(&levelDef->levelData->cadetFinish, &gRight, -2.0f, &rocketPos);
             rocketStartAt(&gRocket, &rocketPos);
         } else {
             entranceExitInit(&gRobotExit, &levelDef->levelData->robotFinish, 0);
