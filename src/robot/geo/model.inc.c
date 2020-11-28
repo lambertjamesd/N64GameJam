@@ -1066,7 +1066,7 @@ Gfx Robot_Robot_mesh_tri_3[] = {
 Gfx mat_Robot_RobotMetal[] = {
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT),
-	gsSPSetGeometryMode(G_TEXTURE_GEN),
+	gsSPSetGeometryMode(G_TEXTURE_GEN|G_LIGHTING|G_SHADE),
 	gsSPTexture(1983, 1983, 0, 0, 1),
 	gsDPSetTextureLUT(G_TT_RGBA16),
 	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, Robot_EnvironmentMap_ci8_pal_rgba16),
