@@ -47,6 +47,15 @@ int collisionTransColliderCollideSphere(struct Vector3* center, float radius, st
         return 0;
     }
 
+    if (center->x + radius < collider->lastBoundingBox.min.x ||
+        center->y + radius < collider->lastBoundingBox.min.y ||
+        center->z + radius < collider->lastBoundingBox.min.z ||
+        center->x - radius > collider->lastBoundingBox.max.x ||
+        center->y - radius > collider->lastBoundingBox.max.y ||
+        center->z - radius > collider->lastBoundingBox.max.z) {
+        return 0;
+    }
+
     struct Vector3 transformedCenter;
     transformPointInverse(collider->transform, center, &transformedCenter);
 
