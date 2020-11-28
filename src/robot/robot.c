@@ -8,6 +8,7 @@
 #include "src/audio/playersounds.h"
 #include "src/audio/audio.h"
 #include "src/puzzle/entranceexit.h"
+#include "src/cadet/cadet.h"
 
 #include "src/collision/geo/robot_collision.inc.c"
 
@@ -161,6 +162,9 @@ void robotAttack(struct Robot* robot) {
     collisionSceneCollideSphere(&attackPos, ROBOT_ATTACK_RADIUS, CollisionLayersBreakable);
 
     explosionInit(&robot->explosions[robot->nextExplosion], &attackPos, ExplosionTypeRobot);
+
+    attackPos.y -= ROBOT_ATTACK_RADIUS;
+    cadetExplosionAt(&gCadet, &attackPos, ROBOT_ATTACK_RADIUS * 3.0f);
 
     robot->nextExplosion = (robot->nextExplosion + 1) % ROBOT_MAX_EXPLOSIONS;
 }

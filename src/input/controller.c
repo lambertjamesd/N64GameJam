@@ -111,5 +111,11 @@ extern struct Vector2 getJoystick(int controller) {
         result.y = 1.0f;
     }
 
+    float magSqr = result.x * result.x + result.y * result.y;
+
+    if (magSqr > 1.0f) {
+        vector2Scale(&result, 1.0f / sqrtf(magSqr), &result);
+    }
+
     return result;
 }

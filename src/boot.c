@@ -224,7 +224,6 @@ static void initGame(void)
 
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
-    // gNextLevel = SceneIndexSpinningLogo;
-    gNextLevel = 0;
+    gNextLevel = SceneIndexSpinningLogo;
 }
 

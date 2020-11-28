@@ -9,9 +9,13 @@
 #include <memory.h>
 
 #define CUTSCENE_HEIGHT     180
+#define MAX_CUTSCENE_HEIGHT 480
 
 struct CutscenePlayer gCutscenePlayer;
 struct TimeUpdateListener gCutsceneListener;
+char* gCutsceneBuffer;
+int gCurrentMaxY = 0;
+int gNeedsClearBars = 0;
 
 void cutSceneUpdate(void* data) {
     gCutscenePlayer.currentTime += gTimeDelta;
@@ -24,6 +28,7 @@ void cutSceneUpdate(void* data) {
         } else {
             gCutscenePlayer.currentFrame++;
             gCutscenePlayer.currentTime = 0.0f;
+            gCurrentMaxY = 0;
         }
     }
 }
@@ -52,15 +57,27 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
     
     int barHeight = (SCREEN_HT - CUTSCENE_HEIGHT) >> 1;
 
-    memset(state->cfb, 0, barHeight * SCREEN_WD * 2);
+    if (gNeedsClearBars) {
+        memset(state->cfb, 0, barHeight * SCREEN_WD * 2);
+        memset(cutsceneBufferAtY(state->cfb, barHeight + CUTSCENE_HEIGHT), 0, barHeight * SCREEN_WD * 2);
+        gNeedsClearBars--;
+    }
+    
+    if (gCurrentMaxY < yOffset + CUTSCENE_HEIGHT) {
+        romCopy(
+            cutsceneBufferAtY(gAllSlideLocations[currFrame->slideIndex], gCurrentMaxY),
+            cutsceneBufferAtY(gCutsceneBuffer, gCurrentMaxY),
+            2 * SCREEN_WD * (yOffset + CUTSCENE_HEIGHT - gCurrentMaxY)
+        );
+        gCurrentMaxY = yOffset + CUTSCENE_HEIGHT;
+    }
 
-    romCopy(
-        cutsceneBufferAtY(gAllSlideLocations[currFrame->slideIndex], yOffset),
+    memcpy(
         cutsceneBufferAtY(state->cfb, barHeight),
+        cutsceneBufferAtY(gCutsceneBuffer, yOffset),
         2 * SCREEN_WD * CUTSCENE_HEIGHT
     );
-
-    memset(cutsceneBufferAtY(state->cfb, barHeight + CUTSCENE_HEIGHT), 0, barHeight * SCREEN_WD * 2);
+    osWritebackDCacheAll();
 }
 
 void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
@@ -82,6 +99,8 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
         &gCutsceneTheme
     );
 
+    gCutsceneBuffer = heapMalloc(SCREEN_WD*MAX_CUTSCENE_HEIGHT*2,16);
+
     renderSceneReset(&gScene);
     gScene.activeViewportCount = 0;
 
@@ -89,6 +108,8 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
     gCutscenePlayer.currentFrame = 0;
     gCutscenePlayer.currentTime = 0.0f;
     gCutscenePlayer.targetLevel = nextLevel;
+    gCurrentMaxY = 0;
+    gNeedsClearBars = 2;
 
     graphicsAddMenu(cutSceneRender, 0, 1);
 

@@ -20,6 +20,7 @@
 
 #define CADET_HORZ_IMPULSE  1.2f
 #define CADET_JUMP_IMPULSE  5.5f
+#define CADET_EXLODE_JUMP_IMPULSE  7.7f
 #define CADET_JUMP_ACCEL    8.0f
 
 struct Cadet;
@@ -53,5 +54,6 @@ void cadetRender(struct DynamicActor* data, struct GraphicsState* state);
 void cadetInit();
 void cadetReset(struct Vector3* startLocation);
 void cadetFinishLevel(struct Cadet* cadet);
+void cadetExplosionAt(struct Cadet* cadet, struct Vector3* origin, float explosionRadius);
 
 #endif

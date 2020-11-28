@@ -15,6 +15,7 @@ struct CutsceneFrame gIntroCutsceneFrames[] = {
     {1.5f, 0, 0.0f, 0.0f},
     {1.0f, 7, 0.0f, 0.0f},
     {8.0f, 8, -17.5, 140.0f},
+    {4.0f, 8, 0.0f, 0.0f},
 };
 
 struct Cutscene gIntroCutscene = {

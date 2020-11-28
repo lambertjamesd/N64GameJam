@@ -309,6 +309,24 @@ void cadetIdle(struct Cadet* cadet) {
 
 }
 
+
+void cadetExplosionAt(struct Cadet* cadet, struct Vector3* origin, float explosionRadius) {
+    struct Vector3 offset;
+    vector3Sub(&cadet->transform.position, origin, &offset);
+
+    float distSqr = vector3MagSqrd(&offset);
+
+    if (distSqr < explosionRadius * explosionRadius) {
+        offset.y += explosionRadius * explosionRadius;
+        vector3Normalize(&offset, &offset);
+        cadet->state = cadetFreefall;
+        cadet->actor.velocity.x = offset.x * CADET_SPEED * 2.0f;
+        cadet->actor.velocity.y = offset.y * CADET_EXLODE_JUMP_IMPULSE;
+        cadet->actor.velocity.z = offset.z * CADET_SPEED * 2.0f;
+    }
+
+}
+
 void cadetTeleportIn(struct Cadet* cadet) {
     if (cadet->actor.lastStableAnchor) {
         transformPoint(cadet->actor.lastStableAnchor, &cadet->actor.lastStableLocation, &cadet->transform.position);

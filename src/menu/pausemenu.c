@@ -100,11 +100,11 @@ void pauseMenuExit(struct PauseMenu* pauseMenu) {
 void pauseMenuUpdate(void* data) {
     struct PauseMenu* pauseMenu =  (struct PauseMenu*)data;
 
-    int inputDir = menuGetInputDir(-gControllerState[0].stick_y, &pauseMenu->lastVerticalInput, 0);
+    int inputDir = menuGetInputDir(gControllerState[0].stick_y, &pauseMenu->lastVerticalInput, 0);
 
-    if (inputDir < 0 && pauseMenu->selectedItem > 0) {
+    if (inputDir > 0 && pauseMenu->selectedItem > 0) {
         pauseMenu->selectedItem--;
-    } else if (inputDir > 0 && pauseMenu->selectedItem + 1 < PauseMenuItemCount) {
+    } else if (inputDir < 0 && pauseMenu->selectedItem + 1 < PauseMenuItemCount) {
         pauseMenu->selectedItem++;
     }
 
@@ -138,6 +138,8 @@ void pauseMenuShow(struct PauseMenu* pauseMenu) {
 
     inputMaskPush(InputMaskPauseMenu);
     timeSetGroupDisabled(TimeUpdateGroupWorld, 1);
+
+    pauseMenu->lastVerticalInput = 0;
 
     timeAddListener(&pauseMenu->updateListener, pauseMenuUpdate, pauseMenu, TimeUpdateGroupMenu);
 }

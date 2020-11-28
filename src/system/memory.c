@@ -21,6 +21,10 @@ void heapReset()
 
 void* heapMalloc(unsigned int len, unsigned int align)
 {
+    if (align == 0) {
+        align = 1;
+    }
+
     gHeapCurrent -= len;
     gHeapCurrent = gHeapCurrent & ~(align - 1);
     void* result = (void*)gHeapCurrent;
@@ -59,6 +63,9 @@ static char gFastMallocHeap[FAST_MALLOC_HEAP_SIZE];
 static char* gFastMallocCurrent;
 
 void* fastMalloc(int len, int align) {
+    if (align == 0) {
+        align = 1;
+    }
     gFastMallocCurrent = (char*)(((int)gFastMallocCurrent + (align - 1)) & ~(align - 1));
     void* result = gFastMallocCurrent;
     gFastMallocCurrent += len;

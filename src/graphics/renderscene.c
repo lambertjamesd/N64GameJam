@@ -93,6 +93,7 @@ void cameraUpdate(void* cameraPtr) {
 void cameraSetFollowDistance(struct SceneCamera* camera, int followDistance) {
     camera->followDistanceStep = followDistance;
     camera->followDistance = gFollowDistances[followDistance];
+    camera->currentPitch = gFollowPitches[followDistance];
 }
 
 void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget, int controllerIndex) {
