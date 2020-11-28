@@ -18,6 +18,6 @@ struct LevelGraphics {
     struct LevelTileGrid grid;
 };
 
-Gfx* graphicsRenderLevelTileGrid(struct LevelTileGrid* levelGrid, Gfx** materials, int materialCount, Gfx* dl);
+void graphicsRenderLevelTileGrid(struct LevelTileGrid* levelGrid, Gfx** materials, int materialCount, struct GraphicsState* state);
 
 #endif

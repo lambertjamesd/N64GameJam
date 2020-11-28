@@ -3,6 +3,7 @@
 #define _GRAPHICS_DYNAMIC_H
 
 #include "src/math/basictransform.h"
+#include "src/math/plane.h"
 
 // Must be a power of 2
 #define MAX_DYNAMIC_ACTORS 64
@@ -20,6 +21,7 @@ struct GraphicsState {
     short lookAtCount;
     struct Vector3* cameraPos;
     void* cfb;
+    struct Plane frustumPlanes[4];
 };
 
 struct DynamicActor;
