@@ -60,6 +60,7 @@ struct CollisionPoint {
 };
 
 struct CollisionMesh {
+    struct Box boundingBox;
     struct CollisionFace* faces;
     int faceCount;
     struct CollisionEdge* edges;
@@ -90,7 +91,10 @@ struct CollisionTransformedCollider {
     int triggerMask;
     void* data;
     TriggerCallback trigger;
+    struct Box lastBoundingBox;
 };
+
+void collisionColliderCalculateBox(struct CollisionCollider* collider, struct Vector3* center, struct Box* out);
 
 int collisionColliderCollideSphere(struct Vector3* center, float radius, struct CollisionCollider* collider, int collisionMask, struct CollisionResult* result);
 int collisionColliderOverlapSphere(struct CollisionCollider* collider, struct Vector3* center, float radius);

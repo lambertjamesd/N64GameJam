@@ -28,10 +28,7 @@ void breakableTrigger(void* data, struct Vector3* origin) {
     if (breakable->renderActorId != ACTOR_ID_NONE) {
         dynamicActorRemoveFromGroup(&gScene.dynamicActors, &breakable->renderActorId);
 
-        struct Box bb;
-        vector3Add(&breakable->collider.collider->box.min, &breakable->transform.position, &bb.min);
-        vector3Add(&breakable->collider.collider->box.max, &breakable->transform.position, &bb.max);
-        sparseCollisionReindex(&gSparseCollisionGrid, &breakable->collider, 0, &bb);
+        sparseCollisionRemove(&gSparseCollisionGrid, &breakable->collider);
 
         rockFragmentsInit(&breakable->breakEffect, &breakable->transform.position, breakable->type ? 3 : 2, origin);
     }
@@ -74,10 +71,7 @@ void breakableInit(struct Breakable* breakable, struct Vector3* position, int ty
 
     breakable->type = type;
 
-    struct Box bb;
-    vector3Add(&collider->box.min, position, &bb.min);
-    vector3Add(&collider->box.max, position, &bb.max);
-    sparseCollisionReindex(&gSparseCollisionGrid, &breakable->collider, &bb, 0);
+    sparseCollisionAdd(&gSparseCollisionGrid, &breakable->collider, NULL);
 
     breakable->renderActorId = dynamicActorAddToGroup(&gScene.dynamicActors, &breakable->transform, breakable, breakableRender, DynamicMaterialTypeBreakable, 2.0f);
 

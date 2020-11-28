@@ -62,40 +62,51 @@ void sparseCollisionAddIndex(struct SparseCollisionGrid* to, int cellIndex, stru
     }
 }
 
-void sparseCollisionReindex(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider, struct Box* bb, struct Box* prevBB) {
-    if (prevBB) {
-        int minX = MIN_INDEX(prevBB->min.x);
-        int minZ = MIN_INDEX(prevBB->min.z);
+void sparseCollisionRemove(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider) {
+    int minX = MIN_INDEX(collider->lastBoundingBox.min.x);
+    int minZ = MIN_INDEX(collider->lastBoundingBox.min.z);
 
-        int maxX = MAX_INDEX(prevBB->max.x);
-        int maxZ = MAX_INDEX(prevBB->max.z);
+    int maxX = MAX_INDEX(collider->lastBoundingBox.max.x);
+    int maxZ = MAX_INDEX(collider->lastBoundingBox.max.z);
 
-        int x;
-        int z;
+    int x;
+    int z;
 
-        for (x = minX; x < maxX; ++x) {
-            for (z = minZ; z < maxZ; ++z) {
-                sparseCollisionRemoveIndex(to, CELL_INDEX(x, z), collider);
-            }
+    for (x = minX; x < maxX; ++x) {
+        for (z = minZ; z < maxZ; ++z) {
+            sparseCollisionRemoveIndex(to, CELL_INDEX(x, z), collider);
+        }
+    }
+}
+
+void sparseCollisionAdd(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider, struct Box* bb) {
+    struct Box calculatedBB;
+    if (bb == NULL) {
+        bb = &calculatedBB;
+        collisionColliderCalculateBox(collider->collider, &collider->transform->position, &calculatedBB);
+    }
+
+    int minX = MIN_INDEX(bb->min.x);
+    int minZ = MIN_INDEX(bb->min.z);
+
+    int maxX = MAX_INDEX(bb->max.x);
+    int maxZ = MAX_INDEX(bb->max.z);
+
+    int x;
+    int z;
+
+    for (x = minX; x < maxX; ++x) {
+        for (z = minZ; z < maxZ; ++z) {
+            sparseCollisionAddIndex(to, CELL_INDEX(x, z), collider);
         }
     }
 
-    if (bb) {
-        int minX = MIN_INDEX(bb->min.x);
-        int minZ = MIN_INDEX(bb->min.z);
+    collider->lastBoundingBox = *bb;
+}
 
-        int maxX = MAX_INDEX(bb->max.x);
-        int maxZ = MAX_INDEX(bb->max.z);
-
-        int x;
-        int z;
-
-        for (x = minX; x < maxX; ++x) {
-            for (z = minZ; z < maxZ; ++z) {
-                sparseCollisionAddIndex(to, CELL_INDEX(x, z), collider);
-            }
-        }
-    }
+void sparseCollisionReindex(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider, struct Box* bb) {
+    sparseCollisionRemove(to, collider);
+    sparseCollisionAdd(to, collider, bb);
 }
 
 int collisionSparseGridCellCollideSphere(struct Vector3* center, float radius, struct SparseCollisionGridCell* cell, int collisionMask, struct CollisionResult* result, int resultCountCheck) {

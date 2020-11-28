@@ -227,8 +227,7 @@ void robotUpdate(void* robotPtr) {
         lastPos.z != robot->transform.position.z) {
         struct Box nextBB;
         robotCalcBB(robot, &nextBB);
-        sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &nextBB, &gRobot.lastBB);
-        gRobot.lastBB = nextBB;
+        sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &nextBB);
     }
 
     dropShadowCalculate(&robot->shadow, robot->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &robot->transform.position);
@@ -271,8 +270,8 @@ void robotReset(struct Vector3* startLocation) {
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRobot.transform, &gRobot, robotRender, MATERIAL_INDEX_NOT_BATCHED, 2.0f);
 
-    robotCalcBB(&gRobot, &gRobot.lastBB);
-    sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &gRobot.lastBB, 0);
+    robotCalcBB(&gRobot, &gRobot.collider.lastBoundingBox);
+    sparseCollisionAdd(&gSparseCollisionGrid, &gRobot.collider, &gRobot.collider.lastBoundingBox);
 }
 
 void robotInit() {

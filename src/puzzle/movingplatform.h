@@ -23,7 +23,6 @@ struct MovingPlatform {
     struct CollisionTransformedCollider collider;
     struct TimeUpdateListener updateListener;
     struct MovingPlatformSlot* currentSlot;
-    struct Box prevBB;
     int moveDirection;
     int nextMoveDir;
     int signalIndex;

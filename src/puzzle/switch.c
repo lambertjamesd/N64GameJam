@@ -147,10 +147,7 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     puzzleSwitch->didTrigger = 0;
     puzzleSwitch->switchType = type;
 
-    struct Box bb;
-    vector3Add(&collider->box.min, position, &bb.min);
-    vector3Add(&collider->box.max, position, &bb.max);
-    sparseCollisionReindex(&gSparseCollisionGrid, &puzzleSwitch->collider, &bb, 0);
+    sparseCollisionAdd(&gSparseCollisionGrid, &puzzleSwitch->collider, NULL);
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, puzzleSwitch, switchRender, DynamicMaterialTypeSwitch, 1.0f);
 }

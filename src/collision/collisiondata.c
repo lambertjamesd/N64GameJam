@@ -4,6 +4,11 @@
 #include "meshcollision.h"
 #include "boxcollision.h"
 
+
+void collisionColliderCalculateBox(struct CollisionCollider* collider, struct Vector3* center, struct Box* out) {
+    boxOffset(&collider->box, center, out);
+}
+
 int collisionColliderCollideSphere(struct Vector3* center, float radius, struct CollisionCollider* collider, int collisionMask, struct CollisionResult* result) {
     if (!(collider->collisionMask & collisionMask)) {
         return 0;

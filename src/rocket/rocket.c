@@ -95,9 +95,7 @@ void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
     rocket->collider.data = 0;
     rocket->collider.trigger = 0;
 
-    struct Box box;
-    boxOffset(&_rocket_collision_bb, &rocket->transform.position, &box);
-    sparseCollisionReindex(&gSparseCollisionGrid, &rocket->collider, &box, 0);
+    sparseCollisionAdd(&gSparseCollisionGrid, &rocket->collider, NULL);
 }
 
 void rocketLaunch(struct Rocket* rocket) {

@@ -158,11 +158,7 @@ void movingPlatformUpdate(void* data) {
             platform->moveDirection = -1;
         }
 
-        struct Box box;
-        vector3Add(&gMovingPlatformCollider.box.min, &platform->transform.position, &box.min);
-        vector3Add(&gMovingPlatformCollider.box.max, &platform->transform.position, &box.max);
-        sparseCollisionReindex(&gSparseCollisionGrid, &platform->collider, &box, &platform->prevBB);
-        platform->prevBB = box;
+        sparseCollisionReindex(&gSparseCollisionGrid, &platform->collider, 0);
     }
 }
 
@@ -186,9 +182,7 @@ void movingPlatformInit(struct MovingPlatform* platform, struct Vector3* positio
     platform->nextMoveDir = -1;
     slot->occupant = platform;
 
-    vector3Add(&gMovingPlatformCollider.box.min, position, &platform->prevBB.min);
-    vector3Add(&gMovingPlatformCollider.box.max, position, &platform->prevBB.max);
-    sparseCollisionReindex(&gSparseCollisionGrid, &platform->collider, &platform->prevBB, 0);
+    sparseCollisionAdd(&gSparseCollisionGrid, &platform->collider, NULL);
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform, 1.0f);
 }

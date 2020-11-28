@@ -98,7 +98,7 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
     bb.max.x = pos->x + 0.8f;
     bb.max.y = pos->y + 0.5f;
     bb.max.z = pos->z + 0.8f;
-    sparseCollisionReindex(&gSparseCollisionGrid, &exit->collider, &bb, 0);
+    sparseCollisionAdd(&gSparseCollisionGrid, &exit->collider, &bb);
 
     exit->exitTrigger.transform = &exit->transform;
     exit->exitTrigger.data = exit;
@@ -112,7 +112,7 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
     bb.max.x = pos->x + 1.0f;
     bb.max.y = pos->y + 0.15f;
     bb.max.z = pos->z + 1.0f;
-    sparseCollisionReindex(&gSparseCollisionGrid, &exit->exitTrigger, &bb, 0);
+    sparseCollisionAdd(&gSparseCollisionGrid, &exit->exitTrigger, &bb);
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &exit->transform, exit, exitEntranceRender, MATERIAL_INDEX_NOT_BATCHED, 1.0f);
 }

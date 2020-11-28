@@ -198,22 +198,22 @@ struct CollisionCollider _%s_collider = {
 	ColliderTypeMesh,
 	%s,
 	.mesh = {
+		{
+			{%.6f, %.6f, %.6f},
+			{%.6f, %.6f, %.6f},
+		},
 		_%s_faces, %d,
 		_%s_edges, %d,
 		_%s_points, %d,
 	},
 };
 `, namePrefix, collisionLayers,
+		min.X, min.Y, min.Z,
+		max.X, max.Y, max.Z,
 		namePrefix, len(collisionMesh.faces),
 		namePrefix, len(collisionMesh.edges),
 		namePrefix, len(collisionMesh.points),
 	))
-
-	file.WriteString(fmt.Sprintf(`
-struct Box _%s_bb = {
-	{%.6f, %.6f, %.6f},
-	{%.6f, %.6f, %.6f},
-};`, namePrefix, min.X, min.Y, min.Z, max.X, max.Y, max.Z))
 
 	return nil
 }
