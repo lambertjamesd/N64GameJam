@@ -45,3 +45,19 @@ func Scale3F(a Vector3, scalar float32) Vector3 {
 		a.Z * scalar,
 	}
 }
+
+func Min3F(a Vector3, b Vector3) Vector3 {
+	return Vector3{
+		float32(math.Min(float64(a.X), float64(b.X))),
+		float32(math.Min(float64(a.Y), float64(b.Y))),
+		float32(math.Min(float64(a.Z), float64(b.Z))),
+	}
+}
+
+func Max3F(a Vector3, b Vector3) Vector3 {
+	return Vector3{
+		float32(math.Max(float64(a.X), float64(b.X))),
+		float32(math.Max(float64(a.Y), float64(b.Y))),
+		float32(math.Max(float64(a.Z), float64(b.Z))),
+	}
+}

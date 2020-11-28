@@ -5,6 +5,7 @@
 #include "src/math/basictransform.h"
 #include "src/math/plane.h"
 #include "src/math/vector.h"
+#include "src/math/box.h"
 
 #define MAX_CONTACT_POINTS  16
 

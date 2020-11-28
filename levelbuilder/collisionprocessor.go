@@ -176,6 +176,9 @@ func WriteOutCollisionMesh(file *os.File, namePrefix string, mesh *Mesh, collisi
 
 	file.WriteString(fmt.Sprintf("\nstruct CollisionPoint _%s_points[] = {\n", namePrefix))
 
+	var min Vector3 = collisionMesh.points[0].origin
+	var max Vector3 = collisionMesh.points[0].origin
+
 	for _, point := range collisionMesh.points {
 		file.WriteString(fmt.Sprintf(
 			`    {
@@ -183,6 +186,9 @@ func WriteOutCollisionMesh(file *os.File, namePrefix string, mesh *Mesh, collisi
     },
 `, point.origin.X, point.origin.Y, point.origin.Z,
 		))
+
+		min = Min3F(min, point.origin)
+		max = Max3F(max, point.origin)
 	}
 
 	file.WriteString("};\n")
@@ -202,6 +208,12 @@ struct CollisionCollider _%s_collider = {
 		namePrefix, len(collisionMesh.edges),
 		namePrefix, len(collisionMesh.points),
 	))
+
+	file.WriteString(fmt.Sprintf(`
+struct CollisionBox _%s_bb = {
+	{%.6f, %.6f, %.6f},
+	{%.6f, %.6f, %.6f},
+};`, namePrefix, min.X, min.Y, min.Z, max.X, max.Y, max.Z))
 
 	return nil
 }

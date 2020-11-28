@@ -3,6 +3,9 @@
 
 #include "src/rocket/geo/model.h"
 #include "src/graphics/renderscene.h"
+#include "src/collision/collisionscene.h"
+#include "src/collision/geo/rocket_collision.inc.c"
+#include "src/collision/collisiondata.h"
 
 #define LANDING_TIME    3.0f
 #define LANDING_ACCEL   2.0f
@@ -85,6 +88,9 @@ void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
     rocket->rocketFlags = 0;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &rocket->transform, rocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 4.3f);
+
+    struct CollisionBox box;
+    sparseCollisionReindex(&gSparseCollisionGrid, &rocket->collider, &box, 0);
 }
 
 void rocketLaunch(struct Rocket* rocket) {

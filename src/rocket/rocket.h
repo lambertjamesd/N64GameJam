@@ -6,6 +6,7 @@
 #include "src/graphics/dynamic.h"
 #include "src/graphics/color.h"
 #include "src/time/time.h"
+#include "src/collision/sparsecollisiongrid.h"
 
 #define ROCKET_FLAGS_LAUNCHING      (1 << 0)
 #define ROCKET_FLAGS_ANIMATION_DONE (1 << 1)
@@ -13,6 +14,7 @@
 struct Rocket {
     struct BasicTransform transform;
     struct TimeUpdateListener updateListener;
+    struct CollisionTransformedCollider collider;
     struct Color color;
     struct Vector3 landingSpot;
     float animationTiming;

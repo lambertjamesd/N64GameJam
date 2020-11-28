@@ -42,8 +42,7 @@ LEVELS = cadet_intro \
 	moving_platforms \
 	switch_mania \
 	raise_robot \
-	final \
-	debug
+	final
 
 	
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
@@ -77,7 +76,7 @@ imageslides/%_0x0.551: imageslides/%.png
 src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include: slidebuilder/slidebuilder $(SLIDE_IMAGES)
 	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include $(IMAGE_SLIDES)
 
-COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit
+COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit rocket_collision
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
 
 src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
