@@ -94,6 +94,7 @@ void movingPlatformRender(struct DynamicActor* data, struct GraphicsState* state
     transformToMatrixL(&transform, 1.0f / 256.0f, nextTransfrom);
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, toRender);
+    gDPPipeSync(state->dl++);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 

@@ -148,24 +148,23 @@ void levelUpdate(void* data) {
         }
     }
 
-    if (gCurrentLevel == 0) {
-        if (gRocket.animationTiming > 0.0f) {
-            gScene.camera[0].targetPosition = gRocket.landingSpot;
-        } else if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
-            gCadet.actor.stateFlags &= ~CADET_IS_INVISIBLE;
-            levelTitleEffectInit(&gLevelTitleEffect, gLoadedLevel->levelData->name);
-            gScene.camera[0].targetPosition = gCadet.transform.position;
-            gScene.camera[0].followDistanceStep = 0;
-        }
-    }
-
-
     if ((gInputMask & InputMaskPlayer) && 
         !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
         tutorialMenuCheck();
     }
 
     if (gLevelFlags & LEVEL_INTRO_CUTSCENE) {
+        if (gCurrentLevel == 0) {
+            if (gRocket.animationTiming > 0.0f) {
+                gScene.camera[0].targetPosition = gRocket.landingSpot;
+            } else if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
+                gCadet.actor.stateFlags &= ~CADET_IS_INVISIBLE;
+                levelTitleEffectInit(&gLevelTitleEffect, gLoadedLevel->levelData->name);
+                gScene.camera[0].targetPosition = gCadet.transform.position;
+                gScene.camera[0].followDistanceStep = 0;
+            }
+        }
+
         if (!(gCadet.actor.stateFlags & CADET_IS_CUTSCENE)) {
             gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
             gInputMask = INPUT_MASK_PLAY;

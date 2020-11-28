@@ -22,6 +22,7 @@ void rockFragmentsRender(struct DynamicActor* data, struct GraphicsState* state)
         gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(transform), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
         gSPDisplayList(state->dl++, gLoadedLevel->theme->theme->themeMeshes[LevelThemeMeshesBreakFragment]);
         gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
+        gDPPipeSync(state->dl++);
     }
 }
 
