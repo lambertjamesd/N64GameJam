@@ -6,7 +6,7 @@
 #include "src/math/mathf.h"
 #include <math.h>
 
-int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, float radius, struct CollisionResult* result) {
+int collisionBoxCollideSphere(struct Box* box, struct Vector3* center, float radius, struct CollisionResult* result) {
     struct ContactPoint* contact = &result->contacts[result->contactCount];
 
     if (box->min.x >= center->x + radius || box->max.x <= center->x - radius ||
@@ -97,7 +97,7 @@ int collisionBoxCollideSphere(struct CollisionBox* box, struct Vector3* center, 
     return 0;
 }
 
-int collisionBoxOverlapSphere(struct CollisionBox* box, struct Vector3* center, float radius) {
+int collisionBoxOverlapSphere(struct Box* box, struct Vector3* center, float radius) {
     struct Vector3 nearestPoint;
     int i;
     for (i = 0; i < 3; ++i) {
@@ -113,7 +113,7 @@ int collisionBoxOverlapSphere(struct CollisionBox* box, struct Vector3* center, 
     return vector3DistSqrd(&nearestPoint, center) < radius * radius;
 }
 
-float collisionBoxRaycast(struct CollisionBox* mesh, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact) {
+float collisionBoxRaycast(struct Box* mesh, struct Vector3* origin, struct Vector3* dir, struct ContactPoint* contact) {
     int xContained = origin->x + NEAR_ZERO >= mesh->min.x && origin->x - NEAR_ZERO <= mesh->max.x;
     int yContained = origin->y + NEAR_ZERO >= mesh->min.y && origin->y - NEAR_ZERO <= mesh->max.y;
     int zContained = origin->z + NEAR_ZERO >= mesh->min.z && origin->z - NEAR_ZERO <= mesh->max.z;

@@ -28,7 +28,7 @@ void breakableTrigger(void* data, struct Vector3* origin) {
     if (breakable->renderActorId != ACTOR_ID_NONE) {
         dynamicActorRemoveFromGroup(&gScene.dynamicActors, &breakable->renderActorId);
 
-        struct CollisionBox bb;
+        struct Box bb;
         vector3Add(&breakable->collider.collider->box.min, &breakable->transform.position, &bb.min);
         vector3Add(&breakable->collider.collider->box.max, &breakable->transform.position, &bb.max);
         sparseCollisionReindex(&gSparseCollisionGrid, &breakable->collider, 0, &bb);
@@ -74,7 +74,7 @@ void breakableInit(struct Breakable* breakable, struct Vector3* position, int ty
 
     breakable->type = type;
 
-    struct CollisionBox bb;
+    struct Box bb;
     vector3Add(&collider->box.min, position, &bb.min);
     vector3Add(&collider->box.max, position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &breakable->collider, &bb, 0);

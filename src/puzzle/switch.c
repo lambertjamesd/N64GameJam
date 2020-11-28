@@ -147,7 +147,7 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     puzzleSwitch->didTrigger = 0;
     puzzleSwitch->switchType = type;
 
-    struct CollisionBox bb;
+    struct Box bb;
     vector3Add(&collider->box.min, position, &bb.min);
     vector3Add(&collider->box.max, position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &puzzleSwitch->collider, &bb, 0);

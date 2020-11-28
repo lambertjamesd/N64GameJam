@@ -151,7 +151,7 @@ void gemUpdate(void* data) {
 void gemTrigger(void* data, struct Vector3* origin) {
     struct Gem* gem = (struct Gem*)data;
 
-    struct CollisionBox bb;
+    struct Box bb;
     vector3Add(&gGemCollider.box.min, &gem->transform.position, &bb.min);
     vector3Add(&gGemCollider.box.max, &gem->transform.position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, 0, &bb);
@@ -184,7 +184,7 @@ void gemInit(struct Gem* gem, struct Vector3* pos, short index) {
     timeAddListener(&gem->updateListener, gemUpdate, gem, TimeUpdateGroupWorld);
     explosionReset(&gem->explosion);
 
-    struct CollisionBox bb;
+    struct Box bb;
     vector3Add(&gGemCollider.box.min, pos, &bb.min);
     vector3Add(&gGemCollider.box.max, pos, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &gem->collider, &bb, 0);

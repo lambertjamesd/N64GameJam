@@ -90,7 +90,7 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
     exit->collider.trigger = 0;
     exit->collider.triggerMask = 0;
 
-    struct CollisionBox bb;
+    struct Box bb;
     bb.min.x = pos->x - 0.8f;
     bb.min.y = pos->y;
     bb.min.z = pos->z - 0.8f;

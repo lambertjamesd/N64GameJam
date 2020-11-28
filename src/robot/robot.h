@@ -37,7 +37,7 @@ struct Robot {
     RobotState state;
     struct TimeUpdateListener updateListener;
     struct Vector2 rotation;
-    struct CollisionBox lastBB;
+    struct Box lastBB;
     struct CollisionTransformedCollider collider;
     struct Explosion explosions[ROBOT_MAX_EXPLOSIONS];
     float attackTimer;

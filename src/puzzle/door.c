@@ -63,7 +63,7 @@ void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int 
 
     door->transform.position.y = door->closedPosition.y + (door->inverted ? -2.0f : 0.0f);
 
-    struct CollisionBox bb;
+    struct Box bb;
     vector3Add(&gDoorCollider.box.min, position, &bb.min);
     vector3Add(&gDoorCollider.box.max, position, &bb.max);
     sparseCollisionReindex(&gSparseCollisionGrid, &door->collider, &bb, 0);

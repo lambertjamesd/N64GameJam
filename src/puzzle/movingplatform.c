@@ -158,7 +158,7 @@ void movingPlatformUpdate(void* data) {
             platform->moveDirection = -1;
         }
 
-        struct CollisionBox box;
+        struct Box box;
         vector3Add(&gMovingPlatformCollider.box.min, &platform->transform.position, &box.min);
         vector3Add(&gMovingPlatformCollider.box.max, &platform->transform.position, &box.max);
         sparseCollisionReindex(&gSparseCollisionGrid, &platform->collider, &box, &platform->prevBB);

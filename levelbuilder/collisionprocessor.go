@@ -210,7 +210,7 @@ struct CollisionCollider _%s_collider = {
 	))
 
 	file.WriteString(fmt.Sprintf(`
-struct CollisionBox _%s_bb = {
+struct Box _%s_bb = {
 	{%.6f, %.6f, %.6f},
 	{%.6f, %.6f, %.6f},
 };`, namePrefix, min.X, min.Y, min.Z, max.X, max.Y, max.Z))

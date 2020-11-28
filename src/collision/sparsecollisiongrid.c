@@ -62,7 +62,7 @@ void sparseCollisionAddIndex(struct SparseCollisionGrid* to, int cellIndex, stru
     }
 }
 
-void sparseCollisionReindex(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider, struct CollisionBox* bb, struct CollisionBox* prevBB) {
+void sparseCollisionReindex(struct SparseCollisionGrid* to, struct CollisionTransformedCollider* collider, struct Box* bb, struct Box* prevBB) {
     if (prevBB) {
         int minX = MIN_INDEX(prevBB->min.x);
         int minZ = MIN_INDEX(prevBB->min.z);

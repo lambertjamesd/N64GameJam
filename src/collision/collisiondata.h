@@ -68,11 +68,6 @@ struct CollisionMesh {
     int pointCount;
 };
 
-struct CollisionBox {
-    struct Vector3 min;
-    struct Vector3 max;
-};
-
 enum ColliderType {
     ColliderTypeMesh,
     ColliderTypeBox,
@@ -82,7 +77,7 @@ struct CollisionCollider {
     enum ColliderType type;
     int collisionMask;
     union {
-        struct CollisionBox box;
+        struct Box box;
         struct CollisionMesh mesh;
     };
 };

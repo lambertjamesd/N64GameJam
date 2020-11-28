@@ -27,7 +27,7 @@ struct Vector3 gAttackCenter = {0.0f, 0.0f, ROBOT_ATTACK_DISTANCE};
 
 void robotRespawn(struct Robot* robot);
 
-void robotCalcBB(struct Robot* robot, struct CollisionBox* box) {
+void robotCalcBB(struct Robot* robot, struct Box* box) {
     box->min.x = robot->transform.position.x - ROBOT_BB_RADIUS;
     box->min.y = robot->transform.position.y;
     box->min.z = robot->transform.position.z - ROBOT_BB_RADIUS;
@@ -225,7 +225,7 @@ void robotUpdate(void* robotPtr) {
     if (lastPos.x != robot->transform.position.x || 
         lastPos.y != robot->transform.position.y || 
         lastPos.z != robot->transform.position.z) {
-        struct CollisionBox nextBB;
+        struct Box nextBB;
         robotCalcBB(robot, &nextBB);
         sparseCollisionReindex(&gSparseCollisionGrid, &gRobot.collider, &nextBB, &gRobot.lastBB);
         gRobot.lastBB = nextBB;

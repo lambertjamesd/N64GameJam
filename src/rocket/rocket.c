@@ -89,7 +89,7 @@ void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &rocket->transform, rocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 4.3f);
 
-    struct CollisionBox box;
+    struct Box box;
     sparseCollisionReindex(&gSparseCollisionGrid, &rocket->collider, &box, 0);
 }
 
