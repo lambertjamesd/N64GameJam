@@ -166,6 +166,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/levelthemes/alienworld/theme.c	\
 	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
+	src/math/box.c   \
 	src/math/mathf.c   	\
 	src/math/plane.c		\
 	src/math/quaternion.c   \

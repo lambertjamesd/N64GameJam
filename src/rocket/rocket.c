@@ -89,7 +89,14 @@ void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &rocket->transform, rocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 4.3f);
 
+    rocket->collider.collider = &_rocket_collision_collider;
+    rocket->collider.transform = &rocket->transform;
+    rocket->collider.triggerMask = 0;
+    rocket->collider.data = 0;
+    rocket->collider.trigger = 0;
+
     struct Box box;
+    boxOffset(&_rocket_collision_bb, &rocket->transform.position, &box);
     sparseCollisionReindex(&gSparseCollisionGrid, &rocket->collider, &box, 0);
 }
 
