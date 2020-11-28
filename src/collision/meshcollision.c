@@ -10,6 +10,20 @@ void collisionFaceBaryCoord(struct CollisionFace* face, struct Vector3* in, stru
     baryCoord->x = 1.0f - baryCoord->y - baryCoord->z;
 }
 
+int collisionFaceIsBaryInside(struct CollisionFace* face, struct Vector3* baryCoord) {
+    if (face->faceType == CollisionFaceTypeTriangle) {
+        if (baryCoord->x < 0.0f || baryCoord->y < 0.0f || baryCoord->z < 0.0f) {
+            return 0;
+        }
+    } else {
+        if (baryCoord->y < 0.0f || baryCoord->z < 0.0f || baryCoord->y > 1.0f || baryCoord->z > 1.0f) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 int collisionFaceCollideSphere(struct CollisionFace* face, struct Vector3* center, float radius, struct ContactPoint* contact) {
     float faceDistance = planeDistanceFromPoint(&face->plane, center);
 
@@ -22,14 +36,8 @@ int collisionFaceCollideSphere(struct CollisionFace* face, struct Vector3* cente
     struct Vector3 baryCoord;
     collisionFaceBaryCoord(face, &contact->point, &baryCoord);
 
-    if (face->faceType == CollisionFaceTypeTriangle) {
-        if (baryCoord.x < 0.0f || baryCoord.y < 0.0f || baryCoord.z < 0.0f) {
-            return 0;
-        }
-    } else {
-        if (baryCoord.y < 0.0f || baryCoord.z < 0.0f || baryCoord.y > 1.0f || baryCoord.z > 1.0f) {
-            return 0;
-        }
+    if (!collisionFaceIsBaryInside(face, &baryCoord)) {
+        return 0;
     }
 
     contact->normal = face->plane.normal;
@@ -169,7 +177,7 @@ float collisionMeshRaycast(struct CollisionMesh* mesh, struct Vector3* origin, s
             struct Vector3 baryCoord;
             collisionFaceBaryCoord(face, &contactCheck.point, &baryCoord);
 
-            if (baryCoord.x > -NEAR_ZERO && baryCoord.y > -NEAR_ZERO && baryCoord.z > -NEAR_ZERO) {
+            if (collisionFaceIsBaryInside(face, &baryCoord)) {
                 result = faceDistance;
                 contact->point = contactCheck.point;
                 contact->normal = contactCheck.normal;

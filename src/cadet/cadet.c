@@ -380,6 +380,10 @@ void cadetUpdate(void* cadetPtr) {
 
     cadetUpdatefootstepSound(cadet);
 
+    if (getButtonDown(0, B_BUTTON)) {
+        cadet->actor.stateFlags &= ~SPHERE_ACTOR_IS_GROUNDED;
+    }
+
     dropShadowCalculate(&cadet->shadow, cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &cadet->transform.position);
 }
 

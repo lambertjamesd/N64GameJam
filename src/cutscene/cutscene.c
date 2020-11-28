@@ -5,7 +5,6 @@
 #include "src/system/memory.h"
 #include "src/level/level.h"
 #include "slides.h"
-#include "src/levelthemes/cutscene/theme.h"
 #include <memory.h>
 
 #define CUTSCENE_HEIGHT     180
@@ -15,7 +14,6 @@ struct CutscenePlayer gCutscenePlayer;
 struct TimeUpdateListener gCutsceneListener;
 char* gCutsceneBuffer;
 int gCurrentMaxY = 0;
-int gNeedsClearBars = 0;
 
 void cutSceneUpdate(void* data) {
     gCutscenePlayer.currentTime += gTimeDelta;
@@ -37,6 +35,64 @@ char* cutsceneBufferAtY(char* input, int y) {
     return input + y * SCREEN_WD * 2;
 }
 
+#define MAX_TILE_X  64
+#define MAX_TILE_Y  32
+
+void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih, int sx, int sy, int dx, int dy, int w, int h) {
+    gDPPipeSync(state->dl++);
+    gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
+    gDPSetRenderMode(state->dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+    gDPSetCombineMode(state->dl++, G_CC_DECALRGB, G_CC_DECALRGB);
+    gDPSetTextureLUT(state->dl++, G_TT_NONE);
+    gDPSetTexturePersp(state->dl++, G_TP_NONE);
+    gDPSetPrimColor(state->dl++, 0, 0, 255, 0, 255, 255);
+
+    int tileXCount = (w + MAX_TILE_X-1) / MAX_TILE_X;
+    int tileYCount = (h + MAX_TILE_Y-1) / MAX_TILE_Y;
+    int tileX, tileY;
+
+    for (tileX = 0; tileX < tileXCount; ++tileX) {
+        int currX = tileX * MAX_TILE_X;
+        int tileWidth = w - currX;
+
+        if (tileWidth > MAX_TILE_X) {
+            tileWidth = MAX_TILE_X;
+        }
+
+        for (tileY = 0; tileY < tileYCount; ++tileY) {
+            int currY = tileY * MAX_TILE_Y;
+            int tileHeight = h - currY;
+            
+            if (tileHeight > MAX_TILE_Y) {
+                tileHeight = MAX_TILE_Y;
+            }
+            
+            gDPLoadTextureTile(
+                state->dl++,
+                K0_TO_PHYS(source + ((sx + currX) + (sy + currY) * iw) * 2),
+                G_IM_FMT_RGBA, G_IM_SIZ_16b,
+                iw, ih,
+                0, 0,
+                tileWidth-1, tileHeight-1,
+                0,
+                G_TX_CLAMP, G_TX_CLAMP,
+                G_TX_NOMASK, G_TX_NOMASK,
+                G_TX_NOLOD, G_TX_NOLOD
+            );
+            
+            gSPTextureRectangle(
+                state->dl++,
+                (dx+currX) << 2, (dy+currY) << 2,
+                (dx+currX+tileWidth) << 2, (dy+currY+tileHeight) << 2,
+                G_TX_RENDERTILE, 
+                0, 0, 1 << 10, 1 << 10
+            );
+        }
+    }
+
+    gDPPipeSync(state->dl++);
+}
+
 void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     if (gCutscenePlayer.currentFrame >= gCutscenePlayer.cutscene->frameCount) {
         return;
@@ -56,12 +112,6 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
     }
     
     int barHeight = (SCREEN_HT - CUTSCENE_HEIGHT) >> 1;
-
-    if (gNeedsClearBars) {
-        memset(state->cfb, 0, barHeight * SCREEN_WD * 2);
-        memset(cutsceneBufferAtY(state->cfb, barHeight + CUTSCENE_HEIGHT), 0, barHeight * SCREEN_WD * 2);
-        gNeedsClearBars--;
-    }
     
     if (gCurrentMaxY < yOffset + CUTSCENE_HEIGHT) {
         romCopy(
@@ -70,14 +120,16 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
             2 * SCREEN_WD * (yOffset + CUTSCENE_HEIGHT - gCurrentMaxY)
         );
         gCurrentMaxY = yOffset + CUTSCENE_HEIGHT;
+        osWritebackDCacheAll();
     }
 
-    memcpy(
-        cutsceneBufferAtY(state->cfb, barHeight),
-        cutsceneBufferAtY(gCutsceneBuffer, yOffset),
-        2 * SCREEN_WD * CUTSCENE_HEIGHT
+    graphicsCopyImage(state, gCutsceneBuffer, 
+        SCREEN_WD, CUTSCENE_HEIGHT, 
+        0, yOffset, 
+        0, barHeight, 
+        SCREEN_WD, CUTSCENE_HEIGHT
     );
-    osWritebackDCacheAll();
+
 }
 
 void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
@@ -96,7 +148,7 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
         0, 
         0, 
         0,
-        &gCutsceneTheme
+        0
     );
 
     gCutsceneBuffer = heapMalloc(SCREEN_WD*MAX_CUTSCENE_HEIGHT*2,16);
@@ -109,7 +161,6 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
     gCutscenePlayer.currentTime = 0.0f;
     gCutscenePlayer.targetLevel = nextLevel;
     gCurrentMaxY = 0;
-    gNeedsClearBars = 2;
 
     graphicsAddMenu(cutSceneRender, 0, 1);
 

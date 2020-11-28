@@ -233,7 +233,6 @@ void robotUpdate(void* robotPtr) {
 
     dropShadowCalculate(&robot->shadow, robot->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &robot->transform.position);
 
-
     if (gInputMask & InputMaskPlayer) {
         if (getButtonDown(robot->controllerIndex, B_BUTTON)) {
             robotAttack(robot);
