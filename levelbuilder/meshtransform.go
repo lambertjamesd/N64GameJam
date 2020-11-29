@@ -179,7 +179,7 @@ func DoLinesCross(a0 *Vector3, a1 *Vector3, b0 *Vector3, b1 *Vector3) bool {
 
 	var normal = Cross3f(aDir, bDir)
 
-	if Dot3f(normal, normal) < 0.000001 {
+	if math.Abs(float64(Dot3f(normal, normal))) < 0.000001 {
 		return false
 	}
 
@@ -193,7 +193,7 @@ func DoLinesCross(a0 *Vector3, a1 *Vector3, b0 *Vector3, b1 *Vector3) bool {
 
 	var lerpValues = inverse.Mul3f(Sub3f(*a0, *b0))
 
-	return lerpValues.X > 0 && lerpValues.X < 1 && lerpValues.Y > 0 && lerpValues.Y < 1
+	return lerpValues.X >= -0.00001 && lerpValues.X <= 1.000001 && lerpValues.Y >= -0.0000001 && lerpValues.Y <= 1.0000001
 }
 
 func CanRemoveTriangleAtVertex(mesh *Mesh, face *MeshFace, vertexIndex int, normal *Vector3) bool {
@@ -211,13 +211,30 @@ func CanRemoveTriangleAtVertex(mesh *Mesh, face *MeshFace, vertexIndex int, norm
 		return false
 	}
 
-	for i := nextIndex; i != prevIndex; i = (i + 1) % len(face.indices) {
-		var curr = mesh.vertices[face.indices[i]].GetPos()
-		var nextIndex = (i + 1) % len(face.indices)
-		var next = mesh.vertices[face.indices[nextIndex]].GetPos()
+	var newFace = MeshFace{[]uint32{
+		face.indices[prevIndex],
+		face.indices[vertexIndex],
+		face.indices[nextIndex],
+	}}
 
-		if DoLinesCross(&prevVertex, &nextVertex, &curr, &next) {
+	var collisionFace = ConvertFaceToCollisionFace(newFace, mesh.vertices)
+
+	for i := nextIndex; i != prevIndex; i = (i + 1) % len(face.indices) {
+		var nextCheck = (i + 1) % len(face.indices)
+		var curr = mesh.vertices[face.indices[i]].GetPos()
+		var baryCoord = collisionFace.ToBaryCoord(curr)
+
+		if baryCoord.X > 0 && baryCoord.Y > 0 && baryCoord.Z > 0 {
 			return false
+		}
+
+		if i != nextIndex && i != prevIndex && nextCheck != nextIndex && nextCheck != prevIndex {
+
+			var next = mesh.vertices[face.indices[nextCheck]].GetPos()
+
+			if DoLinesCross(&prevVertex, &nextVertex, &curr, &next) {
+				return false
+			}
 		}
 	}
 

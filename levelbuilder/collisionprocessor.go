@@ -21,6 +21,15 @@ type CollisionFace struct {
 	faceType                       int
 }
 
+func (face *CollisionFace) ToBaryCoord(input Vector3) Vector3 {
+	var relative = Sub3f(input, face.origin)
+	var result Vector3
+	result.Y = Dot3f(relative, face.d1)
+	result.Z = Dot3f(relative, face.d2)
+	result.X = 1 - result.Y - result.Z
+	return result
+}
+
 type CollisionEdge struct {
 	origin Vector3
 	dir    Vector3

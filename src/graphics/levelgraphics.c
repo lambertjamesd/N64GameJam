@@ -17,12 +17,12 @@ void graphicsRenderLevelTileGrid(struct LevelTileGrid* levelGrid, Gfx** material
     collisionBox.max.y = 8.0f;
 
     for (x = 0; x < levelGrid->sizeX; ++x) {
-        collisionBox.min.x = x * tileGridSize;
-        collisionBox.max.x = (x+1) * tileGridSize;
+        collisionBox.min.x = x * tileGridSize-1.0f;
+        collisionBox.max.x = (x+1) * tileGridSize-1.0f;
 
         for (y = 0; y < levelGrid->sizeY; ++y) {
-            collisionBox.min.z = -(y+1) * tileGridSize;
-            collisionBox.max.z = -y * tileGridSize;
+            collisionBox.min.z = -(y+1) * tileGridSize+1.0f;
+            collisionBox.max.z = -y * tileGridSize+1.0f;
 
             int sectionIndex = y + x * levelGrid->sizeY;
 

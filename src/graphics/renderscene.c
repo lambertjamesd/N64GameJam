@@ -106,6 +106,7 @@ void cameraInit(struct SceneCamera* camera, struct Vector3* startTarget, int con
 
     camera->followDistanceStep = FOLLOW_DISTANCE_START;
     camera->currentRotation = 0.0f;
+    camera->targetRotation = 0.0f;
     camera->controllerIndex = controllerIndex;
 
     cameraCalculatePos(&camera->transform.rotation, &camera->targetPosition, camera->followDistance, &camera->transform.position);

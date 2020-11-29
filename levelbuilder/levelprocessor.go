@@ -102,9 +102,9 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 					mesh = RemoveDuplicates(mesh)
 					mesh = FlipZ(mesh)
 
-					// mesh = LimitedDissolve(mesh)
+					var dissolved = LimitedDissolve(mesh)
 
-					mesh = Triangulate(mesh)
+					mesh = Triangulate(dissolved)
 
 					var lx, ly, lz float32
 					lx = -1

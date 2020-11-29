@@ -179,12 +179,13 @@ void movingPlatformInit(struct MovingPlatform* platform, struct Vector3* positio
 
     platform->currentSlot = slot;
     platform->moveDirection = -1;
-    platform->nextMoveDir = -1;
     slot->occupant = platform;
+    platform->nextMoveDir = 0;
+    movingPlatformClockwiseSlot(platform->currentSlot, &platform->nextMoveDir);
 
     sparseCollisionAdd(&gSparseCollisionGrid, &platform->collider, NULL);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform, 1.0f);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform, 2.0f);
 }
 
 void movingPlatformJoinSlots(struct MovingPlatformSlot* platform, int count) {
