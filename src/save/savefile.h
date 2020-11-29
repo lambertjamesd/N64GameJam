@@ -24,12 +24,15 @@ struct SaveFile {
 int saveFileDidCollectGem(int level, int gemIndex);
 void saveFileMarkCollectedGem(int level, int gemIndex);
 
+int saveFileCalculateGemsCollected(int maxLevels);
+
 void saveFileLoad();
 void saveFileSave();
 
 int saveFileIsLevelComplete(int level);
 void saveFileMarkDidCompleteLevel(int level);
 void saveFileErase();
+void saveUnlockAll();
 
 int saveFileCheckTutorial(int flags);
 void saveFileMarkTutorial(int flags);

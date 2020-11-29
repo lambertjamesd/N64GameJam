@@ -13,6 +13,8 @@ enum SceneIndex {
     SceneIndexSpinningLogo = -1,
     SceneIndexMainMenu = -2,
     SceneIndexIntroCutscene = -3,
+    SceneIndexBadEndingCutscene = -4,
+    SceneIndexGoodEndingCutscene = -5,
 };
 
 #define MAX_MESGS	8

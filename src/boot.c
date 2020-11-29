@@ -16,6 +16,8 @@
 #include "src/audio/playersounds.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 #include "src/cutscene/introcutscene.h"
+#include "src/cutscene/goodendingcutscene.h"
+#include "src/cutscene/badendingcutscene.h"
 #include "src/font/buttons/buttons.h"
 #include "src/save/savefile.h"
 #include "src/menu/spinninglogo.h"
@@ -130,6 +132,10 @@ static void gameEntryPoint(void *argv)
                             mainMenuInit();
                         } else if (gCurrentLevel == SceneIndexIntroCutscene) {
                             cutScenePlay(&gIntroCutscene, 0);
+                        } else if (gCurrentLevel == SceneIndexBadEndingCutscene) {
+                            cutScenePlay(&gBadEndingCutscene, SceneIndexMainMenu);
+                        } else if (gCurrentLevel == SceneIndexGoodEndingCutscene) {
+                            cutScenePlay(&gGoodEndingCutscene, SceneIndexMainMenu);
                         } else {
                             levelLoad(&_level_group_all_levels[gNextLevel], gCurrentPlayMode);
                         }

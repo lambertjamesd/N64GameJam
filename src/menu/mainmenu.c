@@ -16,7 +16,9 @@
 #include "src/menu/menu.h"
 #include "src/levels/levels.h"
 #include "src/save/savefile.h"
+#include "src/audio/playersounds.h"
 #include "src/font/buttons/buttons.h"
+#include "src/audio/audio.h"
 
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
@@ -31,6 +33,22 @@ struct Menu gMainMenu;
 int gMainMenuSelectedLevel;
 int gMainMenuUnlockedLevels;
 int gMainMenuTotalGems;
+
+int mainMenuBuildLevelSelect();
+
+short gKonamiCodeButtons[] = {
+    U_JPAD,
+    U_JPAD,
+    D_JPAD,
+    D_JPAD,
+    L_JPAD,
+    R_JPAD,
+    L_JPAD,
+    R_JPAD,
+    B_BUTTON,
+    A_BUTTON,
+};
+short gKonamiCodeIndex = 0;
 
 struct MenuItemGroup gNewGameGroup;
 
@@ -261,6 +279,27 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
 }
 
 void mainMenuUpdate(void* data) {
+    if (getButtonDown(0, gKonamiCodeButtons[gKonamiCodeIndex])) {
+        ++gKonamiCodeIndex;
+
+        if (gKonamiCodeIndex == sizeof(gKonamiCodeButtons)/sizeof(*gKonamiCodeButtons)) {
+            saveUnlockAll();
+            gMainMenuUnlockedLevels = mainMenuBuildLevelSelect();
+            gMainMenu.current[0] = &gMainMenuGroup;
+            gKonamiCodeIndex = 0;
+
+            audioPlaySound(
+                gPlayerSoundIds[GoalTouchSmall],
+                0.5f,
+                1.0f,
+                0.0f,
+                10
+            );
+        }
+    } else if (getButtonDown(0, ~gKonamiCodeButtons[gKonamiCodeIndex])) {
+        gKonamiCodeIndex = 0;
+    }
+
     if (gMainMenuTime < MAIN_MENU_FADE_END_TIME && gMainMenuTime > MAIN_MENU_FADE_START_TIME) {
         float finalAlpha = mathfLerp(255.0f, BACKGROUND_ALPHA, (gMainMenuTime - MAIN_MENU_FADE_START_TIME) / (MAIN_MENU_FADE_END_TIME - MAIN_MENU_FADE_START_TIME));
         gRocket.color.r = gRocket.color.g = gRocket.color.b = (u8)finalAlpha;
@@ -294,20 +333,6 @@ void mainMenuUpdate(void* data) {
     quatEulerAngles(&eulerAngles, &gRocket.transform.rotation);
 
     vector3Lerp(&gRocket.transform.position, &position, 0.01f, & gRocket.transform.position);
-}
-
-void calculateGemsCollected() {
-    int i;
-    gMainMenuTotalGems = 0;
-
-    for (i = 0; i < MAX_LEVELS; ++i) {
-        int j;
-        for (j = 0; j < 3; ++j) {
-            if (saveFileDidCollectGem(i, j)) {
-                gMainMenuTotalGems++;
-            }
-        }
-    }
 }
 
 int mainMenuBuildLevelSelect() {
@@ -411,11 +436,11 @@ void mainMenuInit() {
     
     gMainMenuSelectedLevel = -2;
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &gRocket.transform, &gRocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 4.3f);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &gRocket.transform, &gRocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 6.3f);
 
     timeAddListener(&gMainMenuUpdate, mainMenuUpdate, 0, TimeUpdateGroupWorld);
 
-    calculateGemsCollected();
+    gMainMenuTotalGems = saveFileCalculateGemsCollected(_level_group_all_levels_count);
     gMainMenuUnlockedLevels = mainMenuBuildLevelSelect();
     graphicsAddMenu(mainMenuRender, &gMainMenu, 1);
     if (gMainMenuUnlockedLevels > 1) {

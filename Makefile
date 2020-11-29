@@ -64,7 +64,15 @@ IMAGE_SLIDES = _00_rocket \
 	_05_pushbutton \
 	_06_mapchanged \
 	_08_rocket_turn \
-	_09_see_planet
+	_09_see_planet \
+	_00_bad_ending \
+	_01_see_robot \
+	_02_sad_cadet \
+	_03_leave_robot \
+	_04_leave_planet \
+	_00_good_ending \
+	_03_leave_with_robot
+
 
 SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).png)
 SLIDE_FILES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide)_0x0.551)
@@ -142,6 +150,8 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/cutscene/slides.c \
 	src/cutscene/cutscene.c \
 	src/cutscene/introcutscene.c \
+	src/cutscene/badendingcutscene.c \
+	src/cutscene/goodendingcutscene.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
 	src/effects/tutorial.c	\

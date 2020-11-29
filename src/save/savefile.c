@@ -51,6 +51,21 @@ void saveFileMarkCollectedGem(int level, int gemIndex) {
     gNeedsSave = 1;
 }
 
+int saveFileCalculateGemsCollected(int maxLevels) {
+    int i;
+    int result = 0;
+
+    for (i = 0; i < maxLevels; ++i) {
+        int j;
+        for (j = 0; j < 3; ++j) {
+            if (saveFileDidCollectGem(i, j)) {
+                result++;
+            }
+        }
+    }
+    return result;
+}
+
 int saveFileIsLevelComplete(int level) {
     return gSaveFile.levelData[level] & SAVEFILE_LEVEL_BEAT;
 }
@@ -63,6 +78,14 @@ void saveFileMarkDidCompleteLevel(int level) {
 void saveFileErase() {
     saveFileNew();
     saveFileSave();
+}
+
+void saveUnlockAll() {
+    gSaveFile.tutorialFlags = ~0;
+    int i;
+    for (i = 0; i < MAX_LEVELS; ++i) {
+        gSaveFile.levelData[i] = ~0;
+    }
 }
 
 int saveFileCheckTutorial(int flags) {
