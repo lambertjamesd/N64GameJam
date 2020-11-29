@@ -11,10 +11,10 @@
 #include "src/effects/explosion.h"
 
 #define ROBOT_ACCEL 16.0f
-#define ROBOT_SPEED 2.0f
+#define ROBOT_SPEED 3.0f
 
 #define ROBOT_RADIUS 0.8f
-#define ROBOT_TURN_RATE (M_PI)
+#define ROBOT_TURN_RATE (M_PI * 1.5f)
 
 #define ROBOT_BB_RADIUS 0.9f
 

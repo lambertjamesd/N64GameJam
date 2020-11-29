@@ -22,10 +22,7 @@ Mtx* graphicsStateNextMtx(struct GraphicsState* state) {
 }
 
 void graphicsStateSetPrimitiveColor(struct GraphicsState* state, u32 color) {
-    if (state->primColor != color) {
-        gDPSetPrimColor(state->dl++, 0, 0, (color & 0xFF000000) >> 24, (color & 0xFF0000) >> 16, (color & 0xFF00) >> 8, color & 0xFF);
-        state->primColor = color;
-    }
+    gDPSetPrimColor(state->dl++, 0, 0, (color & 0xFF000000) >> 24, (color & 0xFF0000) >> 16, (color & 0xFF00) >> 8, color & 0xFF);
 }
 
 int dynamicActorAddToGroup(struct DynamicActorGroup* group, struct BasicTransform* transform, void* data, RenderCallback render, int materialIndex, float radius) {

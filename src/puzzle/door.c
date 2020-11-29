@@ -38,11 +38,16 @@ void doorRender(struct DynamicActor* data, struct GraphicsState* state) {
 void doorUpdate(void* data) {
     struct PuzzleDoor* door = (struct PuzzleDoor*)data;
 
-    door->transform.position.y = mathfMoveTowards(
-        door->transform.position.y,
-        door->closedPosition.y + ((gCurrentSignal[door->signalIndex] ^ door->inverted) ? -2.0f : 0.0f),
-        DOOR_MOVE_SPEED * gTimeDelta
-    );
+    float targetPos = door->closedPosition.y + ((gCurrentSignal[door->signalIndex] ^ door->inverted) ? -2.0f : 0.0f);
+
+    if (targetPos != door->transform.position.y) {
+        door->transform.position.y = mathfMoveTowards(
+            door->transform.position.y,
+            targetPos,
+            DOOR_MOVE_SPEED * gTimeDelta
+        );
+        sparseCollisionReindex(&gSparseCollisionGrid, &door->collider, NULL);
+    }
 }
 
 void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int inverted) {

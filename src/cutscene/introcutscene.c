@@ -2,7 +2,6 @@
 #include "introcutscene.h"
 
 struct CutsceneFrame gIntroCutsceneFrames[] = {
-    {3.0f, 0, 0.0f, 0.0f},
     {3.0f, 1, 0.0f, 0.0f},
     {3.0f, 2, 0.0f, 0.0f},
     {2.0f, 2, 44.0f, 0.0f},
