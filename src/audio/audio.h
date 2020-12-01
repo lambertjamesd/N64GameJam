@@ -56,6 +56,8 @@ extern u8* gAudioHeapBuffer;
 extern ALSndPlayer gSoundPlayer;
 extern ALHeap gAudioHeap;
 
+void audioPlaySequence(char* romStart, char* romEnd, int loopStart, int loopEnd, int loopCount);
+
 int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);

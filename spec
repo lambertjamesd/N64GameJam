@@ -44,19 +44,25 @@ endseg
 beginseg
 	name "bank"
 	flags RAW
-	include "/home/james/Documents/GameJam/Music/n64ambient/N64_ic.ctl"
+	include "sound/instruments/Bank.ctl"
 endseg
 
 beginseg
 	name "table"
 	flags RAW
-	include "/home/james/Documents/GameJam/Music/n64ambient/N64_ic.tbl"
+	include "sound/instruments/Bank.tbl"
+endseg
+
+beginseg
+	name "logoJingle"
+	flags RAW
+	include "sound/music/TeamUltraRareLogoJingleWIP1.mid"
 endseg
 
 beginseg
 	name "seq"
 	flags RAW
-	include "/home/james/Documents/AudioTools/SongRom/midiplayer/n64ambient_mod.mid"
+	include "sound/music/TeamUltraRareLogoJingleWIP1.mid"
 endseg
 
 beginseg
@@ -81,6 +87,7 @@ beginwave
 	include "spinning_logo"
 	include "table"
 	include "bank"
+	include "logoJingle"
 	include "seq"
 	include "player_sounds"
 	include "player_sounds_table"

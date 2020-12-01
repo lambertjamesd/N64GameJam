@@ -41,7 +41,6 @@ extern OSPiHandle	*handler;
 extern char _codeSegmentRomStart[], _codeSegmentRomEnd[];
 extern char _staticSegmentRomStart[], _staticSegmentRomEnd[];
 extern char _tableSegmentRomStart[], _tableSegmentRomEnd[];
-extern char _seqSegmentRomStart[], _seqSegmentRomEnd[];
 extern char _bankSegmentRomStart[], _bankSegmentRomEnd[];
 
 

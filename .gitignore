@@ -12,6 +12,8 @@ slidebuilder/slidebuilder
 
 sound/clips/*
 sound/introcutscene/*
+sound/instruments/*
+sound/music/*
 
 imageslides/*
 

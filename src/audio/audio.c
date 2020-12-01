@@ -5,14 +5,17 @@
 
 extern OSSched         gScheduler;
 
+#define MAX_SEQUENCE_COUNT      2
+
 u8* gAudioHeapBuffer;
 
-ALSeqPlayer	   *seqp;
-static u8          *seqPtr;
-static s32         seqLen;
-static ALSeq       *seq;
-static ALSeqMarker seqStart;
-static ALSeqMarker seqEnd;
+ALSeqPlayer	   *gSequencePlayer;
+static u8          *gSequenceData[MAX_SEQUENCE_COUNT];
+static s32         gSequenceLen[MAX_SEQUENCE_COUNT];
+static ALSeq       *gSequence[MAX_SEQUENCE_COUNT];
+static ALSeqMarker gSequenceStart[MAX_SEQUENCE_COUNT];
+static ALSeqMarker gSequenceEnd[MAX_SEQUENCE_COUNT];
+static int gNextSeq = 0;
 
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
@@ -42,6 +45,24 @@ void soundPlayerInit() {
     alSndpNew(&gSoundPlayer, &sndConfig);
 }
 
+void audioPlaySequence(char* romStart, char* romEnd, int loopStart, int loopEnd, int loopCount) {
+    alSeqpStop(gSequencePlayer);
+
+    gSequenceLen[gNextSeq] = romEnd - romStart;
+    gSequenceData[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, gSequenceLen[gNextSeq]);
+    romCopy(romStart, (char *) gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
+
+    gSequence[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeq));
+    alSeqNew(gSequence[gNextSeq], gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);    
+    alSeqNewMarker(gSequence[gNextSeq], &gSequenceStart[gNextSeq], loopStart);
+    alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], loopEnd);
+    alSeqpLoop(gSequencePlayer, &gSequenceStart[gNextSeq], &gSequenceEnd[gNextSeq], loopCount);
+    alSeqpSetSeq(gSequencePlayer, gSequence[gNextSeq]);
+    alSeqpPlay(gSequencePlayer);
+
+    gNextSeq = (gNextSeq + 1) % MAX_SEQUENCE_COUNT;
+}
+
 void audioInit() 
 {
     ALBankFile    *bankPtr;
@@ -57,10 +78,6 @@ void audioInit()
     romCopy(_bankSegmentRomStart, (char *)bankPtr, bankLen);
     
     alBnkfNew(bankPtr, (u8 *) _tableSegmentRomStart);
-
-    seqLen = _seqSegmentRomEnd - _seqSegmentRomStart;
-    seqPtr = alHeapAlloc(&gAudioHeap, 1, seqLen);
-    romCopy(_seqSegmentRomStart, (char *) seqPtr, seqLen);
 
     c.maxVVoices = MAX_VOICES;
     c.maxPVoices = MAX_VOICES;
@@ -84,20 +101,11 @@ void audioInit()
     seqc.updateOsc      = 0;
     seqc.stopOsc        = 0;
 #ifdef DEBUG
-    seqc.debugFlags     = NO_VOICE_ERR_MASK |NOTE_OFF_ERR_MASK | NO_SOUND_ERR_MASK;
+    seqc.debugFlags     = NO_VOICE_ERR_MASK | NOTE_OFF_ERR_MASK | NO_SOUND_ERR_MASK;
 #endif
-    seqp = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeqPlayer));
-    alSeqpNew(seqp, &seqc);
-
-    seq = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeq));
-    alSeqNew(seq, seqPtr, seqLen);    
-    alSeqNewMarker(seq, &seqStart, 0);
-    alSeqNewMarker(seq, &seqEnd, -1);
-
-    alSeqpLoop(seqp, &seqStart, &seqEnd, -1);
-    alSeqpSetSeq(seqp, seq);
-    alSeqpSetBank(seqp, bankPtr->bankArray[0]);
-    alSeqpPlay(seqp);
+    gSequencePlayer = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeqPlayer));
+    alSeqpNew(gSequencePlayer, &seqc);
+    alSeqpSetBank(gSequencePlayer, bankPtr->bankArray[0]);
 
     soundPlayerInit();
 
