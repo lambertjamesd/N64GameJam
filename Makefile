@@ -93,28 +93,40 @@ src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
 
 src/collision/geo/geo.c: $(COLLISION_GEO)
 
-PLAYER_SOUNDS = sound/clips/Jump.wav \
-	sound/clips/JumpPeakBeep.wav \
-	sound/clips/Landing.wav \
-	sound/clips/AstronautFootsteps.aif \
-	sound/clips/AstronautSlide1.aif \
-	sound/clips/AstronautSlide2.aif \
-	sound/clips/WarpAstronautOnly.aif \
-	sound/clips/WarpRobotOnly.aif \
-	sound/clips/WarpBoth.aif \
-	sound/clips/AstronautDeath_Fall.wav \
-	sound/clips/RobotDeath_Fall.wav \
-	sound/clips/Land_onRobotHead.aif \
-	sound/clips/MetalFootsteps_RoboHead.aif \
-	sound/clips/RobotDestroy.aif \
-	sound/clips/RobotMovement.aif \
-	sound/clips/SwitchBackChar.wav \
-	sound/clips/SwitchChar.wav \
-	sound/clips/BigButton.aif \
-	sound/clips/SmallButton.aif \
-	sound/clips/WarpGoGreen_Big.wav \
-	sound/clips/WarpGoGreen_Small.aif
+PLAYER_SOUNDS = sound/clips/Jump.aifc \
+	sound/clips/JumpPeakBeep.aifc \
+	sound/clips/Landing.aifc \
+	sound/clips/AstronautFootsteps.aifc \
+	sound/clips/AstronautSlide1.aifc \
+	sound/clips/AstronautSlide2.aifc \
+	sound/clips/WarpAstronautOnly.aifc \
+	sound/clips/WarpRobotOnly.aifc \
+	sound/clips/WarpBoth.aifc \
+	sound/clips/AstronautDeath_Fall.aifc \
+	sound/clips/RobotDeath_Fall.aifc \
+	sound/clips/Land_onRobotHead.aifc \
+	sound/clips/MetalFootsteps_RoboHead.aifc \
+	sound/clips/RobotDestroy.aifc \
+	sound/clips/RobotMovement.aifc \
+	sound/clips/SwitchBackChar.aifc \
+	sound/clips/SwitchChar.aifc \
+	sound/clips/BigButton.aifc \
+	sound/clips/SmallButton.aifc \
+	sound/clips/WarpGoGreen_Big.aifc \
+	sound/clips/WarpGoGreen_Small.aifc
 
+PLAYER_SOUNDS_AS_AIF = $(PLAYER_SOUNDS:%.wav=%.aif)
+
+PLAYER_SOUNDS_AS_AIFC = $(PLAYER_SOUNDS_AS_AIFC:%.aif=%.aifc)
+
+sound/clips/%.aif: sound/clips/%.wav
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
+
+sound/clips/%.table: sound/clips/%.aif
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
+
+sound/clips/%.aifc: sound/clips/%.aif sound/clips/%.table
+	wine /home/james/Documents/AudioTools/tools/ADPCMENC.EXE -c $(word 2,$^) $< $@
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
