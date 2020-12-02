@@ -69,6 +69,7 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceLoopStart[gNextSeq], playEvent->loopStart);
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopEnd);
         alSeqpLoop(gSequencePlayer, &gSequenceLoopStart[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopCount);
+        alSeqpSetVol(gSequencePlayer, playEvent->volume);
 
         if (playEvent->playbackStart) {
             alSeqSetLoc(gSequence[gNextSeq], &gSequenceStart[gNextSeq]);

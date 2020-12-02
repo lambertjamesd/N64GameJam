@@ -25,8 +25,6 @@ src/collision/geo/*.inc.c
 src/cutscene/slides.h
 src/cutscene/slides.c
 
-src/tjpeg/*
-
 launch/last_launch.txt
 
 build/*

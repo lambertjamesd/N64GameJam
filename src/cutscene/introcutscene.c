@@ -25,7 +25,8 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .seq = {
             _darkSunsSegmentRomStart,
             _darkSunsSegmentRomEnd,
-            0, 0, 0, 0
+            0, 0, 0, 0,
+            0x7fff,
         }
     },
     {
@@ -104,7 +105,8 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .seq = {
             _cosmicDustSegmentRomStart,
             _cosmicDustSegmentRomEnd,
-            9600, 0, 0, 0
+            9600, 0, 0, 0,
+            0x4000,
         }
     },
     {

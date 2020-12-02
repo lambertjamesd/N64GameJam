@@ -74,7 +74,7 @@ IMAGE_SLIDES = _00_rocket \
 	_03_leave_with_robot
 
 
-SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).png)
+SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).jpg)
 SLIDE_FILES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide)_0x0.551)
 
 imageslides/%_0x0.551: imageslides/%.png
@@ -165,34 +165,36 @@ HFILES = $(DEBUGGERHFILES) \
 CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
-	src/audio/soundarray.c \
 	src/audio/playersounds.c \
+	src/audio/soundarray.c \
+	src/boot.c				\
 	src/cadet/cadet.c   	\
 	src/cadet/geo/model.c \
+	src/collision/boxcollision.c \
 	src/collision/collisiondata.c \
 	src/collision/collisionscene.c \
-	src/collision/boxcollision.c \
 	src/collision/geo/geo.c \
 	src/collision/levelcollisiongrid.c \
 	src/collision/meshcollision.c \
-	src/collision/sphereactor.c \
 	src/collision/sparsecollisiongrid.c \
-	src/cutscene/slides.c \
-	src/cutscene/cutscene.c \
-	src/cutscene/introcutscene.c \
+	src/collision/sphereactor.c \
 	src/cutscene/badendingcutscene.c \
+	src/cutscene/cutscene.c \
 	src/cutscene/goodendingcutscene.c \
+	src/cutscene/introcutscene.c \
+	src/cutscene/slides.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
-	src/effects/tutorial.c	\
 	src/effects/rockfragments.c	\
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
+	src/effects/tutorial.c	\
 	src/effects/walkanim.c \
-	src/font/font.c	\
-	src/font/fontrenderer.c	\
 	src/font/buttons/buttons.c	\
 	src/font/endlessbossbattle/endlessbossbattle.c	\
+	src/font/font.c	\
+	src/font/fontrenderer.c	\
+	src/game.c				\
 	src/graphics/dynamic.c	\
 	src/graphics/graphics.c	\
 	src/graphics/levelgraphics.c	\
@@ -202,8 +204,8 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/input/inputfocus.c  \
 	src/level/level.c	\
 	src/levels/levels.c \
-	src/levelthemes/allthemes.c	\
 	src/levelthemes/alienworld/theme.c	\
+	src/levelthemes/allthemes.c	\
 	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
 	src/math/box.c   \
@@ -217,10 +219,6 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/menu/menu.c   	\
 	src/menu/pausemenu.c   	\
 	src/menu/spinninglogo.c   	\
-	src/robot/robot.c \
-	src/robot/geo/model.c \
-	src/rocket/geo/model.c \
-	src/rocket/rocket.c \
 	src/puzzle/breakable.c  \
 	src/puzzle/door.c  \
 	src/puzzle/entranceexit.c  \
@@ -228,11 +226,14 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/puzzle/movingplatform.c  \
 	src/puzzle/signal.c  \
 	src/puzzle/switch.c  \
-	src/system/assert.c		\
+	src/robot/geo/model.c \
+	src/robot/robot.c \
+	src/rocket/geo/model.c \
+	src/rocket/rocket.c \
 	src/save/savefile.c	\
+	src/system/assert.c		\
 	src/time/time.c		\
-	src/boot.c				\
-	src/game.c				\
+	src/tjpeg/tjpgd.c \
 	src/system/memory.c
 
 CODEOBJECTS =	$(CODEFILES:.c=.o)

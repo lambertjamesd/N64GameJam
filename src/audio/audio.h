@@ -54,6 +54,7 @@ struct SeqPlayEvent {
     int loopStart;
     int loopEnd;
     int loopCount;
+    short volume;
 };
 
 

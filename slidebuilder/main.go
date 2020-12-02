@@ -19,6 +19,7 @@ func writeHeader(output string, slides []string) {
 #define _SLIDES_HEADER_H
 
 extern char* gAllSlideLocations[];
+extern char* gAllSlideEndLocations[];
 extern int gAllSlideCount;
 
 `)
@@ -45,7 +46,7 @@ func writeData(output string, headerPath string, slides []string) {
 `, headerPath))
 
 	for _, slide := range slides {
-		outFile.WriteString(fmt.Sprintf("extern char _%s_slideSegmentRomStart[];\n", slide))
+		outFile.WriteString(fmt.Sprintf("extern char _%s_slideSegmentRomStart[];\nextern char _%s_slideSegmentRomEnd[];\n", slide, slide))
 	}
 
 	outFile.WriteString(`
@@ -54,6 +55,15 @@ char* gAllSlideLocations[] = {
 
 	for _, slide := range slides {
 		outFile.WriteString(fmt.Sprintf("    _%s_slideSegmentRomStart,\n", slide))
+	}
+
+	outFile.WriteString(`};
+	
+char* gAllSlideEndLocations[] = {
+`)
+
+	for _, slide := range slides {
+		outFile.WriteString(fmt.Sprintf("    _%s_slideSegmentRomEnd,\n", slide))
 	}
 
 	outFile.WriteString(fmt.Sprintf(`};
@@ -76,7 +86,7 @@ func writeSpecSegs(output string, slides []string) {
 beginseg
 	name "%s_slide"
 	flags RAW
-	include "imageslides/%s_0x0.551"
+	include "imageslides/%s.jpg"
 endseg		
 `, slide, slide))
 	}
