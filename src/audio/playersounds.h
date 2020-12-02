@@ -4,6 +4,10 @@
 
 #include "soundarray.h"
 
+enum SoundsBanks {
+    SoundBankLevel,
+};
+
 enum PlayerSounds {
     PlayerSoundsJump,
     PlayerSoundsJumpPeak,
@@ -26,12 +30,16 @@ enum PlayerSounds {
     ButtonSoundsSmall,
     GoalTouchBig,
     GoalTouchSmall,
+    SoundUIScroll,
+    SoundUISelect,
+    SoundGemCollect,
     PlayerSoundsCount,
 };
 
 extern struct SoundArray* gPlayerSoundArray;
 extern ALSndId gPlayerSoundIds[PlayerSoundsCount];
 
+void playerSoundsUseBank(enum SoundsBanks bankIndex);
 void playerSoundsInit();
 
 #endif

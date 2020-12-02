@@ -113,11 +113,12 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/BigButton.aifc \
 	sound/clips/SmallButton.aifc \
 	sound/clips/WarpGoGreen_Big.aifc \
-	sound/clips/WarpGoGreen_Small.aifc
+	sound/clips/WarpGoGreen_Small.aifc \
+	sound/clips/UIScroll.aifc \
+	sound/clips/UISelect.aifc \
+	sound/clips/GemPickup.aifc
 
-PLAYER_SOUNDS_AS_AIF = $(PLAYER_SOUNDS:%.wav=%.aif)
-
-PLAYER_SOUNDS_AS_AIFC = $(PLAYER_SOUNDS_AS_AIFC:%.aif=%.aifc)
+INTRO_CUTSCENE_SOUNDS = CockpitAmbience.aif
 
 sound/clips/%.aif: sound/clips/%.wav
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
@@ -131,6 +132,17 @@ sound/clips/%.aifc: sound/clips/%.aif sound/clips/%.table
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
+
+build/audio/intro_cutscene.sounds: $(MENU_SOUNDS)
+	@mkdir -p $(@D)
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
+
+build/ins/Bank.ins: sound/instruments/sfz/instruments.sfz sound/music/usedbanks.txt
+	@mkdir -p $(@D)
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@ --bank_sequence_mapping sound/music/usedbanks.txt --sample_rate 22050
+
+build/ins/Bank.ctl build/ins/Bank.tbl: build/ins/Bank.ins
+	cd build/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
@@ -250,7 +262,13 @@ default:	$(TARGETS)
 
 include $(COMMONRULES)
 
-spec: build/spec/level_segs build/spec/level_include build/spec/slide_segs build/spec/slide_include $(SLIDE_FILES)
+spec: build/spec/level_segs \
+	build/spec/level_include \
+	build/spec/slide_segs \
+	build/spec/slide_include \
+	$(SLIDE_FILES) \
+	build/ins/Bank.ctl \
+	build/ins/Bank.tbl
 
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)

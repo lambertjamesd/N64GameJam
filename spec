@@ -44,19 +44,31 @@ endseg
 beginseg
 	name "bank"
 	flags RAW
-	include "sound/instruments/Bank.ctl"
+	include "build/ins/Bank.ctl"
 endseg
 
 beginseg
 	name "table"
 	flags RAW
-	include "sound/instruments/Bank.tbl"
+	include "build/ins/Bank.tbl"
 endseg
 
 beginseg
 	name "logoJingle"
 	flags RAW
 	include "sound/music/TeamUltraRareLogoJingleWIP1.mid"
+endseg
+
+beginseg
+	name "cosmicDust"
+	flags RAW
+	include "sound/music/CosmicDust.mid"
+endseg
+
+beginseg
+	name "darkSuns"
+	flags RAW
+	include "sound/music/DarkSuns.mid"
 endseg
 
 beginseg
@@ -88,6 +100,8 @@ beginwave
 	include "table"
 	include "bank"
 	include "logoJingle"
+	include "darkSuns"
+	include "cosmicDust"
 	include "seq"
 	include "player_sounds"
 	include "player_sounds_table"

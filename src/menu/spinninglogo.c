@@ -8,6 +8,7 @@
 #include "src/cadet/cadet.h"
 #include "src/font/font.h"
 #include "src/audio/audio.h"
+#include "src/audio/allseq.h"
 
 #define SPINNING_LOGO_TIME      8.0f
 #define FADE_TIME               2.0f
@@ -22,7 +23,6 @@ extern Gfx gFreshEaterUse[];
 
 extern Gfx SpinningLogo_SpinningLogo_mesh[];
 extern char _spinning_logoSegmentRomStart[], _spinning_logoSegmentRomEnd[];
-extern char _logoJingleSegmentRomStart[], _logoJingleSegmentRomEnd[];
 
 struct TimeUpdateListener gSpinningLogoUpdate;
 float gSpinningLogoTimer;
@@ -86,7 +86,14 @@ void spinningLogoUpdate(void* data) {
         float nextTime = gSpinningLogoTimer + gTimeDelta;
 
         if (nextTime >= JINGLE_PLAY_TIME && gSpinningLogoTimer < JINGLE_PLAY_TIME) {
-            audioPlaySequence(_logoJingleSegmentRomStart, _logoJingleSegmentRomEnd, 0, 0, 0);
+            struct SeqPlayEvent playEvent;
+            playEvent.romStart = _logoJingleSegmentRomStart;
+            playEvent.romEnd = _logoJingleSegmentRomEnd;
+            playEvent.loopStart = 0;
+            playEvent.loopEnd = 0;
+            playEvent.loopCount = 0;
+            playEvent.playbackStart = 0;
+            audioPlaySequence(&playEvent);
         }
 
         gSpinningLogoTimer = nextTime;

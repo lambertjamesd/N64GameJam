@@ -8,6 +8,8 @@
 #include "src/level/level.h"
 #include "src/save/savefile.h"
 #include "src/effects/teleport.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
 
 struct DropShadowParams gGemShadowParams = {
     0.15,
@@ -158,6 +160,14 @@ void gemTrigger(void* data, struct Vector3* origin) {
     collectPos.y = gem->transform.position.y + 0.5f;
     collectPos.z = gem->transform.position.z;
     explosionInit(&gem->explosion, &gem->transform.position, ExplosionTypeGemCollect);
+
+    audioPlaySound(
+        gPlayerSoundIds[SoundGemCollect],
+        0.5f,
+        1.0f,
+        0.0f,
+        10
+    );
 
     gem->flags |= GEM_FLAGS_COLLECT_ANIM;
     gem->animationTimer = 0.0f;

@@ -14,6 +14,7 @@ static u8          *gSequenceData[MAX_SEQUENCE_COUNT];
 static s32         gSequenceLen[MAX_SEQUENCE_COUNT];
 static ALSeq       *gSequence[MAX_SEQUENCE_COUNT];
 static ALSeqMarker gSequenceStart[MAX_SEQUENCE_COUNT];
+static ALSeqMarker gSequenceLoopStart[MAX_SEQUENCE_COUNT];
 static ALSeqMarker gSequenceEnd[MAX_SEQUENCE_COUNT];
 static int gNextSeq = 0;
 
@@ -31,6 +32,7 @@ struct PendingSound {
     int priority;
 };
 
+struct SeqPlayEvent gPendingSeq;
 struct PendingSound gPendingSounds[MAX_PENDING_SOUNDS];
 
 #define MAX_SOUNDS 40
@@ -45,22 +47,27 @@ void soundPlayerInit() {
     alSndpNew(&gSoundPlayer, &sndConfig);
 }
 
-void audioPlaySequence(char* romStart, char* romEnd, int loopStart, int loopEnd, int loopCount) {
-    alSeqpStop(gSequencePlayer);
+void audioPlaySequence(struct SeqPlayEvent* playEvent) {
+    if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
+        alSeqpStop(gSequencePlayer);
 
-    gSequenceLen[gNextSeq] = romEnd - romStart;
-    gSequenceData[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, gSequenceLen[gNextSeq]);
-    romCopy(romStart, (char *) gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
+        gPendingSeq = *playEvent;
+    } else {
+        gSequenceLen[gNextSeq] = playEvent->romEnd - playEvent->romStart;
+        gSequenceData[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, gSequenceLen[gNextSeq]);
+        romCopy(playEvent->romStart, (char *) gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
 
-    gSequence[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeq));
-    alSeqNew(gSequence[gNextSeq], gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);    
-    alSeqNewMarker(gSequence[gNextSeq], &gSequenceStart[gNextSeq], loopStart);
-    alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], loopEnd);
-    alSeqpLoop(gSequencePlayer, &gSequenceStart[gNextSeq], &gSequenceEnd[gNextSeq], loopCount);
-    alSeqpSetSeq(gSequencePlayer, gSequence[gNextSeq]);
-    alSeqpPlay(gSequencePlayer);
+        gSequence[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeq));
+        alSeqNew(gSequence[gNextSeq], gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
+        alSeqNewMarker(gSequence[gNextSeq], &gSequenceStart[gNextSeq], playEvent->playbackStart);    
+        alSeqNewMarker(gSequence[gNextSeq], &gSequenceLoopStart[gNextSeq], playEvent->loopStart);
+        alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopEnd);
+        alSeqpLoop(gSequencePlayer, &gSequenceLoopStart[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopCount);
+        alSeqpSetSeq(gSequencePlayer, gSequence[gNextSeq]);
+        alSeqpPlay(gSequencePlayer);
 
-    gNextSeq = (gNextSeq + 1) % MAX_SEQUENCE_COUNT;
+        gNextSeq = (gNextSeq + 1) % MAX_SEQUENCE_COUNT;
+    }
 }
 
 void audioInit() 
@@ -201,5 +208,10 @@ void audioUpdate() {
                 gPendingSounds[i].snd = UNUSED_PENDING_SOUND;
             }
         }
+    }
+
+    if (gPendingSeq.romStart && alSeqpGetState(gSequencePlayer) == AL_STOPPED) {
+        audioPlaySequence(&gPendingSeq);
+        gPendingSeq.romStart = 0;
     }
 }

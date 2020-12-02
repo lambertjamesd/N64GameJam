@@ -1,5 +1,6 @@
 
 #include "introcutscene.h"
+#include "src/audio/allseq.h"
 
 struct CutsceneFrame gIntroCutsceneFrames[] = {
     {3.0f, 1, 0.0f, 0.0f},
@@ -17,7 +18,30 @@ struct CutsceneFrame gIntroCutsceneFrames[] = {
     {4.0f, 8, 0.0f, 0.0f},
 };
 
+struct CutsceneEvent gIntroCutsceneEvents[] = {
+    {
+        0.0f,
+        CutsceneEventTypeSeq,
+        .seq = {
+            _darkSunsSegmentRomStart,
+            _darkSunsSegmentRomEnd,
+            0, 0, 0, 0
+        }
+    },
+    {
+        16.5f,
+        CutsceneEventTypeSeq,
+        .seq = {
+            _cosmicDustSegmentRomStart,
+            _cosmicDustSegmentRomEnd,
+            0, 0, 0, 0
+        }
+    },
+};
+
 struct Cutscene gIntroCutscene = {
     gIntroCutsceneFrames,
     sizeof(gIntroCutsceneFrames)/sizeof(*gIntroCutsceneFrames),
+    gIntroCutsceneEvents,
+    sizeof(gIntroCutsceneEvents)/sizeof(*gIntroCutsceneEvents),
 };

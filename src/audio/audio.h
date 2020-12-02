@@ -47,6 +47,15 @@ typedef struct {
     u32       maxACMDSize;
 } amConfig;
 
+struct SeqPlayEvent {
+    char* romStart;
+    char* romEnd;
+    int playbackStart;
+    int loopStart;
+    int loopEnd;
+    int loopCount;
+};
+
 
 void    amCreateAudioMgr(ALSynConfig *c, OSPri priority, amConfig *amc);
 
@@ -56,7 +65,7 @@ extern u8* gAudioHeapBuffer;
 extern ALSndPlayer gSoundPlayer;
 extern ALHeap gAudioHeap;
 
-void audioPlaySequence(char* romStart, char* romEnd, int loopStart, int loopEnd, int loopCount);
+void audioPlaySequence(struct SeqPlayEvent* playEvent);
 
 int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);

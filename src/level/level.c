@@ -23,10 +23,10 @@
 #include "src/puzzle/movingplatform.h"
 #include "src/puzzle/switch.h"
 #include "src/robot/robot.h"
+#include "src/rocket/rocket.h"
 #include "src/save/savefile.h"
 #include "src/system/memory.h"
 #include "src/time/time.h"
-#include "src/rocket/rocket.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -184,6 +184,13 @@ void levelUpdate(void* data) {
     }
 
     if (!(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE)) && getButtonDown(0, START_BUTTON)) {
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUISelect],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
         pauseMenuShow(&gPauseMenu);
     }
 
@@ -383,6 +390,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     timeResetListeners();
     signalResetAll();
     graphicsClearMenus();
+    playerSoundsUseBank(SoundBankLevel);
 
     graphicsInitLevel(
         staticSegment, 

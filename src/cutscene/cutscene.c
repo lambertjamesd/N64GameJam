@@ -4,6 +4,7 @@
 #include "src/graphics/renderscene.h"
 #include "src/system/memory.h"
 #include "src/level/level.h"
+#include "src/audio/audio.h"
 #include "slides.h"
 #include <memory.h>
 
@@ -17,6 +18,20 @@ int gCurrentMaxY = 0;
 
 void cutSceneUpdate(void* data) {
     gCutscenePlayer.currentTime += gTimeDelta;
+    gCutscenePlayer.totalTime += gTimeDelta;
+
+    if (gCutscenePlayer.nextEvent < gCutscenePlayer.cutscene->eventCount) {
+        struct CutsceneEvent* currentEvent = &gCutscenePlayer.cutscene->events[gCutscenePlayer.nextEvent];
+        if (gCutscenePlayer.totalTime >= currentEvent->at) {
+            switch (currentEvent->eventType) {
+                case CutsceneEventTypeSeq:
+                    audioPlaySequence(&currentEvent->seq);
+                    break;
+            }
+
+            gCutscenePlayer.nextEvent++;
+        }
+    }
 
     struct CutsceneFrame* currFrame = &gCutscenePlayer.cutscene->frames[gCutscenePlayer.currentFrame];
 
@@ -159,7 +174,9 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
     gCutscenePlayer.cutscene = cutscene;
     gCutscenePlayer.currentFrame = 0;
     gCutscenePlayer.currentTime = 0.0f;
+    gCutscenePlayer.totalTime = 0.0f;
     gCutscenePlayer.targetLevel = nextLevel;
+    gCutscenePlayer.nextEvent = 0;
     gCurrentMaxY = 0;
 
     graphicsAddMenu(cutSceneRender, 0, 1);

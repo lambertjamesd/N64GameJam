@@ -9,6 +9,8 @@
 #include "src/level/level.h"
 #include "src/boot.h"
 #include "src/save/savefile.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
 
 #define PAUSE_MENU_WIDTH    120
 #define PAUSE_MENU_HEIGHT   160
@@ -104,15 +106,43 @@ void pauseMenuUpdate(void* data) {
 
     if (inputDir > 0 && pauseMenu->selectedItem > 0) {
         pauseMenu->selectedItem--;
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUIScroll],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
     } else if (inputDir < 0 && pauseMenu->selectedItem + 1 < PauseMenuItemCount) {
         pauseMenu->selectedItem++;
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUIScroll],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
     }
 
     if (pauseMenu->selectedItem == -1) {
         pauseMenu->selectedItem = 0;
     } else if (getButtonDown(0, START_BUTTON)) {
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUISelect],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
         pauseMenuExit(pauseMenu);
     } else if (getButtonDown(0, A_BUTTON)) {
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUISelect],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
         switch (pauseMenu->selectedItem) {
             case PauseMenuItemResume:
                 pauseMenuExit(pauseMenu);

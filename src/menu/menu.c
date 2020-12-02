@@ -2,6 +2,8 @@
 #include "menu.h"
 #include "src/input/controller.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
 
 #define ANIMATE_DURATION     0.5f
 #define MAX_LIST_DISPLAY      8
@@ -258,15 +260,37 @@ void menuHandleInput(struct Menu* menu, int controllerIndex) {
                 selectedItem->action(menu, selectedItem->data);
                 break;
         }
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUISelect],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
     } else if (getButtonDown(controllerIndex, B_BUTTON)) {
         menuGoBack(menu);
         depth = menu->itemStackDepth;
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUISelect],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
     }
 
     struct MenuItemGroup* current = menu->current[depth];
 
     if (menuDir > 0) {
         if (menu->selected[depth] > 0) {
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundUIScroll],
+                0.5f,
+                1.0f,
+                0.0f,
+                10
+            );
+
             menu->selected[depth]--;
 
             int relativePosition = menu->selected[depth] - menu->scrollOffset[depth];
@@ -283,6 +307,14 @@ void menuHandleInput(struct Menu* menu, int controllerIndex) {
         }
     } else if (menuDir < 0) {
         if (menu->selected[depth] + 1 < current->itemCount) {
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundUIScroll],
+                0.5f,
+                1.0f,
+                0.0f,
+                10
+            );
+
             menu->selected[depth]++;
 
             int relativePosition = menu->selected[depth] - menu->scrollOffset[depth];

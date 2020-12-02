@@ -439,6 +439,7 @@ void mainMenuInit() {
     dynamicActorAddToGroup(&gScene.dynamicActors, &gRocket.transform, &gRocket, rocketRender, MATERIAL_INDEX_NOT_BATCHED, 6.3f);
 
     timeAddListener(&gMainMenuUpdate, mainMenuUpdate, 0, TimeUpdateGroupWorld);
+    playerSoundsUseBank(SoundBankLevel);
 
     gMainMenuTotalGems = saveFileCalculateGemsCollected(_level_group_all_levels_count);
     gMainMenuUnlockedLevels = mainMenuBuildLevelSelect();
