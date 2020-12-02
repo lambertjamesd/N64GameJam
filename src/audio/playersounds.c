@@ -8,7 +8,11 @@ ALSndId gPlayerSoundIds[PlayerSoundsCount];
 
 extern char _player_soundsSegmentRomEnd[], _player_soundsSegmentRomStart[];
 extern char _player_sounds_tableSegmentRomStart[];
-static enum SoundsBanks gCurrentBank = -1;
+
+extern char _intro_cutsceneSegmentRomEnd[], _intro_cutsceneSegmentRomStart[];
+extern char _intro_cutscene_tableSegmentRomStart[];
+
+static enum SoundsBanks gCurrentBank = SoundBankNone;
 
 struct AudioBank {
     char* romStart;
@@ -19,6 +23,7 @@ struct AudioBank {
 
 struct AudioBank gAudioBanks[] = {
     {_player_soundsSegmentRomStart, _player_soundsSegmentRomEnd, _player_sounds_tableSegmentRomStart, PlayerSoundsCount},
+    {_intro_cutsceneSegmentRomStart, _intro_cutsceneSegmentRomEnd, _intro_cutscene_tableSegmentRomStart, IntroSoundCount},
 };
 
 

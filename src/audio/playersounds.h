@@ -5,7 +5,9 @@
 #include "soundarray.h"
 
 enum SoundsBanks {
-    SoundBankLevel,
+    SoundBankNone=-1,
+    SoundBankLevel=0,
+    SoundBankIntroCutscene,
 };
 
 enum PlayerSounds {
@@ -34,6 +36,17 @@ enum PlayerSounds {
     SoundUISelect,
     SoundGemCollect,
     PlayerSoundsCount,
+};
+
+enum IntroSounds {
+    IntroSndCockpit,
+    IntroSndProcessing,
+    IntroSndGoButtonPress,
+    IntroSndGemNotice,
+    IntroSndGemNotice2,
+    IntroSndGemHudGlow,
+    IntroSndSpaceshipFlyby,
+    IntroSoundCount,
 };
 
 extern struct SoundArray* gPlayerSoundArray;

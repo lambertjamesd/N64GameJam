@@ -72,12 +72,6 @@ beginseg
 endseg
 
 beginseg
-	name "seq"
-	flags RAW
-	include "sound/music/TeamUltraRareLogoJingleWIP1.mid"
-endseg
-
-beginseg
 	name "player_sounds"
 	flags RAW
 	include "build/audio/player.sounds"
@@ -87,6 +81,18 @@ beginseg
 	name "player_sounds_table"
 	flags RAW
 	include "build/audio/player.sounds.tbl"
+endseg
+
+beginseg
+	name "intro_cutscene"
+	flags RAW
+	include "build/audio/intro_cutscene.sounds"
+endseg
+
+beginseg
+	name "intro_cutscene_table"
+	flags RAW
+	include "build/audio/intro_cutscene.sounds.tbl"
 endseg
 
 beginwave
@@ -102,7 +108,8 @@ beginwave
 	include "logoJingle"
 	include "darkSuns"
 	include "cosmicDust"
-	include "seq"
 	include "player_sounds"
 	include "player_sounds_table"
+	include "intro_cutscene"
+	include "intro_cutscene_table"
 endwave

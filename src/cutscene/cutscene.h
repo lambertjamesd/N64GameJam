@@ -3,6 +3,7 @@
 #define _CUTSCENE_CUTSCENE_H
 
 #include "src/audio/audio.h"
+#include "src/audio/playersounds.h"
 
 struct CutsceneFrame {
     float duration;
@@ -13,6 +14,9 @@ struct CutsceneFrame {
 
 enum CutsceneEventType {
     CutsceneEventTypeSeq,
+    CutsceneEventTypeSeqStop,
+    CutsceneEventTypeSound,
+    CutsceneEventTypeSoundStop,
 };
 
 struct CutsceneEvent {
@@ -20,6 +24,13 @@ struct CutsceneEvent {
     enum CutsceneEventType eventType;
     union {
         struct SeqPlayEvent seq;
+        struct  {
+            int soundId;
+            float pitch;
+            float volume;
+            float pan;
+            int priority;
+        } sound;
     };
 };
 
@@ -28,6 +39,7 @@ struct Cutscene {
     int frameCount;
     struct CutsceneEvent* events;
     int eventCount;
+    enum SoundsBanks soundBank;
 };
 
 struct CutscenePlayer {

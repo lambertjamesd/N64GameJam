@@ -66,6 +66,7 @@ extern ALSndPlayer gSoundPlayer;
 extern ALHeap gAudioHeap;
 
 void audioPlaySequence(struct SeqPlayEvent* playEvent);
+void audioStopSequence();
 
 int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);

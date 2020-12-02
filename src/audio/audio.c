@@ -47,6 +47,12 @@ void soundPlayerInit() {
     alSndpNew(&gSoundPlayer, &sndConfig);
 }
 
+void audioStopSequence() {
+    if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
+        alSeqpStop(gSequencePlayer);
+    }
+}
+
 void audioPlaySequence(struct SeqPlayEvent* playEvent) {
     if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
         alSeqpStop(gSequencePlayer);
@@ -63,6 +69,11 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceLoopStart[gNextSeq], playEvent->loopStart);
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopEnd);
         alSeqpLoop(gSequencePlayer, &gSequenceLoopStart[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopCount);
+
+        if (playEvent->playbackStart) {
+            alSeqSetLoc(gSequence[gNextSeq], &gSequenceStart[gNextSeq]);
+        }
+
         alSeqpSetSeq(gSequencePlayer, gSequence[gNextSeq]);
         alSeqpPlay(gSequencePlayer);
 

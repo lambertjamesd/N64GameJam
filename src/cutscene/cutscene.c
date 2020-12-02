@@ -27,6 +27,21 @@ void cutSceneUpdate(void* data) {
                 case CutsceneEventTypeSeq:
                     audioPlaySequence(&currentEvent->seq);
                     break;
+                case CutsceneEventTypeSeqStop:
+                    audioStopSequence();
+                    break;
+                case CutsceneEventTypeSound:
+                    audioPlaySound(
+                        gPlayerSoundIds[currentEvent->sound.soundId],
+                        currentEvent->sound.pitch,
+                        currentEvent->sound.priority,
+                        currentEvent->sound.pan,
+                        currentEvent->sound.priority
+                    );
+                    break;
+                case CutsceneEventTypeSoundStop:
+                    audioStopSound(gPlayerSoundIds[currentEvent->sound.soundId]);
+                    break;
             }
 
             gCutscenePlayer.nextEvent++;
@@ -38,6 +53,7 @@ void cutSceneUpdate(void* data) {
     if (gCutscenePlayer.currentTime >= currFrame->duration) {
         if (gCutscenePlayer.currentFrame + 1 >= gCutscenePlayer.cutscene->frameCount) {
             gNextLevel = gCutscenePlayer.targetLevel;
+            audioStopSequence();
         } else {
             gCutscenePlayer.currentFrame++;
             gCutscenePlayer.currentTime = 0.0f;
@@ -180,6 +196,10 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
     gCurrentMaxY = 0;
 
     graphicsAddMenu(cutSceneRender, 0, 1);
+
+    if (cutscene->soundBank != SoundBankNone) {
+        playerSoundsUseBank(cutscene->soundBank);
+    }
 
     timeAddListener(&gCutsceneListener, cutSceneUpdate, 0, TimeUpdateGroupWorld);
 }

@@ -118,7 +118,13 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/UISelect.aifc \
 	sound/clips/GemPickup.aifc
 
-INTRO_CUTSCENE_SOUNDS = CockpitAmbience.aif
+INTRO_CUTSCENE_SOUNDS = sound/clips/CockpitAmbience.ins \
+	sound/clips/processing.aifc \
+	sound/clips/GOButtonPress.aifc \
+	sound/clips/GemsNotice1.aifc \
+	sound/clips/GemsNotice2.aifc \
+	sound/clips/HUDglow.aifc \
+	sound/clips/SpaceshipFlyby.aifc
 
 sound/clips/%.aif: sound/clips/%.wav
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
@@ -133,13 +139,13 @@ build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
 
-build/audio/intro_cutscene.sounds: $(MENU_SOUNDS)
+build/audio/intro_cutscene.sounds: $(INTRO_CUTSCENE_SOUNDS)
 	@mkdir -p $(@D)
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
 
 build/ins/Bank.ins: sound/instruments/sfz/instruments.sfz sound/music/usedbanks.txt
 	@mkdir -p $(@D)
-	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@ --bank_sequence_mapping sound/music/usedbanks.txt --sample_rate 22050
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@ --bank_sequence_mapping sound/music/usedbanks.txt --sample-rate 22050
 
 build/ins/Bank.ctl build/ins/Bank.tbl: build/ins/Bank.ins
 	cd build/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
@@ -245,7 +251,7 @@ DATAOBJECTS =	$(DATAFILES:.c=.o)
 
 DEPS = $(CODEFILES:.c=.d) $(DATAFILES:.c=.d)
 
-OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS) build/audio/player.sounds
+OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS) build/audio/player.sounds build/audio/intro_cutscene.sounds 
 
 LCINCS =	-I. -I$(ROOT)/usr/include/PR -I $(ROOT)/usr/include
 LCOPTS =	-mno-shared -G 0
