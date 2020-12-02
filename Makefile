@@ -182,6 +182,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/cutscene/cutscene.c \
 	src/cutscene/goodendingcutscene.c \
 	src/cutscene/introcutscene.c \
+	src/cutscene/jpegdecoder.c \
 	src/cutscene/slides.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\

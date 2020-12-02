@@ -22,6 +22,7 @@
 #include "src/save/savefile.h"
 #include "src/menu/spinninglogo.h"
 #include "src/menu/mainmenu.h"
+#include "src/cutscene/jpegdecoder.h"
 
 #include "boot.h"
 #include "defs.h"
@@ -204,9 +205,10 @@ static void initGame(void)
     osScAddClient(&gScheduler, &gfxClient, &gGfxFrameMsgQ);
 
 #if DEBUG
-    OSThread* threadPtr[1];
+    OSThread* threadPtr[2];
     threadPtr[0] = &gGameThread;
-    enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 1);
+    threadPtr[1] = &gJpegThread;
+    enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 2);
 #else
     enum GDBError err = gdbSerialInit(handler, &gDMAMessageQ);
 #endif
@@ -224,6 +226,7 @@ static void initGame(void)
     graphicsInit(); 
     audioInit();
     playerSoundsInit();
+    jpegDecoderStartThread();
 
     fontInit(&gEndlessBossBattle, gEndlessBossBattleCharacters, gEndlessBossBattleUse, 11);
     fontInit(&gButtonFont, gButtonFontCharacters, gButtonFontUse, 12);

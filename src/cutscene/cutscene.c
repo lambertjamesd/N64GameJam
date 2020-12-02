@@ -5,60 +5,80 @@
 #include "src/system/memory.h"
 #include "src/level/level.h"
 #include "src/audio/audio.h"
-#include "src/tjpeg/tjpgd.h"
+#include "src/cutscene/jpegdecoder.h"
 #include "slides.h"
 #include <memory.h>
 
 #define CUTSCENE_HEIGHT     180
 #define MAX_CUTSCENE_HEIGHT 480
 
-#define JPEG_MEMORY_REQUIREMENT 3100
 #define MAX_JPEG_SIZE       (30*1024)
+
+#define MAX_LOADED_SLIDES   2
 
 struct CutscenePlayer gCutscenePlayer;
 struct TimeUpdateListener gCutsceneListener;
-char* gCutsceneBuffer;
-char* gJpegDecodeMemory;
-JDEC* gJepDecoder;
+char* gCutsceneBuffer[MAX_LOADED_SLIDES];
+int gCurrentLoadedImage[MAX_LOADED_SLIDES];
 char* gEncodedAddress;
-char* gCurrentReadAddress;
 
-int gCurrentMaxY = 0;
+int gLoadedSlideIndex;
 
-unsigned int readJpeg(JDEC* jd,uint8_t* buffer,unsigned int amount) {
-    if (buffer) {
-        memcpy(buffer, gCurrentReadAddress, amount);
-    }
-    gCurrentReadAddress += amount;
-    return amount;
-}
-
-int writeJpeg(JDEC* jd, void* memory, JRECT* rect) {
-    short* input = (short*)memory;
-    short* bufferAsShort = (short*)gCutsceneBuffer;
-    int x, y;
-    for (x = rect->left; x <= rect->right; ++x) {
-        for (y = rect->top; y <= rect->bottom; ++y) {
-            bufferAsShort[x + y * jd->width] = input[(x - rect->left) + ((y - rect->top) << 3)];
+int cutsceneGetImageSlot(int slideId) {
+    int i;
+    for (i = 0; i < MAX_LOADED_SLIDES; ++i) {
+        if (gCurrentLoadedImage[i] == slideId) {
+            return i;
         }
     }
+
+    return -1;
 }
 
-void loadCurrentImage(struct CutsceneFrame* frame) {
-    romCopy(
-        gAllSlideLocations[frame->slideIndex],
-        gEncodedAddress,
-        gAllSlideEndLocations[frame->slideIndex] - gAllSlideLocations[frame->slideIndex]
-    );
-
-    gCurrentReadAddress = gEncodedAddress;
-    if (jd_prepare(gJepDecoder, readJpeg, gJpegDecodeMemory, JPEG_MEMORY_REQUIREMENT, 0) == JDR_OK) {
-        jd_decomp(gJepDecoder, writeJpeg, 0);
+int requestImageSlot(int nextSlide, int currentSlide) {
+    int result = -1;
+    int i;
+    for (i = 0; i < MAX_LOADED_SLIDES; ++i) {
+        if (gCurrentLoadedImage[i] == nextSlide) {
+            return i;
+        } else if (gCurrentLoadedImage[i] == -1 || gCurrentLoadedImage[i] != currentSlide) {
+            result = i;
+            break;
+        }
     }
 
+    if (result != -1) {
+        gCurrentLoadedImage[result] = nextSlide;
+        romCopy(
+            gAllSlideLocations[nextSlide], 
+            gEncodedAddress, 
+            gAllSlideEndLocations[nextSlide] - gAllSlideLocations[nextSlide]
+        );
+
+        jpegDecode(gEncodedAddress, gCutsceneBuffer[result]);
+    }
+
+    return -1;
+}
+
+struct CutsceneFrame* cutSceneGetFrame(int offset) {
+    if (gCutscenePlayer.currentFrame+offset < gCutscenePlayer.cutscene->frameCount) {
+        return &gCutscenePlayer.cutscene->frames[gCutscenePlayer.currentFrame+offset];
+    }
+
+    return 0;
 }
 
 void cutSceneUpdate(void* data) {
+    struct JpegDecodeRequest* jpeg;
+    if (osRecvMesg(&gCompletedImages, (OSMesg*)&jpeg, OS_MESG_NOBLOCK) == 0) {
+        ++gLoadedSlideIndex;
+    }
+
+    if (gCutscenePlayer.currentFrame > gLoadedSlideIndex) {
+        return;
+    }
+
     gCutscenePlayer.currentTime += gTimeDelta;
     gCutscenePlayer.totalTime += gTimeDelta;
 
@@ -90,7 +110,12 @@ void cutSceneUpdate(void* data) {
         }
     }
 
-    struct CutsceneFrame* currFrame = &gCutscenePlayer.cutscene->frames[gCutscenePlayer.currentFrame];
+    struct CutsceneFrame* currFrame = cutSceneGetFrame(0);
+    struct CutsceneFrame* nextFrame = cutSceneGetFrame(1);
+
+    if (nextFrame && cutsceneGetImageSlot(nextFrame->slideIndex) == -1) {
+        requestImageSlot(nextFrame->slideIndex, currFrame->slideIndex);
+    }
 
     if (gCutscenePlayer.currentTime >= currFrame->duration) {
         if (gCutscenePlayer.currentFrame + 1 >= gCutscenePlayer.cutscene->frameCount) {
@@ -99,8 +124,11 @@ void cutSceneUpdate(void* data) {
         } else {
             gCutscenePlayer.currentFrame++;
             gCutscenePlayer.currentTime = 0.0f;
-            gCurrentMaxY = 0;
-            loadCurrentImage(&gCutscenePlayer.cutscene->frames[gCutscenePlayer.currentFrame]);
+
+            nextFrame = cutSceneGetFrame(1);
+            if (nextFrame && cutsceneGetImageSlot(nextFrame->slideIndex) != -1) {
+                ++gLoadedSlideIndex;
+            }
         }
     }
 }
@@ -168,7 +196,7 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
 }
 
 void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
-    if (gCutscenePlayer.currentFrame >= gCutscenePlayer.cutscene->frameCount) {
+    if (gCutscenePlayer.currentFrame >= gCutscenePlayer.cutscene->frameCount || gCutscenePlayer.currentFrame > gLoadedSlideIndex) {
         return;
     }
 
@@ -187,13 +215,16 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
     
     int barHeight = (SCREEN_HT - CUTSCENE_HEIGHT) >> 1;
 
-    graphicsCopyImage(state, gCutsceneBuffer, 
-        SCREEN_WD, CUTSCENE_HEIGHT, 
-        0, yOffset, 
-        0, barHeight, 
-        SCREEN_WD, CUTSCENE_HEIGHT
-    );
+    int index = cutsceneGetImageSlot(currFrame->slideIndex);
 
+    if (index != -1) {
+        graphicsCopyImage(state, gCutsceneBuffer[index], 
+            SCREEN_WD, CUTSCENE_HEIGHT, 
+            0, yOffset, 
+            0, barHeight, 
+            SCREEN_WD, CUTSCENE_HEIGHT
+        );
+    }
 }
 
 void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
@@ -215,7 +246,11 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
         0
     );
 
-    gCutsceneBuffer = heapMalloc(SCREEN_WD*MAX_CUTSCENE_HEIGHT*2,16);
+    gCurrentLoadedImage[0] = -1;
+    gCurrentLoadedImage[1] = -1;
+
+    gCutsceneBuffer[0] = heapMalloc(SCREEN_WD*MAX_CUTSCENE_HEIGHT*2,16);
+    gCutsceneBuffer[1] = heapMalloc(SCREEN_WD*MAX_CUTSCENE_HEIGHT*2,16);
 
     renderSceneReset(&gScene);
     gScene.activeViewportCount = 0;
@@ -226,13 +261,8 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
     gCutscenePlayer.totalTime = 0.0f;
     gCutscenePlayer.targetLevel = nextLevel;
     gCutscenePlayer.nextEvent = 0;
-    gCurrentMaxY = 0;
 
     gEncodedAddress = heapMalloc(MAX_JPEG_SIZE, 1);
-    gCurrentReadAddress = gEncodedAddress;
-
-    gJepDecoder = heapMalloc(sizeof(JDEC), ALIGNMENT_OF(JDEC));
-    gJpegDecodeMemory = heapMalloc(JPEG_MEMORY_REQUIREMENT, 1);
 
     graphicsAddMenu(cutSceneRender, 0, 1);
 
@@ -240,8 +270,9 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
         playerSoundsUseBank(cutscene->soundBank);
     }
 
+    gLoadedSlideIndex = -1;
     if (cutscene->frameCount) {
-        loadCurrentImage(&cutscene->frames[0]);
+        requestImageSlot(cutscene->frames[0].slideIndex, -1);
     }
 
     timeAddListener(&gCutsceneListener, cutSceneUpdate, 0, TimeUpdateGroupWorld);
