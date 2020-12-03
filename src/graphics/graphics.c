@@ -202,6 +202,8 @@ void createGfxTask(GFXInfo *i) {
             dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0, 0);
         }
 
+	    gDPSetRenderMode(state.dl++, G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2);
+
         dynamicActorGroupRender(&gScene.transparentActors, &state, gScene.transparentMaterials, gScene.transparentMaterialCleanup, MAX_MATERIAL_GROUPS);
 
     }

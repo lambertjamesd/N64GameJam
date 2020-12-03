@@ -151,7 +151,7 @@ struct MenuItem gNewGameItems[] = {
         "New Game",
         MenuItemAction,
         .action = mainMenuSelectLevel,
-        0,
+        (void*)SceneIndexIntroCutscene,
     },
 };
 
@@ -317,10 +317,6 @@ void mainMenuUpdate(void* data) {
             } else {
                 gNextLevel = gMainMenuSelectedLevel;
             }
-
-            if (gNextLevel == 0) {
-                gNextLevel = SceneIndexIntroCutscene;
-            }
         }
     }
 
@@ -420,6 +416,7 @@ void mainMenuInit() {
     gScene.viewports[0].miny = 0;
     gScene.viewports[0].maxy = SCREEN_HT;
     gScene.fov[0] = 54.188044907f;
+    gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
 
     gMainMenuTime = 0.0f;
 
@@ -433,6 +430,8 @@ void mainMenuInit() {
     gRocket.color.g = 255;
     gRocket.color.b = 255;
     gRocket.color.a = 255;
+
+    rocektTrailStart(&gRocket.trail, &gRocket.transform, &gRocketTrailOrigin);
     
     gMainMenuSelectedLevel = -2;
 

@@ -13,6 +13,10 @@
 
 struct Rocket gRocket;
 
+struct Vector3 gRocketTrailOrigin = {
+    0.0f, 1.0f, 0.0f,
+};
+
 void rocketRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct Rocket* rocket = (struct Rocket*)data->data;
 
@@ -56,6 +60,7 @@ void rocketUpdate(void* data) {
         if (rocket->animationTiming >= 0.0f) {
             rocket->rocketFlags = ROCKET_FLAGS_ANIMATION_DONE;
             timeRemoveListener(&rocket->updateListener, TimeUpdateGroupWorld);
+            rocektTrailStop(&rocket->trail);
         }
     } else {
         rocket->animationTiming -= gTimeDelta;
@@ -63,6 +68,7 @@ void rocketUpdate(void* data) {
         if (rocket->animationTiming <= 0.0f) {
             rocket->transform.position = rocket->landingSpot;
             timeRemoveListener(&rocket->updateListener, TimeUpdateGroupWorld);
+            rocektTrailStop(&rocket->trail);
         }
     }
 }
@@ -72,6 +78,8 @@ void rocketLandAt(struct Rocket* rocket, struct Vector3* location) {
     rocket->animationTiming = LANDING_TIME;
     timeAddListener(&rocket->updateListener, rocketUpdate, rocket, TimeUpdateGroupWorld);
     vector3AddScaled(location, &gUp, LANDING_TIME*LANDING_TIME*LANDING_ACCEL, &rocket->transform.position);
+
+    rocektTrailStart(&rocket->trail, &rocket->transform, &gRocketTrailOrigin);
 }
 
 void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
@@ -102,4 +110,5 @@ void rocketLaunch(struct Rocket* rocket) {
     rocket->rocketFlags |= ROCKET_FLAGS_LAUNCHING;
     rocket->animationTiming = -LAUNCH_DELAY;
     timeAddListener(&rocket->updateListener, rocketUpdate, rocket, TimeUpdateGroupWorld);
+    rocektTrailStart(&rocket->trail, &rocket->transform, &gRocketTrailOrigin);
 }

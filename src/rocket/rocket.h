@@ -7,9 +7,12 @@
 #include "src/graphics/color.h"
 #include "src/time/time.h"
 #include "src/collision/sparsecollisiongrid.h"
+#include "src/effects/rockettrail.h"
 
 #define ROCKET_FLAGS_LAUNCHING      (1 << 0)
 #define ROCKET_FLAGS_ANIMATION_DONE (1 << 1)
+
+extern struct Vector3 gRocketTrailOrigin;
 
 struct Rocket {
     struct BasicTransform transform;
@@ -19,6 +22,7 @@ struct Rocket {
     struct Vector3 landingSpot;
     float animationTiming;
     int rocketFlags;
+    struct RocketTrail trail;
 };
 
 extern struct Rocket gRocket;
