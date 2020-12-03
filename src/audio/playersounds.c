@@ -27,6 +27,17 @@ struct AudioBank gAudioBanks[] = {
 };
 
 
+void playerSoundsStopAll() {
+    if (gCurrentBank != SoundBankNone) {
+        struct AudioBank* bank = &gAudioBanks[gCurrentBank];
+        int i;
+        for (i = 0; i < PlayerSoundsCount && i < gPlayerSoundArray->soundCount && i < bank->soundCount; ++i) {
+            alSndpSetSound(&gSoundPlayer, gPlayerSoundIds[i]);
+            alSndpStop(&gSoundPlayer);
+        }
+    }
+}
+
 void playerSoundsUseBank(enum SoundsBanks bankIndex) {
     if (bankIndex == gCurrentBank) {
         return;

@@ -110,5 +110,4 @@ void rocketLaunch(struct Rocket* rocket) {
     rocket->rocketFlags |= ROCKET_FLAGS_LAUNCHING;
     rocket->animationTiming = -LAUNCH_DELAY;
     timeAddListener(&rocket->updateListener, rocketUpdate, rocket, TimeUpdateGroupWorld);
-    rocektTrailStart(&rocket->trail, &rocket->transform, &gRocketTrailOrigin);
 }

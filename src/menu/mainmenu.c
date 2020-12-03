@@ -26,7 +26,7 @@ float gMainMenuTime;
 #define MAIN_MENU_FADE_START_TIME       5.0f
 #define MAIN_MENU_FADE_END_TIME         6.0f
 
-#define BACKGROUND_ALPHA                128
+#define BACKGROUND_ALPHA                64
 #define MAX_LEVELS_PER_PAGE             6
 
 struct Menu gMainMenu;
@@ -303,10 +303,12 @@ void mainMenuUpdate(void* data) {
     if (gMainMenuTime < MAIN_MENU_FADE_END_TIME && gMainMenuTime > MAIN_MENU_FADE_START_TIME) {
         float finalAlpha = mathfLerp(255.0f, BACKGROUND_ALPHA, (gMainMenuTime - MAIN_MENU_FADE_START_TIME) / (MAIN_MENU_FADE_END_TIME - MAIN_MENU_FADE_START_TIME));
         gRocket.color.r = gRocket.color.g = gRocket.color.b = (u8)finalAlpha;
+        gRocket.trail.alpha = (u8)finalAlpha;
     } else if (gMainMenuTime >= MAIN_MENU_FADE_END_TIME) {
         gRocket.color.r = BACKGROUND_ALPHA;
         gRocket.color.g = BACKGROUND_ALPHA;
         gRocket.color.b = BACKGROUND_ALPHA;
+        gRocket.trail.alpha = BACKGROUND_ALPHA;
 
         menuUpdate(&gMainMenu);
         menuHandleInput(&gMainMenu, 0);

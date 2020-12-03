@@ -124,6 +124,7 @@ static void gameEntryPoint(void *argv)
             case (OS_SC_RETRACE_MSG):   
                 if (gNextLevel != gCurrentLevel) {
                     controllersReadData();
+                    playerSoundsStopAll();
 
                     if (pendingGFX == 0) {
                         gCurrentLevel = gNextLevel;

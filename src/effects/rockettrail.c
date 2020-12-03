@@ -30,7 +30,7 @@ void rocektTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
         Mtx* transform = graphicsStateNextMtx(state);
         transformToMatrixL(currentTransform, 1.0f / 256.0f, transform);
 
-        u8 alpha = 255 - (u8)(255.0f * currentTransform->scale / MAX_SCALE);
+        u8 alpha = trail->alpha - (u8)((float)trail->alpha * currentTransform->scale / MAX_SCALE);
 
         gDPSetEnvColor(state->dl++, 255, 255, 255, alpha);
         gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(transform), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
@@ -95,6 +95,7 @@ void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSour
     trail->emitSource = emitSource;
     trail->emitOffset = *emitOffset;
     trail->spawnTimer = 0.0f; 
+    trail->alpha = 255;
 
     timeAddListener(&trail->updateListener, rocketTrailUpdate, trail, TimeUpdateGroupWorld);
     trail->renderId = dynamicActorAddToGroup(&gScene.transparentActors, emitSource, trail, rocektTrailRender, TransparentMaterialTypeShockwave, 20.0f);

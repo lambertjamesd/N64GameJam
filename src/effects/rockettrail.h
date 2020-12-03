@@ -14,6 +14,7 @@ struct RocketTrail {
     struct TimeUpdateListener updateListener;
     float spawnTimer;
     int renderId;
+    char alpha;
 };
 
 void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct Vector3* emitOffset);
