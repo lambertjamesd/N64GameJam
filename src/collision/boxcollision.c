@@ -6,12 +6,15 @@
 #include "src/math/mathf.h"
 #include <math.h>
 
+#define COLLIDE_EXTRA_RADIUS        0.01f
+
 int collisionBoxCollideSphere(struct Box* box, struct Vector3* center, float radius, struct CollisionResult* result) {
     struct ContactPoint* contact = &result->contacts[result->contactCount];
+    float wideRadius = radius + COLLIDE_EXTRA_RADIUS;
 
-    if (box->min.x >= center->x + radius || box->max.x <= center->x - radius ||
-        box->min.y >= center->y + radius || box->max.y <= center->y - radius ||
-        box->min.z >= center->z + radius || box->max.z <= center->z - radius
+    if (box->min.x >= center->x + wideRadius || box->max.x <= center->x - wideRadius ||
+        box->min.y >= center->y + wideRadius || box->max.y <= center->y - wideRadius ||
+        box->min.z >= center->z + wideRadius || box->max.z <= center->z - wideRadius
     ) {
         return 0;
     }
@@ -87,7 +90,7 @@ int collisionBoxCollideSphere(struct Box* box, struct Vector3* center, float rad
 
         return 1;
     } else {
-        if (collisionPointCollideSphere(&contact->point, center, radius, contact)) {
+        if (collisionPointCollideSphere(&contact->point, center, wideRadius, contact)) {
             vector3AddScaled(&contact->point, &contact->normal, radius, center);
             ++result->contactCount;
             return 1;

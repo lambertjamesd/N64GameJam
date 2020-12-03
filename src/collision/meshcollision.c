@@ -2,6 +2,8 @@
 #include "meshcollision.h"
 #include "src/math/ray.h"
 
+#define COLLIDE_EXTRA_RADIUS        0.01f
+
 void collisionFaceBaryCoord(struct CollisionFace* face, struct Vector3* in, struct Vector3* baryCoord) {
     struct Vector3 relative;
     vector3Sub(in, &face->origin, &relative);
@@ -98,9 +100,12 @@ int collisionPointCollideSphere(struct Vector3* point, struct Vector3* center, f
 int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* center, float radius, struct CollisionResult* result) {
     int didCollide = 0;
     int i;
+
+    float wideRadius = radius + COLLIDE_EXTRA_RADIUS;
+
     for (i = 0; i < mesh->faceCount; ++i) {
         struct ContactPoint* contact = &result->contacts[result->contactCount];
-        if (collisionFaceCollideSphere(&mesh->faces[i], center, radius, contact)) {
+        if (collisionFaceCollideSphere(&mesh->faces[i], center, wideRadius, contact)) {
             vector3AddScaled(&contact->point, &contact->normal, radius, center);
             ++result->contactCount;
             didCollide = 1;
@@ -117,7 +122,7 @@ int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* cente
 
     for (i = 0; i < mesh->edgeCount; ++i) {
         struct ContactPoint* contact = &result->contacts[result->contactCount];
-        if (collisionEdgeCollideSphere(&mesh->edges[i], center, radius, contact)) {
+        if (collisionEdgeCollideSphere(&mesh->edges[i], center, wideRadius, contact)) {
             vector3AddScaled(&contact->point, &contact->normal, radius, center);
             ++result->contactCount;
             didCollide = 1;
@@ -134,7 +139,7 @@ int collisionMeshCollideSphere(struct CollisionMesh* mesh, struct Vector3* cente
 
     for (i = 0; i < mesh->pointCount; ++i) {
         struct ContactPoint* contact = &result->contacts[result->contactCount];
-        if (collisionPointCollideSphere(&mesh->points[i].origin, center, radius, contact)) {
+        if (collisionPointCollideSphere(&mesh->points[i].origin, center, wideRadius, contact)) {
             vector3AddScaled(&contact->point, &contact->normal, radius, center);
             ++result->contactCount;
             didCollide = 1;
