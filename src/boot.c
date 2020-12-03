@@ -134,9 +134,9 @@ static void gameEntryPoint(void *argv)
                         } else if (gCurrentLevel == SceneIndexIntroCutscene) {
                             cutScenePlay(&gIntroCutscene, 0);
                         } else if (gCurrentLevel == SceneIndexBadEndingCutscene) {
-                            cutScenePlay(&gBadEndingCutscene, SceneIndexMainMenu);
+                            cutScenePlay(&gBadEndingCutscene, SceneIndexSpinningLogo);
                         } else if (gCurrentLevel == SceneIndexGoodEndingCutscene) {
-                            cutScenePlay(&gGoodEndingCutscene, SceneIndexMainMenu);
+                            cutScenePlay(&gGoodEndingCutscene, SceneIndexSpinningLogo);
                         } else {
                             levelLoad(&_level_group_all_levels[gNextLevel], gCurrentPlayMode);
                         }
@@ -195,7 +195,6 @@ static void layoutMemory(void)
 
 static void initGame(void)
 { 
-
     osCreateMesgQueue(&gDMAMessageQ, &gDMAMessageBuf, 1);
     osCreateMesgQueue(&gGfxFrameMsgQ, gGfxFrameMsgBuf, MAX_MESGS);
 
@@ -234,6 +233,6 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    gNextLevel = SceneIndexIntroCutscene;
+    // gNextLevel = SceneIndexIntroCutscene;
 }
 

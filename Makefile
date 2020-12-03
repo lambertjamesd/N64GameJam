@@ -58,7 +58,9 @@ build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/le
 
 IMAGE_SLIDES = _00_rocket \
 	_01_insidecockpit \
+	_01_insidecockpit_flash \
 	_02_fuelgauge \
+	_02_fuelgauge_flash \
 	_03_mapcloseup \
 	_04_seebutton \
 	_05_pushbutton \
@@ -66,20 +68,20 @@ IMAGE_SLIDES = _00_rocket \
 	_08_rocket_turn \
 	_09_see_planet \
 	_00_bad_ending \
+	_00_bad_ending_closeup \
 	_01_see_robot \
 	_02_sad_cadet \
 	_03_leave_robot \
 	_04_leave_planet \
 	_00_good_ending \
-	_03_leave_with_robot
+	_00_good_ending_closeup \
+	_02_leave_with_robot \
+	_10_credits_text \
+	_11_homebrew
+
 
 
 SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).jpg)
-SLIDE_FILES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide)_0x0.551)
-
-imageslides/%_0x0.551: imageslides/%.png
-	@mkdir -p $(@D)
-	tools/png2n64.py $<
 
 src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include: slidebuilder/slidebuilder $(SLIDE_IMAGES)
 	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include $(IMAGE_SLIDES)
@@ -124,7 +126,9 @@ INTRO_CUTSCENE_SOUNDS = sound/clips/CockpitAmbience.ins \
 	sound/clips/GemsNotice1.aifc \
 	sound/clips/GemsNotice2.aifc \
 	sound/clips/HUDglow.aifc \
-	sound/clips/SpaceshipFlyby.aifc
+	sound/clips/SpaceshipFlyby.aifc \
+	sound/clips/LogoLaughing.aifc \
+	sound/clips/Alarm1.aifc
 
 sound/clips/%.aif: sound/clips/%.wav
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
@@ -186,6 +190,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/cutscene/slides.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
+	src/effects/rockettrail.c \
 	src/effects/rockfragments.c	\
 	src/effects/shadow.c	\
 	src/effects/teleport.c	\
@@ -274,7 +279,7 @@ spec: build/spec/level_segs \
 	build/spec/level_include \
 	build/spec/slide_segs \
 	build/spec/slide_include \
-	$(SLIDE_FILES) \
+	$(SLIDE_IMAGES) \
 	build/ins/Bank.ctl \
 	build/ins/Bank.tbl
 

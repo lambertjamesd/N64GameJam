@@ -9,10 +9,12 @@
 #include "src/font/font.h"
 #include "src/audio/audio.h"
 #include "src/audio/allseq.h"
+#include "src/audio/playersounds.h"
 
 #define SPINNING_LOGO_TIME      8.0f
 #define FADE_TIME               2.0f
 #define JINGLE_PLAY_TIME        1.0f
+#define LAUGH_PLAY_TIME         4.0f
 #define DELAY_TIME              1.0f
 #define RADS_PER_SEC            (M_PI*1/3)
 #define RAD_OFFSET              (M_PI*0.5f)
@@ -97,6 +99,10 @@ void spinningLogoUpdate(void* data) {
             audioPlaySequence(&playEvent);
         }
 
+        if (nextTime >= LAUGH_PLAY_TIME && gSpinningLogoTimer < LAUGH_PLAY_TIME) {
+            audioPlaySound(gPlayerSoundIds[IntroSndLogoLaughing], 0.5f, 1.0f, 0.0f, 10);
+        }
+
         gSpinningLogoTimer = nextTime;
     }
 }
@@ -149,6 +155,8 @@ void spinningLogoInit() {
     gScene.fov[0] = 70.0f;
 
     gSpinningLogoTimer = 0.0f;
+
+    playerSoundsUseBank(SoundBankIntroCutscene);
 
     fontInit(&gFreshEater, gFreshEaterCharacters, gFreshEaterUse, 30);
 

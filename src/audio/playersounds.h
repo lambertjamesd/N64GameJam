@@ -46,6 +46,8 @@ enum IntroSounds {
     IntroSndGemNotice2,
     IntroSndGemHudGlow,
     IntroSndSpaceshipFlyby,
+    IntroSndLogoLaughing,
+    IntroSndAlarm1,
     IntroSoundCount,
 };
 
