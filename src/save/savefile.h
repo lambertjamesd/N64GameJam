@@ -9,6 +9,8 @@
 #define SAVEFILE_LEARNED_FOUND_ROBOT    (1 << 2)
 #define SAVEFILE_LEARNED_ATTACK         (1 << 3)
 #define SAVEFILE_LEARNED_SWITCH         (1 << 4)
+#define SAVEFILE_LEARNED_CAM_MOVE       (1 << 5)
+#define SAVEFILE_LEARNED_CAM_FREE       (1 << 6)
 
 #define SAVEFILE_HEADER     0xBEEF
 

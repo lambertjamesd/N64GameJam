@@ -33,13 +33,17 @@ enum ButtonFontMapping gTutorialButton[TutorialMenuTypeCount] = {
     ButtonFontMappingA,
     ButtonFontMappingB,
     ButtonFontMappingZ,
+    ButtonFontMappingC_U,
+    ButtonFontMappingR,
 };
 
-char* gTutorialText[] = {
+char* gTutorialText[TutorialMenuTypeCount] = {
     "Move",
     "Jump",
     "Attack",
     "Switch",
+    "Camera",
+    "Map",
 };
 
 void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
@@ -140,6 +144,16 @@ int tutorialDidPlayerMove() {
             gControllerState[0].stick_y != 0);
 }
 
+int tutorialDidPlayerCamera() {
+    return gCadet.controllerIndex != -1 && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
+            getButtonDown(gCadet.controllerIndex, R_CBUTTONS | L_CBUTTONS | U_CBUTTONS | D_CBUTTONS);
+}
+
+int tutorialDidPlayerCamFree() {
+    return gCadet.controllerIndex != -1 && ((gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
+            getButtonDown(gCadet.controllerIndex, R_TRIG) || (gInputMask[gCadet.controllerIndex] & InputMaskFreeCamera));
+}
+
 int tutorialDidPlayerJump() {
     return getButtonDown(gCadet.controllerIndex, A_BUTTON) && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer);
 }
@@ -175,6 +189,30 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_JUMP);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuJump) {
+            gTutorialMenu.state = 2;
+        }
+    }
+
+    if (tutorialDidPlayerCamera()) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_MOVE)) {
+            gTutorialMenu.delay = 0.0f;
+        }
+
+        saveFileMarkTutorial(SAVEFILE_LEARNED_CAM_MOVE);
+
+        if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuCamMove) {
+            gTutorialMenu.state = 2;
+        }
+    }
+
+    if (tutorialDidPlayerCamFree()) {
+        if (!saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_FREE)) {
+            gTutorialMenu.delay = 0.0f;
+        }
+
+        saveFileMarkTutorial(SAVEFILE_LEARNED_CAM_FREE);
+
+        if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuCamFree) {
             gTutorialMenu.state = 2;
         }
     }
@@ -215,6 +253,18 @@ void tutorialMenuCheck() {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuJump);
+            }
+        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_MOVE)) {
+            if (gTutorialMenu.delay < TUTORIAL_DELAY) {
+                gTutorialMenu.delay += gTimeDelta;
+            } else {
+                tutorialMenuInit(&gTutorialMenu, TutorialMenuCamMove);
+            }
+        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_FREE)) {
+            if (gTutorialMenu.delay < TUTORIAL_DELAY) {
+                gTutorialMenu.delay += gTimeDelta;
+            } else {
+                tutorialMenuInit(&gTutorialMenu, TutorialMenuCamFree);
             }
         } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_FOUND_ROBOT)) {
             if ((gLevelFlags & LEVEL_INTRO_ROBOT) && 

@@ -9,6 +9,8 @@ enum TutorialMenuType {
     TutorialMenuJump,
     TutorialMenuRobot,
     TutorialMenuSwitch,
+    TutorialMenuCamMove,
+    TutorialMenuCamFree,
     TutorialMenuTypeCount,
 };
 

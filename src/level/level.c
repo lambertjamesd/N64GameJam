@@ -111,6 +111,11 @@ void levelFocusCutscene(struct Vector3* target, float time, int viewportIndex) {
 }
 
 void levelUpdate(void* data) {
+    if ((gInputMask[0] & InputMaskPlayer) && 
+        !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
+        tutorialMenuCheck();
+    }
+
     if (gCurrentPlayMode == LevelPlayModeCoOp) {
         if (gInputMask[0] & InputMaskPlayer) {
             gScene.camera[0].targetPosition = gCadet.transform.position;
@@ -120,9 +125,10 @@ void levelUpdate(void* data) {
 
             if (getButtonDown(0, R_TRIG)) {
                 gInputMask[0] = INPUT_MASK_FREE_CAM;
+                gScene.camera[0].followDistanceStep = 2;
             }
         } else if (gInputMask[0] & InputMaskFreeCamera) {
-            if (getButtonDown(0, R_TRIG)) {
+            if (getButtonDown(0, R_TRIG | B_BUTTON)) {
                 gInputMask[0] = INPUT_MASK_PLAY;
             }
         }
@@ -135,17 +141,19 @@ void levelUpdate(void* data) {
             }
 
             if (getButtonDown(1, R_TRIG)) {
-                gInputMask[0] = INPUT_MASK_FREE_CAM;
+                gInputMask[1] = INPUT_MASK_FREE_CAM;
+                gScene.camera[1].followDistanceStep = 2;
             }
         } else if (gInputMask[1] & InputMaskFreeCamera) {
-            if (getButtonDown(1, R_TRIG)) {
-                gInputMask[0] = INPUT_MASK_PLAY;
+            if (getButtonDown(1, R_TRIG | B_BUTTON)) {
+                gInputMask[1] = INPUT_MASK_PLAY;
             }
         }
     } else {
         if (gInputMask[0] & InputMaskPlayer) {
             if (getButtonDown(0, R_TRIG)) {
                 gInputMask[0] = INPUT_MASK_FREE_CAM;
+                gScene.camera[0].followDistanceStep = 2;
             }
 
             if (gCadet.controllerIndex != -1) {
@@ -170,15 +178,10 @@ void levelUpdate(void* data) {
                 }
             }
         } else if (gInputMask[0] & InputMaskFreeCamera) {
-            if (getButtonDown(0, R_TRIG)) {
+            if (getButtonDown(0, R_TRIG | B_BUTTON)) {
                 gInputMask[0] = INPUT_MASK_PLAY;
             }
         }
-    }
-
-    if ((gInputMask[0] & InputMaskPlayer) && 
-        !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
-        tutorialMenuCheck();
     }
 
     if (gLevelFlags & LEVEL_INTRO_CUTSCENE) {
