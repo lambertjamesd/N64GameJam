@@ -10,6 +10,7 @@ OSContPad gControllerState[MAXCONTROLLERS];
 u16 gControllerLastButton[MAXCONTROLLERS];
 
 #define OUTER_DEAD_ZONE     10
+#define INNER_DEAD_ZONE     6
 
 int gInputRange[MAXCONTROLLERS] = {
     64,
@@ -94,7 +95,35 @@ extern struct Vector2 getJoystick(int controller) {
         gInputRange[controller] = -rawY;
     }
 
-    float scale = 1.0f / (float)(gInputRange[controller] - OUTER_DEAD_ZONE);
+    if (rawX > 0) {
+        if (rawX < INNER_DEAD_ZONE) {
+            rawX = 0;
+        } else {
+            rawX -= INNER_DEAD_ZONE;
+        }
+    } else {
+        if (rawX > -INNER_DEAD_ZONE) {
+            rawX = 0;
+        } else {
+            rawX += INNER_DEAD_ZONE;
+        }
+    }
+
+    if (rawY > 0) {
+        if (rawY < INNER_DEAD_ZONE) {
+            rawY = 0;
+        } else {
+            rawY -= INNER_DEAD_ZONE;
+        }
+    } else {
+        if (rawY > -INNER_DEAD_ZONE) {
+            rawY = 0;
+        } else {
+            rawY += INNER_DEAD_ZONE;
+        }
+    }
+
+    float scale = 1.0f / (float)(gInputRange[controller] - OUTER_DEAD_ZONE - INNER_DEAD_ZONE);
 
     result.x = rawX * scale;
     result.y = -rawY * scale;
