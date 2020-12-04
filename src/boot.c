@@ -124,9 +124,9 @@ static void gameEntryPoint(void *argv)
             case (OS_SC_RETRACE_MSG):   
                 if (gNextLevel != gCurrentLevel) {
                     controllersReadData();
-                    playerSoundsStopAll();
+                    int allStopped = playerSoundsStopAll();
 
-                    if (pendingGFX == 0) {
+                    if (allStopped && pendingGFX == 0) {
                         gCurrentLevel = gNextLevel;
                         if (gCurrentLevel == SceneIndexSpinningLogo) {
                             spinningLogoInit();
@@ -234,6 +234,6 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    gNextLevel = SceneIndexMainMenu;
+    gNextLevel = 0;
 }
 

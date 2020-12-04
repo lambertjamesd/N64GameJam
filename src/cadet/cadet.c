@@ -144,7 +144,7 @@ void cadetUpdatefootstepSound(struct Cadet* cadet) {
 void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
     struct Vector2 rotatedInput;
 
-    if (gInputMask & InputMaskPlayer && cadet->controllerIndex != -1) {
+    if (cadet->controllerIndex != -1 && gInputMask[cadet->controllerIndex] & InputMaskPlayer) {
         struct Vector2 input2d = getJoystick(cadet->controllerIndex);
         cameraGetMoveDir(&gScene.camera[cadet->controllerIndex], &input2d, &rotatedInput);
     } else {
@@ -232,7 +232,7 @@ void cadetWalk(struct Cadet* cadet) {
             cadet->coyoteTimer -= gTimeDelta;
         }
 
-        if ((gInputMask & InputMaskPlayer) && getButtonDown(cadet->controllerIndex, A_BUTTON)) {
+        if (getButtonDown(cadet->controllerIndex, A_BUTTON) && (gInputMask[cadet->controllerIndex] & InputMaskPlayer)) {
             struct Vector3 targetVelocity;
             cadetTargetVelocity(cadet, &targetVelocity);
 
@@ -295,7 +295,7 @@ void cadetFreefall(struct Cadet* cadet) {
 }
 
 void cadetJump(struct Cadet* cadet) {
-    if ((gInputMask & InputMaskPlayer) && getButton(cadet->controllerIndex, A_BUTTON)) {
+    if (getButton(cadet->controllerIndex, A_BUTTON) && (gInputMask[cadet->controllerIndex] & InputMaskPlayer)) {
         cadet->gravity = CADET_JUMP_ACCEL + GLOBAL_GRAVITY;
     } else {
         cadet->gravity = GLOBAL_GRAVITY;

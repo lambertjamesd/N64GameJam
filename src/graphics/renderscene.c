@@ -16,6 +16,8 @@ short gCurrentSplit;
 #define FOLLOW_DISTANCE_START 0
 #define CAMERA_ROTATE_STEP (M_PI * 0.25f)
 
+#define FREE_CAMERA_SPEED 8.0f
+
 float gFollowDistances[] = {
     5.0f,
     10.0f,
@@ -53,7 +55,7 @@ void cameraCalculatePos(struct Quaternion* rotation, struct Vector3* target, flo
 void cameraUpdate(void* cameraPtr) {
     struct SceneCamera* camera = cameraPtr;
 
-    if (gInputMask & InputMaskCamera) {
+    if (camera->controllerIndex != -1 && gInputMask[camera->controllerIndex] & InputMaskCamera) {
         if (getButtonDown(camera->controllerIndex, D_CBUTTONS)) {
             if (camera->followDistanceStep + 1 < FOLLOW_STEP_COUNT) {
                 ++camera->followDistanceStep;
@@ -73,6 +75,15 @@ void cameraUpdate(void* cameraPtr) {
         if (getButtonDown(camera->controllerIndex, L_CBUTTONS)) {
             camera->targetRotation -= CAMERA_ROTATE_STEP;
         }
+    }
+
+    if (camera->controllerIndex != -1 && gInputMask[camera->controllerIndex] & InputMaskFreeCamera) {
+        struct Vector2 moveDir = getJoystick(camera->controllerIndex);
+        struct Vector2 rotatedDir;
+        cameraGetMoveDir(camera, &moveDir, &rotatedDir);
+
+        camera->targetPosition.x += rotatedDir.x * FREE_CAMERA_SPEED * gTimeDelta;
+        camera->targetPosition.z += rotatedDir.y * FREE_CAMERA_SPEED * gTimeDelta;
     }
 
     float moveAmount = CAMERA_MAX_SPEED * gTimeDelta;

@@ -135,22 +135,22 @@ void tutorialMenuInit(struct TutorialMenu* tutorial, enum TutorialMenuType type)
 
 
 int tutorialDidPlayerMove() {
-    return (gInputMask & InputMaskPlayer) && gCadet.controllerIndex != -1 &&
+    return gCadet.controllerIndex != -1 && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
             (gControllerState[0].stick_x != 0 ||
             gControllerState[0].stick_y != 0);
 }
 
 int tutorialDidPlayerJump() {
-    return (gInputMask & InputMaskPlayer) && getButtonDown(gCadet.controllerIndex, A_BUTTON);
+    return getButtonDown(gCadet.controllerIndex, A_BUTTON) && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer);
 }
 
 int tutorialDidPlayerAttack() {
-    return (gInputMask & InputMaskPlayer) && getButtonDown(gRobot.controllerIndex, B_BUTTON);
+    return getButtonDown(gRobot.controllerIndex, B_BUTTON) && (gInputMask[gRobot.controllerIndex] & InputMaskPlayer);
 }
 
 int tutorialDidPlayerSwitch() {
     return (gLevelFlags & LEVEL_HAS_ROBOT) &&
-        (gInputMask & InputMaskPlayer) && 
+        (gInputMask[0] & InputMaskPlayer) && 
         getButtonDown(0, Z_TRIG | R_TRIG);
 }
 
@@ -226,13 +226,13 @@ void tutorialMenuCheck() {
                     gTutorialMenu.delay = 0.0f;
                     gLevelFlags |= LEVEL_HAS_ROBOT;
             }
-        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex != -1 && !saveFileCheckTutorial(SAVEFILE_LEARNED_ATTACK)) {
+        } else if (gRobot.controllerIndex != -1 && (gInputMask[gRobot.controllerIndex] & InputMaskPlayer) && !saveFileCheckTutorial(SAVEFILE_LEARNED_ATTACK)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuRobot);
             }
-        } else if ((gInputMask & InputMaskPlayer) && gRobot.controllerIndex == 0 && !saveFileCheckTutorial(SAVEFILE_LEARNED_SWITCH)) {
+        } else if (gRobot.controllerIndex == 0 && (gInputMask[0] & InputMaskPlayer) && !saveFileCheckTutorial(SAVEFILE_LEARNED_SWITCH)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {

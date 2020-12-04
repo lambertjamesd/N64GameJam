@@ -156,7 +156,7 @@ struct MenuItem gNewGameItems[] = {
 };
 
 struct MenuItemGroup gNewGameGroup = {
-    "Telelocation: Gemini",
+    "Telocation: Gemini",
     gNewGameItems,
     1,
 };

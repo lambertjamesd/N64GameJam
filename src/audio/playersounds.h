@@ -54,7 +54,7 @@ enum IntroSounds {
 extern struct SoundArray* gPlayerSoundArray;
 extern ALSndId gPlayerSoundIds[PlayerSoundsCount];
 
-void playerSoundsStopAll();
+int playerSoundsStopAll();
 void playerSoundsUseBank(enum SoundsBanks bankIndex);
 void playerSoundsInit();
 

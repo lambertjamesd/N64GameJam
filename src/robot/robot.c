@@ -77,7 +77,7 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
 void robotMove(struct Robot* robot) {
     struct Vector2 rotatedInput;
 
-    if (gInputMask & InputMaskPlayer && robot->controllerIndex != -1) {
+    if (robot->controllerIndex != -1 && gInputMask[robot->controllerIndex] & InputMaskPlayer) {
         struct Vector2 input2d = getJoystick(robot->controllerIndex);
         cameraGetMoveDir(&gScene.camera[robot->controllerIndex], &input2d, &rotatedInput);
     } else {
@@ -232,7 +232,7 @@ void robotUpdate(void* robotPtr) {
 
     dropShadowCalculate(&robot->shadow, robot->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &robot->transform.position);
 
-    if (gInputMask & InputMaskPlayer) {
+    if (robot->controllerIndex != -1 && gInputMask[robot->controllerIndex] & InputMaskPlayer) {
         if (getButtonDown(robot->controllerIndex, B_BUTTON)) {
             robotAttack(robot);
         }

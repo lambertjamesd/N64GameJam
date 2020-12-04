@@ -112,43 +112,71 @@ void levelFocusCutscene(struct Vector3* target, float time, int viewportIndex) {
 
 void levelUpdate(void* data) {
     if (gCurrentPlayMode == LevelPlayModeCoOp) {
-        if (gInputMask & InputMaskPlayer) {
+        if (gInputMask[0] & InputMaskPlayer) {
             gScene.camera[0].targetPosition = gCadet.transform.position;
-            gScene.camera[1].targetPosition = gRobot.transform.position;
-
             if (gScene.camera[0].targetPosition.y < 0.0f) {
                 gScene.camera[0].targetPosition.y = 0.0f;
             }
+
+            if (getButtonDown(0, R_TRIG)) {
+                gInputMask[0] = INPUT_MASK_FREE_CAM;
+            }
+        } else if (gInputMask[0] & InputMaskFreeCamera) {
+            if (getButtonDown(0, R_TRIG)) {
+                gInputMask[0] = INPUT_MASK_PLAY;
+            }
+        }
+
+        if (gInputMask[1] & InputMaskPlayer) {
+            gScene.camera[1].targetPosition = gRobot.transform.position;
 
             if (gScene.camera[1].targetPosition.y < 0.0f) {
                 gScene.camera[1].targetPosition.y = 0.0f;
             }
+
+            if (getButtonDown(1, R_TRIG)) {
+                gInputMask[0] = INPUT_MASK_FREE_CAM;
+            }
+        } else if (gInputMask[1] & InputMaskFreeCamera) {
+            if (getButtonDown(1, R_TRIG)) {
+                gInputMask[0] = INPUT_MASK_PLAY;
+            }
         }
     } else {
-        if (gInputMask & InputMaskPlayer && gCadet.controllerIndex != -1) {
-            gScene.camera[0].targetPosition = gCadet.transform.position;
-
-            if (gScene.camera[0].targetPosition.y < 0.0f) {
-                gScene.camera[0].targetPosition.y = 0.0f;
+        if (gInputMask[0] & InputMaskPlayer) {
+            if (getButtonDown(0, R_TRIG)) {
+                gInputMask[0] = INPUT_MASK_FREE_CAM;
             }
 
-            if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
-                levelSwitchToRobot();
-            }
-        } else if (gInputMask & InputMaskPlayer && gRobot.controllerIndex != -1) {
-            gScene.camera[0].targetPosition = gRobot.transform.position;
+            if (gCadet.controllerIndex != -1) {
+                gScene.camera[0].targetPosition = gCadet.transform.position;
 
-            if (gScene.camera[0].targetPosition.y < 0.0f) {
-                gScene.camera[0].targetPosition.y = 0.0f;
-            }
+                if (gScene.camera[0].targetPosition.y < 0.0f) {
+                    gScene.camera[0].targetPosition.y = 0.0f;
+                }
 
-            if (getButtonDown(0, L_TRIG | Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
-                levelSwitchToCadet();
+                if (getButtonDown(0, Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
+                    levelSwitchToRobot();
+                }
+            } else if (gRobot.controllerIndex != -1) {
+                gScene.camera[0].targetPosition = gRobot.transform.position;
+
+                if (gScene.camera[0].targetPosition.y < 0.0f) {
+                    gScene.camera[0].targetPosition.y = 0.0f;
+                }
+
+                if (getButtonDown(0, Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
+                    levelSwitchToCadet();
+                }
+            }
+        } else if (gInputMask[0] & InputMaskFreeCamera) {
+            if (getButtonDown(0, R_TRIG)) {
+                gInputMask[0] = INPUT_MASK_PLAY;
             }
         }
     }
 
-    if ((gInputMask & InputMaskPlayer) && 
+    if ((gInputMask[0] & InputMaskPlayer) && 
         !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
         tutorialMenuCheck();
     }
@@ -167,7 +195,8 @@ void levelUpdate(void* data) {
 
         if (!(gCadet.actor.stateFlags & CADET_IS_CUTSCENE)) {
             gLevelFlags &= ~LEVEL_INTRO_CUTSCENE;
-            gInputMask = INPUT_MASK_PLAY;
+            gInputMask[0] = INPUT_MASK_PLAY;
+            gInputMask[1] = INPUT_MASK_PLAY;
             gScene.camera[0].followDistanceStep = 1;
             gScene.camera[1].followDistanceStep = 1;
         }
@@ -208,7 +237,8 @@ void levelUpdate(void* data) {
         gScene.camera[0].followDistanceStep = 0;
         gScene.camera[1].followDistanceStep = 0;
         gLevelFlags |= LEVEL_EXIT_CUTSCENE;
-        gInputMask = 0;
+        gInputMask[0] = 0;
+        gInputMask[1] = 0;
 
         int i;
 
@@ -410,8 +440,8 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gLevelFlags |= LEVEL_IS_FINAL;
     }
 
-    gInputMask = INPUT_MASK_PLAY;
-    gInputMask = 0;
+    gInputMask[0] = 0;
+    gInputMask[1] = 0;
 
     gCurrentPlayMode = playMode;
 
