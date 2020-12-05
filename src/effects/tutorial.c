@@ -35,6 +35,7 @@ enum ButtonFontMapping gTutorialButton[TutorialMenuTypeCount] = {
     ButtonFontMappingZ,
     ButtonFontMappingC_U,
     ButtonFontMappingR,
+    ButtonFontMappingStart,
 };
 
 char* gTutorialText[TutorialMenuTypeCount] = {
@@ -44,6 +45,7 @@ char* gTutorialText[TutorialMenuTypeCount] = {
     "Switch",
     "Camera",
     "Map",
+    "Skip",
 };
 
 void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
@@ -108,6 +110,10 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
 
 }
 
+int tutorialMenuIsActive(struct TutorialMenu* menu) {
+    return timeHasListener(&menu->updateListener, TimeUpdateGroupWorld);
+}
+
 void tutorialMenuUpdate(void* data) {
     struct TutorialMenu* menu = (struct TutorialMenu*)data;
 
@@ -137,6 +143,9 @@ void tutorialMenuInit(struct TutorialMenu* tutorial, enum TutorialMenuType type)
     timeAddListener(&tutorial->updateListener, tutorialMenuUpdate, tutorial, TimeUpdateGroupWorld);
 }
 
+void tutorialMenuClose(struct TutorialMenu* tutorial) {
+    tutorial->state = 2;
+}
 
 int tutorialDidPlayerMove() {
     return gCadet.controllerIndex != -1 && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
@@ -177,7 +186,7 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_MOVE);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuMove) {
-            gTutorialMenu.state = 2;
+            tutorialMenuClose(&gTutorialMenu);
         }
     }
 
@@ -189,7 +198,7 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_JUMP);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuJump) {
-            gTutorialMenu.state = 2;
+            tutorialMenuClose(&gTutorialMenu);
         }
     }
 
@@ -201,7 +210,7 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_CAM_MOVE);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuCamMove) {
-            gTutorialMenu.state = 2;
+            tutorialMenuClose(&gTutorialMenu);
         }
     }
 
@@ -213,7 +222,7 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_CAM_FREE);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuCamFree) {
-            gTutorialMenu.state = 2;
+            tutorialMenuClose(&gTutorialMenu);
         }
     }
 
@@ -225,7 +234,7 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_ATTACK);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuRobot) {
-            gTutorialMenu.state = 2;
+            tutorialMenuClose(&gTutorialMenu);
         }
     }
 
@@ -237,7 +246,7 @@ void tutorialMenuCheck() {
         saveFileMarkTutorial(SAVEFILE_LEARNED_SWITCH);
 
         if (gTutorialMenu.state == 1 && gTutorialMenu.type == TutorialMenuSwitch) {
-            gTutorialMenu.state = 2;
+            tutorialMenuClose(&gTutorialMenu);
         }
     }
 

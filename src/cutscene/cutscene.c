@@ -6,6 +6,8 @@
 #include "src/level/level.h"
 #include "src/audio/audio.h"
 #include "src/cutscene/jpegdecoder.h"
+#include "src/effects/tutorial.h"
+#include "src/input/controller.h"
 #include "slides.h"
 #include <memory.h>
 
@@ -16,11 +18,14 @@
 
 #define MAX_LOADED_SLIDES   2
 
+#define SKIP_PROMPT_TIME    2.0f
+
 struct CutscenePlayer gCutscenePlayer;
 struct TimeUpdateListener gCutsceneListener;
 char* gCutsceneBuffer[MAX_LOADED_SLIDES];
 int gCurrentLoadedImage[MAX_LOADED_SLIDES];
 char* gEncodedAddress;
+float gSkipTimer;
 
 int gLoadedSlideIndex;
 
@@ -33,6 +38,13 @@ int cutsceneGetImageSlot(int slideId) {
     }
 
     return -1;
+}
+
+void cutSceneEnd() {
+    timeRemoveListener(&gCutsceneListener, TimeUpdateGroupWorld);
+    jpegDecoderFlush();
+    gNextLevel = gCutscenePlayer.targetLevel;
+    audioStopSequence();
 }
 
 int requestImageSlot(int nextSlide, int currentSlide) {
@@ -73,6 +85,23 @@ void cutSceneUpdate(void* data) {
     struct JpegDecodeRequest* jpeg;
     if (osRecvMesg(&gCompletedImages, (OSMesg*)&jpeg, OS_MESG_NOBLOCK) == 0) {
         ++gLoadedSlideIndex;
+    }
+
+    if (getButtonDown(0, START_BUTTON)) {
+        if (!tutorialMenuIsActive(&gTutorialMenu)) {
+            tutorialMenuInit(&gTutorialMenu, TutorialMenuSkip);
+            gSkipTimer = SKIP_PROMPT_TIME;
+        } else if (gTutorialMenu.currTime == 0.0f) {
+            cutSceneEnd();
+        }
+    }
+
+    if (gSkipTimer > 0.0f) {
+        gSkipTimer -= gTimeDelta;
+
+        if (gSkipTimer <= 0.0f) {
+            tutorialMenuClose(&gTutorialMenu);
+        }
     }
 
     if (gCutscenePlayer.currentFrame > gLoadedSlideIndex) {
@@ -119,8 +148,7 @@ void cutSceneUpdate(void* data) {
 
     if (gCutscenePlayer.currentTime >= currFrame->duration) {
         if (gCutscenePlayer.currentFrame + 1 >= gCutscenePlayer.cutscene->frameCount) {
-            gNextLevel = gCutscenePlayer.targetLevel;
-            audioStopSequence();
+            cutSceneEnd();
         } else {
             gCutscenePlayer.currentFrame++;
             gCutscenePlayer.currentTime = 0.0f;
@@ -264,7 +292,7 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
 
     gEncodedAddress = heapMalloc(MAX_JPEG_SIZE, 1);
 
-    graphicsAddMenu(cutSceneRender, 0, 1);
+    graphicsAddMenu(cutSceneRender, 0, 0);
 
     if (cutscene->soundBank != SoundBankNone) {
         playerSoundsUseBank(cutscene->soundBank);

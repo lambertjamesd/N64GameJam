@@ -11,6 +11,7 @@ enum TutorialMenuType {
     TutorialMenuSwitch,
     TutorialMenuCamMove,
     TutorialMenuCamFree,
+    TutorialMenuSkip,
     TutorialMenuTypeCount,
 };
 
@@ -22,7 +23,9 @@ struct TutorialMenu {
     short state;
 };
 
+int tutorialMenuIsActive(struct TutorialMenu* menu);
 void tutorialMenuInit(struct TutorialMenu* tutorial, enum TutorialMenuType type);
+void tutorialMenuClose(struct TutorialMenu* tutorial);
 
 extern struct TutorialMenu gTutorialMenu;
 

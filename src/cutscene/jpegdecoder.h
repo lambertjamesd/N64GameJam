@@ -25,5 +25,6 @@ struct JpegDecodeRequest {
 
 void jpegDecoderStartThread();
 void jpegDecode(char* jpegData, char* targetImageData);
+void jpegDecoderFlush();
 
 #endif

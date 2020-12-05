@@ -17,6 +17,7 @@ static u64 gJpegThreadStack[STACKSIZEBYTES/sizeof(u64)];
 char gJpegDecodeMemory[JPEG_MEMORY_REQUIREMENT];
 struct JpegDecodeRequest gPendingRequests[MAX_REQUEST_COUNT];
 int gNextRequestBuffer;
+int gIsDecoding;
 
 unsigned int readJpeg(JDEC* jd,uint8_t* buffer,unsigned int amount) {
     struct JpegDecodeRequest* request = (struct JpegDecodeRequest*)jd->device;
@@ -47,6 +48,7 @@ void jpegThreadLoop(void* argv) {
     while (1) {
         struct JpegDecodeRequest* request;
         osRecvMesg(&gPendingImages, (OSMesg*)&request, OS_MESG_BLOCK);
+        gIsDecoding = 1;
         request->state = JpegDecodeStateDecoding;
         JDEC jd;
         if (jd_prepare(&jd, readJpeg, gJpegDecodeMemory, JPEG_MEMORY_REQUIREMENT, request) == JDR_OK) {
@@ -61,6 +63,7 @@ void jpegThreadLoop(void* argv) {
         } else {
             request->state = JpegDecodeStateError;
         }
+        gIsDecoding = 0;
         osSendMesg(&gCompletedImages, request, OS_MESG_BLOCK);
     }
 }  
@@ -94,4 +97,14 @@ void jpegDecode(char* jpegData, char* targetImageData) {
     request->height = 0;
 
     osSendMesg(&gPendingImages, request, OS_MESG_NOBLOCK);
+}
+
+void jpegDecoderFlush() {
+    OSMesg msg;
+    while (osRecvMesg(&gPendingImages, &msg, OS_MESG_NOBLOCK) != -1);
+    while (osRecvMesg(&gCompletedImages, &msg, OS_MESG_NOBLOCK) != -1);
+
+    if (gIsDecoding) {
+        osRecvMesg(&gCompletedImages, &msg, OS_MESG_BLOCK);
+    }
 }
