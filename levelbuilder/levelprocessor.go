@@ -242,6 +242,14 @@ struct LevelGemDef _level_%s_gems[] = {
 		humanName = levelName
 	}
 
+	var romStart = "0"
+	var romEnd = "0"
+
+	if tileMap.MusicName != "" {
+		romStart = fmt.Sprintf("_%sSegmentRomStart", tileMap.MusicName)
+		romEnd = fmt.Sprintf("_%sSegmentRomEnd", tileMap.MusicName)
+	}
+
 	outputLevel.WriteString(fmt.Sprintf(`
 struct LevelData _level_%s_levelData = {
 	&_level_%s_levelGraphics,
@@ -263,6 +271,8 @@ struct LevelData _level_%s_levelData = {
 	_level_%s_gems,
 	%d,
 	"%s",
+	%s,
+	%s,
 };
 `, levelName, levelName, levelName,
 		tileMap.PlayerPosX, 0.1, -tileMap.PlayerPosY,
@@ -276,6 +286,8 @@ struct LevelData _level_%s_levelData = {
 		levelName, len(tileMap.PlatformSlots),
 		levelName, len(tileMap.Gems),
 		humanName,
+		romStart,
+		romEnd,
 	))
 
 	geoSources = append(geoSources, tileIncFile)

@@ -7,6 +7,8 @@ extern OSSched         gScheduler;
 
 #define MAX_SEQUENCE_COUNT      2
 
+#define MAX_SEQ_LENGTH         (40 * 1024)
+
 u8* gAudioHeapBuffer;
 
 ALSeqPlayer	   *gSequencePlayer;
@@ -17,6 +19,7 @@ static ALSeqMarker gSequenceStart[MAX_SEQUENCE_COUNT];
 static ALSeqMarker gSequenceLoopStart[MAX_SEQUENCE_COUNT];
 static ALSeqMarker gSequenceEnd[MAX_SEQUENCE_COUNT];
 static int gNextSeq = 0;
+static char* gCurrentSeq = 0;
 
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
@@ -50,20 +53,21 @@ void soundPlayerInit() {
 void audioStopSequence() {
     if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
         alSeqpStop(gSequencePlayer);
+        gCurrentSeq = 0;
     }
 }
 
 void audioPlaySequence(struct SeqPlayEvent* playEvent) {
-    if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
+    if (gCurrentSeq == playEvent->romStart) {
+        return;
+    } else if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
         alSeqpStop(gSequencePlayer);
 
         gPendingSeq = *playEvent;
     } else {
         gSequenceLen[gNextSeq] = playEvent->romEnd - playEvent->romStart;
-        gSequenceData[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, gSequenceLen[gNextSeq]);
         romCopy(playEvent->romStart, (char *) gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
 
-        gSequence[gNextSeq] = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeq));
         alSeqNew(gSequence[gNextSeq], gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceStart[gNextSeq], playEvent->playbackStart);    
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceLoopStart[gNextSeq], playEvent->loopStart);
@@ -77,6 +81,7 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
 
         alSeqpSetSeq(gSequencePlayer, gSequence[gNextSeq]);
         alSeqpPlay(gSequencePlayer);
+        gCurrentSeq = playEvent->romStart;
 
         gNextSeq = (gNextSeq + 1) % MAX_SEQUENCE_COUNT;
     }
@@ -129,6 +134,13 @@ void audioInit()
     soundPlayerInit();
 
     int i;
+
+    for (i = 0; i < MAX_SEQUENCE_COUNT; ++i) {
+        gSequenceData[i] = alHeapAlloc(&gAudioHeap, 1, MAX_SEQ_LENGTH);
+        gSequence[i] = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeq));
+    }
+
+
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
         gPendingSounds[i].snd = UNUSED_PENDING_SOUND;
     }

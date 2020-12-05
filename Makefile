@@ -98,7 +98,7 @@ src/collision/geo/geo.c: $(COLLISION_GEO)
 PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/JumpPeakBeep.aifc \
 	sound/clips/Landing.aifc \
-	sound/clips/AstronautFootsteps.aifc \
+	sound/clips/AstronautFootsteps.ins \
 	sound/clips/AstronautSlide1.aifc \
 	sound/clips/AstronautSlide2.aifc \
 	sound/clips/WarpAstronautOnly.aifc \

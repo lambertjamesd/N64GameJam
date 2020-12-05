@@ -99,7 +99,7 @@ void cadetUpdateRotation(struct Cadet* cadet) {
 
 void cadetUpdatefootstepSound(struct Cadet* cadet) {
     int isGrounded = (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED);
-    int isOnGround = isGrounded && cadet->coyoteTimer > 0.0f;
+    int isOnGround = isGrounded || cadet->coyoteTimer > 0.0f;
 
     int nextSound = -1;
     float soundVolume = 0.0f;
@@ -240,6 +240,7 @@ void cadetWalk(struct Cadet* cadet) {
 
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
+            cadet->coyoteTimer = 0.0f;
             walkAnimUpdate(&cadet->walkAnim, 0.0f);
             cadet->actor.stateFlags |= CADET_IS_JUMPING;
 

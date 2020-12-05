@@ -67,6 +67,8 @@ struct LevelData {
     struct LevelGemDef* gems;
     int gemCount;
     char* name;
+    char* musicRomStart;
+    char* musicRomEnd;
 };
 
 struct LevelThemeDefinition {

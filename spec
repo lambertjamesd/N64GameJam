@@ -56,19 +56,43 @@ endseg
 beginseg
 	name "logoJingle"
 	flags RAW
-	include "sound/music/TeamUltraRareLogoJingleWIP1.mid"
+	include "sound/music/TeamUltraRareLogoJingleWIP2Loud.mid"
 endseg
 
 beginseg
 	name "cosmicDust"
 	flags RAW
-	include "sound/music/CosmicDust.mid"
+	include "sound/music/CosmicDustLoud.mid"
 endseg
 
 beginseg
 	name "darkSuns"
 	flags RAW
-	include "sound/music/DarkSuns.mid"
+	include "sound/music/DarkSunsLoud.mid"
+endseg
+
+beginseg
+	name "thermalImaging"
+	flags RAW
+	include "sound/music/ThermalImagingLoud.mid"
+endseg
+
+beginseg
+	name "stepsAcrossTheSky"
+	flags RAW
+	include "sound/music/StepsAcrosstheSkyLoud.mid"
+endseg
+
+beginseg
+	name "getToTheTele"
+	flags RAW
+	include "sound/music/GetToTheTeleLoud.mid"
+endseg
+
+beginseg
+	name "robotTheme"
+	flags RAW
+	include "sound/music/robotthemeLoud.mid"
 endseg
 
 beginseg
@@ -108,6 +132,10 @@ beginwave
 	include "logoJingle"
 	include "darkSuns"
 	include "cosmicDust"
+	include "thermalImaging"
+	include "stepsAcrossTheSky"
+	include "getToTheTele"
+	include "robotTheme"
 	include "player_sounds"
 	include "player_sounds_table"
 	include "intro_cutscene"

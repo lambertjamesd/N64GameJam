@@ -133,6 +133,7 @@ func WriteGeoFile(filename string, name string, geoSources []string) {
 #include "src/collision/levelcollisiongrid.h"
 #include "src/collision/geo/geo.h"
 #include "src/level/level.h"
+#include "src/audio/allseq.h"
 
 `)
 

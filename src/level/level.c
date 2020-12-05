@@ -130,6 +130,7 @@ void levelUpdate(void* data) {
         } else if (gInputMask[0] & InputMaskFreeCamera) {
             if (getButtonDown(0, R_TRIG | B_BUTTON)) {
                 gInputMask[0] = INPUT_MASK_PLAY;
+                gScene.camera[0].followDistanceStep = 1;
             }
         }
 
@@ -147,6 +148,7 @@ void levelUpdate(void* data) {
         } else if (gInputMask[1] & InputMaskFreeCamera) {
             if (getButtonDown(1, R_TRIG | B_BUTTON)) {
                 gInputMask[1] = INPUT_MASK_PLAY;
+                gScene.camera[1].followDistanceStep = 1;
             }
         }
     } else {
@@ -180,6 +182,7 @@ void levelUpdate(void* data) {
         } else if (gInputMask[0] & InputMaskFreeCamera) {
             if (getButtonDown(0, R_TRIG | B_BUTTON)) {
                 gInputMask[0] = INPUT_MASK_PLAY;
+                gScene.camera[0].followDistanceStep = 1;
             }
         }
     }
@@ -516,6 +519,18 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
     gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = _gem_cleanup_mat;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
+
+    if (levelDef->levelData->musicRomStart && levelDef->levelData->musicRomEnd) {
+        struct SeqPlayEvent seq;
+        seq.loopStart = 0;
+        seq.loopEnd = -1;
+        seq.loopCount = -1;
+        seq.playbackStart = 0;
+        seq.romStart = levelDef->levelData->musicRomStart;
+        seq.romEnd = levelDef->levelData->musicRomEnd;
+        seq.volume = 0x7fff;
+        audioPlaySequence(&seq);
+    }
 
     if (gCurrentLevel == 0) {
         struct Vector3 rocketPos;

@@ -114,6 +114,7 @@ type LevelGrid struct {
 	PlatformSlots                      []LevelPlatformSlotDef
 	Gems                               []LevelGemDef
 	Name                               string
+	MusicName                          string
 }
 
 func (level *LevelGrid) GetSize() (int, int) {

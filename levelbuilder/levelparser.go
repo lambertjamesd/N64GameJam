@@ -56,6 +56,7 @@ func TrimLevel(level *LevelGrid) *LevelGrid {
 			nil,
 			nil,
 			"",
+			"",
 		}
 	}
 
@@ -233,6 +234,11 @@ func AppendMetadata(filename string, target *LevelGrid) {
 		name, nameCheck := metadata["name"]
 		if nameCheck {
 			target.Name = name
+		}
+
+		music, musicCheck := metadata["music"]
+		if musicCheck {
+			target.MusicName = music
 		}
 	}
 }

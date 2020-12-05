@@ -19,6 +19,7 @@
 #include "src/audio/playersounds.h"
 #include "src/font/buttons/buttons.h"
 #include "src/audio/audio.h"
+#include "src/audio/allseq.h"
 
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
@@ -319,6 +320,8 @@ void mainMenuUpdate(void* data) {
             } else {
                 gNextLevel = gMainMenuSelectedLevel;
             }
+
+            audioStopSequence();
         }
     }
 
@@ -441,6 +444,16 @@ void mainMenuInit() {
 
     timeAddListener(&gMainMenuUpdate, mainMenuUpdate, 0, TimeUpdateGroupWorld);
     playerSoundsUseBank(SoundBankLevel);
+
+    struct SeqPlayEvent seq;
+    seq.loopEnd = -1;
+    seq.loopStart = 0;
+    seq.loopCount = -1;
+    seq.playbackStart = 0;
+    seq.volume = 0x7fff;
+    seq.romStart = _thermalImagingSegmentRomStart;
+    seq.romEnd =_thermalImagingSegmentRomEnd;
+    audioPlaySequence(&seq);
 
     gMainMenuTotalGems = saveFileCalculateGemsCollected(_level_group_all_levels_count);
     gMainMenuUnlockedLevels = mainMenuBuildLevelSelect();

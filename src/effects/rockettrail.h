@@ -7,6 +7,8 @@
 
 #define MAX_ACTIVE_PARTICLES    4
 
+#define ROCKET_TRAIL_FLAGS_RELATIVE (1 << 0)
+
 struct RocketTrail {
     struct BasicTransform *emitSource;
     struct Vector3 emitOffset;
@@ -15,6 +17,7 @@ struct RocketTrail {
     float spawnTimer;
     int renderId;
     char alpha;
+    char flags;
 };
 
 void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct Vector3* emitOffset);
