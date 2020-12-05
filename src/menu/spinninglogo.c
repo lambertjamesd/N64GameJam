@@ -40,7 +40,7 @@ void spinningLogoText(void* data, struct GraphicsState* state, struct FontRender
         &state->dl,
         "ULTRA RARE",
         80,
-        163
+        (gScreenHeight >> 1) + 43
     );
 
     u8 alpha = 255;
@@ -58,7 +58,7 @@ void spinningLogoText(void* data, struct GraphicsState* state, struct FontRender
     gDPPipeSync(state->dl++);
     gDPSetCombineLERP(state->dl++, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
     gDPSetEnvColor(state->dl++, 0, 0, 0, 255 - alpha);
-    gDPFillRectangle(state->dl++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+    gDPFillRectangle(state->dl++, 0, 0, SCREEN_WD-1, gScreenHeight-1);
     gDPPipeSync(state->dl++);
 }
 
@@ -150,7 +150,7 @@ void spinningLogoInit() {
     gScene.viewports[0].minx = 0;
     gScene.viewports[0].maxx = SCREEN_WD;
     gScene.viewports[0].miny = 0;
-    gScene.viewports[0].maxy = SCREEN_HT;
+    gScene.viewports[0].maxy = gScreenHeight;
 
     gScene.fov[0] = 70.0f;
 

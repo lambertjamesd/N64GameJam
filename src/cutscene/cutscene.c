@@ -241,7 +241,7 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
         yOffset = 0;
     }
     
-    int barHeight = (SCREEN_HT - CUTSCENE_HEIGHT) >> 1;
+    int barHeight = (gScreenHeight - CUTSCENE_HEIGHT) >> 1;
 
     int index = cutsceneGetImageSlot(currFrame->slideIndex);
 

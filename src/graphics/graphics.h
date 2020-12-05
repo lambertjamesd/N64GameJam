@@ -48,6 +48,7 @@ typedef struct {
     u16		*cfb;
 } GFXInfo;
 
+extern Gfx rdpstateinit_dl_pal[];
 extern Gfx	rdpstateinit_dl[];
 extern Gfx	setup_rspstate[];
 extern Gfx 	logo_dl[];
@@ -61,6 +62,7 @@ extern u64	gRSPYieldBuffer[];
 extern u64          gDramStack[];
 
 extern int gFrameNumber;
+extern int gScreenHeight;
 
 void graphicsInitLevel(
     char* staticSegment, 

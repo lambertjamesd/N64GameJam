@@ -24,10 +24,10 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
         &gEndlessBossBattle,
         &state->dl,
         group->title,
-        (SCREEN_WD/2) - (int)halfWidth + xOffset, 40
+        (SCREEN_WD/2) - (int)halfWidth + xOffset, (gScreenHeight >> 1) - 80
     );
 
-    int y = 80;
+    int y = (gScreenHeight >> 1) - 40;
     int yStep = 40;
     int x = SCREEN_WD/2;
     float scale = 2.0f;

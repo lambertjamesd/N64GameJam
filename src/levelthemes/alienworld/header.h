@@ -29,3 +29,4 @@ extern Gfx _entrance_exit_off_material[];
 extern Gfx _entrance_exit_mesh_tri_0[];
 
 extern Gfx _alien_clearScreen[];
+extern Gfx _alien_clearScreenPal[];

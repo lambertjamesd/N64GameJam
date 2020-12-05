@@ -59,6 +59,7 @@ struct LevelThemeGraphics {
     Gfx** dynamicMaterialCleanup;
     int dynamicMaterialCount;
 	Gfx* clear;
+	Gfx* clearPal;
 	Gfx* themeMeshes[LevelThemeMeshesCount];
 	AnimCallback animCallback;
 };

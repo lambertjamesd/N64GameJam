@@ -3,6 +3,7 @@
 #include "fontrenderer.h"
 #include "src/defs.h"
 #include "src/system/assert.h"
+#include "src/graphics/graphics.h"
 
 void fontRendererBeginFrame(struct FontRenderer* renderer) {
     renderer->nextDL = renderer->dl;
@@ -33,8 +34,8 @@ float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font*
         topOffset = 0;
     }
 
-    if (shiftedLower > (SCREEN_HT << 2)) {
-        shiftedLower = SCREEN_HT << 2;
+    if (shiftedLower > (gScreenHeight << 2)) {
+        shiftedLower = gScreenHeight << 2;
     }
 
     if (shiftedLower <= shiftedY) {

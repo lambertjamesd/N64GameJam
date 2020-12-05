@@ -113,6 +113,13 @@ Gfx _alien_track_material_anim[] = {
 Gfx _alien_clearScreen[] = {
     gsDPSetFillColor(GPACK_RGBA5551(46, 14, 89, 1) << 16 | 
                     GPACK_RGBA5551(46, 14, 89, 1)),
-    gsDPFillRectangle(0, 0, SCREEN_WD-1, SCREEN_HT-1),
+    gsDPFillRectangle(0, 0, SCREEN_WD-1, SCREEN_HT_NTSC-1),
+	gsSPEndDisplayList(),
+};
+
+Gfx _alien_clearScreenPal[] = {
+    gsDPSetFillColor(GPACK_RGBA5551(46, 14, 89, 1) << 16 | 
+                    GPACK_RGBA5551(46, 14, 89, 1)),
+    gsDPFillRectangle(0, 0, SCREEN_WD-1, SCREEN_HT_PAL-1),
 	gsSPEndDisplayList(),
 };

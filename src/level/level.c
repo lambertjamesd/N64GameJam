@@ -484,13 +484,13 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gScene.viewports[0].minx = 0;
         gScene.viewports[0].maxx = SCREEN_WD/2-1;
         gScene.viewports[0].miny = 0;
-        gScene.viewports[0].maxy = SCREEN_HT;
+        gScene.viewports[0].maxy = gScreenHeight;
         gScene.fov[0] = 70.0f;
 
         gScene.viewports[1].minx = SCREEN_WD/2+1;
         gScene.viewports[1].maxx = SCREEN_WD;
         gScene.viewports[1].miny = 0;
-        gScene.viewports[1].maxy = SCREEN_HT;
+        gScene.viewports[1].maxy = gScreenHeight;
         gScene.fov[1] = 70.0f;
 
         if (gLevelFlags & LEVEL_INTRO_ROBOT) {
@@ -506,7 +506,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gScene.viewports[0].minx = 0;
         gScene.viewports[0].maxx = SCREEN_WD;
         gScene.viewports[0].miny = 0;
-        gScene.viewports[0].maxy = SCREEN_HT;
+        gScene.viewports[0].maxy = gScreenHeight;
         gScene.fov[0] = 70.0f;
     }
 

@@ -419,7 +419,7 @@ void mainMenuInit() {
     gScene.viewports[0].minx = 0;
     gScene.viewports[0].maxx = SCREEN_WD;
     gScene.viewports[0].miny = 0;
-    gScene.viewports[0].maxy = SCREEN_HT;
+    gScene.viewports[0].maxy = gScreenHeight;
     gScene.fov[0] = 54.188044907f;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
     

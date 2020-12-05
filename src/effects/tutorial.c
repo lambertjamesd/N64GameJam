@@ -19,12 +19,12 @@
 // BAR_HEIGHT + 240 - 160 = 0.5 * ACCEL * ANIMATION_DURATION * ANIMATION_DURATION
 
 #define BAR_HEIGHT  30
-#define BAR_Y       160
+#define BAR_Y       ((gScreenHeight >> 1) + 40)
 #define BAR_SIDE_PADDING 15
 
 #define TEXT_SCALE      2.0f
 
-#define ACCEL   ((BAR_HEIGHT + SCREEN_HT - BAR_Y) / (0.5f * ANIMATION_DURATION * ANIMATION_DURATION))
+#define ACCEL   ((BAR_HEIGHT + gScreenHeight - BAR_Y) / (0.5f * ANIMATION_DURATION * ANIMATION_DURATION))
 
 struct TutorialMenu gTutorialMenu;
 
@@ -64,9 +64,9 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
     int topY = (int)(offset + BAR_Y-(BAR_HEIGHT>>1));
     int bottomY = (int)(offset + BAR_Y+(BAR_HEIGHT>>1));
 
-    if (topY < SCREEN_HT) {
-        if (bottomY > SCREEN_HT-1) {
-            bottomY = SCREEN_HT-1;
+    if (topY < gScreenHeight) {
+        if (bottomY > gScreenHeight-1) {
+            bottomY = gScreenHeight-1;
         }
 
         gDPPipeSync(state->dl++);

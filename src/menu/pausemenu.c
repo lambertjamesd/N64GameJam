@@ -38,9 +38,9 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
     gDPFillRectangle(
         state->dl++, 
         (SCREEN_WD-PAUSE_MENU_WIDTH)>>1, 
-        (SCREEN_HT-PAUSE_MENU_HEIGHT)>>1,
+        (gScreenHeight-PAUSE_MENU_HEIGHT)>>1,
         (SCREEN_WD+PAUSE_MENU_WIDTH)>>1, 
-        (SCREEN_HT+PAUSE_MENU_HEIGHT)>>1
+        (gScreenHeight+PAUSE_MENU_HEIGHT)>>1
     );
     gDPPipeSync(state->dl++);
     gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
@@ -57,7 +57,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
         &state->dl,
         gPauseMenuTitle,
         (SCREEN_WD >> 1) - (int)(halfWidth),
-        ((SCREEN_HT - PAUSE_MENU_HEIGHT) >> 1) + 10
+        ((gScreenHeight - PAUSE_MENU_HEIGHT) >> 1) + 10
     );
 
     fontRendererSetScale(fontRenderer, 1.0f, 1.0f);
@@ -87,7 +87,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
             &state->dl,
             text,
             (SCREEN_WD >> 1) - (int)(halfWidth),
-            (SCREEN_HT >> 1) + yOffset
+            (gScreenHeight >> 1) + yOffset
         );
     }
 }

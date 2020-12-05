@@ -54,6 +54,7 @@ static OSMesg           gDMAMessageBuf;
 OSMesgQueue     gGfxFrameMsgQ;
 OSMesg          gGfxFrameMsgBuf[MAX_MESGS];
 GFXInfo         gInfo[2];
+int gScreenHeight;
 
 /**** Scheduler globals ****/
 OSSched         gScheduler;
@@ -83,13 +84,16 @@ static void idleThreadEntryPoint(char *argv)
 
 	switch (osTvType) {
 		case 0: // PAL
-			osViSetMode(&osViModeTable[OS_VI_PAL_LPF1]);
+			osViSetMode(&osViModeTable[OS_VI_FPAL_LPF1]);
+            gScreenHeight = 288;
 			break;
 		case 1: // NTSC
 			osViSetMode(&osViModeTable[OS_VI_NTSC_LPF1]);
+            gScreenHeight = 240;
 			break;
 		case 2: // MPAL
 			osViSetMode(&osViModeTable[OS_VI_MPAL_LPF1]);
+            gScreenHeight = 240;
 			break;
 	}
 	osViSetSpecialFeatures(OS_VI_GAMMA_OFF |
@@ -188,9 +192,9 @@ void romCopy(const char *src, const char *dest, const int len)
 
 static void layoutMemory(void)
 {
-    gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT);
-    gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * SCREEN_HT);
-    gAudioHeapBuffer = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * SCREEN_HT - AUDIO_HEAP_SIZE);
+    gColorBuffer[0] = (u16*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * MAX_SCREEN_HT);
+    gColorBuffer[1] = (u16*)PHYS_TO_K0(osMemSize - sizeof(u16) * SCREEN_WD * MAX_SCREEN_HT);
+    gAudioHeapBuffer = (u8*)PHYS_TO_K0(osMemSize - 2 * sizeof(u16) * SCREEN_WD * MAX_SCREEN_HT - AUDIO_HEAP_SIZE);
     heapInit((u32)gAudioHeapBuffer);
 }
 

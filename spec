@@ -56,7 +56,7 @@ endseg
 beginseg
 	name "logoJingle"
 	flags RAW
-	include "sound/music/TeamUltraRareLogoJingleWIP2Loud.mid"
+	include "sound/music/TeamUltraRareLogoJingleWIP1Loud.mid"
 endseg
 
 beginseg

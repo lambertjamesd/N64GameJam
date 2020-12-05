@@ -2,12 +2,7 @@
 #include <ultra64.h>
 #include "src/graphics/graphics.h"
 
-static Vp vp = {
-    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0,
-    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0,
-};
-
-Gfx rdpstateinit_dl[] = {
+Gfx rdpstateinit_dl_common[] = {
     gsDPSetEnvColor(0,0,0,0),
     gsDPSetPrimColor(0,0,0,0,0,0),
     gsDPSetBlendColor(0,0,0,0),
@@ -19,8 +14,6 @@ Gfx rdpstateinit_dl[] = {
     gsDPSetKeyGB(0,0,0,0,0,0),
 
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
-
-    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, SCREEN_WD, SCREEN_HT),
 
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0),
@@ -52,6 +45,16 @@ Gfx rdpstateinit_dl[] = {
 
     gsDPPipeSync(),
     gsSPEndDisplayList(),
+};
+
+Gfx rdpstateinit_dl_pal[] = {
+    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, SCREEN_WD, SCREEN_HT_PAL),
+    gsSPBranchList(rdpstateinit_dl_common),
+};
+
+Gfx rdpstateinit_dl[] = {
+    gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, SCREEN_WD, SCREEN_HT_NTSC),
+    gsSPBranchList(rdpstateinit_dl_common),
 };
 
 /* intialize the RSP state: */

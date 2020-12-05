@@ -36,12 +36,14 @@ void levelTitleEffectRender(void* data, struct GraphicsState* state, struct Font
         barHeight = BAR_HEIGHT;
     }
 
+    int barY = (gScreenHeight >> 1) + 40;
+
     if (barHeight > 0) {
         gDPPipeSync(state->dl++);
         gDPSetCycleType(state->dl++, G_CYC_FILL);
         gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
                     GPACK_RGBA5551(0, 0, 0, 1)));
-        gDPFillRectangle(state->dl++, 0, 160-(barHeight>>1), SCREEN_WD-1, 160+(barHeight>>1));
+        gDPFillRectangle(state->dl++, 0, barY-(barHeight>>1), SCREEN_WD-1, barY+(barHeight>>1));
         gDPPipeSync(state->dl++);
 
 
@@ -63,7 +65,7 @@ void levelTitleEffectRender(void* data, struct GraphicsState* state, struct Font
             &state->dl, 
             titleEffect->message, 
             -titleEffect->titleWidth * 0.5f + SCREEN_WD*0.5f+centerOffset, 
-            160-8
+            barY-8
         );
 
         gDPPipeSync(state->dl++);

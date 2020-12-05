@@ -23,7 +23,7 @@ extern GFXInfo         gInfo[];
 
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 // extra 64 bytes to make sure it is aligned to 64 bytes
-unsigned short	gZBuffer[SCREEN_WD*SCREEN_HT + 64 / sizeof(u16)];
+unsigned short	gZBuffer[SCREEN_WD*MAX_SCREEN_HT + 64 / sizeof(u16)];
 unsigned short* gColorBuffer[2];
 char* gStaticSegmentBuffer;
 char* gLevelSegmentBuffer;
@@ -36,8 +36,13 @@ MenuRenderCallback gMenuGraphics[MAX_MENUS];
 void* gMenuGraphicsData[MAX_MENUS];
 
 static Vp gFullVP = {
-    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0,
-    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ/2, 0,
+    SCREEN_WD*2, 240*2, G_MAXZ/2, 0,
+    SCREEN_WD*2, 240*2, G_MAXZ/2, 0,
+};
+
+static Vp gFullPalVP = {
+    SCREEN_WD*2, 288*2, G_MAXZ/2, 0,
+    SCREEN_WD*2, 288*2, G_MAXZ/2, 0,
 };
 
 void graphicsInit(void) 
@@ -118,7 +123,11 @@ void createGfxTask(GFXInfo *i) {
 
     gSPDisplayList(glistp++, setup_rspstate);
     if (firsttime) {
-        gSPDisplayList(glistp++, rdpstateinit_dl);
+        if (gScreenHeight == SCREEN_HT_PAL) {
+            gSPDisplayList(glistp++, rdpstateinit_dl_pal);
+        } else {
+            gSPDisplayList(glistp++, rdpstateinit_dl);
+        }
 	    firsttime = 0;
     }
 
@@ -129,18 +138,22 @@ void createGfxTask(GFXInfo *i) {
     gDPSetCycleType(glistp++, G_CYC_FILL);
     gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, zBuffAligned);
     gDPSetFillColor(glistp++, (GPACK_ZDZ(G_MAXFBZ,0) << 16 | GPACK_ZDZ(G_MAXFBZ,0)));
-    gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+    gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, gScreenHeight-1);
 	
     gDPPipeSync(glistp++);
     gDPSetColorImage(glistp++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD,
 		     osVirtualToPhysical(i->cfb));
 
     if (gCurrentLevelTheme) {
-        gSPDisplayList(glistp++, gCurrentLevelTheme->clear);
+        if (gScreenHeight == SCREEN_HT_PAL) {
+            gSPDisplayList(glistp++, gCurrentLevelTheme->clearPal);
+        } else {
+            gSPDisplayList(glistp++, gCurrentLevelTheme->clear);
+        }
     } else {
         gDPSetFillColor(glistp++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
                     GPACK_RGBA5551(0, 0, 0, 1)));
-        gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+        gDPFillRectangle(glistp++, 0, 0, SCREEN_WD-1, gScreenHeight-1);
     }
 
     struct GraphicsState state;
@@ -211,7 +224,11 @@ void createGfxTask(GFXInfo *i) {
     glistp = state.dl;
 
     gDPPipeSync(glistp++);
-    gSPViewport(glistp++, &gFullVP);
+    if (gScreenHeight == SCREEN_HT_PAL) {
+        gSPViewport(glistp++, &gFullPalVP);
+    } else {
+        gSPViewport(glistp++, &gFullVP);
+    }
 
     gSPClearGeometryMode(state.dl++, G_ZBUFFER|G_CULL_BACK);
     gDPSetRenderMode(state.dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
@@ -227,7 +244,7 @@ void createGfxTask(GFXInfo *i) {
             gScene.viewports[0].maxx,
             0,
             gScene.viewports[1].minx-1,
-            SCREEN_HT-1
+            gScreenHeight-1
         );
         gDPPipeSync(glistp++);
         gDPSetCycleType(glistp++, G_CYC_1CYCLE);
