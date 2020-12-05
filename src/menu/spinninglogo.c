@@ -34,13 +34,14 @@ void spinningLogoText(void* data, struct GraphicsState* state, struct FontRender
     gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
 
     gSPDisplayList(state->dl++, gFreshEaterUse);
+    fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
     fontRendererDrawCharacters(
         fontRenderer,
         &gFreshEater,
         &state->dl,
         "ULTRA RARE",
         80,
-        (gScreenHeight >> 1) + 43
+        (gScreenHeight >> 1) + SCALE_FOR_PAL(43)
     );
 
     u8 alpha = 255;

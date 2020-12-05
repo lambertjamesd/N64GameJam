@@ -18,8 +18,8 @@
 
 // BAR_HEIGHT + 240 - 160 = 0.5 * ACCEL * ANIMATION_DURATION * ANIMATION_DURATION
 
-#define BAR_HEIGHT  30
-#define BAR_Y       ((gScreenHeight >> 1) + 40)
+#define BAR_HEIGHT  SCALE_FOR_PAL(30)
+#define BAR_Y       ((gScreenHeight >> 1) + SCALE_FOR_PAL(40))
 #define BAR_SIDE_PADDING 15
 
 #define TEXT_SCALE      2.0f
@@ -83,7 +83,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
         gDPPipeSync(state->dl++);
 
         gSPDisplayList(state->dl++, gButtonFontUse);
-        fontRendererSetScale(fontRenderer, TEXT_SCALE, TEXT_SCALE);
+        fontRendererSetScale(fontRenderer, TEXT_SCALE, TEXT_SCALE * gScreenYScale);
         float nextX = fontRendererDrawCharacters(
             fontRenderer, 
             &gButtonFont, 
@@ -102,7 +102,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
             &state->dl, 
             gTutorialText[menu->type],
             (int)nextX,
-            (int)offset+BAR_Y-8
+            (int)offset+BAR_Y-SCALE_FOR_PAL(8)
         );
 
         gDPPipeSync(state->dl++);
@@ -275,16 +275,6 @@ void tutorialMenuCheck() {
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuCamFree);
             }
-        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_FOUND_ROBOT)) {
-            if ((gLevelFlags & LEVEL_INTRO_ROBOT) && 
-                fabsf(gRobot.transform.position.x - gCadet.transform.position.x) < DISCOVER_RADIUS &&
-                fabsf(gRobot.transform.position.z - gCadet.transform.position.z) < DISCOVER_RADIUS) {
-                    int robotController = levelSwitchToRobot();
-                    levelFocusCutscene(&gRobot.transform.position, 2.0f, robotController);
-                    saveFileMarkTutorial(SAVEFILE_LEARNED_FOUND_ROBOT);
-                    gTutorialMenu.delay = 0.0f;
-                    gLevelFlags |= LEVEL_HAS_ROBOT;
-            }
         } else if (gRobot.controllerIndex != -1 && (gInputMask[gRobot.controllerIndex] & InputMaskPlayer) && !saveFileCheckTutorial(SAVEFILE_LEARNED_ATTACK)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
@@ -297,6 +287,18 @@ void tutorialMenuCheck() {
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuSwitch);
             }
+        }
+    }
+
+    if (!saveFileCheckTutorial(SAVEFILE_LEARNED_FOUND_ROBOT)) {
+        if ((gLevelFlags & LEVEL_INTRO_ROBOT) && 
+            fabsf(gRobot.transform.position.x - gCadet.transform.position.x) < DISCOVER_RADIUS &&
+            fabsf(gRobot.transform.position.z - gCadet.transform.position.z) < DISCOVER_RADIUS) {
+                int robotController = levelSwitchToRobot();
+                levelFocusCutscene(&gRobot.transform.position, 2.0f, robotController);
+                saveFileMarkTutorial(SAVEFILE_LEARNED_FOUND_ROBOT);
+                gTutorialMenu.delay = 0.0f;
+                gLevelFlags |= LEVEL_HAS_ROBOT;
         }
     }
 }

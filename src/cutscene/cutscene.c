@@ -168,7 +168,7 @@ char* cutsceneBufferAtY(char* input, int y) {
 #define MAX_TILE_X  64
 #define MAX_TILE_Y  32
 
-void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih, int sx, int sy, int dx, int dy, int w, int h) {
+void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih, int sx, int sy, int dx, int dy, int width, int height) {
     gDPPipeSync(state->dl++);
     gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
     gDPSetRenderMode(state->dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
@@ -177,25 +177,29 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
     gDPSetTexturePersp(state->dl++, G_TP_NONE);
     gDPSetPrimColor(state->dl++, 0, 0, 255, 0, 255, 255);
 
-    int tileXCount = (w + MAX_TILE_X-1) / MAX_TILE_X;
-    int tileYCount = (h + MAX_TILE_Y-1) / MAX_TILE_Y;
+    int tileXCount = (width + MAX_TILE_X-1) / MAX_TILE_X;
+    int tileYCount = (height + MAX_TILE_Y-1) / MAX_TILE_Y;
     int tileX, tileY;
 
     for (tileX = 0; tileX < tileXCount; ++tileX) {
         int currX = tileX * MAX_TILE_X;
-        int tileWidth = w - currX;
+        int tileWidth = width - currX;
 
         if (tileWidth > MAX_TILE_X) {
             tileWidth = MAX_TILE_X;
         }
 
+        int scaledY = 0;
+
         for (tileY = 0; tileY < tileYCount; ++tileY) {
             int currY = tileY * MAX_TILE_Y;
-            int tileHeight = h - currY;
+            int tileHeight = height - currY;
             
             if (tileHeight > MAX_TILE_Y) {
                 tileHeight = MAX_TILE_Y;
             }
+
+            int scaledTileHeight = SCALE_FOR_PAL(tileHeight);
             
             gDPLoadTextureTile(
                 state->dl++,
@@ -212,11 +216,13 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
             
             gSPTextureRectangle(
                 state->dl++,
-                (dx+currX) << 2, (dy+currY) << 2,
-                (dx+currX+tileWidth) << 2, (dy+currY+tileHeight) << 2,
+                (dx+currX) << 2, (dy+scaledY) << 2,
+                (dx+currX+tileWidth) << 2, (dy+scaledY+scaledTileHeight) << 2,
                 G_TX_RENDERTILE, 
-                0, 0, 1 << 10, 1 << 10
+                0, 0, 1 << 10, (tileHeight << 10) / scaledTileHeight
             );
+
+            scaledY += scaledTileHeight;
         }
     }
 
@@ -241,7 +247,7 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
         yOffset = 0;
     }
     
-    int barHeight = (gScreenHeight - CUTSCENE_HEIGHT) >> 1;
+    int barHeight = (SCREEN_HT_NTSC - CUTSCENE_HEIGHT) >> 1;
 
     int index = cutsceneGetImageSlot(currFrame->slideIndex);
 
@@ -249,7 +255,7 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
         graphicsCopyImage(state, gCutsceneBuffer[index], 
             SCREEN_WD, CUTSCENE_HEIGHT, 
             0, yOffset, 
-            0, barHeight, 
+            0, SCALE_FOR_PAL(barHeight), 
             SCREEN_WD, CUTSCENE_HEIGHT
         );
     }

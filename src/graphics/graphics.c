@@ -21,6 +21,9 @@ extern OSSched         gScheduler;
 extern OSMesgQueue     *gSchedulerCommandQ;
 extern GFXInfo         gInfo[];
 
+int gScreenHeight;
+float gScreenYScale;
+
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 // extra 64 bytes to make sure it is aligned to 64 bytes
 unsigned short	gZBuffer[SCREEN_WD*MAX_SCREEN_HT + 64 / sizeof(u16)];
@@ -52,7 +55,28 @@ void graphicsInit(void)
     gInfo[1].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[1].cfb = gColorBuffer[1];
 
-    osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
+	switch (osTvType) {
+		case 0: // PAL
+			osViSetMode(&osViModeTable[OS_VI_FPAL_LPF1]);
+            gScreenHeight = SCREEN_HT_PAL;
+            gScreenYScale = (float)SCREEN_HT_PAL/SCREEN_HT_NTSC;
+			break;
+		case 1: // NTSC
+			osViSetMode(&osViModeTable[OS_VI_NTSC_LPF1]);
+            gScreenHeight = SCREEN_HT_NTSC;
+            gScreenYScale = 1.0f;
+			break;
+		case 2: // MPAL
+			osViSetMode(&osViModeTable[OS_VI_MPAL_LPF1]);
+            gScreenHeight = SCREEN_HT_NTSC;
+            gScreenYScale = 1.0f;
+			break;
+	}
+
+	osViSetSpecialFeatures(OS_VI_GAMMA_OFF |
+			OS_VI_GAMMA_DITHER_OFF |
+			OS_VI_DIVOT_OFF |
+			OS_VI_DITHER_FILTER_OFF);
 
     gFrameNumber = -1;
 }
@@ -66,7 +90,7 @@ void graphicsCaluclateFrustum(Dynamic* dynamicp, struct SceneViewport* vp, int c
         perspectiveMtx, 
         &dynamicp->perspectiveCorrect[cameraIndex], 
         gScene.fov[cameraIndex], 
-        (float)(vp->maxx - vp->minx) / (float)(vp->maxy - vp->miny),
+        gScreenYScale * (float)(vp->maxx - vp->minx) / (float)(vp->maxy - vp->miny),
         1.0f, 
         128.0f, 
         1.0f
@@ -166,6 +190,8 @@ void createGfxTask(GFXInfo *i) {
     state.usedLookAt = 0;
     state.lookAtCount = LOOK_AT_COUNT;
     state.cfb = i->cfb;
+
+    u16* buffer = i->cfb;
 
     int index;
     for (index = 0; index < gScene.activeViewportCount && index < MAX_VIEWPORTS; ++index) {

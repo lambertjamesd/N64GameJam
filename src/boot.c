@@ -54,7 +54,6 @@ static OSMesg           gDMAMessageBuf;
 OSMesgQueue     gGfxFrameMsgQ;
 OSMesg          gGfxFrameMsgBuf[MAX_MESGS];
 GFXInfo         gInfo[2];
-int gScreenHeight;
 
 /**** Scheduler globals ****/
 OSSched         gScheduler;
@@ -80,26 +79,10 @@ void boot(void *arg)
 
 static void idleThreadEntryPoint(char *argv) 
 {
-    osCreateViManager(OS_PRIORITY_VIMGR);
 
-	switch (osTvType) {
-		case 0: // PAL
-			osViSetMode(&osViModeTable[OS_VI_FPAL_LPF1]);
-            gScreenHeight = 288;
-			break;
-		case 1: // NTSC
-			osViSetMode(&osViModeTable[OS_VI_NTSC_LPF1]);
-            gScreenHeight = 240;
-			break;
-		case 2: // MPAL
-			osViSetMode(&osViModeTable[OS_VI_MPAL_LPF1]);
-            gScreenHeight = 240;
-			break;
-	}
-	osViSetSpecialFeatures(OS_VI_GAMMA_OFF |
-			OS_VI_GAMMA_DITHER_OFF |
-			OS_VI_DIVOT_OFF |
-			OS_VI_DITHER_FILTER_OFF);
+    gScreenHeight = 240;
+    
+    osCreateViManager(OS_PRIORITY_VIMGR);
 
     osCreatePiManager((OSPri) OS_PRIORITY_PIMGR, &PiMessageQ, PiMessages,
                         DMA_QUEUE_SIZE);

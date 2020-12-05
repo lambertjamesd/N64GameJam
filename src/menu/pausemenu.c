@@ -31,6 +31,9 @@ struct PauseMenu gPauseMenu;
 void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     struct PauseMenu* pauseMenu =  (struct PauseMenu*)data;
 
+    int modifiedHeight = SCALE_FOR_PAL(PAUSE_MENU_HEIGHT);
+    int modfiedLineHeight = SCALE_FOR_PAL(LINE_HEIGHT);
+
     gDPPipeSync(state->dl++);
     gDPSetCycleType(state->dl++, G_CYC_FILL);
     gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
@@ -38,9 +41,9 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
     gDPFillRectangle(
         state->dl++, 
         (SCREEN_WD-PAUSE_MENU_WIDTH)>>1, 
-        (gScreenHeight-PAUSE_MENU_HEIGHT)>>1,
+        (gScreenHeight-modifiedHeight)>>1,
         (SCREEN_WD+PAUSE_MENU_WIDTH)>>1, 
-        (gScreenHeight+PAUSE_MENU_HEIGHT)>>1
+        (gScreenHeight+modifiedHeight)>>1
     );
     gDPPipeSync(state->dl++);
     gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
@@ -49,7 +52,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
 
     float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, gPauseMenuTitle);
 
-    fontRendererSetScale(fontRenderer, 2.0f, 2.0f);
+    fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
 
     fontRendererDrawCharacters(
         fontRenderer,
@@ -57,10 +60,10 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
         &state->dl,
         gPauseMenuTitle,
         (SCREEN_WD >> 1) - (int)(halfWidth),
-        ((gScreenHeight - PAUSE_MENU_HEIGHT) >> 1) + 10
+        ((gScreenHeight - modifiedHeight) >> 1) + SCALE_FOR_PAL(10)
     );
 
-    fontRendererSetScale(fontRenderer, 1.0f, 1.0f);
+    fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
 
     int i;
 
@@ -68,7 +71,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
         int isSaved = i == 2 && !saveFileNeedsSave();
         char* text = isSaved ? "Saved" : gPauseMenuText[i];
         halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, text) * 0.5f;
-        int yOffset = 20 + i * LINE_HEIGHT - (int)((LINE_HEIGHT * PauseMenuItemCount) >> 1);
+        int yOffset = 20 + i * modfiedLineHeight - (int)((modfiedLineHeight * PauseMenuItemCount) >> 1);
 
 
         if (pauseMenu->selectedItem == i) {

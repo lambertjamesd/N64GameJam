@@ -27,13 +27,13 @@ void levelTitleEffectRender(void* data, struct GraphicsState* state, struct Font
     int barHeight = 0;
 
     if (titleEffect->currTime < BAR_SCALE_TIME) {
-        barHeight = (int)(BAR_HEIGHT * (titleEffect->currTime / BAR_SCALE_TIME));
+        barHeight = (int)SCALE_FOR_PAL(BAR_HEIGHT * (titleEffect->currTime / BAR_SCALE_TIME));
     } else if (titleEffect->currTime > MESSAGE_TOTAL_TIME - BAR_SCALE_TIME) {
         float lerpTime = titleEffect->currTime - MESSAGE_TOTAL_TIME + BAR_SCALE_TIME;
         lerpTime = 1.0f - lerpTime/ BAR_SCALE_TIME;
-        barHeight = (int)(BAR_HEIGHT * lerpTime);
+        barHeight = (int)SCALE_FOR_PAL(BAR_HEIGHT * lerpTime);
     } else {
-        barHeight = BAR_HEIGHT;
+        barHeight = SCALE_FOR_PAL(BAR_HEIGHT);
     }
 
     int barY = (gScreenHeight >> 1) + 40;
@@ -58,14 +58,14 @@ void levelTitleEffectRender(void* data, struct GraphicsState* state, struct Font
         }
 
         gSPDisplayList(state->dl++, gEndlessBossBattleUse);
-        fontRendererSetScale(fontRenderer, MESSAGE_SCALE, MESSAGE_SCALE);
+        fontRendererSetScale(fontRenderer, MESSAGE_SCALE, MESSAGE_SCALE * gScreenYScale);
         fontRendererDrawCharacters(
             fontRenderer, 
             &gEndlessBossBattle, 
             &state->dl, 
             titleEffect->message, 
             -titleEffect->titleWidth * 0.5f + SCREEN_WD*0.5f+centerOffset, 
-            barY-8
+            barY-SCALE_FOR_PAL(8)
         );
 
         gDPPipeSync(state->dl++);
