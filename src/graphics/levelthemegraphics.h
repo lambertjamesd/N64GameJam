@@ -32,6 +32,7 @@ enum TransparentMaterialType {
 	TransparentMaterialTypeShadow,
 	TransparentMaterialTypeGem,
 	TransparentMaterialTypeShockwave,
+	TransparentMaterialTypeSmoke,
 };
 
 #define SWITCH_COLOR_COUNT	5

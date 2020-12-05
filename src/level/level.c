@@ -519,6 +519,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
     gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = _gem_cleanup_mat;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
+    gScene.transparentMaterials[TransparentMaterialTypeSmoke] = _smoke_mat;
 
     if (levelDef->levelData->musicRomStart && levelDef->levelData->musicRomEnd) {
         struct SeqPlayEvent seq;

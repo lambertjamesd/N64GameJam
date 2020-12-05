@@ -33,6 +33,11 @@ struct DropShadowParams gCadetShadowParams = {
     CollisionLayersGeometry | CollisionLayersRobot,
 };
 
+struct RocketTrailParameters gCadetTrailParameters = {
+    TransparentMaterialTypeSmoke,
+    {0.0f, 0.0f, 0.0f}, 
+};
+
 struct Cadet gCadet;
 
 struct Vector2 gCadetMaxRotation;
@@ -238,6 +243,7 @@ void cadetWalk(struct Cadet* cadet) {
 
             vector3MoveTowards(&cadet->actor.velocity, &targetVelocity, CADET_HORZ_IMPULSE, &cadet->actor.velocity);
 
+            rocektTrailStart(&cadet->jumpTrail, &cadet->transform, &gCadetTrailParameters, 0);
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
             cadet->coyoteTimer = 0.0f;
@@ -275,6 +281,8 @@ void cadetFreefall(struct Cadet* cadet) {
             0.0f,
             10
         );
+
+        rocektTrailStop(&cadet->jumpTrail);
     }
 
     cadetUpdateRotation(cadet);

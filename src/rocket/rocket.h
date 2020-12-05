@@ -12,7 +12,7 @@
 #define ROCKET_FLAGS_LAUNCHING      (1 << 0)
 #define ROCKET_FLAGS_ANIMATION_DONE (1 << 1)
 
-extern struct Vector3 gRocketTrailOrigin;
+extern struct RocketTrailParameters gRocketTrailParameters;
 
 struct Rocket {
     struct BasicTransform transform;

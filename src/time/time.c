@@ -68,6 +68,20 @@ void timeRemoveListener(struct TimeUpdateListener* listener, enum TimeUpdateGrou
     }
 }
 
+int timeHasListener(struct TimeUpdateListener* listener, enum TimeUpdateGroup group) {
+    struct TimeUpdateListener* curr = gTimeListenerHead[group];
+
+    while (curr) {
+        if (curr == listener) {
+            return 1;
+        }
+
+        curr = curr->next;
+    }
+
+    return 0;
+}
+
 void timeResetListeners() {
     int i;
 

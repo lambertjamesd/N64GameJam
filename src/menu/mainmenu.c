@@ -422,6 +422,7 @@ void mainMenuInit() {
     gScene.viewports[0].maxy = SCREEN_HT;
     gScene.fov[0] = 54.188044907f;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
+    
 
     gMainMenuTime = 0.0f;
 
@@ -436,7 +437,7 @@ void mainMenuInit() {
     gRocket.color.b = 255;
     gRocket.color.a = 255;
 
-    rocektTrailStart(&gRocket.trail, &gRocket.transform, &gRocketTrailOrigin);
+    rocektTrailStart(&gRocket.trail, &gRocket.transform, &gRocketTrailParameters, 0);
     
     gMainMenuSelectedLevel = -2;
 

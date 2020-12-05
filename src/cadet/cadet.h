@@ -9,6 +9,7 @@
 #include "src/math/basictransform.h"
 #include "src/math/vector2.h"
 #include "src/time/time.h"
+#include "src/effects/rockettrail.h"
 
 #define CADET_RADIUS        0.2f
 #define CADET_SPEED         5.6f
@@ -38,6 +39,7 @@ struct Cadet {
     struct TimeUpdateListener updateListener;
     struct Vector2 rotation;
     struct DropShadow shadow;
+    struct RocketTrail jumpTrail;
     float accumTime;
     float gravity;
     struct WalkAnim walkAnim;

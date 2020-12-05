@@ -28,7 +28,13 @@ void rocektTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
         }
 
         Mtx* transform = graphicsStateNextMtx(state);
-        transformToMatrixL(currentTransform, 1.0f / 256.0f, transform);
+        if (trail->flags & ROCKET_TRAIL_FLAGS_RELATIVE) {
+            struct BasicTransform combined;
+            transformConcat(data->transform, currentTransform, &combined);
+            transformToMatrixL(&combined, 1.0f / 256.0f, transform);
+        } else {
+            transformToMatrixL(currentTransform, 1.0f / 256.0f, transform);
+        }
 
         u8 alpha = trail->alpha - (u8)((float)trail->alpha * currentTransform->scale / MAX_SCALE);
 
@@ -69,9 +75,15 @@ void rocketTrailUpdate(void* data) {
     if (trail->spawnTimer <= 0.0f && nextParticle != -1) {
         struct BasicTransform* currentTransform = &trail->particleTransforms[nextParticle];
 
-        currentTransform->rotation = trail->emitSource->rotation;
-        transformPoint(trail->emitSource, &trail->emitOffset, &currentTransform->position);
-        currentTransform->scale = MIN_SCALE;
+        if (trail->flags & ROCKET_TRAIL_FLAGS_RELATIVE) {
+            quatIdent(&currentTransform->rotation);
+            currentTransform->position = gZeroVec;
+            currentTransform->scale = MIN_SCALE;
+        } else {
+            currentTransform->rotation = trail->emitSource->rotation;
+            transformPoint(trail->emitSource, &trail->parameters->emitOffset, &currentTransform->position);
+            currentTransform->scale = MIN_SCALE;
+        }
 
         trail->spawnTimer = SPAWN_INTERVAL;
     } else if (trail->spawnTimer == STOP_ANIMATING) {
@@ -84,7 +96,7 @@ void rocketTrailUpdate(void* data) {
     }
 }
 
-void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct Vector3* emitOffset) {
+void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, char flags) {
     int i;
 
     for (i = 0; i < MAX_ACTIVE_PARTICLES; ++i) {
@@ -93,12 +105,15 @@ void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSour
     }
 
     trail->emitSource = emitSource;
-    trail->emitOffset = *emitOffset;
+    trail->parameters = parameters;
     trail->spawnTimer = 0.0f; 
     trail->alpha = 255;
+    trail->flags = flags;
 
-    timeAddListener(&trail->updateListener, rocketTrailUpdate, trail, TimeUpdateGroupWorld);
-    trail->renderId = dynamicActorAddToGroup(&gScene.transparentActors, emitSource, trail, rocektTrailRender, TransparentMaterialTypeShockwave, 20.0f);
+    if (!timeHasListener(&trail->updateListener, TimeUpdateGroupWorld)) {
+        timeAddListener(&trail->updateListener, rocketTrailUpdate, trail, TimeUpdateGroupWorld);
+        trail->renderId = dynamicActorAddToGroup(&gScene.transparentActors, emitSource, trail, rocektTrailRender, parameters->material, 20.0f);
+    }    
 }
 
 void rocektTrailStop(struct RocketTrail* trail) {

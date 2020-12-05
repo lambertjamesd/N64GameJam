@@ -2,6 +2,7 @@
 #include "explosion.h"
 
 #include "geo/explosion.inc.c"
+#include "geo/smoke.inc.c"
 #include "src/collision/collisionscene.h"
 #include "src/graphics/graphics.h"
 
