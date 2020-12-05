@@ -100,7 +100,7 @@ void spinningLogoUpdate(void* data) {
         }
 
         if (nextTime >= LAUGH_PLAY_TIME && gSpinningLogoTimer < LAUGH_PLAY_TIME) {
-            audioPlaySound(gPlayerSoundIds[IntroSndLogoLaughing], 0.5f, 1.0f, 0.0f, 10);
+            audioPlaySound(gPlayerSoundIds[IntroSndLogoLaughing], 0.5f, 0.7f, 0.0f, 10);
         }
 
         gSpinningLogoTimer = nextTime;

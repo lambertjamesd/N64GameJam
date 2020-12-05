@@ -130,7 +130,7 @@ void pauseMenuUpdate(void* data) {
         audioRestartPlaySound(
             gPlayerSoundIds[SoundUISelect],
             0.5f,
-            1.0f,
+            MENU_SELECT_SOUND_VOLUME,
             0.0f,
             10
         );
@@ -139,7 +139,7 @@ void pauseMenuUpdate(void* data) {
         audioRestartPlaySound(
             gPlayerSoundIds[SoundUISelect],
             0.5f,
-            1.0f,
+            MENU_SELECT_SOUND_VOLUME,
             0.0f,
             10
         );

@@ -263,7 +263,7 @@ void menuHandleInput(struct Menu* menu, int controllerIndex) {
         audioRestartPlaySound(
             gPlayerSoundIds[SoundUISelect],
             0.5f,
-            1.0f,
+            MENU_SELECT_SOUND_VOLUME,
             0.0f,
             10
         );
@@ -273,7 +273,7 @@ void menuHandleInput(struct Menu* menu, int controllerIndex) {
         audioRestartPlaySound(
             gPlayerSoundIds[SoundUISelect],
             0.5f,
-            1.0f,
+            MENU_SELECT_SOUND_VOLUME,
             0.0f,
             10
         );

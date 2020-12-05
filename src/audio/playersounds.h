@@ -10,6 +10,8 @@ enum SoundsBanks {
     SoundBankIntroCutscene,
 };
 
+#define MENU_SELECT_SOUND_VOLUME    0.5f
+
 enum PlayerSounds {
     PlayerSoundsJump,
     PlayerSoundsJumpPeak,

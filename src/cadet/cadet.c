@@ -247,7 +247,7 @@ void cadetWalk(struct Cadet* cadet) {
             audioPlaySound(
                 gPlayerSoundIds[PlayerSoundsJump],
                 0.5f,
-                1.0f,
+                0.6f,
                 0.0f,
                 10
             );
@@ -271,7 +271,7 @@ void cadetFreefall(struct Cadet* cadet) {
         audioPlaySound(
             gPlayerSoundIds[PlayerSoundsJumpPeak],
             0.5f,
-            0.75f,
+            0.3f,
             0.0f,
             10
         );

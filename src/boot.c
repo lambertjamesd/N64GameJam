@@ -205,10 +205,9 @@ static void initGame(void)
     osScAddClient(&gScheduler, &gfxClient, &gGfxFrameMsgQ);
 
 #if DEBUG
-    OSThread* threadPtr[2];
+    OSThread* threadPtr[1];
     threadPtr[0] = &gGameThread;
-    threadPtr[1] = &gJpegThread;
-    enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 2);
+    enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 1);
 #else
     enum GDBError err = gdbSerialInit(handler, &gDMAMessageQ);
 #endif
@@ -234,6 +233,6 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    gNextLevel = 1;
+    // gNextLevel = 1;
 }
 

@@ -4,8 +4,8 @@ include $(ROOT)/usr/include/make/PRdefs
 FINAL = YES
 
 ifeq ($(FINAL), YES)
-# OPTIMIZER       = -O2 -std=gnu90 -mno-shared
-OPTIMIZER       = -g
+OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
+# OPTIMIZER       = -g
 LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
 else
