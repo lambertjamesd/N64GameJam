@@ -3,15 +3,9 @@
 #include "explosion.h"
 
 #include "src/graphics/graphics.h"
+#include "src/math/mathf.h"
 
 #define STOP_ANIMATING  100.0f
-
-#define MOVE_SPEED 2.0f
-#define SCALE_RATE 0.5f
-#define MAX_SCALE 1.0f
-#define MIN_SCALE 0.1f
-
-#define SPAWN_INTERVAL 0.5f
 
 void rocektTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct RocketTrail* trail = (struct RocketTrail*)data->data;
@@ -20,7 +14,7 @@ void rocektTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
 
     int i;
 
-    for (i = 0; i < MAX_ACTIVE_PARTICLES; ++i) {
+    for (i = 0; i < trail->particleCount; ++i) {
         struct BasicTransform* currentTransform = &trail->particleTransforms[i];
 
         if (currentTransform->scale == 0.0f) {
@@ -36,7 +30,10 @@ void rocektTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
             transformToMatrixL(currentTransform, 1.0f / 256.0f, transform);
         }
 
-        u8 alpha = trail->alpha - (u8)((float)trail->alpha * currentTransform->scale / MAX_SCALE);
+        float lerp = (currentTransform->scale - trail->parameters->minScale) / 
+            (trail->parameters->maxScale - trail->parameters->minScale);
+
+        u8 alpha = (u8)mathfLerp((u8)trail->alpha, 0.0f, lerp);
 
         gDPSetEnvColor(state->dl++, 255, 255, 255, alpha);
         gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(transform), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
@@ -54,17 +51,17 @@ void rocketTrailUpdate(void* data) {
 
     int i;
 
-    for (i = 0; i < MAX_ACTIVE_PARTICLES; ++i) {
+    for (i = 0; i < trail->particleCount; ++i) {
         struct BasicTransform* currentTransform = &trail->particleTransforms[i];
         if (currentTransform->scale != 0.0f) {
-            currentTransform->scale += gTimeDelta * SCALE_RATE;
+            currentTransform->scale += gTimeDelta * trail->parameters->scaleRate;
 
-            if (currentTransform->scale >= MAX_SCALE) {
+            if (currentTransform->scale >= trail->parameters->maxScale) {
                 currentTransform->scale = 0.0f;
             } else {
                 struct Vector3 velocity;
                 quatMultVector(&currentTransform->rotation, &gUp, &velocity);
-                vector3AddScaled(&currentTransform->position, &velocity, -MOVE_SPEED * gTimeDelta, &currentTransform->position);
+                vector3AddScaled(&currentTransform->position, &velocity, trail->parameters->moveSpeed * gTimeDelta, &currentTransform->position);
                 hasActive = 1;
             }
         } else if (nextParticle == -1) {
@@ -78,14 +75,14 @@ void rocketTrailUpdate(void* data) {
         if (trail->flags & ROCKET_TRAIL_FLAGS_RELATIVE) {
             quatIdent(&currentTransform->rotation);
             currentTransform->position = gZeroVec;
-            currentTransform->scale = MIN_SCALE;
+            currentTransform->scale = trail->parameters->minScale;
         } else {
             currentTransform->rotation = trail->emitSource->rotation;
             transformPoint(trail->emitSource, &trail->parameters->emitOffset, &currentTransform->position);
-            currentTransform->scale = MIN_SCALE;
+            currentTransform->scale = trail->parameters->minScale;
         }
 
-        trail->spawnTimer = SPAWN_INTERVAL;
+        trail->spawnTimer = trail->parameters->spawnInterval;
     } else if (trail->spawnTimer == STOP_ANIMATING) {
         if (!hasActive) {
             timeRemoveListener(&trail->updateListener, TimeUpdateGroupWorld);
@@ -96,10 +93,10 @@ void rocketTrailUpdate(void* data) {
     }
 }
 
-void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, char flags) {
+void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, short particleCount, char flags) {
     int i;
 
-    for (i = 0; i < MAX_ACTIVE_PARTICLES; ++i) {
+    for (i = 0; i < particleCount; ++i) {
         trail->particleTransforms[i] = *emitSource;
         trail->particleTransforms[i].scale = 0.0f;
     }
@@ -109,6 +106,7 @@ void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSour
     trail->spawnTimer = 0.0f; 
     trail->alpha = 255;
     trail->flags = flags;
+    trail->particleCount = particleCount;
 
     if (!timeHasListener(&trail->updateListener, TimeUpdateGroupWorld)) {
         timeAddListener(&trail->updateListener, rocketTrailUpdate, trail, TimeUpdateGroupWorld);

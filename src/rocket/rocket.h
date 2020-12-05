@@ -13,6 +13,7 @@
 #define ROCKET_FLAGS_ANIMATION_DONE (1 << 1)
 
 extern struct RocketTrailParameters gRocketTrailParameters;
+#define ROCKET_TRAIL_PARAMETER_COUNT       4
 
 struct Rocket {
     struct BasicTransform transform;
@@ -23,6 +24,7 @@ struct Rocket {
     float animationTiming;
     int rocketFlags;
     struct RocketTrail trail;
+    struct BasicTransform trailParticles[ROCKET_TRAIL_PARAMETER_COUNT];
 };
 
 extern struct Rocket gRocket;

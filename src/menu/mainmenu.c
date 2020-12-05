@@ -437,7 +437,7 @@ void mainMenuInit() {
     gRocket.color.b = 255;
     gRocket.color.a = 255;
 
-    rocektTrailStart(&gRocket.trail, &gRocket.transform, &gRocketTrailParameters, 0);
+    rocektTrailStart(&gRocket.trail, &gRocket.transform, &gRocketTrailParameters, ROCKET_TRAIL_PARAMETER_COUNT, 0);
     
     gMainMenuSelectedLevel = -2;
 

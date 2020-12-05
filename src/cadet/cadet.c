@@ -35,7 +35,12 @@ struct DropShadowParams gCadetShadowParams = {
 
 struct RocketTrailParameters gCadetTrailParameters = {
     TransparentMaterialTypeSmoke,
-    {0.0f, 0.0f, 0.0f}, 
+    {0.0f, 0.2f, -0.1f}, 
+    0.5f,
+    0.6f,
+    0.15f,
+    0.5f,
+    0.02f,
 };
 
 struct Cadet gCadet;
@@ -243,7 +248,8 @@ void cadetWalk(struct Cadet* cadet) {
 
             vector3MoveTowards(&cadet->actor.velocity, &targetVelocity, CADET_HORZ_IMPULSE, &cadet->actor.velocity);
 
-            rocektTrailStart(&cadet->jumpTrail, &cadet->transform, &gCadetTrailParameters, 0);
+            rocektTrailStart(&cadet->jumpTrail, &cadet->transform, &gCadetTrailParameters, CADET_PARTICLE_TRAIL_COUNT, 0);
+            cadet->jumpTrail.alpha = 160;
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
             cadet->coyoteTimer = 0.0f;

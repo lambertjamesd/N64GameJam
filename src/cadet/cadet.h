@@ -32,6 +32,8 @@ typedef void (*CadetState)(struct Cadet* cadet);
 #define CADET_IS_CUTSCENE  SPHERE_ACTOR_FLAG_1
 #define CADET_IS_INVISIBLE  SPHERE_ACTOR_FLAG_2
 
+#define CADET_PARTICLE_TRAIL_COUNT      8
+
 struct Cadet {
     struct BasicTransform transform;
     struct SphereActor actor;
@@ -40,6 +42,7 @@ struct Cadet {
     struct Vector2 rotation;
     struct DropShadow shadow;
     struct RocketTrail jumpTrail;
+    struct BasicTransform jumpTrailParticles[CADET_PARTICLE_TRAIL_COUNT];
     float accumTime;
     float gravity;
     struct WalkAnim walkAnim;

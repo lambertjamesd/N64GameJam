@@ -16,6 +16,11 @@ struct Rocket gRocket;
 struct RocketTrailParameters gRocketTrailParameters = {
     TransparentMaterialTypeShockwave,
     {0.0f, 1.0f, 0.0f}, 
+    -2.0f,
+    0.5f,
+    0.1f,
+    1.0f,
+    0.5f,
 };
 
 void rocketRender(struct DynamicActor* data, struct GraphicsState* state) {
@@ -80,7 +85,7 @@ void rocketLandAt(struct Rocket* rocket, struct Vector3* location) {
     timeAddListener(&rocket->updateListener, rocketUpdate, rocket, TimeUpdateGroupWorld);
     vector3AddScaled(location, &gUp, LANDING_TIME*LANDING_TIME*LANDING_ACCEL, &rocket->transform.position);
 
-    rocektTrailStart(&rocket->trail, &rocket->transform, &gRocketTrailParameters, ROCKET_TRAIL_FLAGS_RELATIVE);
+    rocektTrailStart(&rocket->trail, &rocket->transform, &gRocketTrailParameters, ROCKET_TRAIL_PARAMETER_COUNT, ROCKET_TRAIL_FLAGS_RELATIVE);
 }
 
 void rocketStartAt(struct Rocket* rocket, struct Vector3* location) {
