@@ -29,10 +29,12 @@ slidebuilder/slidebuilder: $(SLIDE_BUILDER_SOURCE)
 	go build -o slidebuilder/slidebuilder ./slidebuilder/
 
 LEVELS = cadet_intro \
+	switch_intro \
 	robot_intro \
 	robot_platform \
+	switch_sizes \
 	lava_platform \
-	switch_tutorial \
+	connected_colors \
 	inverted_doors \
 	switch_tagteam \
 	loop_around \
@@ -202,6 +204,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/effects/rockettrail.c \
 	src/effects/rockfragments.c	\
 	src/effects/shadow.c	\
+	src/effects/splash.c \
 	src/effects/teleport.c	\
 	src/effects/tutorial.c	\
 	src/effects/walkanim.c \

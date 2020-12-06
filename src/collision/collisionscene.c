@@ -4,7 +4,7 @@
 
 #include "meshcollision.h"
 
-static struct LevelCollisionGrid* gLevelCollisionGrid;
+struct LevelCollisionGrid* gLevelCollisionGrid;
 struct SparseCollisionGrid gSparseCollisionGrid;
 
 struct CollisionResult* collisionSceneCollideSphere(struct Vector3* position, float radius, int collisionMask) {

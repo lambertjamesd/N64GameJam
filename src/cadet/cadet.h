@@ -10,6 +10,7 @@
 #include "src/math/vector2.h"
 #include "src/time/time.h"
 #include "src/effects/rockettrail.h"
+#include "src/effects/splash.h"
 
 #define CADET_RADIUS        0.2f
 #define CADET_SPEED         5.6f
@@ -43,6 +44,7 @@ struct Cadet {
     struct DropShadow shadow;
     struct RocketTrail jumpTrail;
     struct BasicTransform jumpTrailParticles[CADET_PARTICLE_TRAIL_COUNT];
+    struct SplashEffect splash;
     float accumTime;
     float gravity;
     struct WalkAnim walkAnim;

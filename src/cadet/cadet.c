@@ -25,6 +25,8 @@
 
 #define CADET_TURN_RATE     (M_PI * 3.0f)
 
+#define SPLASH_CHECK_THRESH -0.1f
+
 struct DropShadowParams gCadetShadowParams = {
     MIN_SHADOW_SCALE,
     MAX_SHADOW_SCALE,
@@ -443,18 +445,37 @@ void cadetRespawn(struct Cadet* cadet) {
     }
 }
 
+void cadetCheckForSwamp(struct Cadet* cadet) {
+    if (gLevelCollisionGrid && !splashEffectActive(&cadet->splash)) {
+        struct Vector3 raycastCheck;
+        raycastCheck.x = cadet->transform.position.x;
+        raycastCheck.y = 0.1f;
+        raycastCheck.z = cadet->transform.position.z;
+        struct Vector3 raycastDir;
+        raycastDir.x = 0.0f;
+        raycastDir.y = -1.0f;
+        raycastDir.z = 0.0f;
+        struct ContactPoint contact;
+        if (collisionGridRaycast(gLevelCollisionGrid, &raycastCheck, &raycastDir, CollisionLayersSwamp, 1.0f, &contact) != RAYCAST_NO_HIT) {
+            splashEffectInit(&cadet->splash, &contact.point, fabsf(cadet->actor.velocity.y) * 0.1f);
+        }
+    }
+}
+
 void cadetUpdate(void* cadetPtr) {
     struct Cadet* cadet = (struct Cadet*)cadetPtr;
     if (cadet->actor.stateFlags & CADET_IS_INVISIBLE) {
         return;
     }
 
+    float prevY = cadet->transform.position.y;
+
     cadet->state(cadet);
 
     cadetUpdatefootstepSound(cadet);
 
-    if (getButtonDown(0, B_BUTTON)) {
-        cadet->actor.stateFlags &= ~SPHERE_ACTOR_IS_GROUNDED;
+    if (prevY >= SPLASH_CHECK_THRESH && cadet->transform.position.y < SPLASH_CHECK_THRESH) {
+        cadetCheckForSwamp(cadet);
     }
 
     dropShadowCalculate(&cadet->shadow, cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED, &cadet->transform.position);
