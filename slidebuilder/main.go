@@ -86,7 +86,7 @@ func writeSpecSegs(output string, slides []string) {
 beginseg
 	name "%s_slide"
 	flags RAW
-	include "imageslides/%s.jpg"
+	include "imageslides/%s.jpeg"
 endseg		
 `, slide, slide))
 	}

@@ -189,6 +189,25 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
             tileWidth = MAX_TILE_X;
         }
 
+        int currDx = dx + currX;
+
+        if (currDx >= SCREEN_WD) {
+            break;
+        }
+
+        if (currDx + tileWidth < 0) {
+            continue;
+        }
+
+        if (currDx < 0) {
+            tileWidth += currDx;
+            currDx = 0;
+        }
+
+        if (currDx + tileWidth >= SCREEN_WD) {
+            tileWidth = SCREEN_WD - currDx;
+        }
+
         int scaledY = 0;
 
         for (tileY = 0; tileY < tileYCount; ++tileY) {
@@ -216,8 +235,8 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
             
             gSPTextureRectangle(
                 state->dl++,
-                (dx+currX) << 2, (dy+scaledY) << 2,
-                (dx+currX+tileWidth) << 2, (dy+scaledY+scaledTileHeight) << 2,
+                (currDx) << 2, (dy+scaledY) << 2,
+                (currDx+tileWidth) << 2, (dy+scaledY+scaledTileHeight) << 2,
                 G_TX_RENDERTILE, 
                 0, 0, 1 << 10, (tileHeight << 10) / scaledTileHeight
             );
@@ -246,6 +265,8 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
     if (yOffset < 0) {
         yOffset = 0;
     }
+
+    int dxOffset = (int)(gCutscenePlayer.currentTime * currFrame->dxVelocity + currFrame->dxOffset);
     
     int barHeight = (SCREEN_HT_NTSC - CUTSCENE_HEIGHT) >> 1;
 
@@ -255,7 +276,7 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
         graphicsCopyImage(state, gCutsceneBuffer[index], 
             SCREEN_WD, CUTSCENE_HEIGHT, 
             0, yOffset, 
-            0, SCALE_FOR_PAL(barHeight), 
+            dxOffset, SCALE_FOR_PAL(barHeight), 
             SCREEN_WD, CUTSCENE_HEIGHT
         );
     }

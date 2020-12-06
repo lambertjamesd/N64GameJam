@@ -35,6 +35,8 @@ struct CutsceneFrame {
     int slideIndex;
     float yVelocity;
     float yOffset;
+    float dxVelocity;
+    float dxOffset;
 };
 
 enum CutsceneEventType {
