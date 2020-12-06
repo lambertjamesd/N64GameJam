@@ -20,10 +20,12 @@ enum PuzzleSwitchType {
 struct PuzzleSwitch {
     struct BasicTransform transform;
     struct CollisionTransformedCollider collider;
+    struct CollisionTransformedCollider trigger;
     struct SignalSender sender;
     struct TimeUpdateListener updateListener;
     short didTrigger;
     short switchType;
+    float animTimer;
 };
 
 void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enum PuzzleSwitchType type, int color);

@@ -5,6 +5,8 @@
 #include "src/level/level.h"
 #include "src/audio/playersounds.h"
 #include "src/audio/audio.h"
+#include "src/puzzle/geo/permanantswitch.inc.c"
+#include "src/collision/geo/permanant_switch.inc.c"
 
 struct CollisionCollider gLargeSwitchCollider = {
     ColliderTypeBox,
@@ -31,6 +33,9 @@ struct Quaternion gRotateSwitch45 = {
     0.923879533f,
 };
 
+#define HIDE_TIME   3.0f
+#define HIDE_SPEED  0.25f
+
 void switchTriggerSound(struct PuzzleSwitch* puzzleSwitch) {
     int sound;
     switch (puzzleSwitch->switchType) {
@@ -54,18 +59,28 @@ void switchTriggerSound(struct PuzzleSwitch* puzzleSwitch) {
 void switchRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct PuzzleSwitch* puzzleSwitch = (struct PuzzleSwitch*)data->data;
     Gfx* toRender;
+
+    float scale = 1.0f / 256.0f;
     
     switch (puzzleSwitch->switchType) {
         case PuzzleSwitchTypeLarge:
-        case PuzzleSwitchTypeLargePermanant:
             toRender = gLoadedLevel->theme->theme->themeMeshes[LevelThemeMeshesLSwitchUp + puzzleSwitch->sender.currentSignal];
             break;
-        default:
+        case PuzzleSwitchTypeSmall:
             toRender = gLoadedLevel->theme->theme->themeMeshes[LevelThemeMeshesSSwitchUp + puzzleSwitch->sender.currentSignal];
+            break;
+        case PuzzleSwitchTypeLargePermanant:
+            toRender = PermanantSwitch_PermanantSwitch_mesh_tri_0;
+            break;
+        case PuzzleSwitchTypeSmallPermanant:
+            toRender = PermanantSwitch_PermanantSwitch_mesh_tri_0;
+            scale = 1.0f / 512.0f;
             break;
     }
 
     Mtx* nextTransfrom = graphicsStateNextMtx(state);
+
+    gDPPipeSync(state->dl++);
 
     if (puzzleSwitch->sender.currentSignal) {
         graphicsStateSetPrimitiveColor(state, gSwitchColors[puzzleSwitch->sender.signalIndex]);
@@ -74,16 +89,7 @@ void switchRender(struct DynamicActor* data, struct GraphicsState* state) {
     }
 
 
-    if (puzzleSwitch->switchType == PuzzleSwitchTypeLargePermanant || 
-        puzzleSwitch->switchType == PuzzleSwitchTypeSmallPermanant) {
-        struct BasicTransform finalTransform;
-        finalTransform.position = data->transform->position;
-        finalTransform.scale = data->transform->scale;
-        finalTransform.rotation = gRotateSwitch45;
-        transformToMatrixL(&finalTransform, 1.0f / 256.0f, nextTransfrom);
-    } else {
-        transformToMatrixL(data->transform, 1.0f / 256.0f, nextTransfrom);
-    }
+    transformToMatrixL(data->transform, scale, nextTransfrom);
 
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gSPDisplayList(state->dl++, toRender);
@@ -105,27 +111,47 @@ void switchUpdate(void* data) {
     struct PuzzleSwitch* puzzleSwitch = (struct PuzzleSwitch*)data;
     signalSetSender(&puzzleSwitch->sender, puzzleSwitch->didTrigger != 0);
 
-    if (!(puzzleSwitch->switchType & PUZZLE_SWITCH_PERMANANT) && puzzleSwitch->didTrigger > 0) {
-        puzzleSwitch->didTrigger--;
+    if (puzzleSwitch->didTrigger > 0) {
+        if (puzzleSwitch->switchType & PUZZLE_SWITCH_PERMANANT) {
+            puzzleSwitch->animTimer += gTimeDelta;
 
-        if (!puzzleSwitch->didTrigger) {
-            switchTriggerSound(puzzleSwitch);
+            if (puzzleSwitch->animTimer > HIDE_TIME) {
+                timeRemoveListener(&puzzleSwitch->updateListener, TimeUpdateGroupWorld);
+                sparseCollisionRemove(&gSparseCollisionGrid, &puzzleSwitch->trigger);
+            } else {
+                puzzleSwitch->transform.position.y -= gTimeDelta * HIDE_SPEED;
+                
+                if (puzzleSwitch->switchType == PuzzleSwitchTypeLarge) {
+                    sparseCollisionReindex(&gSparseCollisionGrid, &puzzleSwitch->collider, 0);
+                }
+            }
+        } else {
+            puzzleSwitch->didTrigger--;
+
+            if (!puzzleSwitch->didTrigger) {
+                switchTriggerSound(puzzleSwitch);
+            }
         }
     }
 }
 
 void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enum PuzzleSwitchType type, int color) {
-    struct CollisionCollider* collider;
+    struct CollisionCollider* trigger;
+    struct CollisionCollider* collider = 0;
     int triggerMask = 0;
 
     switch (type) {
         case PuzzleSwitchTypeLarge:
-        case PuzzleSwitchTypeLargePermanant:
-            collider = &gLargeSwitchCollider;
+            trigger = &gLargeSwitchCollider;
             triggerMask = CollisionLayersRobotSwitch;
             break;
+        case PuzzleSwitchTypeLargePermanant:
+            trigger = &gLargeSwitchCollider;
+            triggerMask = CollisionLayersRobotSwitch;
+            collider = &_permanant_switch_collider;
+            break;
         default:
-            collider = &gSmallSwitchCollider;
+            trigger = &gSmallSwitchCollider;
             triggerMask = CollisionLayersMutualSwitch;
             break;
     }
@@ -133,11 +159,20 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
     transformIdentity(&puzzleSwitch->transform);
     puzzleSwitch->transform.position = *position;
 
-    puzzleSwitch->collider.collider = collider;
-    puzzleSwitch->collider.transform = &puzzleSwitch->transform;
-    puzzleSwitch->collider.data = puzzleSwitch;
-    puzzleSwitch->collider.trigger = switchTrigger;
-    puzzleSwitch->collider.triggerMask = triggerMask;
+    puzzleSwitch->trigger.collider = trigger;
+    puzzleSwitch->trigger.transform = &puzzleSwitch->transform;
+    puzzleSwitch->trigger.data = puzzleSwitch;
+    puzzleSwitch->trigger.trigger = switchTrigger;
+    puzzleSwitch->trigger.triggerMask = triggerMask;
+
+    if (collider) {
+        puzzleSwitch->collider.collider = collider;
+        puzzleSwitch->collider.transform = &puzzleSwitch->transform;
+        puzzleSwitch->collider.data = 0;
+        puzzleSwitch->collider.trigger = 0;
+        puzzleSwitch->collider.triggerMask = 0;
+        sparseCollisionAdd(&gSparseCollisionGrid, &puzzleSwitch->collider, NULL);
+    }
 
     puzzleSwitch->sender.currentSignal = 0;
     puzzleSwitch->sender.signalIndex = color;
@@ -146,8 +181,9 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
 
     puzzleSwitch->didTrigger = 0;
     puzzleSwitch->switchType = type;
+    puzzleSwitch->animTimer = 0.0f;
 
-    sparseCollisionAdd(&gSparseCollisionGrid, &puzzleSwitch->collider, NULL);
+    sparseCollisionAdd(&gSparseCollisionGrid, &puzzleSwitch->trigger, NULL);
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, puzzleSwitch, switchRender, DynamicMaterialTypeSwitch, 1.0f);
 }
