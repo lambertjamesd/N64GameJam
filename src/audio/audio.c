@@ -162,6 +162,7 @@ int audioPendsound(ALSndId snd, float pitch, float volume, float pan, int priori
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
         if (gPendingSounds[i].snd == UNUSED_PENDING_SOUND) {
             gPendingSounds[i].snd = snd;
+            gPendingSounds[i].volume = volume;
             gPendingSounds[i].pitch = pitch;
             gPendingSounds[i].priority = priority;
             return 1;
@@ -171,6 +172,7 @@ int audioPendsound(ALSndId snd, float pitch, float volume, float pan, int priori
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
         if (gPendingSounds[i].priority < priority) {
             gPendingSounds[i].snd = snd;
+            gPendingSounds[i].volume = volume;
             gPendingSounds[i].pitch = pitch;
             gPendingSounds[i].priority = priority;
             return 1;
@@ -224,7 +226,7 @@ void audioUpdate() {
                 audioPlaySound(
                     gPendingSounds[i].snd, 
                     gPendingSounds[i].pitch, 
-                    gPendingSounds[i].priority, 
+                    gPendingSounds[i].volume, 
                     gPendingSounds[i].pan, 
                     gPendingSounds[i].priority
                 );

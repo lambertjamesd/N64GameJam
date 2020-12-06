@@ -130,13 +130,19 @@ INTRO_CUTSCENE_SOUNDS = sound/clips/CockpitAmbience.ins \
 	sound/clips/LogoLaughing.aifc \
 	sound/clips/Alarm1.aifc
 
+BANK_SOUNDS = $(wildcard build/ins/sounds/*.aiff)
+BANK_SOUNDS_COMP = $(BANK_SOUNDS:.aiff=.aifc)
+
 sound/clips/%.aif: sound/clips/%.wav
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
 
-sound/clips/%.table: sound/clips/%.aif
+%.aif: %.aiff
+	cp $< $@
+
+%.table: %.aif
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@
 
-sound/clips/%.aifc: sound/clips/%.aif sound/clips/%.table
+%.aifc: %.aif %.table
 	wine /home/james/Documents/AudioTools/tools/ADPCMENC.EXE -c $(word 2,$^) $< $@
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
@@ -151,8 +157,11 @@ build/ins/Bank.ins: sound/instruments/sfz/instruments.sfz sound/music/usedbanks.
 	@mkdir -p $(@D)
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@ --bank_sequence_mapping sound/music/usedbanks.txt --sample-rate 22050
 
-build/ins/Bank.ctl build/ins/Bank.tbl: build/ins/Bank.ins
-	cd build/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
+build/ins/BankCompressed.ins: build/ins/Bank.ins $(BANK_SOUNDS_COMP)
+	sed 's/aiff/aifc/g' build/ins/Bank.ins > build/ins/BankCompressed.ins
+
+build/ins/Bank.ctl build/ins/Bank.tbl: build/ins/BankCompressed.ins
+	cd build/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./BankCompressed.ins
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h

@@ -97,12 +97,51 @@ void cadetUpdateRotation(struct Cadet* cadet) {
         struct Vector2 targetRotation;
         targetRotation.x = cadet->actor.velocity.x;
         targetRotation.y = cadet->actor.velocity.z;
+
+        struct Vector3 rotation;
+
+        if (cadet->actor.anchor) {
+            rotation.x = cadet->rotation.x;
+            rotation.y = 0.0f;
+            rotation.z = cadet->rotation.y;
+            quatMultVector(&cadet->actor.anchor->rotation, &rotation, &rotation);
+            cadet->rotation.x = rotation.x;
+            cadet->rotation.y = rotation.z;
+        }
+
         vector2Normalize(&targetRotation, &targetRotation);
         vector2RotateTowards(&cadet->rotation, &targetRotation, &gCadetMaxRotation, &cadet->rotation);
 
         struct Vector2 dir;
         dir.x = cadet->rotation.y;
         dir.y = cadet->rotation.x;
+        quatAxisComplex(&gUp, &dir, &cadet->transform.rotation);
+
+        if (cadet->actor.anchor) {
+            struct Quaternion quatInv;
+            
+            rotation.x = cadet->rotation.x;
+            rotation.y = 0.0f;
+            rotation.z = cadet->rotation.y;
+            quatConjugate(&cadet->actor.anchor->rotation, &quatInv);
+            quatMultVector(&quatInv, &rotation, &rotation);
+            cadet->rotation.x = rotation.x;
+            cadet->rotation.y = rotation.z;
+        }
+    } else if (cadet->actor.anchor) {
+        struct Vector3 rotation;
+
+        rotation.x = cadet->rotation.x;
+        rotation.y = 0.0f;
+        rotation.z = cadet->rotation.y;
+
+        if (cadet->actor.anchor) {
+            quatMultVector(&cadet->actor.anchor->rotation, &rotation, &rotation);
+        }
+
+        struct Vector2 dir;
+        dir.x = rotation.z;
+        dir.y = rotation.x;
         quatAxisComplex(&gUp, &dir, &cadet->transform.rotation);
     }
 }
@@ -170,8 +209,15 @@ void cadetTargetVelocity(struct Cadet* cadet, struct Vector3* output) {
 }
 
 void cadetMove(struct Cadet* cadet) {
+    struct Vector3 rotation;
+
+    rotation.x = cadet->rotation.x;
+    rotation.y = 0.0f;
+    rotation.z = cadet->rotation.y;
+
     if (cadet->actor.anchor) {
         transformPoint(cadet->actor.anchor, &cadet->actor.relativeToAnchor, &cadet->transform.position);
+        quatMultVector(&cadet->actor.anchor->rotation, &rotation, &rotation);
     }
 
     cadet->accumTime += gTimeDelta;
@@ -212,6 +258,17 @@ void cadetMove(struct Cadet* cadet) {
     }
 
     enum SphereActorCollideResult colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
+
+    if (cadet->actor.anchor) {
+        struct Quaternion quatInv;
+        quatConjugate(&cadet->actor.anchor->rotation, &quatInv);
+        quatMultVector(&quatInv, &rotation, &rotation);
+    }
+
+    cadet->rotation.x = rotation.x;
+    cadet->rotation.y = rotation.z;
+
+    vector2Normalize(&cadet->rotation, &cadet->rotation);
 
     if (colliderResult == SphereActorCollideResultKill) {
         audioPlaySound(
