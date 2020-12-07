@@ -7,7 +7,7 @@
 
 #define STOP_ANIMATING  100.0f
 
-void rocektTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
+void rocketTrailRender(struct DynamicActor* data, struct GraphicsState* state) {
     struct RocketTrail* trail = (struct RocketTrail*)data->data;
 
     gDPPipeSync(state->dl++);
@@ -93,7 +93,7 @@ void rocketTrailUpdate(void* data) {
     }
 }
 
-void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, short particleCount, char flags) {
+void rocketTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, short particleCount, char flags) {
     int i;
 
     for (i = 0; i < particleCount; ++i) {
@@ -110,10 +110,10 @@ void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSour
 
     if (!timeHasListener(&trail->updateListener, TimeUpdateGroupWorld)) {
         timeAddListener(&trail->updateListener, rocketTrailUpdate, trail, TimeUpdateGroupWorld);
-        trail->renderId = dynamicActorAddToGroup(&gScene.transparentActors, emitSource, trail, rocektTrailRender, parameters->material, 20.0f);
+        trail->renderId = dynamicActorAddToGroup(&gScene.transparentActors, emitSource, trail, rocketTrailRender, parameters->material, 20.0f);
     }    
 }
 
-void rocektTrailStop(struct RocketTrail* trail) {
+void rocketTrailStop(struct RocketTrail* trail) {
     trail->spawnTimer = STOP_ANIMATING;
 }

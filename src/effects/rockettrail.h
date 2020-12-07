@@ -30,7 +30,7 @@ struct RocketTrail {
     struct BasicTransform particleTransforms[];
 };
 
-void rocektTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, short particleCount, char flags);
-void rocektTrailStop(struct RocketTrail* trail);
+void rocketTrailStart(struct RocketTrail* trail, struct BasicTransform *emitSource, struct RocketTrailParameters* parameters, short particleCount, char flags);
+void rocketTrailStop(struct RocketTrail* trail);
 
 #endif

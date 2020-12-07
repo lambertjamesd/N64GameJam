@@ -35,11 +35,14 @@ LEVELS = cadet_intro \
 	switch_sizes \
 	lava_platform \
 	connected_colors \
-	inverted_doors \
 	switch_tagteam \
+	inverted_doors \
+	platform_intro \
+	spiral \
 	loop_around \
 	radioactive_river \
 	double_crossing \
+	track_blockage \
 	raised_platform \
 	moving_platforms \
 	switch_mania \

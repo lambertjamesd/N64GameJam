@@ -307,7 +307,7 @@ void cadetWalk(struct Cadet* cadet) {
 
             vector3MoveTowards(&cadet->actor.velocity, &targetVelocity, CADET_HORZ_IMPULSE, &cadet->actor.velocity);
 
-            rocektTrailStart(&cadet->jumpTrail, &cadet->transform, &gCadetTrailParameters, CADET_PARTICLE_TRAIL_COUNT, 0);
+            rocketTrailStart(&cadet->jumpTrail, &cadet->transform, &gCadetTrailParameters, CADET_PARTICLE_TRAIL_COUNT, 0);
             cadet->jumpTrail.alpha = 160;
             cadet->actor.velocity.y = CADET_JUMP_IMPULSE;
             cadet->state = cadetJump;
@@ -347,7 +347,7 @@ void cadetFreefall(struct Cadet* cadet) {
             10
         );
 
-        rocektTrailStop(&cadet->jumpTrail);
+        rocketTrailStop(&cadet->jumpTrail);
     }
 
     cadetUpdateRotation(cadet);
@@ -365,6 +365,7 @@ void cadetFreefall(struct Cadet* cadet) {
         );
 
         cadet->state = cadetWalk;
+        rocketTrailStop(&cadet->jumpTrail);
     }
 }
 
