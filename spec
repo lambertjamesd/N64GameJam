@@ -33,11 +33,19 @@ beginseg
 	number LEVEL_THEME_SEGMENT
 	include "src/levelthemes/alienworld/materials.o"
 endseg
+
 beginseg
 	name "alienworldred"
 	flags OBJECT
 	number LEVEL_THEME_SEGMENT
 	include "src/levelthemes/alienworldred/materials.o"
+endseg
+
+beginseg
+	name "alienworldgrey"
+	flags OBJECT
+	number LEVEL_THEME_SEGMENT
+	include "src/levelthemes/alienworldgrey/materials.o"
 endseg
 
 beginseg
@@ -133,6 +141,7 @@ beginwave
 #include "build/spec/slide_include"
 	include "alienworld"
 	include "alienworldred"
+	include "alienworldgrey"
 	include "spinning_logo"
 	include "table"
 	include "bank"

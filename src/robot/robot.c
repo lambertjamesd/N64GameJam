@@ -15,8 +15,8 @@
 struct DropShadowParams gRobotShadowParams = {
     1.0f,
     1.5f,
-    168.0f,
     94.0f,
+    168.0f,
     CollisionLayersGeometry,
 };
 

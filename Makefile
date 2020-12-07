@@ -52,12 +52,13 @@ LEVELS = cadet_intro \
 	
 LEVEL_GEO = $(foreach level, $(LEVELS), src/levels/$(level)/geo.c)
 LEVEL_DATA = $(foreach level, $(LEVELS), levels/$(level).level)
+LEVEL_META_DATA = $(foreach level, $(LEVELS), levels/$(level).meta)
 
 src/levels/%/geo.c: levels/%.level levels/%.meta levelbuilder/levelbuilder
 	@mkdir -p $(@D)
 	levelbuilder/levelbuilder level $* $< $@
 
-build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA)
+build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA) $(LEVEL_META_DATA)
 	@mkdir -p build/spec
 	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs build/spec/level_include $(LEVELS)
 
@@ -227,6 +228,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/levels/levels.c \
 	src/levelthemes/alienworld/theme.c	\
 	src/levelthemes/alienworldred/theme.c	\
+	src/levelthemes/alienworldgrey/theme.c	\
 	src/levelthemes/allthemes.c	\
 	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
@@ -268,6 +270,7 @@ DATAFILES =	$(LEVEL_GEO) \
 	src/graphics/init.c \
 	src/levelthemes/alienworld/materials.c \
 	src/levelthemes/alienworldred/materials.c \
+	src/levelthemes/alienworldgrey/materials.c \
 	src/menu/geo/spinninglogo.c \
 	src/system/heapstart.c
 
