@@ -56,7 +56,7 @@ struct LevelCollisionGrid _level_%s_collision_grid = {
 }
 
 func processLevel(levelName string, levelFile string, outputFile string, gridSize int) {
-	var tileSet = BuildTileSet()
+	var tileSet = BuildTileSet(&ThemeColors[GetThemeIndex(levelFile)])
 	var tileMap = ParseLevel(levelFile, tileSet)
 
 	var joinedMesh = ExtractMeshTiles(tileMap, gridSize)

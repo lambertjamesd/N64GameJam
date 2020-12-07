@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"strconv"
 )
 
 func writeSpecInclude(specInc string, levels []string) error {
@@ -45,18 +47,33 @@ endseg
 	return nil
 }
 
-func getLevelName(cName string) string {
+func getLevelName(cName string) (string, int) {
 	metadataFile, err := ioutil.ReadFile(fmt.Sprintf("levels/%s.meta", cName))
+
+	var name string = cName
+	var theme int = 0
 
 	if err == nil {
 		metadata := ReadMetadata(string(metadataFile))
-		name, nameCheck := metadata["name"]
+		nameValue, nameCheck := metadata["name"]
 		if nameCheck {
-			return name
+			name = nameValue
+		}
+
+		themeValue, nameCheck := metadata["theme"]
+
+		if nameCheck {
+			themeAsInt, err := strconv.ParseInt(themeValue, 10, 32)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			theme = int(themeAsInt)
 		}
 	}
 
-	return cName
+	return name, theme
 }
 
 func writeLevelPack(cName string, themeIndex string, geoOutput string, levels []string) error {
@@ -88,8 +105,8 @@ struct LevelDefinition _level_group_%s[] = {
 `, cName))
 
 	for _, level := range levels {
-		name := getLevelName(level)
-		output.WriteString(fmt.Sprintf("    {\"%s\", _%sSegmentRomStart, _%sSegmentRomEnd, &_level_%s_levelData, &gAllThemes[%s]},\n", name, level, level, level, themeIndex))
+		name, levelThemeIndex := getLevelName(level)
+		output.WriteString(fmt.Sprintf("    {\"%s\", _%sSegmentRomStart, _%sSegmentRomEnd, &_level_%s_levelData, &gAllThemes[%d]},\n", name, level, level, level, levelThemeIndex))
 	}
 
 	output.WriteString(fmt.Sprintf("};\n\nint _level_group_%s_count = sizeof(_level_group_%s) / sizeof(*_level_group_%s);\n", cName, cName, cName))

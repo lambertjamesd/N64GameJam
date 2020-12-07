@@ -226,6 +226,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/level/level.c	\
 	src/levels/levels.c \
 	src/levelthemes/alienworld/theme.c	\
+	src/levelthemes/alienworldred/theme.c	\
 	src/levelthemes/allthemes.c	\
 	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
@@ -266,6 +267,7 @@ CODESEGMENT =	codesegment.o
 DATAFILES =	$(LEVEL_GEO) \
 	src/graphics/init.c \
 	src/levelthemes/alienworld/materials.c \
+	src/levelthemes/alienworldred/materials.c \
 	src/menu/geo/spinninglogo.c \
 	src/system/heapstart.c
 

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -241,6 +242,28 @@ func AppendMetadata(filename string, target *LevelGrid) {
 			target.MusicName = music
 		}
 	}
+}
+
+func GetThemeIndex(filename string) int {
+	metadataFile, err := ioutil.ReadFile(filename[0:len(filename)-len(filepath.Ext(filename))] + ".meta")
+
+	if err == nil {
+		metadata := ReadMetadata(string(metadataFile))
+
+		resultAsString, has := metadata["theme"]
+
+		if has {
+			result, err := strconv.ParseInt(resultAsString, 10, 32)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			return int(result)
+		}
+	}
+
+	return 0
 }
 
 func ParseLevel(filename string, tileMap *LevelTileSet) *LevelGrid {

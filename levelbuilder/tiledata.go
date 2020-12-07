@@ -7,9 +7,59 @@ import (
 	"path/filepath"
 )
 
+type Color struct {
+	R, G, B, A uint8
+}
+
+type ColorTheme struct {
+	Floor    Color
+	Platform Color
+	Barrier  Color
+	Wall     Color
+}
+
 var meshCache map[string]*Mesh = make(map[string]*Mesh)
 
-func buildFace(plyFile string, matType MaterialType) *LevelBlockFace {
+var ThemeColors = []ColorTheme{
+	ColorTheme{
+		Color{185, 47, 169, 255},
+		Color{210, 90, 162, 255},
+		Color{160, 117, 162, 255},
+		Color{128, 71, 140, 255},
+	},
+	ColorTheme{
+		Color{70, 161, 176, 255},
+		Color{92, 207, 178, 255},
+		Color{144, 173, 186, 255},
+		Color{73, 120, 154, 255},
+	},
+	ColorTheme{
+		Color{203, 43, 18, 255},
+		Color{214, 87, 44, 255},
+		Color{160, 112, 95, 255},
+		Color{132, 54, 28, 255},
+	},
+}
+
+func recolorMesh(input *Mesh, color Color) *Mesh {
+	var vertices []MeshVertex = nil
+
+	for _, vertex := range input.vertices {
+		vertices = append(vertices, MeshVertex{
+			vertex.x, vertex.y, vertex.z,
+			vertex.nx, vertex.ny, vertex.nz,
+			vertex.s, vertex.t,
+			color.R, color.G, color.B, color.A,
+		})
+	}
+
+	return &Mesh{
+		vertices,
+		input.faces,
+	}
+}
+
+func buildFace(plyFile string, matType MaterialType, color Color) *LevelBlockFace {
 	if plyFile == "" {
 		return nil
 	}
@@ -32,31 +82,36 @@ func buildFace(plyFile string, matType MaterialType) *LevelBlockFace {
 		meshCache[plyFile] = mesh
 	}
 
-	return &LevelBlockFace{mesh, matType}
+	return &LevelBlockFace{recolorMesh(mesh, color), matType}
 }
 
 func buildBlock(
 	isSolid bool,
 	left string,
 	leftMat MaterialType,
+	leftColor Color,
 	front string,
 	frontMat MaterialType,
+	frontColor Color,
 	right string,
 	rightMat MaterialType,
+	rightColor Color,
 	back string,
 	backMat MaterialType,
+	backColor Color,
 	top string,
 	topMat MaterialType,
+	topColor Color,
 ) *LevelBlock {
 	return &LevelBlock{
 		isSolid,
 		[4]*LevelBlockFace{
-			buildFace(left, leftMat),
-			buildFace(front, frontMat),
-			buildFace(right, rightMat),
-			buildFace(back, backMat),
+			buildFace(left, leftMat, leftColor),
+			buildFace(front, frontMat, frontColor),
+			buildFace(right, rightMat, rightColor),
+			buildFace(back, backMat, backColor),
 		},
-		buildFace(top, topMat),
+		buildFace(top, topMat, topColor),
 	}
 }
 
@@ -72,115 +127,115 @@ func buildTile(
 	}
 }
 
-func BuildTileSet() *LevelTileSet {
+func BuildTileSet(theme *ColorTheme) *LevelTileSet {
 	var result LevelTileSet
 
 	var floorBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/floor_color.ply", LowerFloor,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/floor_color.ply", LowerFloor, theme.Floor,
 	)
 
 	var platformBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/platform_color.ply", UpperFloor,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/platform_color.ply", UpperFloor, theme.Platform,
 	)
 
 	var barrierBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/barrier_color.ply", BarrierTop,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/barrier_color.ply", BarrierTop, theme.Barrier,
 	)
 
 	var rampLowerBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/ramp.ply", BarrierTop,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/ramp.ply", BarrierTop, theme.Platform,
 	)
 
 	var rampUpperBlock = buildBlock(
 		false,
-		"ply/ramp_side_left.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/ramp_side_right.ply", Wall,
-		"", Wall,
-		"", BarrierTop,
+		"ply/ramp_side_left.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/ramp_side_right.ply", Wall, theme.Wall,
+		"", Wall, theme.Wall,
+		"", BarrierTop, theme.Barrier,
 	)
 
 	var stairLowerBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/stair.ply", BarrierTop,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/stair.ply", UpperFloor, theme.Platform,
 	)
 
 	var stairUpperBlock = buildBlock(
 		false,
-		"ply/stair_side_left.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/stair_side_right.ply", Wall,
-		"", Wall,
-		"", BarrierTop,
+		"ply/stair_side_left.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/stair_side_right.ply", Wall, theme.Wall,
+		"", Wall, theme.Wall,
+		"", BarrierTop, theme.Barrier,
 	)
 
 	var tunnelBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Wall,
-		"ply/tunnel_face.ply", Wall,
-		"ply/wall_color.ply", Wall,
-		"ply/tunnel_face.ply", Wall,
-		"ply/platform_color.ply", UpperFloor,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/tunnel_face.ply", Wall, theme.Wall,
+		"ply/wall_color.ply", Wall, theme.Wall,
+		"ply/tunnel_face.ply", Wall, theme.Wall,
+		"ply/platform_color.ply", UpperFloor, theme.Platform,
 	)
 
 	var lavaBlock = buildBlock(
 		true,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/lava_color.ply", Lava,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/lava_color.ply", Lava, Color{255, 255, 255, 255},
 	)
 
 	var floorHole = buildBlock(
 		true,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"ply/wall_color.ply", Underhang,
-		"", LowerFloor,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"ply/wall_color.ply", Underhang, theme.Wall,
+		"", LowerFloor, theme.Floor,
 	)
 
 	var trackBlock = buildBlock(
 		false,
-		"", Underhang,
-		"", Underhang,
-		"", Underhang,
-		"", Underhang,
-		"ply/track.ply", Track,
+		"", Underhang, theme.Wall,
+		"", Underhang, theme.Wall,
+		"", Underhang, theme.Wall,
+		"", Underhang, theme.Wall,
+		"ply/track.ply", Track, Color{255, 255, 255, 255},
 	)
 
 	var halfBlock = buildBlock(
 		false,
-		"ply/half_wall_color.ply", Wall,
-		"ply/half_wall_color.ply", Wall,
-		"ply/half_wall_color.ply", Wall,
-		"ply/half_wall_color.ply", Wall,
-		"ply/low_floor_color.ply", UpperFloor,
+		"ply/half_wall_color.ply", Wall, theme.Wall,
+		"ply/half_wall_color.ply", Wall, theme.Wall,
+		"ply/half_wall_color.ply", Wall, theme.Wall,
+		"ply/half_wall_color.ply", Wall, theme.Wall,
+		"ply/low_floor_color.ply", UpperFloor, theme.Platform,
 	)
 
 	result.Tiles = make(map[string]*LevelTile)
