@@ -116,6 +116,12 @@ beginseg
 endseg
 
 beginseg
+	name "auroraBorealis"
+	flags RAW
+	include "sound/music/AuroraBorealisLoud.mid"
+endseg
+
+beginseg
 	name "player_sounds"
 	flags RAW
 	include "build/audio/player.sounds"
@@ -159,6 +165,7 @@ beginwave
 	include "getToTheTele"
 	include "robotTheme"
 	include "enceladus"
+	include "auroraBorealis"
 	include "player_sounds"
 	include "player_sounds_table"
 	include "intro_cutscene"
