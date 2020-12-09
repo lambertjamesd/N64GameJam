@@ -161,7 +161,7 @@ build/audio/intro_cutscene.sounds: $(INTRO_CUTSCENE_SOUNDS)
 
 build/ins/Bank.ins: sound/instruments/sfz/instruments.sfz sound/music/usedbanks.txt
 	@mkdir -p $(@D)
-	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $< $@ --bank_sequence_mapping sound/music/usedbanks.txt --sample-rate 22050
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 /home/james/Documents/AudioTools/SongRom/midiplayer/input/old/Bank.ctl $@ --bank_sequence_mapping sound/music/usedbanks.txt
 
 build/ins/BankCompressed.ins: build/ins/Bank.ins $(BANK_SOUNDS_COMP)
 	sed 's/aiff/aifc/g' build/ins/Bank.ins > build/ins/BankCompressed.ins

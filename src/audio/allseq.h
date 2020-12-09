@@ -9,5 +9,6 @@ extern char _thermalImagingSegmentRomStart[], _thermalImagingSegmentRomEnd[];
 extern char _stepsAcrossTheSkySegmentRomStart[], _stepsAcrossTheSkySegmentRomEnd[];
 extern char _getToTheTeleSegmentRomStart[], _getToTheTeleSegmentRomEnd[];
 extern char _robotThemeSegmentRomStart[], _robotThemeSegmentRomEnd[];
+extern char _enceladusSegmentRomStart[], _enceladusSegmentRomEnd[];
 
 #endif

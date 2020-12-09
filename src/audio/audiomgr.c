@@ -30,9 +30,9 @@ typedef struct {
     AudioInfo     *audioInfo[NUM_OUTPUT_BUFFERS];
     OSThread      thread;
     OSMesgQueue   audioFrameMsgQ;
-    OSMesg        audioFrameMsgBuf[MAX_MESGS];
+    OSMesg        audioFrameMsgBuf[MAX_AUDIO_MESGS];
     OSMesgQueue   audioReplyMsgQ;
-    OSMesg        audioReplyMsgBuf[MAX_MESGS];
+    OSMesg        audioReplyMsgBuf[MAX_AUDIO_MESGS];
     ALGlobals     g;
 } AMAudioMgr;
 
@@ -125,8 +125,8 @@ void amCreateAudioMgr(ALSynConfig *c, OSPri pri, amConfig *amc)
         __am.audioInfo[i]->data = alHeapAlloc(c->heap, 1, 4*maxFrameSize);
     }    
     
-    osCreateMesgQueue(&__am.audioReplyMsgQ, __am.audioReplyMsgBuf, MAX_MESGS);
-    osCreateMesgQueue(&__am.audioFrameMsgQ, __am.audioFrameMsgBuf, MAX_MESGS);
+    osCreateMesgQueue(&__am.audioReplyMsgQ, __am.audioReplyMsgBuf, MAX_AUDIO_MESGS);
+    osCreateMesgQueue(&__am.audioFrameMsgQ, __am.audioFrameMsgBuf, MAX_AUDIO_MESGS);
     osCreateMesgQueue(&audDMAMessageQ, audDMAMessageBuf, NUM_DMA_MESSAGES);
 
     osCreateThread(&__am.thread, 3, __amMain, 0,

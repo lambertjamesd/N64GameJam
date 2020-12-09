@@ -5,15 +5,15 @@
 #include <libaudio.h>
 #include <sched.h>
 
-#define MAX_UPDATES             48
-#define MAX_EVENTS              48
-#define AUDIO_HEAP_SIZE         300000
+#define MAX_UPDATES             32
+#define MAX_EVENTS              32
+#define AUDIO_HEAP_SIZE         400000
 
-#define MAX_VOICES              32
+#define MAX_VOICES              22
 #define EXTRA_SAMPLES           80
 #define NUM_OUTPUT_BUFFERS      3      /* Need three of these */
 #define OUTPUT_RATE             44100
-#define MAX_MESGS               8
+#define MAX_AUDIO_MESGS         8
 #define QUIT_MSG                10
 
 #define DMA_BUFFER_LENGTH       0x800  /* Larger buffers result in fewer DMA' but more  */
@@ -24,7 +24,7 @@
 #define MAX_RSP_CMDS            4096   /* max number of commands in any command list.   */
                                        /* Mainly dependent on sequences used            */
 
-#define NUM_DMA_BUFFERS         32     /* max number of dma buffers needed.             */
+#define NUM_DMA_BUFFERS         24     /* max number of dma buffers needed.             */
                                        /* Mainly dependent on sequences and sfx's       */
 
 #define NUM_DMA_MESSAGES        32     /* The maximum number of DMAs any one frame can  */

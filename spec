@@ -110,6 +110,12 @@ beginseg
 endseg
 
 beginseg
+	name "enceladus"
+	flags RAW
+	include "sound/music/EnceladusdelayCompensatedLoud.mid"
+endseg
+
+beginseg
 	name "player_sounds"
 	flags RAW
 	include "build/audio/player.sounds"
@@ -152,6 +158,7 @@ beginwave
 	include "stepsAcrossTheSky"
 	include "getToTheTele"
 	include "robotTheme"
+	include "enceladus"
 	include "player_sounds"
 	include "player_sounds_table"
 	include "intro_cutscene"

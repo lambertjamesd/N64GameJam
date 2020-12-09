@@ -13,6 +13,7 @@ slidebuilder/slidebuilder
 sound/clips/*
 sound/introcutscene/*
 sound/instruments/*
+sound/instruments_full/*
 sound/music/*
 
 imageslides/*
