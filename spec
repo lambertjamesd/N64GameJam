@@ -70,55 +70,55 @@ endseg
 beginseg
 	name "logoJingle"
 	flags RAW
-	include "sound/music/TeamUltraRareLogoJingleWIP1Loud.mid"
+	include "build/music/TeamUltraRareLogoJingleWIP1.mid"
 endseg
 
 beginseg
 	name "cosmicDust"
 	flags RAW
-	include "sound/music/CosmicDustLoud.mid"
+	include "build/music/CosmicDust.mid"
 endseg
 
 beginseg
 	name "darkSuns"
 	flags RAW
-	include "sound/music/DarkSunsLoud.mid"
+	include "build/music/DarkSuns.mid"
 endseg
 
 beginseg
 	name "thermalImaging"
 	flags RAW
-	include "sound/music/ThermalImagingLoud.mid"
+	include "build/music/ThermalImaging.mid"
 endseg
 
 beginseg
 	name "stepsAcrossTheSky"
 	flags RAW
-	include "sound/music/StepsAcrosstheSkyLoud.mid"
+	include "build/music/StepsAcrosstheSky.mid"
 endseg
 
 beginseg
 	name "getToTheTele"
 	flags RAW
-	include "sound/music/GetToTheTeleLoud.mid"
+	include "build/music/GetToTheTele.mid"
 endseg
 
 beginseg
 	name "robotTheme"
 	flags RAW
-	include "sound/music/robotthemeLoud.mid"
+	include "build/music/robottheme.mid"
 endseg
 
 beginseg
 	name "enceladus"
 	flags RAW
-	include "sound/music/EnceladusdelayCompensatedLoud.mid"
+	include "build/music/EnceladusdelayCompensated.mid"
 endseg
 
 beginseg
 	name "auroraBorealis"
 	flags RAW
-	include "sound/music/AuroraBorealisLoud.mid"
+	include "build/music/AuroraBorealis.mid"
 endseg
 
 beginseg

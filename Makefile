@@ -143,7 +143,7 @@ INTRO_CUTSCENE_SOUNDS = sound/clips/CockpitAmbience.ins \
 	sound/clips/LogoLaughing.aifc \
 	sound/clips/Alarm1.aifc
 
-BANK_SOUNDS = $(wildcard build/ins/sounds/*.aiff)
+BANK_SOUNDS = $(wildcard sound/ins/sounds/*.aiff)
 BANK_SOUNDS_COMP = $(BANK_SOUNDS:.aiff=.aifc)
 
 sound/clips/%.aif: sound/clips/%.wav
@@ -166,15 +166,27 @@ build/audio/intro_cutscene.sounds: $(INTRO_CUTSCENE_SOUNDS)
 	@mkdir -p $(@D)
 	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^ --compress
 
-build/ins/Bank.ins: sound/instruments/sfz/instruments.sfz sound/music/usedbanks.txt
+SONG_FILES = build/music/AuroraBorealis.mid \
+	build/music/CosmicDust.mid \
+	build/music/DarkSuns.mid \
+	build/music/EnceladusdelayCompensated.mid \
+	build/music/GetToTheTele.mid \
+	build/music/robottheme.mid \
+	build/music/StepsAcrosstheSky.mid \
+	build/music/TeamUltraRareLogoJingleWIP1.mid \
+	build/music/ThermalImaging.mid
+
+build/music/%.mid: sound/music/%.mid sound/music/%.meta
 	@mkdir -p $(@D)
-	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 /home/james/Documents/AudioTools/SongRom/midiplayer/input/old/Bank.ctl $@ --bank_sequence_mapping sound/music/usedbanks.txt
+	midicomp $< | grep PrCh > $@.instruments
+	/home/james/go/src/github.com/lambertjamesd/midicvt/midicvt $< $@ --metadata $(word 2,$^)
 
-build/ins/BankCompressed.ins: build/ins/Bank.ins $(BANK_SOUNDS_COMP)
-	sed 's/aiff/aifc/g' build/ins/Bank.ins > build/ins/BankCompressed.ins
-
-build/ins/Bank.ctl build/ins/Bank.tbl: build/ins/BankCompressed.ins
-	cd build/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./BankCompressed.ins
+build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
+	@mkdir -p $(@D)
+	# /home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 sound/ins/Bank.ins build/ins/Bank.ctl
+	cd sound/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
+	mv sound/ins/Bank.ctl build/ins/Bank.ctl
+	mv sound/ins/Bank.tbl build/ins/Bank.tbl
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
@@ -307,8 +319,10 @@ spec: build/spec/level_segs \
 	build/spec/slide_segs \
 	build/spec/slide_include \
 	$(SLIDE_IMAGES) \
+	$(SONG_FILES) \
 	build/ins/Bank.ctl \
 	build/ins/Bank.tbl
+	touch spec
 
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)

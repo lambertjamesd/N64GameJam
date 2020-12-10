@@ -318,7 +318,7 @@ void cadetWalk(struct Cadet* cadet) {
             audioPlaySound(
                 gPlayerSoundIds[PlayerSoundsJump],
                 0.5f,
-                0.6f,
+                0.4f,
                 0.0f,
                 10
             );
@@ -342,7 +342,7 @@ void cadetFreefall(struct Cadet* cadet) {
         audioPlaySound(
             gPlayerSoundIds[PlayerSoundsJumpPeak],
             0.5f,
-            0.3f,
+            0.2f,
             0.0f,
             10
         );
@@ -353,13 +353,14 @@ void cadetFreefall(struct Cadet* cadet) {
     cadetUpdateRotation(cadet);
 
     if (cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) {
+        int isOnMetal = (cadet->actor.groundCollisionMask & CollisionLayersRobot);
         audioPlaySound(
-            gPlayerSoundIds[(cadet->actor.groundCollisionMask & CollisionLayersRobot) ? 
+            gPlayerSoundIds[isOnMetal ? 
                 PlayerSoundsLandMetal :
                 PlayerSoundsLand
             ],
             0.5f,
-            0.8f,
+            isOnMetal ? 0.7f : 0.5f,
             0.0f,
             10
         );

@@ -122,7 +122,7 @@ void levelUpdateCamera(int controllerIndex, struct Vector3* target) {
             gScene.camera[controllerIndex].followDistanceStep = 2;
             audioRestartPlaySound(
                 gPlayerSoundIds[SoundZoomOut],
-                1.0f,
+                0.5f,
                 0.5f,
                 0.0f, 
                 10
@@ -134,7 +134,7 @@ void levelUpdateCamera(int controllerIndex, struct Vector3* target) {
             gScene.camera[controllerIndex].followDistanceStep = 1;
             audioRestartPlaySound(
                 gPlayerSoundIds[SoundZoomIn],
-                1.0f,
+                0.5f,
                 0.5f,
                 0.0f, 
                 10

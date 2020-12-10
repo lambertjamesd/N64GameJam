@@ -64,8 +64,8 @@ void cameraUpdate(void* cameraPtr) {
 
                 audioRestartPlaySound(
                     gPlayerSoundIds[SoundZoomOut],
-                    1.0f,
                     0.5f,
+                    0.3f,
                     0.0f, 
                     10
                 );
@@ -78,8 +78,8 @@ void cameraUpdate(void* cameraPtr) {
 
                 audioRestartPlaySound(
                     gPlayerSoundIds[SoundZoomIn],
-                    1.0f,
                     0.5f,
+                    0.4f,
                     0.0f, 
                     10
                 );
@@ -91,9 +91,9 @@ void cameraUpdate(void* cameraPtr) {
 
             audioRestartPlaySound(
                 gPlayerSoundIds[SoundCameraMoveR],
-                1.0f,
                 0.5f,
-                0.0f, 
+                0.2f,
+                0.5f, 
                 10
             );
         }
@@ -103,9 +103,9 @@ void cameraUpdate(void* cameraPtr) {
 
             audioRestartPlaySound(
                 gPlayerSoundIds[SoundCameraMoveL],
-                1.0f,
                 0.5f,
-                0.0f, 
+                0.15f,
+                -0.5f, 
                 10
             );
         }
