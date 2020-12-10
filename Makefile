@@ -174,7 +174,8 @@ SONG_FILES = build/music/AuroraBorealis.mid \
 	build/music/robottheme.mid \
 	build/music/StepsAcrosstheSky.mid \
 	build/music/TeamUltraRareLogoJingleWIP1.mid \
-	build/music/ThermalImaging.mid
+	build/music/ThermalImaging.mid \
+	build/music/LostHasselbladBoogie.mid
 
 build/music/%.mid: sound/music/%.mid sound/music/%.meta
 	@mkdir -p $(@D)

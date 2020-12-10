@@ -122,6 +122,12 @@ beginseg
 endseg
 
 beginseg
+	name "boogie"
+	flags RAW
+	include "build/music/LostHasselbladBoogie.mid"
+endseg
+
+beginseg
 	name "player_sounds"
 	flags RAW
 	include "build/audio/player.sounds"
@@ -166,6 +172,7 @@ beginwave
 	include "robotTheme"
 	include "enceladus"
 	include "auroraBorealis"
+	include "boogie"
 	include "player_sounds"
 	include "player_sounds_table"
 	include "intro_cutscene"

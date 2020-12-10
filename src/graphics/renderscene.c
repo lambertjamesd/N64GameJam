@@ -92,7 +92,7 @@ void cameraUpdate(void* cameraPtr) {
             audioRestartPlaySound(
                 gPlayerSoundIds[SoundCameraMoveR],
                 0.5f,
-                0.2f,
+                0.3f,
                 0.5f, 
                 10
             );
@@ -104,7 +104,7 @@ void cameraUpdate(void* cameraPtr) {
             audioRestartPlaySound(
                 gPlayerSoundIds[SoundCameraMoveL],
                 0.5f,
-                0.15f,
+                0.25f,
                 -0.5f, 
                 10
             );

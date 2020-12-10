@@ -1,4 +1,5 @@
 
+
 envelope Percussion_01Env
 {
     attackTime = 0;
@@ -481,7 +482,7 @@ sound Acoustic_Grand_PianoSound5
 instrument Acoustic_Grand_Piano
 {
     volume = 127;
-    pan = 64;
+    pan = 96;
     priority = 5;
     bendRange = 200;
     sound = Acoustic_Grand_PianoSound;
@@ -489,6 +490,42 @@ instrument Acoustic_Grand_Piano
     sound = Acoustic_Grand_PianoSound3;
     sound = Acoustic_Grand_PianoSound4;
     sound = Acoustic_Grand_PianoSound5;
+}
+
+envelope _003Honkytonk_PianoSoundEnv
+{
+    attackTime = 0;
+    attackVolume = 127;
+    decayTime = 6509828;
+    decayVolume = 0;
+    releaseTime = 429814;
+}
+
+keymap _003Honkytonk_PianoSoundKeymap
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 0;
+    keyMax = 68;
+    keyBase = 65;
+    detune = -22;
+}
+
+sound _003Honkytonk_PianoSound
+{
+    use("./sounds/_003Honkytonk_PianoSoundSnd.aiff");
+    pan = 64;
+    volume = 127;
+    keymap = _003Honkytonk_PianoSoundKeymap;
+    envelope = _003Honkytonk_PianoSoundEnv;
+}
+
+instrument _003Honkytonk_Piano
+{
+    volume = 127;
+    pan = 32;
+    priority = 0;
+    sound = _003Honkytonk_PianoSound;
 }
 
 envelope ClavinetSoundEnv
@@ -556,68 +593,158 @@ instrument Marimba
     sound = MarimbaSound;
 }
 
-keymap Rock_OrganSoundKeymap
+// keymap Rock_OrganSoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 106;
+//     keyBase = 94;
+//     detune = 0;
+// }
+
+// sound Rock_OrganSound
+// {
+//     use("./sounds/Rock_OrganSoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = Rock_OrganSoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument Rock_Organ
+// {
+//     volume = 100;
+//     pan = 64;
+//     priority = 5;
+//     tremeloType = 1;
+//     tremeloRate = 140;
+//     tremeloDepth = 10;
+//     tremeloDelay = 1;
+//     vibratoType = 128;
+//     vibratoRate = 180;
+//     vibratoDepth = 10;
+//     vibratoDelay = 1;
+//     bendRange = 200;
+//     sound = Rock_OrganSound;
+// }
+
+envelope _018Rock_OrganSoundEnv
+{
+    attackTime = 0;
+    attackVolume = 127;
+    decayTime = 0;
+    decayVolume = 127;
+    releaseTime = 97235;
+}
+
+keymap _018Rock_OrganSoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 106;
-    keyBase = 94;
-    detune = 0;
+    keyMax = 127;
+    keyBase = 99;
+    detune = 1;
 }
 
-sound Rock_OrganSound
+sound _018Rock_OrganSound
 {
-    use("./sounds/Rock_OrganSoundSnd.aifc");
+    use("./sounds/_018Rock_OrganSoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = Rock_OrganSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _018Rock_OrganSoundKeymap;
+    envelope = _018Rock_OrganSoundEnv;
 }
 
-instrument Rock_Organ
+instrument _018Rock_Organ
 {
-    volume = 100;
-    pan = 64;
-    priority = 5;
-    tremeloType = 1;
-    tremeloRate = 140;
-    tremeloDepth = 10;
-    tremeloDelay = 1;
-    vibratoType = 128;
-    vibratoRate = 180;
-    vibratoDepth = 10;
-    vibratoDelay = 1;
-    bendRange = 200;
-    sound = Rock_OrganSound;
+    volume = 127;
+    pan = 32;
+    priority = 0;
+    sound = _018Rock_OrganSound;
 }
 
-keymap Electric_Bass_pickSoundKeymap
+sound _018Rock_OrganEchoSound
+{
+    use("./sounds/_018Rock_OrganSoundSnd.aifc");
+    pan = 64;
+    volume = 127;
+    keymap = _018Rock_OrganSoundKeymap;
+    envelope = _018Rock_OrganSoundEnv;
+}
+
+instrument _018Rock_OrganEcho
+{
+    volume = 127;
+    pan = 96;
+    priority = 0;
+    sound = _018Rock_OrganEchoSound;
+}
+
+// keymap Electric_Bass_pickSoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 60;
+//     keyBase = 48;
+//     detune = 0;
+// }
+
+// sound Electric_Bass_pickSound
+// {
+//     use("./sounds/Electric_Bass_pickSoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = Electric_Bass_pickSoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument Electric_Bass_pick
+// {
+//     volume = 127;
+//     pan = 64;
+//     priority = 5;
+//     bendRange = 200;
+//     sound = Electric_Bass_pickSound;
+// }
+
+
+envelope _034Electric_Bass_pickSoundEnv
+{
+    attackTime = 0;
+    attackVolume = 127;
+    decayTime = 1736220;
+    decayVolume = 0;
+    releaseTime = 434055;
+}
+
+keymap _034Electric_Bass_pickSoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 60;
-    keyBase = 48;
-    detune = 0;
+    keyMax = 127;
+    keyBase = 80;
+    detune = -12;
 }
 
-sound Electric_Bass_pickSound
+sound _034Electric_Bass_pickSound
 {
-    use("./sounds/Electric_Bass_pickSoundSnd.aifc");
+    use("./sounds/_034Electric_Bass_pickSoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = Electric_Bass_pickSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _034Electric_Bass_pickSoundKeymap;
+    envelope = _034Electric_Bass_pickSoundEnv;
 }
 
-instrument Electric_Bass_pick
+instrument _034Electric_Bass_pick
 {
     volume = 127;
     pan = 64;
-    priority = 5;
-    bendRange = 200;
-    sound = Electric_Bass_pickSound;
+    priority = 0;
+    sound = _034Electric_Bass_pickSound;
 }
 
 // keymap Slap_Bass_2SoundKeymap
@@ -786,32 +913,68 @@ instrument Orchestral_Harp
     sound = Orchestral_HarpSound;
 }
 
-keymap TimpaniSoundKeymap
+// keymap TimpaniSoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 78;
+//     keyBase = 66;
+//     detune = 0;
+// }
+
+// sound TimpaniSound
+// {
+//     use("./sounds/TimpaniSoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = TimpaniSoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument Timpani
+// {
+//     volume = 127;
+//     pan = 64;
+//     priority = 5;
+//     bendRange = 200;
+//     sound = TimpaniSound;
+// }
+
+envelope _047TimpaniSoundEnv
+{
+    attackTime = 0;
+    attackVolume = 127;
+    decayTime = 8679540;
+    decayVolume = 0;
+    releaseTime = 1084942;
+}
+
+keymap _047TimpaniSoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 78;
-    keyBase = 66;
-    detune = 0;
+    keyMax = 127;
+    keyBase = 87;
+    detune = 43;
 }
 
-sound TimpaniSound
+sound _047TimpaniSound
 {
-    use("./sounds/TimpaniSoundSnd.aifc");
+    use("./sounds/_047TimpaniSoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = TimpaniSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _047TimpaniSoundKeymap;
+    envelope = _047TimpaniSoundEnv;
 }
 
-instrument Timpani
+instrument _047Timpani
 {
     volume = 127;
     pan = 64;
-    priority = 5;
-    bendRange = 200;
-    sound = TimpaniSound;
+    priority = 0;
+    sound = _047TimpaniSound;
 }
 
 envelope String_Ensemble_2SoundEnv
@@ -924,7 +1087,7 @@ keymap _051Synth_Strings_2SoundKeymap
 
 sound _051Synth_Strings_2Sound
 {
-    use("./sounds/_051Synth_Strings_2SoundSnd.aiff");
+    use("./sounds/_051Synth_Strings_2SoundSnd.aifc");
     pan = 64;
     volume = 127;
     keymap = _051Synth_Strings_2SoundKeymap;
@@ -1018,7 +1181,7 @@ sound TrumpetSound4
 instrument Trumpet
 {
     volume = 127;
-    pan = 64;
+    pan = 20;
     priority = 5;
     tremeloType = 1;
     tremeloRate = 170;
@@ -1072,7 +1235,7 @@ sound TromboneSound2
 instrument Trombone
 {
     volume = 127;
-    pan = 64;
+    pan = 40;
     priority = 5;
     tremeloType = 1;
     tremeloRate = 140;
@@ -1083,36 +1246,72 @@ instrument Trombone
     sound = TromboneSound2;
 }
 
-keymap French_HornSoundKeymap
+// keymap French_HornSoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 89;
+//     keyBase = 77;
+//     detune = 0;
+// }
+
+// sound French_HornSound
+// {
+//     use("./sounds/French_HornSoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = French_HornSoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument French_Horn
+// {
+//     volume = 127;
+//     pan = 64;
+//     priority = 5;
+//     tremeloType = 1;
+//     tremeloRate = 140;
+//     tremeloDepth = 10;
+//     tremeloDelay = 1;
+//     bendRange = 200;
+//     sound = French_HornSound;
+// }
+
+envelope _060French_HornSoundEnv
+{
+    attackTime = 4339;
+    attackVolume = 127;
+    decayTime = 0;
+    decayVolume = 127;
+    releaseTime = 86827;
+}
+
+keymap _060French_HornSoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 89;
-    keyBase = 77;
-    detune = 0;
+    keyMax = 127;
+    keyBase = 68;
+    detune = -1;
 }
 
-sound French_HornSound
+sound _060French_HornSound
 {
-    use("./sounds/French_HornSoundSnd.aifc");
+    use("./sounds/_060French_HornSoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = French_HornSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _060French_HornSoundKeymap;
+    envelope = _060French_HornSoundEnv;
 }
 
-instrument French_Horn
+instrument _060French_Horn
 {
     volume = 127;
-    pan = 64;
-    priority = 5;
-    tremeloType = 1;
-    tremeloRate = 140;
-    tremeloDepth = 10;
-    tremeloDelay = 1;
-    bendRange = 200;
-    sound = French_HornSound;
+    pan = 96;
+    priority = 0;
+    sound = _060French_HornSound;
 }
 
 keymap Alto_SaxSoundKeymap
@@ -1137,7 +1336,7 @@ sound Alto_SaxSound
 instrument Alto_Sax
 {
     volume = 127;
-    pan = 64;
+    pan = 96;
     priority = 5;
     vibratoType = 128;
     vibratoRate = 170;
@@ -1377,20 +1576,22 @@ bank Bank
     sampleRate = 44100;
     percussionDefault = Percussion;
     instrument [0] = Acoustic_Grand_Piano;
+    instrument [3] = _003Honkytonk_Piano;
     instrument [7] = Clavinet;
     instrument [12] = Marimba;
-    instrument [18] = Rock_Organ;
-    instrument [34] = Electric_Bass_pick;
+    instrument [18] = _018Rock_Organ;
+    instrument [19] = _018Rock_OrganEcho;
+    instrument [34] = _034Electric_Bass_pick;
     instrument [37] = _037Slap_Bass_2;
     instrument [40] = Violin;
     instrument [42] = Cello;
     instrument [46] = Orchestral_Harp;
-    instrument [47] = Timpani;
+    instrument [47] = _047Timpani;
     instrument [49] = String_Ensemble_2;
     instrument [51] = _051Synth_Strings_2;
     instrument [56] = Trumpet;
     instrument [57] = Trombone;
-    instrument [60] = French_Horn;
+    instrument [60] = _060French_Horn;
     instrument [65] = Alto_Sax;
     instrument [78] = Whistle;
     instrument [80] = Lead_1_square;
