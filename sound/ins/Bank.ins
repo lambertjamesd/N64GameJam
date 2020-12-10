@@ -620,32 +620,69 @@ instrument Electric_Bass_pick
     sound = Electric_Bass_pickSound;
 }
 
-keymap Slap_Bass_2SoundKeymap
+// keymap Slap_Bass_2SoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 60;
+//     keyBase = 48;
+//     detune = 0;
+// }
+
+// sound Slap_Bass_2Sound
+// {
+//     use("./sounds/Slap_Bass_2SoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = Slap_Bass_2SoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument Slap_Bass_2
+// {
+//     volume = 127;
+//     pan = 64;
+//     priority = 5;
+//     bendRange = 200;
+//     sound = Slap_Bass_2Sound;
+// }
+
+
+envelope _037Slap_Bass_2SoundEnv
+{
+    attackTime = 0;
+    attackVolume = 127;
+    decayTime = 4773738;
+    decayVolume = 0;
+    releaseTime = 8679;
+}
+
+keymap _037Slap_Bass_2SoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 60;
-    keyBase = 48;
-    detune = 0;
+    keyMax = 127;
+    keyBase = 60;
+    detune = -18;
 }
 
-sound Slap_Bass_2Sound
+sound _037Slap_Bass_2Sound
 {
-    use("./sounds/Slap_Bass_2SoundSnd.aifc");
+    use("./sounds/_037Slap_Bass_2SoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = Slap_Bass_2SoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _037Slap_Bass_2SoundKeymap;
+    envelope = _037Slap_Bass_2SoundEnv;
 }
 
-instrument Slap_Bass_2
+instrument _037Slap_Bass_2
 {
     volume = 127;
     pan = 64;
-    priority = 5;
-    bendRange = 200;
-    sound = Slap_Bass_2Sound;
+    priority = 0;
+    sound = _037Slap_Bass_2Sound;
 }
 
 envelope ViolinSoundEnv
@@ -838,32 +875,68 @@ instrument String_Ensemble_2
     sound = String_Ensemble_2Sound2;
 }
 
-keymap Synth_Strings_2SoundKeymap
+// keymap Synth_Strings_2SoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 90;
+//     keyBase = 78;
+//     detune = 0;
+// }
+
+// sound Synth_Strings_2Sound
+// {
+//     use("./sounds/Synth_Strings_2SoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = Synth_Strings_2SoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument Synth_Strings_2
+// {
+//     volume = 127;
+//     pan = 64;
+//     priority = 5;
+//     bendRange = 200;
+//     sound = Synth_Strings_2Sound;
+// }
+
+envelope _051Synth_Strings_2SoundEnv
+{
+    attackTime = 110220;
+    attackVolume = 127;
+    decayTime = 0;
+    decayVolume = 127;
+    releaseTime = 742321;
+}
+
+keymap _051Synth_Strings_2SoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 90;
-    keyBase = 78;
-    detune = 0;
+    keyMax = 55;
+    keyBase = 58;
+    detune = -47;
 }
 
-sound Synth_Strings_2Sound
+sound _051Synth_Strings_2Sound
 {
-    use("./sounds/Synth_Strings_2SoundSnd.aifc");
+    use("./sounds/_051Synth_Strings_2SoundSnd.aiff");
     pan = 64;
     volume = 127;
-    keymap = Synth_Strings_2SoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _051Synth_Strings_2SoundKeymap;
+    envelope = _051Synth_Strings_2SoundEnv;
 }
 
-instrument Synth_Strings_2
+instrument _051Synth_Strings_2
 {
     volume = 127;
     pan = 64;
-    priority = 5;
-    bendRange = 200;
-    sound = Synth_Strings_2Sound;
+    priority = 0;
+    sound = _051Synth_Strings_2Sound;
 }
 
 keymap TrumpetSoundKeymap
@@ -1130,32 +1203,69 @@ instrument Lead_1_square
     sound = Lead_1_squareSound;
 }
 
-keymap Pad_2_warmSoundKeymap
+// keymap Pad_2_warmSoundKeymap
+// {
+//     velocityMin = 0;
+//     velocityMax = 127;
+//     keyMin = 0;
+//     keyMax = 96;
+//     keyBase = 84;
+//     detune = 0;
+// }
+
+// sound Pad_2_warmSound
+// {
+//     use("./sounds/Pad_2_warmSoundSnd.aifc");
+//     pan = 64;
+//     volume = 127;
+//     keymap = Pad_2_warmSoundKeymap;
+//     envelope = ClavinetSoundEnv;
+// }
+
+// instrument Pad_2_warm
+// {
+//     volume = 127;
+//     pan = 64;
+//     priority = 5;
+//     bendRange = 200;
+//     sound = Pad_2_warmSound;
+// }
+
+
+envelope _089Pad_2_warmSoundEnv
+{
+    attackTime = 303398;
+    attackVolume = 127;
+    decayTime = 0;
+    decayVolume = 127;
+    releaseTime = 868110;
+}
+
+keymap _089Pad_2_warmSoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
     keyMin = 0;
-    keyMax = 96;
-    keyBase = 84;
-    detune = 0;
+    keyMax = 127;
+    keyBase = 80;
+    detune = -3;
 }
 
-sound Pad_2_warmSound
+sound _089Pad_2_warmSound
 {
-    use("./sounds/Pad_2_warmSoundSnd.aifc");
+    use("./sounds/_089Pad_2_warmSoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = Pad_2_warmSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _089Pad_2_warmSoundKeymap;
+    envelope = _089Pad_2_warmSoundEnv;
 }
 
-instrument Pad_2_warm
+instrument _089Pad_2_warm
 {
     volume = 127;
     pan = 64;
-    priority = 5;
-    bendRange = 200;
-    sound = Pad_2_warmSound;
+    priority = 0;
+    sound = _089Pad_2_warmSound;
 }
 
 ///////////////////////////////////////
@@ -1271,19 +1381,19 @@ bank Bank
     instrument [12] = Marimba;
     instrument [18] = Rock_Organ;
     instrument [34] = Electric_Bass_pick;
-    instrument [37] = Slap_Bass_2;
+    instrument [37] = _037Slap_Bass_2;
     instrument [40] = Violin;
     instrument [42] = Cello;
     instrument [46] = Orchestral_Harp;
     instrument [47] = Timpani;
     instrument [49] = String_Ensemble_2;
-    instrument [51] = Synth_Strings_2;
+    instrument [51] = _051Synth_Strings_2;
     instrument [56] = Trumpet;
     instrument [57] = Trombone;
     instrument [60] = French_Horn;
     instrument [65] = Alto_Sax;
     instrument [78] = Whistle;
     instrument [80] = Lead_1_square;
-    instrument [89] = Pad_2_warm;
+    instrument [89] = _089Pad_2_warm;
     instrument [100] = _100FX_5_brightness;
 }

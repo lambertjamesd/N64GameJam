@@ -113,7 +113,7 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/AstronautDeath_Fall.aifc \
 	sound/clips/RobotDeath_Fall.aifc \
 	sound/clips/Land_onRobotHead.aifc \
-	sound/clips/MetalFootsteps_RoboHead.aifc \
+	sound/clips/MetalFootsteps_RoboHead.ins \
 	sound/clips/RoboDestroy.aifc \
 	sound/clips/RobotMovement.aifc \
 	sound/clips/SwitchBackChar.aifc \

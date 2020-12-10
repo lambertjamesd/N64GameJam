@@ -276,7 +276,7 @@ void cadetMove(struct Cadet* cadet) {
         audioPlaySound(
             gPlayerSoundIds[PlayerCadetFall],
             0.5f,
-            1.0f,
+            0.7f,
             0.0f,
             10
         );
@@ -360,7 +360,7 @@ void cadetFreefall(struct Cadet* cadet) {
                 PlayerSoundsLand
             ],
             0.5f,
-            isOnMetal ? 0.7f : 0.5f,
+            isOnMetal ? 0.6f : 0.5f,
             0.0f,
             10
         );

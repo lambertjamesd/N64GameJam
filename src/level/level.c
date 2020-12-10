@@ -74,7 +74,7 @@ void levelSwitchToCadet() {
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerSwitchBack],
         0.5f,
-        1.0f,
+        0.7f,
         0.0f,
         10
     );
@@ -92,7 +92,7 @@ int levelSwitchToRobot() {
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerSwitch],
         0.5f,
-        1.0f,
+        0.7f,
         0.0f,
         10
     );
