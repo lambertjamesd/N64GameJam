@@ -125,7 +125,7 @@ void cutSceneUpdate(void* data) {
                     audioPlaySound(
                         gPlayerSoundIds[currentEvent->sound.soundId],
                         currentEvent->sound.pitch,
-                        currentEvent->sound.priority,
+                        currentEvent->sound.volume,
                         currentEvent->sound.pan,
                         currentEvent->sound.priority
                     );

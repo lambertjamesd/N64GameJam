@@ -42,7 +42,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .sound = {
             IntroSndCockpit,
             0.5f,
-            1.0f,
+            0.25f,
             0.0f,
             10
         }
@@ -87,7 +87,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
             IntroSndAlarm1,
             0.5f,
             0.5f,
-            0.0f,
+            -0.25f,
             10
         }
     },
@@ -98,7 +98,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
             IntroSndAlarm1,
             0.5f,
             0.5f,
-            0.0f,
+            -0.25f,
             10
         }
     },
@@ -178,8 +178,8 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .seq = {
             _cosmicDustSegmentRomStart,
             _cosmicDustSegmentRomEnd,
-            9600, 0, 0, 0,
-            0x4000,
+            57600, 0, 0, 0,
+            0x7fff,
         }
     },
     {

@@ -19,8 +19,8 @@ struct CutsceneEvent gGoodEndingCutsceneEvents[] = {
         .seq = {
             _cosmicDustSegmentRomStart,
             _cosmicDustSegmentRomEnd,
-            0, 0, 0, 0,
-            0x4000,
+            57600-960*20, 0, 0, 0,
+            0x7fff,
         }
     },
     {
@@ -29,7 +29,7 @@ struct CutsceneEvent gGoodEndingCutsceneEvents[] = {
         .sound = {
             IntroSndCockpit,
             0.5f,
-            1.0f,
+            0.25f,
             0.0f,
             10
         }
@@ -44,6 +44,11 @@ struct CutsceneEvent gGoodEndingCutsceneEvents[] = {
             0.0f,
             10
         }
+    },
+    {
+        7.0f,
+        CutsceneEventTypeSoundStop,
+        .sound = {IntroSndCockpit}
     },
     {
         12.0f,

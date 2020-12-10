@@ -31,7 +31,7 @@ struct CutsceneEvent gBadEndingCutsceneEvents[] = {
         .sound = {
             IntroSndCockpit,
             0.5f,
-            1.0f,
+            0.25f,
             0.0f,
             10
         }
@@ -46,6 +46,27 @@ struct CutsceneEvent gBadEndingCutsceneEvents[] = {
             0.0f,
             10
         }
+    },
+    {
+        8.0f,
+        CutsceneEventTypeSoundStop,
+        .sound = {IntroSndCockpit}
+    },
+    {
+        12.0f,
+        CutsceneEventTypeSound,
+        .sound = {
+            IntroSndCockpit,
+            0.5f,
+            0.25f,
+            0.0f,
+            10
+        }
+    },
+    {
+        16.0f,
+        CutsceneEventTypeSoundStop,
+        .sound = {IntroSndCockpit}
     },
     {
         16.0f,

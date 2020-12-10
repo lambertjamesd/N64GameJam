@@ -202,12 +202,12 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
         } else {
             alSndpSetVol(&gSoundPlayer, (s16)(volume * 32767));
         }
-        if (pan < -1.0f) {
+        if (pan <= -1.0f) {
             alSndpSetPan(&gSoundPlayer, 0);
-        } else if (pan > 1.0f) {
+        } else if (pan >= 1.0f) {
             alSndpSetPan(&gSoundPlayer, 127);
         } else {
-            alSndpSetPan(&gSoundPlayer, (u8)((pan + 1.0f) * 127));
+            alSndpSetPan(&gSoundPlayer, (u8)((pan + 1.0f) * 64));
         }
         alSndpSetPriority(&gSoundPlayer, snd, 10);
 

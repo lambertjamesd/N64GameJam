@@ -128,6 +128,13 @@ void gemUpdate(void* data) {
         }
 
         if (timeOffset > GEM_END_ANIM_DURATION) {
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundGemCollect],
+                0.5f,
+                0.8f,
+                0.0f,
+                10
+            );
             gem->flags &= ~GEM_FLAGS_END_ANIM;
             gem->flags |= GEM_FLAGS_COLLECTED;
         } else if (timeOffset > GEM_END_ANIM_DURATION - GEM_RADIUS_TIME) {
