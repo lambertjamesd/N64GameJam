@@ -14,7 +14,7 @@ sound/clips/*
 sound/introcutscene/*
 sound/instruments/*
 sound/instruments_full/*
-sound/music/*
+sound/music/*.mid
 sound/ins/sounds/*
 
 imageslides/*
