@@ -110,6 +110,39 @@ void levelFocusCutscene(struct Vector3* target, float time, int viewportIndex) {
     gScene.camera[viewportIndex].followDistanceStep = 0;
 }
 
+void levelUpdateCamera(int controllerIndex, struct Vector3* target) {
+    if (gInputMask[controllerIndex] & InputMaskPlayer) {
+        gScene.camera[controllerIndex].targetPosition = *target;
+        if (gScene.camera[controllerIndex].targetPosition.y < 0.0f) {
+            gScene.camera[controllerIndex].targetPosition.y = 0.0f;
+        }
+
+        if (getButtonDown(controllerIndex, R_TRIG)) {
+            gInputMask[controllerIndex] = INPUT_MASK_FREE_CAM;
+            gScene.camera[controllerIndex].followDistanceStep = 2;
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundZoomOut],
+                1.0f,
+                0.5f,
+                0.0f, 
+                10
+            );
+        }
+    } else if (gInputMask[controllerIndex] & InputMaskFreeCamera) {
+        if (getButtonDown(controllerIndex, R_TRIG | B_BUTTON)) {
+            gInputMask[controllerIndex] = INPUT_MASK_PLAY;
+            gScene.camera[controllerIndex].followDistanceStep = 1;
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundZoomIn],
+                1.0f,
+                0.5f,
+                0.0f, 
+                10
+            );
+        }
+    }
+}
+
 void levelUpdate(void* data) {
     if ((gInputMask[0] & InputMaskPlayer) && 
         !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
@@ -117,72 +150,20 @@ void levelUpdate(void* data) {
     }
 
     if (gCurrentPlayMode == LevelPlayModeCoOp) {
-        if (gInputMask[0] & InputMaskPlayer) {
-            gScene.camera[0].targetPosition = gCadet.transform.position;
-            if (gScene.camera[0].targetPosition.y < 0.0f) {
-                gScene.camera[0].targetPosition.y = 0.0f;
-            }
-
-            if (getButtonDown(0, R_TRIG)) {
-                gInputMask[0] = INPUT_MASK_FREE_CAM;
-                gScene.camera[0].followDistanceStep = 2;
-            }
-        } else if (gInputMask[0] & InputMaskFreeCamera) {
-            if (getButtonDown(0, R_TRIG | B_BUTTON)) {
-                gInputMask[0] = INPUT_MASK_PLAY;
-                gScene.camera[0].followDistanceStep = 1;
-            }
-        }
-
-        if (gInputMask[1] & InputMaskPlayer) {
-            gScene.camera[1].targetPosition = gRobot.transform.position;
-
-            if (gScene.camera[1].targetPosition.y < 0.0f) {
-                gScene.camera[1].targetPosition.y = 0.0f;
-            }
-
-            if (getButtonDown(1, R_TRIG)) {
-                gInputMask[1] = INPUT_MASK_FREE_CAM;
-                gScene.camera[1].followDistanceStep = 2;
-            }
-        } else if (gInputMask[1] & InputMaskFreeCamera) {
-            if (getButtonDown(1, R_TRIG | B_BUTTON)) {
-                gInputMask[1] = INPUT_MASK_PLAY;
-                gScene.camera[1].followDistanceStep = 1;
-            }
-        }
+        levelUpdateCamera(0, &gCadet.transform.position);
+        levelUpdateCamera(1, &gRobot.transform.position);
     } else {
-        if (gInputMask[0] & InputMaskPlayer) {
-            if (getButtonDown(0, R_TRIG)) {
-                gInputMask[0] = INPUT_MASK_FREE_CAM;
-                gScene.camera[0].followDistanceStep = 2;
+        if (gCadet.controllerIndex != -1) {
+            levelUpdateCamera(0, &gCadet.transform.position);
+
+            if (gInputMask[0] & InputMaskPlayer && getButtonDown(0, Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
+                levelSwitchToRobot();
             }
+        } else if (gRobot.controllerIndex != -1) {
+            levelUpdateCamera(0, &gRobot.transform.position);
 
-            if (gCadet.controllerIndex != -1) {
-                gScene.camera[0].targetPosition = gCadet.transform.position;
-
-                if (gScene.camera[0].targetPosition.y < 0.0f) {
-                    gScene.camera[0].targetPosition.y = 0.0f;
-                }
-
-                if (getButtonDown(0, Z_TRIG) && (gLevelFlags & LEVEL_HAS_ROBOT)) {
-                    levelSwitchToRobot();
-                }
-            } else if (gRobot.controllerIndex != -1) {
-                gScene.camera[0].targetPosition = gRobot.transform.position;
-
-                if (gScene.camera[0].targetPosition.y < 0.0f) {
-                    gScene.camera[0].targetPosition.y = 0.0f;
-                }
-
-                if (getButtonDown(0, Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
-                    levelSwitchToCadet();
-                }
-            }
-        } else if (gInputMask[0] & InputMaskFreeCamera) {
-            if (getButtonDown(0, R_TRIG | B_BUTTON)) {
-                gInputMask[0] = INPUT_MASK_PLAY;
-                gScene.camera[0].followDistanceStep = 1;
+            if (gInputMask[0] & InputMaskPlayer && getButtonDown(0, Z_TRIG) && (gLevelFlags & LEVEL_HAS_CADET)) {
+                levelSwitchToCadet();
             }
         }
     }

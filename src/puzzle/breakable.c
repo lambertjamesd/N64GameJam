@@ -4,6 +4,8 @@
 #include "src/collision/collisionscene.h"
 #include "src/graphics/renderscene.h"
 #include "src/level/level.h"
+#include "src/audio/audio.h"
+#include "src/audio/playersounds.h"
 
 struct CollisionCollider gBreakablePlatformCollider = {
     ColliderTypeBox,
@@ -26,6 +28,14 @@ struct CollisionCollider gBreakableBarrierCollider = {
 void breakableTrigger(void* data, struct Vector3* origin) {
     struct Breakable* breakable = (struct Breakable*)data;
     if (breakable->renderActorId != ACTOR_ID_NONE) {
+        audioPlaySound(
+            gPlayerSoundIds[SoundRocksBreak],
+            1.0f,
+            1.0f,
+            0.0f, 
+            10
+        );
+
         dynamicActorRemoveFromGroup(&gScene.dynamicActors, &breakable->renderActorId);
 
         sparseCollisionRemove(&gSparseCollisionGrid, &breakable->collider);

@@ -4,6 +4,8 @@
 #include "src/collision/collisionscene.h"
 #include "src/graphics/renderscene.h"
 #include "src/level/level.h"
+#include "src/audio/playersounds.h"
+#include "src/audio/audio.h"
 
 struct CollisionCollider gMovingPlatformCollider = {
     ColliderTypeBox,
@@ -102,6 +104,14 @@ void movingPlatformUpdate(void* data) {
     struct MovingPlatform* platform = (struct MovingPlatform*)data;
 
     if (gCurrentSignal[platform->signalIndex] != platform->lastSignalValue) {
+        audioPlaySound(
+            gPlayerSoundIds[SoundPlatformMove],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
+
         if (platform->moveDirection != -1) {
             platform->currentSlot = platform->currentSlot->adjacent[platform->moveDirection];
             platform->moveDirection = (platform->moveDirection + 2) & 0x3;

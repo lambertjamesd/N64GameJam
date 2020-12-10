@@ -114,7 +114,7 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/RobotDeath_Fall.aifc \
 	sound/clips/Land_onRobotHead.aifc \
 	sound/clips/MetalFootsteps_RoboHead.aifc \
-	sound/clips/RobotDestroy.aifc \
+	sound/clips/RoboDestroy.aifc \
 	sound/clips/RobotMovement.aifc \
 	sound/clips/SwitchBackChar.aifc \
 	sound/clips/SwitchChar.aifc \
@@ -125,7 +125,13 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/UIScroll.aifc \
 	sound/clips/UISelect.aifc \
 	sound/clips/GemPickup.aifc \
-	sound/clips/SlidingBlock4.aifc
+	sound/clips/SlidingBlock4.aifc \
+	sound/clips/PlatformMove1.ins \
+	sound/clips/CameraSqueekL.aifc \
+	sound/clips/CameraSqueekR.aifc \
+	sound/clips/RocksBreak.aifc \
+	sound/clips/ZoomIn.aifc \
+	sound/clips/ZoomOut.aifc
 
 INTRO_CUTSCENE_SOUNDS = sound/clips/CockpitAmbience.ins \
 	sound/clips/processing.aifc \
@@ -154,11 +160,11 @@ sound/clips/%.aif: sound/clips/%.wav
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
-	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^ --compress
 
 build/audio/intro_cutscene.sounds: $(INTRO_CUTSCENE_SOUNDS)
 	@mkdir -p $(@D)
-	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^
+	/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64 $@ $^ --compress
 
 build/ins/Bank.ins: sound/instruments/sfz/instruments.sfz sound/music/usedbanks.txt
 	@mkdir -p $(@D)

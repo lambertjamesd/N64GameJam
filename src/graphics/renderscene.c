@@ -4,6 +4,8 @@
 #include "src/math/mathf.h"
 #include "src/input/controller.h"
 #include "src/input/inputfocus.h"
+#include "src/audio/audio.h"
+#include "src/audio/playersounds.h"
 #include "src/defs.h"
 
 #define SPLIT_MOVE_SPEED    2
@@ -59,21 +61,53 @@ void cameraUpdate(void* cameraPtr) {
         if (getButtonDown(camera->controllerIndex, D_CBUTTONS)) {
             if (camera->followDistanceStep + 1 < FOLLOW_STEP_COUNT) {
                 ++camera->followDistanceStep;
+
+                audioRestartPlaySound(
+                    gPlayerSoundIds[SoundZoomOut],
+                    1.0f,
+                    0.5f,
+                    0.0f, 
+                    10
+                );
             }
         }
 
         if (getButtonDown(camera->controllerIndex, U_CBUTTONS)) {
             if (camera->followDistanceStep > 0) {
                 --camera->followDistanceStep;
+
+                audioRestartPlaySound(
+                    gPlayerSoundIds[SoundZoomIn],
+                    1.0f,
+                    0.5f,
+                    0.0f, 
+                    10
+                );
             }
         }
 
         if (getButtonDown(camera->controllerIndex, R_CBUTTONS)) {
             camera->targetRotation += CAMERA_ROTATE_STEP;
+
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundCameraMoveR],
+                1.0f,
+                0.5f,
+                0.0f, 
+                10
+            );
         }
 
         if (getButtonDown(camera->controllerIndex, L_CBUTTONS)) {
             camera->targetRotation -= CAMERA_ROTATE_STEP;
+
+            audioRestartPlaySound(
+                gPlayerSoundIds[SoundCameraMoveL],
+                1.0f,
+                0.5f,
+                0.0f, 
+                10
+            );
         }
     }
 

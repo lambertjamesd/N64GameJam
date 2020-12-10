@@ -38,6 +38,12 @@ enum PlayerSounds {
     SoundUISelect,
     SoundGemCollect,
     SoundDoorOpen,
+    SoundPlatformMove,
+    SoundCameraMoveL,
+    SoundCameraMoveR,
+    SoundRocksBreak,
+    SoundZoomIn,
+    SoundZoomOut,
     PlayerSoundsCount,
 };
 
