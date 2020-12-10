@@ -124,7 +124,8 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/WarpGoGreen_Small.aifc \
 	sound/clips/UIScroll.aifc \
 	sound/clips/UISelect.aifc \
-	sound/clips/GemPickup.aifc
+	sound/clips/GemPickup.aifc \
+	sound/clips/SlidingBlock4.aifc
 
 INTRO_CUTSCENE_SOUNDS = sound/clips/CockpitAmbience.ins \
 	sound/clips/processing.aifc \

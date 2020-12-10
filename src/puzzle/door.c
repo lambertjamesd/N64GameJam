@@ -4,6 +4,8 @@
 #include "src/graphics/renderscene.h"
 #include "src/level/level.h"
 #include "src/math/mathf.h"
+#include "src/audio/audio.h"
+#include "src/audio/playersounds.h"
 
 #define DOOR_MOVE_SPEED 2.0f
 
@@ -38,7 +40,19 @@ void doorRender(struct DynamicActor* data, struct GraphicsState* state) {
 void doorUpdate(void* data) {
     struct PuzzleDoor* door = (struct PuzzleDoor*)data;
 
-    float targetPos = door->closedPosition.y + ((gCurrentSignal[door->signalIndex] ^ door->inverted) ? -2.0f : 0.0f);
+    char currentSignal = gCurrentSignal[door->signalIndex] ^ door->inverted;
+    float targetPos = door->closedPosition.y + (currentSignal ? -2.0f : 0.0f);
+
+    if (currentSignal != door->lastSignal) {
+        door->lastSignal = currentSignal;
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundDoorOpen],
+            0.5f,
+            1.0f,
+            0.0f,
+            10
+        );
+    }
 
     if (targetPos != door->transform.position.y) {
         door->transform.position.y = mathfMoveTowards(
@@ -65,6 +79,7 @@ void doorInit(struct PuzzleDoor* door, struct Vector3* position, int color, int 
     door->signalIndex = color;
     door->closedPosition = *position;
     door->inverted = inverted;
+    door->lastSignal = inverted;
 
     door->transform.position.y = door->closedPosition.y + (door->inverted ? -2.0f : 0.0f);
 

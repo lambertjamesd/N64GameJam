@@ -35,9 +35,9 @@ var ThemeColors = []ColorTheme{
 	},
 	ColorTheme{
 		Color{219, 84, 143, 255},
-		Color{215, 97, 132, 255},
-		Color{179, 119, 137, 255},
-		Color{154, 61, 108, 255},
+		Color{215, 100, 97, 255},
+		Color{179, 141, 119, 255},
+		Color{154, 76, 115, 255},
 	},
 }
 

@@ -37,6 +37,7 @@ enum PlayerSounds {
     SoundUIScroll,
     SoundUISelect,
     SoundGemCollect,
+    SoundDoorOpen,
     PlayerSoundsCount,
 };
 

@@ -87,7 +87,7 @@ Gfx _aliengrey_swamp_material[] = {
 	gsDPTileSync(),
 	gsDPSetTile(0, 0, 0, 256, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
 	gsDPLoadSync(),
-	gsDPLoadTLUTCmd(7, 4),
+	gsDPLoadTLUTCmd(7, 6),
 	gsDPPipeSync(),
 	gsDPTileSync(),
 	gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b, 16, _aliengrey_swamp_tex_ci4),

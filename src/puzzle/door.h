@@ -11,8 +11,9 @@ struct PuzzleDoor {
     struct BasicTransform transform;
     struct CollisionTransformedCollider collider;
     struct TimeUpdateListener updateListener;
-    short signalIndex;
-    short inverted;
+    char signalIndex;
+    char inverted;
+    char lastSignal;
     struct Vector3 closedPosition;
 };
 
