@@ -54,7 +54,7 @@ void entraceExitTrigger(void* data, struct Vector3* origin) {
             gPlayerSoundIds[(exit->exitTrigger.triggerMask & CollisionLayersCadetSwitch) ?
                 GoalTouchSmall : GoalTouchBig],
             0.5f,
-            1.0f,
+            0.8f,
             0.0f,
             10
         );

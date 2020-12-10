@@ -7,6 +7,7 @@
 #include "geo/model.h"
 #include "src/audio/playersounds.h"
 #include "src/audio/audio.h"
+#include "src/math/mathf.h"
 #include "src/puzzle/entranceexit.h"
 #include "src/cadet/cadet.h"
 
@@ -152,7 +153,7 @@ void robotAttack(struct Robot* robot) {
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerRobotAttack],
         0.5f,
-        1.0f,
+        0.7f,
         0.0f,
         10
     );
@@ -215,12 +216,47 @@ void robotRespawn(struct Robot* robot) {
     }
 }
 
+int robotIsMoving(struct Robot* robot) {
+    return robot->actor.velocity.x * robot->actor.velocity.x + robot->actor.velocity.z * robot->actor.velocity.z > 0.1f;
+}
+
+void robotUpdateSound(struct Robot* robot, int wasMoving) {
+    int isMoving = robotIsMoving(robot);
+
+    if (!isMoving) {
+        audioStopSound(gPlayerSoundIds[PlayerRobotMove]);
+    } else {
+        if (!wasMoving) {
+            audioPlaySound(
+                gPlayerSoundIds[PlayerRobotMoveStart],
+                0.5f,
+                0.3f,
+                0.0f,
+                1
+            );
+        }
+
+        float moveSpeed = sqrtf(robot->actor.velocity.x * robot->actor.velocity.x + robot->actor.velocity.z * robot->actor.velocity.z);
+        float moveLerp = moveSpeed / ROBOT_SPEED;
+        audioPlaySound(
+            gPlayerSoundIds[PlayerRobotMove],
+            mathfLerp(0.1f, 0.5f, moveLerp),
+            0.2f * moveLerp,
+            0.0f,
+            1
+        );
+    }
+}
+
 void robotUpdate(void* robotPtr) {
     struct Robot* robot = (struct Robot*)robotPtr;
 
     struct Vector3 lastPos = robot->transform.position;
+    int wasMoving = robotIsMoving(robot);
 
     robot->state(robot);
+    
+    robotUpdateSound(robot, wasMoving);
 
     if (lastPos.x != robot->transform.position.x || 
         lastPos.y != robot->transform.position.y || 

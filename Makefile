@@ -115,7 +115,8 @@ PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/Land_onRobotHead.aifc \
 	sound/clips/MetalFootsteps_RoboHead.ins \
 	sound/clips/RoboDestroy.aifc \
-	sound/clips/RobotMovement.aifc \
+	sound/clips/RobotMovement.ins \
+	sound/clips/RobotStartMoving.aifc \
 	sound/clips/SwitchBackChar.aifc \
 	sound/clips/SwitchChar.aifc \
 	sound/clips/BigButton.aifc \

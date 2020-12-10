@@ -169,7 +169,7 @@ void cadetUpdatefootstepSound(struct Cadet* cadet) {
             } else {
                 nextSound = PlayerSoundsFootsteps;
             }
-            soundVolume = sqrtf(moveSpeed) / CADET_SPEED;
+            soundVolume = 0.4f * sqrtf(moveSpeed) / CADET_SPEED;
         }
     }
 

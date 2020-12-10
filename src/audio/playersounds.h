@@ -28,6 +28,7 @@ enum PlayerSounds {
     PlayerSoundsFootstepsMetal,
     PlayerRobotAttack,
     PlayerRobotMove,
+    PlayerRobotMoveStart,
     PlayerSwitchBack,
     PlayerSwitch,
     ButtonSoundsBig,
