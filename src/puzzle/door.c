@@ -45,11 +45,13 @@ void doorUpdate(void* data) {
 
     if (currentSignal != door->lastSignal) {
         door->lastSignal = currentSignal;
-        audioRestartPlaySound(
+        audioPlaySound3D(
             gPlayerSoundIds[SoundDoorOpen],
             0.5f,
             1.0f,
-            0.0f,
+            &door->transform.position,
+            &gZeroVec,
+            1,
             10
         );
     }

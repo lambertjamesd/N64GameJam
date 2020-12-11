@@ -20,6 +20,8 @@ static ALSeqMarker gSequenceLoopStart[MAX_SEQUENCE_COUNT];
 static ALSeqMarker gSequenceEnd[MAX_SEQUENCE_COUNT];
 static int gNextSeq = 0;
 static char* gCurrentSeq = 0;
+struct BasicTransform* gListener;
+struct Vector3 gListenerRight = {1.0f, 0.0f, 0.0f};
 
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
@@ -58,6 +60,7 @@ void audioStopSequence() {
 }
 
 void audioPlaySequence(struct SeqPlayEvent* playEvent) {
+    return;
     if (gCurrentSeq == playEvent->romStart) {
         return;
     } else if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
@@ -197,17 +200,21 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
     if (volume > 0.0f && snd != UNUSED_PENDING_SOUND) {
         alSndpSetSound(&gSoundPlayer, snd);
         alSndpSetPitch(&gSoundPlayer, pitch);
-        if (volume > 1.0f) {
+        float floatAsShort = volume * 32767;
+        if (floatAsShort > 32767.0f) {
             alSndpSetVol(&gSoundPlayer, 32767);
         } else {
-            alSndpSetVol(&gSoundPlayer, (s16)(volume * 32767));
+            alSndpSetVol(&gSoundPlayer, (s16)floatAsShort);
         }
-        if (pan <= -1.0f) {
+
+        float panAs127 = (pan + 1.0f) * 128.0f;
+
+        if (panAs127 <= 0.0f) {
             alSndpSetPan(&gSoundPlayer, 0);
-        } else if (pan >= 1.0f) {
-            alSndpSetPan(&gSoundPlayer, 127);
+        } else if (panAs127 >= 255.0f) {
+            alSndpSetPan(&gSoundPlayer, 255);
         } else {
-            alSndpSetPan(&gSoundPlayer, (u8)((pan + 1.0f) * 64));
+            alSndpSetPan(&gSoundPlayer, (u8)(panAs127));
         }
         alSndpSetPriority(&gSoundPlayer, snd, 10);
 
@@ -217,8 +224,44 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
     }
 }
 
+#define HALF_DECAY_RADIUS   20.0f
+#define SOUND_VELOCITY      50.0f
+
+void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* source, struct Vector3* velocity, int restart, int priority) {
+    if (!gListener) {
+        audioPlaySound(snd, pitch, volume, 0.0f, priority);
+    } else {
+        struct Vector3 offset;
+        vector3Sub(source, &gListener->position, &offset);
+
+        float distance = vector3MagSqrd(&offset);
+        float pan;
+
+        if (distance > 0.1f) {
+            volume *= (0.5f * HALF_DECAY_RADIUS * HALF_DECAY_RADIUS) / distance;
+            float invDistance = 1.0f / sqrtf(distance);
+            pitch *= SOUND_VELOCITY / (SOUND_VELOCITY + vector3Dot(&offset, velocity) * invDistance);
+            pan = vector3Dot(&gListenerRight, &offset) * invDistance;
+        } else {
+            volume *= 100.0f;
+            pan = 0.0f;
+        }
+
+
+        if (restart) {
+            audioRestartPlaySound(snd, pitch, volume, pan, priority);
+        } else {
+            audioPlaySound(snd, pitch, volume, pan, priority);
+        }
+    }
+}
+
 void audioUpdate() {
     int i;
+
+    if (gListener) {
+        quatMultVector(&gListener->rotation, &gRight, &gListenerRight);
+    }
 
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
         if (gPendingSounds[i].snd != UNUSED_PENDING_SOUND) {

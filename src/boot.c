@@ -205,6 +205,7 @@ static void initGame(void)
     fastMallocReset();
     cameraInit(&gScene.camera[0], &gZeroVec, 0);
     cameraInit(&gScene.camera[1], &gZeroVec, 1);
+    gListener = &gScene.camera[0].transform;
     cadetInit();
     robotInit();
     controllersInit();
@@ -220,6 +221,6 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    // gNextLevel =     2;
+    gNextLevel =     2;
 }
 

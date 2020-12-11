@@ -104,14 +104,6 @@ void movingPlatformUpdate(void* data) {
     struct MovingPlatform* platform = (struct MovingPlatform*)data;
 
     if (gCurrentSignal[platform->signalIndex] != platform->lastSignalValue) {
-        audioPlaySound(
-            gPlayerSoundIds[SoundPlatformMove],
-            0.5f,
-            1.0f,
-            0.0f,
-            10
-        );
-
         if (platform->moveDirection != -1) {
             platform->currentSlot = platform->currentSlot->adjacent[platform->moveDirection];
             platform->moveDirection = (platform->moveDirection + 2) & 0x3;
@@ -138,11 +130,28 @@ void movingPlatformUpdate(void* data) {
         struct MovingPlatformSlot* next = platform->currentSlot->adjacent[platform->moveDirection];
 
         if (next) {
+            struct Vector3 velocity;
+
+            velocity = platform->transform.position;
+
             vector3MoveTowards(
                 &platform->transform.position,
                 &next->position,
                 gTimeDelta * PLATFORM_MOVE_SPEED,
                 &platform->transform.position
+            );
+
+            vector3Sub(&platform->transform.position, &velocity, &velocity);
+            vector3Scale(&velocity, &velocity, 1.0f / gTimeDelta);
+
+            audioPlaySound3D(
+                gPlayerSoundIds[SoundPlatformMove],
+                0.5f,
+                1.0f,
+                &platform->transform.position,
+                &velocity,
+                0,
+                10
             );
 
             if (platform->transform.position.x == next->position.x &&

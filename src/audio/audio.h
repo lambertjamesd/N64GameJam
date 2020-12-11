@@ -4,6 +4,7 @@
 #include <ultra64.h>
 #include <libaudio.h>
 #include <sched.h>
+#include "src/math/basictransform.h"
 
 #define MAX_UPDATES             32
 #define MAX_EVENTS              32
@@ -63,6 +64,7 @@ extern u8* gAudioHeapBuffer;
 
 extern ALSndPlayer gSoundPlayer;
 extern ALHeap gAudioHeap;
+extern struct BasicTransform* gListener;
 
 void audioPlaySequence(struct SeqPlayEvent* playEvent);
 void audioStopSequence();
@@ -71,6 +73,7 @@ int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
 void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
+void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* source, struct Vector3* velocity, int restart, int priority);
 
 void audioUpdate();
 
