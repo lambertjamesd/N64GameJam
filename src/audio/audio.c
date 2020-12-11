@@ -102,7 +102,7 @@ void audioInit()
 {
     ALBankFile    *bankPtr;
     u32           bankLen;
-    ALSynConfig   c;
+    ALSynConfig   synConfig;
     ALSeqpConfig  seqc;
     amConfig      amc;
     
@@ -114,19 +114,19 @@ void audioInit()
     
     alBnkfNew(bankPtr, (u8 *) _tableSegmentRomStart);
 
-    c.maxVVoices = MAX_VOICES;
-    c.maxPVoices = MAX_VOICES;
-    c.maxUpdates = MAX_UPDATES;
-    c.dmaproc    = 0;
-    c.fxType	 = AL_FX_SMALLROOM;
-    c.outputRate = 0;
-    c.heap       = &gAudioHeap;
+    synConfig.maxVVoices = MAX_VOICES;
+    synConfig.maxPVoices = MAX_VOICES;
+    synConfig.maxUpdates = MAX_UPDATES;
+    synConfig.dmaproc    = 0;
+    synConfig.fxType	 = AL_FX_SMALLROOM;
+    synConfig.outputRate = 0;
+    synConfig.heap       = &gAudioHeap;
     
     amc.outputRate = 44100;
     amc.framesPerField = NUM_FIELDS;
     amc.maxACMDSize = MAX_RSP_CMDS;
  
-    amCreateAudioMgr(&c, AUDIO_PRIORITY, &amc);
+    amCreateAudioMgr(&synConfig, AUDIO_PRIORITY, &amc);
     
     seqc.maxVoices      = MAX_VOICES;
     seqc.maxEvents      = MAX_EVENTS;

@@ -25,8 +25,7 @@ int gScreenHeight;
 float gScreenYScale;
 
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
-// extra 64 bytes to make sure it is aligned to 64 bytes
-unsigned short	gZBuffer[SCREEN_WD*MAX_SCREEN_HT + 64 / sizeof(u16)];
+unsigned short __attribute__((aligned(64)))	gZBuffer[SCREEN_WD*MAX_SCREEN_HT];
 unsigned short* gColorBuffer[2];
 char* gStaticSegmentBuffer;
 char* gLevelSegmentBuffer;
@@ -155,7 +154,7 @@ void createGfxTask(GFXInfo *i) {
 	    firsttime = 0;
     }
 
-    u32 zBuffAligned = ALIGN_64_BYTES(osVirtualToPhysical(gZBuffer));
+    u32 zBuffAligned = osVirtualToPhysical(gZBuffer);
     
     gDPSetDepthImage(glistp++, zBuffAligned);
     gDPPipeSync(glistp++);

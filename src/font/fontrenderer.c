@@ -53,7 +53,7 @@ float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font*
             int leftOffset = 0;
 
             if (renderX < 0) {
-                leftOffset = (int)(renderX * -32.0f);
+                leftOffset = (int)(renderX * -16.0f);
                 renderX = 0.0f;
             }
 

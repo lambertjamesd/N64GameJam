@@ -53,7 +53,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .sound = {
             IntroSndAlarm1,
             0.5f,
-            1.0f,
+            0.8f,
             0.0f,
             10
         }
@@ -64,7 +64,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .sound = {
             IntroSndAlarm1,
             0.5f,
-            0.9f,
+            0.7f,
             0.0f,
             10
         }
@@ -75,7 +75,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         .sound = {
             IntroSndGemNotice,
             0.5f,
-            0.7f,
+            0.6f,
             0.0f,
             10
         }

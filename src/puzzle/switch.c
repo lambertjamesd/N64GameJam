@@ -105,7 +105,7 @@ void switchTrigger(void* data, struct Vector3* origin) {
         switchTriggerSound(puzzleSwitch);
     }
 
-    if (!(puzzleSwitch->switchType & PUZZLE_SWITCH_PERMANANT)) {
+    if (!(puzzleSwitch->switchType & PUZZLE_SWITCH_PERMANANT) && puzzleSwitch->collider.collider) {
         puzzleSwitch->collider.collider->collisionMask = 0;
     }
 
@@ -135,7 +135,10 @@ void switchUpdate(void* data) {
 
             if (!puzzleSwitch->didTrigger) {
                 switchTriggerSound(puzzleSwitch);
-                puzzleSwitch->collider.collider->collisionMask = CollisionLayersCadetSwitch;
+
+                if (puzzleSwitch->collider.collider) {
+                    puzzleSwitch->collider.collider->collisionMask = CollisionLayersCadetSwitch;
+                }
             }
         }
     }
@@ -179,6 +182,11 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
         puzzleSwitch->collider.trigger = 0;
         puzzleSwitch->collider.triggerMask = 0;
         sparseCollisionAdd(&gSparseCollisionGrid, &puzzleSwitch->collider, NULL);
+    } else {
+        puzzleSwitch->collider.collider = 0;
+        puzzleSwitch->collider.transform = 0;
+        puzzleSwitch->collider.data = 0;
+        puzzleSwitch->collider.trigger = switchTrigger;
     }
 
     puzzleSwitch->sender.currentSignal = 0;
