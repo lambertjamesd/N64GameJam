@@ -9,6 +9,7 @@
 #include "src/effects/shadow.h"
 #include "src/effects/teleport.h"
 #include "src/effects/explosion.h"
+#include "src/effects/respawn.h"
 
 #define ROBOT_ACCEL 16.0f
 #define ROBOT_SPEED 3.0f
@@ -39,6 +40,7 @@ struct Robot {
     struct Vector2 rotation;
     struct CollisionTransformedCollider collider;
     struct Explosion explosions[ROBOT_MAX_EXPLOSIONS];
+    struct RespawnEffect respawn;
     float attackTimer;
     // state sepecific
     struct DropShadow shadow;

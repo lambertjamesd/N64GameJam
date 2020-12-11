@@ -7,6 +7,7 @@
 
 extern OSContStatus gControllerStatus[MAXCONTROLLERS];
 extern OSContPad gControllerState[MAXCONTROLLERS];
+extern int gControllerIsConnected;
 
 extern void controllersInit();
 extern void controllersReadData();

@@ -138,6 +138,7 @@ void robotMove(struct Robot* robot) {
         );
 
         teleportEffectStart(&robot->teleport, TELEPORT_FLAG_QUICK);
+        respawnEffectStart(&robot->respawn, &robot->transform, 1.5f, &robot->teleport);
         robot->state = robotRespawn;
         robot->actor.velocity = gZeroVec;
     }
@@ -180,6 +181,7 @@ void robotTeleportIn(struct Robot* robot) {
     }
 
     if (!teleportEffectUpdate(&gRobot.teleport)) {
+        respawnEffectEnd(&robot->respawn);
         robot->state = robotWalk;
         robot->actor.stateFlags &= ~ROBOT_IS_CUTSCENE;
     }
@@ -301,6 +303,8 @@ void robotReset(struct Vector3* startLocation) {
     }
     gRobot.nextExplosion = 0;
     gRobot.controllerIndex = -1;
+
+    gRobot.respawn.renderId = -1;
 
     teleportEffectStart(&gRobot.teleport, TELEPORT_FLAG_REVERSE);
 

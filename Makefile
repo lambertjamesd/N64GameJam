@@ -92,7 +92,7 @@ SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).jpeg)
 src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include: slidebuilder/slidebuilder $(SLIDE_IMAGES)
 	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include $(IMAGE_SLIDES)
 
-COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit rocket_collision
+COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit rocket_collision large_switch
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
 
 src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
@@ -226,6 +226,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/cutscene/slides.c \
 	src/effects/explosion.c	\
 	src/effects/leveltitle.c	\
+	src/effects/respawn.c \
 	src/effects/rockettrail.c \
 	src/effects/rockfragments.c	\
 	src/effects/shadow.c	\

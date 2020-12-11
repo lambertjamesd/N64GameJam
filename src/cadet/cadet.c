@@ -282,6 +282,7 @@ void cadetMove(struct Cadet* cadet) {
         );
 
         teleportEffectStart(&cadet->teleport, TELEPORT_FLAG_QUICK);
+        respawnEffectStart(&cadet->respawn, &cadet->transform, 1.0f, &cadet->teleport);
         cadet->state = cadetRespawn;
         cadet->actor.velocity = gZeroVec;
     }
@@ -409,6 +410,7 @@ void cadetTeleportIn(struct Cadet* cadet) {
     }
 
     if (!teleportEffectUpdate(&gCadet.teleport)) {
+        respawnEffectEnd(&cadet->respawn);
         cadet->state = cadetFreefall;
         cadet->actor.stateFlags &= ~CADET_IS_CUTSCENE;
     }
@@ -516,6 +518,8 @@ void cadetReset(struct Vector3* startLocation) {
     gCadet.accumTime = 0.0f;
     gCadet.footstepSound = -1;
     gCadet.controllerIndex = -1;
+
+    gCadet.respawn.renderId = -1;
 
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, &gCadet, cadetRender, MATERIAL_INDEX_NOT_BATCHED, 0.5f);
 }

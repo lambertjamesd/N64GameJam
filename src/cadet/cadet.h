@@ -11,6 +11,7 @@
 #include "src/time/time.h"
 #include "src/effects/rockettrail.h"
 #include "src/effects/splash.h"
+#include "src/effects/respawn.h"
 
 #define CADET_RADIUS        0.2f
 #define CADET_SPEED         5.6f
@@ -45,6 +46,7 @@ struct Cadet {
     struct RocketTrail jumpTrail;
     struct BasicTransform jumpTrailParticles[CADET_PARTICLE_TRAIL_COUNT];
     struct SplashEffect splash;
+    struct RespawnEffect respawn;
     float accumTime;
     float gravity;
     struct WalkAnim walkAnim;

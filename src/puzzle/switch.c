@@ -7,6 +7,7 @@
 #include "src/audio/audio.h"
 #include "src/puzzle/geo/permanantswitch.inc.c"
 #include "src/collision/geo/permanant_switch.inc.c"
+#include "src/collision/geo/large_switch.inc.c"
 
 struct CollisionCollider gLargeSwitchCollider = {
     ColliderTypeBox,
@@ -104,6 +105,10 @@ void switchTrigger(void* data, struct Vector3* origin) {
         switchTriggerSound(puzzleSwitch);
     }
 
+    if (!(puzzleSwitch->switchType & PUZZLE_SWITCH_PERMANANT)) {
+        puzzleSwitch->collider.collider->collisionMask = 0;
+    }
+
     puzzleSwitch->didTrigger = 2;
 }
 
@@ -130,6 +135,7 @@ void switchUpdate(void* data) {
 
             if (!puzzleSwitch->didTrigger) {
                 switchTriggerSound(puzzleSwitch);
+                puzzleSwitch->collider.collider->collisionMask = CollisionLayersCadetSwitch;
             }
         }
     }
@@ -144,6 +150,7 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
         case PuzzleSwitchTypeLarge:
             trigger = &gLargeSwitchCollider;
             triggerMask = CollisionLayersRobotSwitch;
+            collider = &_large_switch_collider;
             break;
         case PuzzleSwitchTypeLargePermanant:
             trigger = &gLargeSwitchCollider;

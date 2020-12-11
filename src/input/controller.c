@@ -8,6 +8,7 @@ OSMesgQueue gContMessageQ;
 OSContStatus gControllerStatus[MAXCONTROLLERS];
 OSContPad gControllerState[MAXCONTROLLERS];
 u16 gControllerLastButton[MAXCONTROLLERS];
+int gControllerIsConnected;
 
 #define OUTER_DEAD_ZONE     10
 #define INNER_DEAD_ZONE     6
@@ -26,9 +27,9 @@ void controllersInit() {
 
     osContInit(&gContMessageQ, &pattern, &gControllerStatus[0]);
 
-    saveFileLoad();
+    gControllerIsConnected = (pattern & 1) && !(gControllerStatus[0].errno & CONT_NO_RESPONSE_ERROR);;
 
-    assert((pattern & 1) && !(gControllerStatus[0].errno & CONT_NO_RESPONSE_ERROR));
+    saveFileLoad();
 
     osContStartReadData(&gContMessageQ);
 }

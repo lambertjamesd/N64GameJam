@@ -194,7 +194,7 @@ func BuildTileSet(theme *ColorTheme) *LevelTileSet {
 	)
 
 	var tunnelBlock = buildBlock(
-		true,
+		false,
 		"ply/wall_color.ply", Wall, theme.Wall,
 		"ply/tunnel_face.ply", Wall, theme.Wall,
 		"ply/wall_color.ply", Wall, theme.Wall,
@@ -271,7 +271,7 @@ func BuildTileSet(theme *ColorTheme) *LevelTileSet {
 	}, "gCollideTileStair", DynamicTypeNone)
 
 	result.Tiles["Tunnel"] = buildTile([3]*LevelBlock{
-		stairLowerBlock,
+		floorBlock,
 		tunnelBlock,
 		nil,
 	}, "gCollideTileTunnel", DynamicTypeNone)

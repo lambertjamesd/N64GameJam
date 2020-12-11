@@ -52,6 +52,14 @@ float teleportEffectGetHeight(float time) {
     return time * time * FALL_ACCEL;
 }
 
+float teleportEffectGetQuickLerp(struct TeleportEffect* effect) {
+    if (effect->flags & TELEPORT_FLAG_QUICK) {
+        return (EFFECT_DURATION - effect->time) / (EFFECT_DURATION - SCALE_START_TIME);
+    }
+
+    return 0.0f;
+}
+
 void teleportEffectCreateTransform(struct TeleportEffect* effect, struct BasicTransform* transform, Mtx* mtx) {
     float tSqr;
     

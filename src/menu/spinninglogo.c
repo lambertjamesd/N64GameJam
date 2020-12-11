@@ -10,6 +10,8 @@
 #include "src/audio/audio.h"
 #include "src/audio/allseq.h"
 #include "src/audio/playersounds.h"
+#include "src/input/controller.h"
+#include "src/font/endlessbossbattle/endlessbossbattle.h"
 
 #define SPINNING_LOGO_TIME      8.0f
 #define FADE_TIME               2.0f
@@ -29,82 +31,105 @@ extern char _spinning_logoSegmentRomStart[], _spinning_logoSegmentRomEnd[];
 struct TimeUpdateListener gSpinningLogoUpdate;
 float gSpinningLogoTimer;
 
+char* noControllerMessage = "No controller connnected";
+
 void spinningLogoText(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
-    gDPPipeSync(state->dl++);
-    gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
+    if (gControllerIsConnected) {
+        gDPPipeSync(state->dl++);
+        gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
 
-    gSPDisplayList(state->dl++, gFreshEaterUse);
-    fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
-    fontRendererDrawCharacters(
-        fontRenderer,
-        &gFreshEater,
-        &state->dl,
-        "ULTRA RARE",
-        80,
-        (gScreenHeight >> 1) + SCALE_FOR_PAL(43)
-    );
+        gSPDisplayList(state->dl++, gFreshEaterUse);
+        fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
+        fontRendererDrawCharacters(
+            fontRenderer,
+            &gFreshEater,
+            &state->dl,
+            "ULTRA RARE",
+            80,
+            (gScreenHeight >> 1) + SCALE_FOR_PAL(43)
+        );
 
-    u8 alpha = 255;
+        u8 alpha = 255;
 
-    if (gSpinningLogoTimer < DELAY_TIME) {
-        alpha = 0;
-    } else if (gSpinningLogoTimer < DELAY_TIME + FADE_TIME) {
-        alpha = (u8)(255 * (gSpinningLogoTimer - DELAY_TIME) / FADE_TIME);
-    } else if (gSpinningLogoTimer >= SPINNING_LOGO_TIME) {
-        alpha = 0;
-    } else if (gSpinningLogoTimer > SPINNING_LOGO_TIME - FADE_TIME) {
-        alpha = (u8)(255 * (SPINNING_LOGO_TIME - gSpinningLogoTimer) / FADE_TIME);
+        if (gSpinningLogoTimer < DELAY_TIME) {
+            alpha = 0;
+        } else if (gSpinningLogoTimer < DELAY_TIME + FADE_TIME) {
+            alpha = (u8)(255 * (gSpinningLogoTimer - DELAY_TIME) / FADE_TIME);
+        } else if (gSpinningLogoTimer >= SPINNING_LOGO_TIME) {
+            alpha = 0;
+        } else if (gSpinningLogoTimer > SPINNING_LOGO_TIME - FADE_TIME) {
+            alpha = (u8)(255 * (SPINNING_LOGO_TIME - gSpinningLogoTimer) / FADE_TIME);
+        }
+
+        gDPPipeSync(state->dl++);
+        gDPSetCombineLERP(state->dl++, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
+        gDPSetEnvColor(state->dl++, 0, 0, 0, 255 - alpha);
+        gDPFillRectangle(state->dl++, 0, 0, SCREEN_WD-1, gScreenHeight-1);
+        gDPPipeSync(state->dl++);
+    } else {
+        gDPPipeSync(state->dl++);
+        gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
+
+        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+        fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
+        fontRendererDrawCharacters(
+            fontRenderer,
+            &gEndlessBossBattle,
+            &state->dl,
+            noControllerMessage,
+            (SCREEN_WD - fontRendererMeasureWidth(&gEndlessBossBattle, noControllerMessage))/2,
+            (gScreenHeight >> 1) - SCALE_FOR_PAL(6)
+        );
+        gDPPipeSync(state->dl++);
     }
-
-    gDPPipeSync(state->dl++);
-    gDPSetCombineLERP(state->dl++, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
-    gDPSetEnvColor(state->dl++, 0, 0, 0, 255 - alpha);
-    gDPFillRectangle(state->dl++, 0, 0, SCREEN_WD-1, gScreenHeight-1);
-    gDPPipeSync(state->dl++);
 }
 
 void spinningLogoRender(struct DynamicActor* data, struct GraphicsState* state) {
-    struct BasicTransform spinningTransform;
-    spinningTransform.position = gZeroVec;
-    spinningTransform.scale = 1.0f;
-    quatAxisAngle(
-        &gUp, 
-        -gSpinningLogoTimer * RADS_PER_SEC + RAD_OFFSET, 
-        &spinningTransform.rotation
-    );
+    if (gControllerIsConnected) {
+        struct BasicTransform spinningTransform;
+        spinningTransform.position = gZeroVec;
+        spinningTransform.scale = 1.0f;
+        quatAxisAngle(
+            &gUp, 
+            -gSpinningLogoTimer * RADS_PER_SEC + RAD_OFFSET, 
+            &spinningTransform.rotation
+        );
 
-    Mtx* nextTransfrom = graphicsStateNextMtx(state);
-    transformToMatrixL(&spinningTransform, 1.0f / 256.0f, nextTransfrom);
-    gSPSetGeometryMode(state->dl++, G_ZBUFFER);
-    gDPSetRenderMode(state->dl++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
-    gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    gSPDisplayList(state->dl++, SpinningLogo_SpinningLogo_mesh);
-    gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
+        Mtx* nextTransfrom = graphicsStateNextMtx(state);
+        transformToMatrixL(&spinningTransform, 1.0f / 256.0f, nextTransfrom);
+        gSPSetGeometryMode(state->dl++, G_ZBUFFER);
+        gDPSetRenderMode(state->dl++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
+        gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
+        gSPDisplayList(state->dl++, SpinningLogo_SpinningLogo_mesh);
+        gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
+    }
 }
 
 void spinningLogoUpdate(void* data) {
-    if (gSpinningLogoTimer >= SPINNING_LOGO_TIME) {
-        gNextLevel = SceneIndexMainMenu;
-    } else {
-        float nextTime = gSpinningLogoTimer + gTimeDelta;
+    if (gControllerIsConnected) {
+        if (gSpinningLogoTimer >= SPINNING_LOGO_TIME) {
+            gNextLevel = SceneIndexMainMenu;
+        } else {
+            float nextTime = gSpinningLogoTimer + gTimeDelta;
 
-        if (nextTime >= JINGLE_PLAY_TIME && gSpinningLogoTimer < JINGLE_PLAY_TIME) {
-            struct SeqPlayEvent playEvent;
-            playEvent.romStart = _logoJingleSegmentRomStart;
-            playEvent.romEnd = _logoJingleSegmentRomEnd;
-            playEvent.loopStart = 0;
-            playEvent.loopEnd = 0;
-            playEvent.loopCount = 0;
-            playEvent.playbackStart = 0;
-            playEvent.volume = 0x7fff;
-            audioPlaySequence(&playEvent);
+            if (nextTime >= JINGLE_PLAY_TIME && gSpinningLogoTimer < JINGLE_PLAY_TIME) {
+                struct SeqPlayEvent playEvent;
+                playEvent.romStart = _logoJingleSegmentRomStart;
+                playEvent.romEnd = _logoJingleSegmentRomEnd;
+                playEvent.loopStart = 0;
+                playEvent.loopEnd = 0;
+                playEvent.loopCount = 0;
+                playEvent.playbackStart = 0;
+                playEvent.volume = 0x7fff;
+                audioPlaySequence(&playEvent);
+            }
+
+            if (nextTime >= LAUGH_PLAY_TIME && gSpinningLogoTimer < LAUGH_PLAY_TIME) {
+                audioPlaySound(gPlayerSoundIds[IntroSndLogoLaughing], 0.5f, 0.7f, 0.0f, 10);
+            }
+
+            gSpinningLogoTimer = nextTime;
         }
-
-        if (nextTime >= LAUGH_PLAY_TIME && gSpinningLogoTimer < LAUGH_PLAY_TIME) {
-            audioPlaySound(gPlayerSoundIds[IntroSndLogoLaughing], 0.5f, 0.7f, 0.0f, 10);
-        }
-
-        gSpinningLogoTimer = nextTime;
     }
 }
 
