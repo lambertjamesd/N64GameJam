@@ -168,7 +168,7 @@ void gemTrigger(void* data, struct Vector3* origin) {
     collectPos.z = gem->transform.position.z;
     explosionInit(&gem->explosion, &gem->transform.position, ExplosionTypeGemCollect);
 
-    audioPlaySound(
+    audioRestartPlaySound(
         gPlayerSoundIds[SoundGemCollect],
         0.5f,
         1.0f,

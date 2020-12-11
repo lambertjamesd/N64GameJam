@@ -21,6 +21,11 @@
 #include "src/audio/audio.h"
 #include "src/audio/allseq.h"
 
+extern char _titlescreenSegmentStart[];
+extern char _titlescreenSegmentEnd[];
+extern unsigned short _titleScreenRendered_tex[];
+extern Sprite titleScreenSprite;
+
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
 
@@ -240,11 +245,54 @@ void mainMenuRocketPosition(float time, struct Vector3* out, struct Vector3* eul
 #define GEM_COUNT_X     280
 #define GEM_COUNT_Y     200
 
+void mainMenuRenderImage(struct GraphicsState* state, int y) {
+    gDPPipeSync(state->dl++);
+    // gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
+    // gDPSetRenderMode(state->dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+    // gDPSetCombineMode(state->dl++, G_CC_DECALRGB, G_CC_DECALRGB);
+    // gDPSetTextureLUT(state->dl++, G_TT_NONE);
+    // gDPSetTexturePersp(state->dl++, G_TP_NONE);
+    // gDPSetPrimColor(state->dl++, 0, 0, 255, 255, 255, 255);
+
+    // gDPLoadTextureTile(
+    //     state->dl++,
+    //     K0_TO_PHYS(_titleScreenRendered_tex),
+    //     G_IM_FMT_RGBA, G_IM_SIZ_16b,
+    //     256, 8,
+    //     0, 0,
+    //     255, 7,
+    //     0,
+    //     G_TX_CLAMP, G_TX_CLAMP,
+    //     G_TX_NOMASK, G_TX_NOMASK,
+    //     G_TX_NOLOD, G_TX_NOLOD
+    // );
+
+    // int tileHeight = 8;
+    // int scaledTileHeight = 8;
+    
+    // gSPTextureRectangle(
+    //     state->dl++,
+    //     32 << 2, 30 << 2,
+    //     188 << 2, 38 << 2,
+    //     G_TX_RENDERTILE, 
+    //     0, 0, 1 << 10, (tileHeight << 10) / scaledTileHeight
+    // );
+
+    spInit(&state->dl);
+    spMove(&titleScreenSprite, 32, 30);
+    titleScreenSprite.rsp_dl_next = titleScreenSprite.rsp_dl;
+    gSPDisplayList(state->dl++, spDraw(&titleScreenSprite));
+    spFinish(&state->dl);
+
+    gDPPipeSync(state->dl++);
+
+
+}
+
 void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     menuRender(data, state, fontRenderer);
 
     if (gMainMenuTotalGems && gMainMenu.itemStackDepth != 0) {
-        gDPPipeSync(state->dl++);
         gSPDisplayList(state->dl++, gEndlessBossBattleUse);
         char buffer[16];
         sprintf(buffer, "%d/%d", gMainMenuTotalGems, 3 * _level_group_all_levels_count);
@@ -277,6 +325,8 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
         );
         gDPPipeSync(state->dl++);
     }
+
+    mainMenuRenderImage(state, 0);    
 }
 
 void mainMenuUpdate(void* data) {
@@ -384,21 +434,21 @@ void mainMenuInit() {
     char* staticSegment = heapMalloc(len, 8);
     romCopy(_staticSegmentRomStart, (char*)staticSegment, len);
 
-    // len = (u32)(_spinning_logoSegmentRomEnd - _spinning_logoSegmentRomStart);
-    // u32 levelAlign;
-    // u32 levelPageMask;
-    // tlbAlign(len, &levelAlign, &levelPageMask);
+    len = (u32)(_titlescreenSegmentEnd - _titlescreenSegmentStart);
+    u32 levelAlign;
+    u32 levelPageMask;
+    tlbAlign(len, &levelAlign, &levelPageMask);
 
-    // char* levelSegment = heapMalloc(len, levelAlign);
-    // romCopy(_spinning_logoSegmentRomStart, levelSegment, len);
-    // osMapTLB(0, levelPageMask, (void*)(LEVEL_SEGMENT << 24), osVirtualToPhysical(levelSegment), -1, -1);
+    char* levelSegment = heapMalloc(len, levelAlign);
+    romCopy(_titlescreenSegmentStart, levelSegment, len);
+    osMapTLB(0, levelPageMask, (void*)(LEVEL_SEGMENT << 24), osVirtualToPhysical(levelSegment), -1, -1);
 
     timeResetListeners();
     graphicsClearMenus();
 
     graphicsInitLevel(
         staticSegment, 
-        0, 
+        levelSegment, 
         0, 
         0,
         0

@@ -175,7 +175,7 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
     gDPSetCombineMode(state->dl++, G_CC_DECALRGB, G_CC_DECALRGB);
     gDPSetTextureLUT(state->dl++, G_TT_NONE);
     gDPSetTexturePersp(state->dl++, G_TP_NONE);
-    gDPSetPrimColor(state->dl++, 0, 0, 255, 0, 255, 255);
+    gDPSetPrimColor(state->dl++, 0, 0, 255, 255, 255, 255);
 
     int tileXCount = (width + MAX_TILE_X-1) / MAX_TILE_X;
     int tileYCount = (height + MAX_TILE_Y-1) / MAX_TILE_Y;

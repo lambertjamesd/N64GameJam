@@ -56,6 +56,13 @@ beginseg
 endseg
 
 beginseg
+	name "titlescreen"
+	flags OBJECT
+	number LEVEL_SEGMENT
+	include "src/menu/geo/titlescreen.o"
+endseg
+
+beginseg
 	name "bank"
 	flags RAW
 	include "build/ins/Bank.ctl"
@@ -161,6 +168,7 @@ beginwave
 	include "alienworldred"
 	include "alienworldgrey"
 	include "spinning_logo"
+	include "titlescreen"
 	include "table"
 	include "bank"
 	include "logoJingle"

@@ -147,7 +147,7 @@ void movingPlatformUpdate(void* data) {
             audioPlaySound3D(
                 gPlayerSoundIds[SoundPlatformMove],
                 0.5f,
-                1.0f,
+                0.5f,
                 &platform->transform.position,
                 &velocity,
                 AUDIO_3D_FLAGS_LOOPED,

@@ -232,7 +232,7 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
     }
 }
 
-#define FULL_VOLUME_RADIUS   8.0f
+#define FULL_VOLUME_RADIUS   20.0f
 #define SOUND_VELOCITY      40.0f
 
 struct Sound3DState* audioFindState(ALSndId snd, int loop) {
@@ -273,7 +273,9 @@ void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* so
         state->distance = distance;
         
         if (distance > 0.1f) {
-            volume *= (FULL_VOLUME_RADIUS * FULL_VOLUME_RADIUS) / distance;
+            if (distance > FULL_VOLUME_RADIUS * FULL_VOLUME_RADIUS) {
+                volume *= (FULL_VOLUME_RADIUS * FULL_VOLUME_RADIUS) / distance;
+            }
             float invDistance = 1.0f / sqrtf(distance);
             pitch *= SOUND_VELOCITY / (SOUND_VELOCITY + vector3Dot(&offset, velocity) * invDistance);
             pan = vector3Dot(&gListenerRight, &offset) * invDistance;

@@ -293,7 +293,8 @@ DATAFILES =	$(LEVEL_GEO) \
 	src/levelthemes/alienworldred/materials.c \
 	src/levelthemes/alienworldgrey/materials.c \
 	src/menu/geo/spinninglogo.c \
-	src/system/heapstart.c
+	src/system/heapstart.c \
+	src/menu/geo/titlescreen.c
 
 DATAOBJECTS =	$(DATAFILES:.c=.o)
 

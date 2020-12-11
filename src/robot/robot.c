@@ -241,7 +241,7 @@ void robotUpdateSound(struct Robot* robot, int wasMoving) {
         audioPlaySound(
             gPlayerSoundIds[PlayerRobotMove],
             mathfLerp(0.1f, 0.5f, moveLerp),
-            0.2f * moveLerp,
+            mathfLerp(0.1f, 0.2f, moveLerp),
             0.0f,
             1
         );
@@ -331,5 +331,6 @@ void robotInit() {
 
 void robotFinishLevel(struct Robot* robot) {
     teleportEffectStart(&gRobot.teleport, 0);
+    robot->actor.velocity = gZeroVec;
     robot->state = robotTeleportOut;
 }

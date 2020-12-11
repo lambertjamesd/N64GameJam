@@ -254,6 +254,7 @@ void levelUpdate(void* data) {
         if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
             if (gLevelFlags & LEVEL_IS_FINAL) {
                 if (gRocket.rocketFlags & ROCKET_FLAGS_ANIMATION_DONE) {
+                    saveFileSave();
                     if (saveFileCalculateGemsCollected(_level_group_all_levels_count) == _level_group_all_levels_count * 3) {
                         gNextLevel = SceneIndexGoodEndingCutscene;
                     } else {
