@@ -46,6 +46,7 @@ struct MenuItemGroup {
     int itemCount;
     enum MenuType type;
     MenuItemGroupAdditionalRender renderMore;
+    int yOffset;
 };
 
 struct Menu {
@@ -64,6 +65,7 @@ void menuPush(struct Menu* menu, struct MenuItemGroup* items);
 void menuGoBack(struct Menu* menu);
 void menuInit(struct Menu* menu, struct MenuItemGroup* rootMenu);
 void menuHandleInput(struct Menu* menu, int controllerIndex);
+float menuGetAnimationLerp(struct Menu* menu);
 
 void menuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer);
 void menuUpdate(struct Menu* menu);

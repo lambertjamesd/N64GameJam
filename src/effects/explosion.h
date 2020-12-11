@@ -7,6 +7,7 @@
 #include "src/time/time.h"
 
 extern Gfx _shockwave_mat[];
+extern Gfx _shockwave_mat_cleanup[];
 extern Gfx _shockwave_mesh_tri_0[];
 extern Gfx _explosion_spike_mesh_tri_0[];
 extern Gfx _smoke_mat[];

@@ -657,7 +657,7 @@ Gfx mat_Rocket_Rocket[] = {
 
 Gfx mat_revert_Rocket_Rocket[] = {
 	gsDPPipeSync(),
-	gsSPClearGeometryMode(G_TEXTURE_GEN),
+	gsSPClearGeometryMode(G_TEXTURE_GEN|G_LIGHTING),
 	gsDPSetTextureLUT(G_TT_NONE),
 	gsSPEndDisplayList(),
 };

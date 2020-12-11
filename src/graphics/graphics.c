@@ -214,7 +214,6 @@ void createGfxTask(GFXInfo *i) {
 
         viewportConvert(vp, &dynamicp->viewports[index]);
 
-        // gDPSetScissor(state.dl++, G_SC_NON_INTERLACE, 60, 60, 259, 179);
         gSPViewport(state.dl++, &dynamicp->viewports[index]);
 
         graphicsCaluclateFrustum(dynamicp, vp, index, state.frustumPlanes);
@@ -235,7 +234,6 @@ void createGfxTask(GFXInfo *i) {
             gDPSetRenderMode(state.dl++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
             gDPSetTextureLUT(state.dl++, G_TT_NONE);
         }
-
 
         if (gCurrentLevelTheme) {
             dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);

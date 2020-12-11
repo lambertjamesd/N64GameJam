@@ -158,6 +158,7 @@ Gfx _explosion_spike_mesh_tri_0[] = {
 
 Gfx _shockwave_mat[] = {
 	gsDPPipeSync(),
+	gsSPClearGeometryMode(G_CULL_BACK),
 	gsDPSetCombineLERP(0, 0, 0, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0, 0, 0, 0, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPTileSync(),
@@ -171,3 +172,7 @@ Gfx _shockwave_mat[] = {
 	gsSPEndDisplayList(),
 };
 
+Gfx _shockwave_mat_cleanup[] = {
+	gsSPSetGeometryMode(G_CULL_BACK),
+	gsSPEndDisplayList(),
+};

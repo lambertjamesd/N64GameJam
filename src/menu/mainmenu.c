@@ -21,16 +21,18 @@
 #include "src/audio/audio.h"
 #include "src/audio/allseq.h"
 
-extern char _titlescreenSegmentStart[];
-extern char _titlescreenSegmentEnd[];
+extern char _titlescreenSegmentRomStart[];
+extern char _titlescreenSegmentRomEnd[];
 extern unsigned short _titleScreenRendered_tex[];
-extern Sprite titleScreenSprite;
 
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
+float gMainMenuExitTime;
 
 #define MAIN_MENU_FADE_START_TIME       5.0f
 #define MAIN_MENU_FADE_END_TIME         6.0f
+#define MAIN_MENU_EXIT_DURATION         3.0f
+#define MAIN_MENU_FADE_IN_TIME          0.5f
 
 #define BACKGROUND_ALPHA                64
 #define MAX_LEVELS_PER_PAGE             6
@@ -162,7 +164,7 @@ struct MenuItem gNewGameItems[] = {
 };
 
 struct MenuItemGroup gNewGameGroup = {
-    "Telocation: Gemini",
+    "",
     gNewGameItems,
     1,
 };
@@ -189,9 +191,12 @@ struct MenuItem gMainMenuItems[] = {
 };
 
 struct MenuItemGroup gMainMenuGroup = {
-    "Telelocation: Gemini",
+    "",
     gMainMenuItems,
     3,
+    MenuTypeLarge,
+    0,
+    28,
 };
 
 void levelSelectPrepGems(struct MenuItemGroup* group, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
@@ -240,53 +245,69 @@ void mainMenuRocketPosition(float time, struct Vector3* out, struct Vector3* eul
     eulerAngles->x = (s1 + s2) * 0.2f;
     eulerAngles->y = M_PI * 0.5f + (s1 + s4);
     eulerAngles->z = -M_PI * 0.5f + (s0 + s3) * 0.2f;
+
+    out->x += 4.0f * gMainMenuExitTime * gMainMenuExitTime;
 }
 
 #define GEM_COUNT_X     280
 #define GEM_COUNT_Y     200
 
+#define TITLE_SCREEN_WIDTH          256
+#define TITLE_SCREEN_TILE_HEIGHT    8
+#define TITLE_SCREEN_TILES          8
+#define TITLE_SCREEN_LOCATION       30
+
 void mainMenuRenderImage(struct GraphicsState* state, int y) {
     gDPPipeSync(state->dl++);
-    // gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
-    // gDPSetRenderMode(state->dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-    // gDPSetCombineMode(state->dl++, G_CC_DECALRGB, G_CC_DECALRGB);
-    // gDPSetTextureLUT(state->dl++, G_TT_NONE);
-    // gDPSetTexturePersp(state->dl++, G_TP_NONE);
-    // gDPSetPrimColor(state->dl++, 0, 0, 255, 255, 255, 255);
 
-    // gDPLoadTextureTile(
-    //     state->dl++,
-    //     K0_TO_PHYS(_titleScreenRendered_tex),
-    //     G_IM_FMT_RGBA, G_IM_SIZ_16b,
-    //     256, 8,
-    //     0, 0,
-    //     255, 7,
-    //     0,
-    //     G_TX_CLAMP, G_TX_CLAMP,
-    //     G_TX_NOMASK, G_TX_NOMASK,
-    //     G_TX_NOLOD, G_TX_NOLOD
-    // );
+    gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
+    gDPSetRenderMode(state->dl++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+    gDPSetCombineMode(state->dl++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    gDPSetTextureLUT(state->dl++, G_TT_NONE);
+    gDPSetTexturePersp(state->dl++, G_TP_NONE);
+    gDPSetPrimColor(state->dl++, 0, 0, 255, 255, 255, 255);
 
-    // int tileHeight = 8;
-    // int scaledTileHeight = 8;
-    
-    // gSPTextureRectangle(
-    //     state->dl++,
-    //     32 << 2, 30 << 2,
-    //     188 << 2, 38 << 2,
-    //     G_TX_RENDERTILE, 
-    //     0, 0, 1 << 10, (tileHeight << 10) / scaledTileHeight
-    // );
+    int i;
+    for (i = 0; i < TITLE_SCREEN_TILES; ++i) {
+        int tileHeight = SCALE_FOR_PAL(TITLE_SCREEN_TILE_HEIGHT);
 
-    spInit(&state->dl);
-    spMove(&titleScreenSprite, 32, 30);
-    titleScreenSprite.rsp_dl_next = titleScreenSprite.rsp_dl;
-    gSPDisplayList(state->dl++, spDraw(&titleScreenSprite));
-    spFinish(&state->dl);
+        if (y + tileHeight > 0) {
+            int yStart = y;
+            int ySrcy = i * TITLE_SCREEN_TILE_HEIGHT;
+
+            if (yStart < 0) {
+                ySrcy -= UNSCALE_FOR_PAL(yStart);
+                tileHeight += yStart;
+                yStart = 0;
+            }
+
+            gDPLoadTextureTile(
+                state->dl++,
+                _titleScreenRendered_tex + ySrcy * TITLE_SCREEN_WIDTH,
+                G_IM_FMT_RGBA, G_IM_SIZ_16b,
+                256, 8,
+                0, 0,
+                255, 7,
+                0,
+                G_TX_CLAMP, G_TX_CLAMP,
+                G_TX_NOMASK, G_TX_NOMASK,
+                G_TX_NOLOD, G_TX_NOLOD
+            );
+
+            gSPTextureRectangle(
+                state->dl++,
+                32 << 2, (yStart) << 2,
+                288 << 2, (yStart + tileHeight) << 2,
+                G_TX_RENDERTILE, 
+                0, 0, 1 << 10, (TITLE_SCREEN_TILE_HEIGHT << 10) / SCALE_FOR_PAL(TITLE_SCREEN_TILE_HEIGHT)
+            );
+        }
+
+
+        y += tileHeight;
+    }
 
     gDPPipeSync(state->dl++);
-
-
 }
 
 void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
@@ -326,7 +347,23 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
         gDPPipeSync(state->dl++);
     }
 
-    mainMenuRenderImage(state, 0);    
+    if (gMainMenu.itemStackDepth == 0 || gMainMenu.exitAnimationLevel == 0) {
+        if (gMainMenu.exitAnimationLevel != 0) {
+            float animLerp = 1.0f - menuGetAnimationLerp(&gMainMenu);
+            mainMenuRenderImage(state, SCALE_FOR_PAL(
+                    TITLE_SCREEN_LOCATION - 
+                    animLerp * animLerp * (TITLE_SCREEN_TILE_HEIGHT * TITLE_SCREEN_TILES + TITLE_SCREEN_LOCATION)
+            )); 
+        } else if (gMainMenu.insertAnimationLevel != 0) {
+            float animLerp = menuGetAnimationLerp(&gMainMenu);
+            mainMenuRenderImage(state, SCALE_FOR_PAL(
+                    TITLE_SCREEN_LOCATION - 
+                    animLerp * animLerp * (TITLE_SCREEN_TILE_HEIGHT * TITLE_SCREEN_TILES + TITLE_SCREEN_LOCATION)
+            )); 
+        } else {
+            mainMenuRenderImage(state, SCALE_FOR_PAL(TITLE_SCREEN_LOCATION));    
+        }
+    }
 }
 
 void mainMenuUpdate(void* data) {
@@ -338,6 +375,7 @@ void mainMenuUpdate(void* data) {
             gMainMenuUnlockedLevels = mainMenuBuildLevelSelect();
             gMainMenu.current[0] = &gMainMenuGroup;
             gKonamiCodeIndex = 0;
+            gMainMenuTotalGems = _level_group_all_levels_count * 3;
 
             audioPlaySound(
                 gPlayerSoundIds[GoalTouchSmall],
@@ -356,22 +394,33 @@ void mainMenuUpdate(void* data) {
         gRocket.color.r = gRocket.color.g = gRocket.color.b = (u8)finalAlpha;
         gRocket.trail.alpha = (u8)finalAlpha;
     } else if (gMainMenuTime >= MAIN_MENU_FADE_END_TIME) {
-        gRocket.color.r = BACKGROUND_ALPHA;
-        gRocket.color.g = BACKGROUND_ALPHA;
-        gRocket.color.b = BACKGROUND_ALPHA;
-        gRocket.trail.alpha = BACKGROUND_ALPHA;
-
-        menuUpdate(&gMainMenu);
-        menuHandleInput(&gMainMenu, 0);
-
         if (gMainMenu.exitAnimationLevel == -1 && gMainMenuSelectedLevel != -2) {
-            if (gMainMenuSelectedLevel == -1) {
-                gNextLevel = gMainMenuUnlockedLevels - 1;
+            if (gMainMenuExitTime < MAIN_MENU_FADE_IN_TIME) {
+                float finalAlpha = mathfLerp(BACKGROUND_ALPHA, 255.0f, gMainMenuExitTime / MAIN_MENU_FADE_IN_TIME);
+                gRocket.color.r = gRocket.color.g = gRocket.color.b = (u8)finalAlpha;
+                gRocket.trail.alpha = (u8)finalAlpha;
+            } else if (gMainMenuExitTime < MAIN_MENU_EXIT_DURATION) {
+                gRocket.color.r = gRocket.color.g = gRocket.color.b = 255;
+                gRocket.trail.alpha = 255;
             } else {
-                gNextLevel = gMainMenuSelectedLevel;
+                if (gMainMenuSelectedLevel == -1) {
+                    gNextLevel = gMainMenuUnlockedLevels - 1;
+                } else {
+                    gNextLevel = gMainMenuSelectedLevel;
+                }
+
+                audioStopSequence();
             }
 
-            audioStopSequence();
+            gMainMenuExitTime += gTimeDelta;
+        } else {
+            gRocket.color.r = BACKGROUND_ALPHA;
+            gRocket.color.g = BACKGROUND_ALPHA;
+            gRocket.color.b = BACKGROUND_ALPHA;
+            gRocket.trail.alpha = BACKGROUND_ALPHA;
+
+            menuUpdate(&gMainMenu);
+            menuHandleInput(&gMainMenu, 0);
         }
     }
 
@@ -434,13 +483,13 @@ void mainMenuInit() {
     char* staticSegment = heapMalloc(len, 8);
     romCopy(_staticSegmentRomStart, (char*)staticSegment, len);
 
-    len = (u32)(_titlescreenSegmentEnd - _titlescreenSegmentStart);
+    len = (u32)(_titlescreenSegmentRomEnd - _titlescreenSegmentRomStart);
     u32 levelAlign;
     u32 levelPageMask;
     tlbAlign(len, &levelAlign, &levelPageMask);
 
     char* levelSegment = heapMalloc(len, levelAlign);
-    romCopy(_titlescreenSegmentStart, levelSegment, len);
+    romCopy(_titlescreenSegmentRomStart, (char*)levelSegment, len);
     osMapTLB(0, levelPageMask, (void*)(LEVEL_SEGMENT << 24), osVirtualToPhysical(levelSegment), -1, -1);
 
     timeResetListeners();
@@ -472,9 +521,11 @@ void mainMenuInit() {
     gScene.viewports[0].maxy = gScreenHeight;
     gScene.fov[0] = 54.188044907f;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
+    gScene.transparentMaterialCleanup[TransparentMaterialTypeShockwave] = _shockwave_mat_cleanup;
     
 
     gMainMenuTime = 0.0f;
+    gMainMenuExitTime = 0.0f;
 
     struct Vector3 eulerAngles;
     mainMenuRocketPosition(gMainMenuTime, &gRocket.transform.position, &eulerAngles);

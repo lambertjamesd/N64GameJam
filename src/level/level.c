@@ -501,6 +501,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
     gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
     gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = _gem_cleanup_mat;
     gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
+    gScene.transparentMaterialCleanup[TransparentMaterialTypeShockwave] = _shockwave_mat_cleanup;
     gScene.transparentMaterials[TransparentMaterialTypeSmoke] = _smoke_mat;
     gTutorialMenu.state = 0;
 

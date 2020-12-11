@@ -27,7 +27,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
         (SCREEN_WD/2) - (int)halfWidth + xOffset, (gScreenHeight >> 1) - SCALE_FOR_PAL(80)
     );
 
-    int y = (gScreenHeight >> 1) - 40;
+    int y = SCALE_FOR_PAL(group->yOffset - 40) + (gScreenHeight >> 1);
     int yStep = SCALE_FOR_PAL(40);
     int x = SCREEN_WD/2;
     float scale = 2.0f;
@@ -37,7 +37,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
         yStep = SCALE_FOR_PAL(12);
         scale = 1.0f;
     } else if (group->itemCount == 1) {
-        y += 40;
+        y += SCALE_FOR_PAL(40);
     }
 
     fontRendererSetScale(fontRenderer, scale, scale*gScreenYScale);
@@ -121,6 +121,16 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
         }
 
         y += yStep;
+    }
+}
+
+float menuGetAnimationLerp(struct Menu* menu) {
+    float result = menu->animationTime * (1.0f / ANIMATE_DURATION);
+
+    if (result > 1.0f) {
+        return 1.0f;
+    } else {
+        return result;
     }
 }
 
