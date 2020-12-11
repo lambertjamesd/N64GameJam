@@ -150,7 +150,7 @@ void movingPlatformUpdate(void* data) {
                 1.0f,
                 &platform->transform.position,
                 &velocity,
-                0,
+                AUDIO_3D_FLAGS_LOOPED,
                 10
             );
 

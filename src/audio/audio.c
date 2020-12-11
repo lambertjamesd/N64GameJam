@@ -22,12 +22,14 @@ static int gNextSeq = 0;
 static char* gCurrentSeq = 0;
 struct BasicTransform* gListener;
 struct Vector3 gListenerRight = {1.0f, 0.0f, 0.0f};
+struct Sound3DState gSound3DStates[MAX_3D_SOUNDS];
 
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
 
 #define MAX_PENDING_SOUNDS  4
 #define UNUSED_PENDING_SOUND -1
+#define UNUSED_DISTANCE 1000000000.0f
 
 struct PendingSound {
     ALSndId snd;
@@ -48,6 +50,13 @@ void soundPlayerInit() {
     sndConfig.maxEvents = MAX_EVENTS;
     sndConfig.maxSounds = MAX_SOUNDS;
     sndConfig.heap = &gAudioHeap;
+
+    int i;
+
+    for (i = 0; i < MAX_3D_SOUNDS; ++i) {
+        gSound3DStates[i].id = UNUSED_PENDING_SOUND;
+        gSound3DStates[i].distance = UNUSED_DISTANCE;
+    }
 
     alSndpNew(&gSoundPlayer, &sndConfig);
 }
@@ -207,12 +216,12 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
             alSndpSetVol(&gSoundPlayer, (s16)floatAsShort);
         }
 
-        float panAs127 = (pan + 1.0f) * 128.0f;
+        float panAs127 = (pan + 1.0f) * 64.0f;
 
         if (panAs127 <= 0.0f) {
             alSndpSetPan(&gSoundPlayer, 0);
-        } else if (panAs127 >= 255.0f) {
-            alSndpSetPan(&gSoundPlayer, 255);
+        } else if (panAs127 >= 127.0f) {
+            alSndpSetPan(&gSoundPlayer, 127);
         } else {
             alSndpSetPan(&gSoundPlayer, (u8)(panAs127));
         }
@@ -224,21 +233,48 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
     }
 }
 
-#define HALF_DECAY_RADIUS   20.0f
-#define SOUND_VELOCITY      50.0f
+#define FULL_VOLUME_RADIUS   8.0f
+#define SOUND_VELOCITY      40.0f
 
-void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* source, struct Vector3* velocity, int restart, int priority) {
+struct Sound3DState* audioFindState(ALSndId snd, int loop) {
+    int index;
+    int emptySlot = -1;
+    for (index = 0; index < MAX_3D_SOUNDS; ++index) {
+        if (gSound3DStates[index].id == snd && gSound3DStates[index].looped == loop) {
+            return &gSound3DStates[index];
+        } else if (gSound3DStates[index].id == UNUSED_PENDING_SOUND && emptySlot == -1) {
+            emptySlot = index;
+        }
+    }
+
+    if (emptySlot == -1) {
+        return 0;
+    } else {
+        gSound3DStates[emptySlot].id = snd;
+        gSound3DStates[emptySlot].looped = loop;
+        return &gSound3DStates[emptySlot];
+    }
+}
+
+void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* source, struct Vector3* velocity, int flags, int priority) {
     if (!gListener) {
         audioPlaySound(snd, pitch, volume, 0.0f, priority);
     } else {
         struct Vector3 offset;
         vector3Sub(source, &gListener->position, &offset);
+        struct Sound3DState* state = audioFindState(snd, flags & AUDIO_3D_FLAGS_LOOPED);
 
         float distance = vector3MagSqrd(&offset);
         float pan;
 
+        if (!state || distance >= state->distance) {
+            return;
+        }
+
+        state->distance = distance;
+        
         if (distance > 0.1f) {
-            volume *= (0.5f * HALF_DECAY_RADIUS * HALF_DECAY_RADIUS) / distance;
+            volume *= (FULL_VOLUME_RADIUS * FULL_VOLUME_RADIUS) / distance;
             float invDistance = 1.0f / sqrtf(distance);
             pitch *= SOUND_VELOCITY / (SOUND_VELOCITY + vector3Dot(&offset, velocity) * invDistance);
             pan = vector3Dot(&gListenerRight, &offset) * invDistance;
@@ -248,7 +284,7 @@ void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* so
         }
 
 
-        if (restart) {
+        if (flags & AUDIO_3D_FLAGS_RESTART) {
             audioRestartPlaySound(snd, pitch, volume, pan, priority);
         } else {
             audioPlaySound(snd, pitch, volume, pan, priority);
@@ -261,6 +297,19 @@ void audioUpdate() {
 
     if (gListener) {
         quatMultVector(&gListener->rotation, &gRight, &gListenerRight);
+    }
+
+    for (i = 0; i < MAX_3D_SOUNDS; ++i) {
+        if (gSound3DStates[i].id != UNUSED_PENDING_SOUND) {
+            if (gSound3DStates[i].distance == UNUSED_DISTANCE) {
+                if (gSound3DStates[i].looped) {
+                    audioStopSound(gSound3DStates[i].id);
+                }
+                gSound3DStates[i].id = UNUSED_PENDING_SOUND;
+            }
+
+            gSound3DStates[i].distance = UNUSED_DISTANCE;
+        }
     }
 
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {

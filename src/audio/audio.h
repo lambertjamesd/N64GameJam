@@ -39,6 +39,11 @@
 
 #define AUDIO_STACKSIZE         0x2000
 
+#define MAX_3D_SOUNDS           4
+
+#define AUDIO_3D_FLAGS_RESTART      (1 << 0)
+#define AUDIO_3D_FLAGS_LOOPED       (1 << 1)
+
 
 typedef struct {
     u32       outputRate;
@@ -56,6 +61,11 @@ struct SeqPlayEvent {
     short volume;
 };
 
+struct Sound3DState {
+    ALSndId id;
+    float distance;
+    int looped;
+};
 
 void    amCreateAudioMgr(ALSynConfig *c, OSPri priority, amConfig *amc);
 
@@ -73,7 +83,7 @@ int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
 void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);
-void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* source, struct Vector3* velocity, int restart, int priority);
+void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* source, struct Vector3* velocity, int flags, int priority);
 
 void audioUpdate();
 
