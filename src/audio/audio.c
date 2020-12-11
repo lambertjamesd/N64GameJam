@@ -69,7 +69,6 @@ void audioStopSequence() {
 }
 
 void audioPlaySequence(struct SeqPlayEvent* playEvent) {
-    return;
     if (gCurrentSeq == playEvent->romStart) {
         return;
     } else if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {

@@ -1,7 +1,5 @@
 #include <ultra64.h>
 
-Gfx _aliengreyWorldTexAlign[] = {gsSPEndDisplayList()};
-
 #include "tex/tex_floor.inc.c"
 #include "tex/tex_wall.inc.c"
 #include "tex/tex_underhang.inc.c"

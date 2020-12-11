@@ -228,6 +228,8 @@ void createGfxTask(GFXInfo *i) {
             graphicsRenderLevelTileGrid(&gCurrentLevelGraphics->grid, gCurrentLevelTheme->materials, gCurrentLevelTheme->materialCount, &state);
             gSPPopMatrix(state.dl++, G_MTX_MODELVIEW);
 
+            gDPPipeSync(state.dl++);
+
             gSPClearGeometryMode(state.dl++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
             gSPSetGeometryMode(state.dl++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
             gDPSetRenderMode(state.dl++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);

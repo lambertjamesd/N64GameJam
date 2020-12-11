@@ -92,6 +92,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
             SCREEN_WD/2-halfWidth, 
             (int)offset+BAR_Y-12
         );
+        gDPPipeSync(state->dl++);
 
         nextX += BAR_SIDE_PADDING;
 
