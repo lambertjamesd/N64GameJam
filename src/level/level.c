@@ -206,10 +206,10 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
     }
     gDPPipeSync(state->dl++);
 
-#if DEBUG 
+#if DEBUG || 1
 
-    char buffer[8];
-    sprintf(buffer, "%d", gUnusedDL);
+    char buffer[16];
+    sprintf(buffer, "%d %d", gUnusedDL, gUnusedMatrices);
     gSPDisplayList(state->dl++, gEndlessBossBattleUse);
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
 
@@ -473,7 +473,7 @@ void levelExpand(struct LevelDefinition* levelDef) {
     movingPlatformJoinSlots(slots, levelDef->levelData->platformSlotCount);
 
     /////////////////////
-    // platform slots
+    // platforms
 
     struct MovingPlatform* platforms = heapMalloc(
         ARRAY_SIZE(struct MovingPlatform, levelDef->levelData->platformCount),

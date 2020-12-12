@@ -23,7 +23,8 @@ extern GFXInfo         gInfo[];
 
 int gScreenHeight;
 float gScreenYScale;
-int gUnusedDL;
+short gUnusedDL;
+short gUnusedMatrices;
 
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 unsigned short __attribute__((aligned(64)))	gZBuffer[SCREEN_WD*MAX_SCREEN_HT];
@@ -99,6 +100,9 @@ void graphicsCaluclateFrustum(Dynamic* dynamicp, struct SceneViewport* vp, int c
     guMtxF2L(perspectiveMtx, &dynamicp->projection[cameraIndex]);
 
     transformInvert(&gScene.camera[cameraIndex].transform, &cameraInverse);
+    if (getButton(0, B_BUTTON)) {
+        quatIdent(&cameraInverse.rotation);
+    }
     transformToMatrix(&cameraInverse, 1.0f, viewMtx);
     guMtxF2L(viewMtx, &dynamicp->viewing[cameraIndex]);
 
@@ -297,6 +301,7 @@ void createGfxTask(GFXInfo *i) {
     assert(glistp <= &dynamicp->glist[DYANAMIC_LIST_LEN]);
 
     gUnusedDL = &dynamicp->glist[DYANAMIC_LIST_LEN] - glistp;
+    gUnusedMatrices = state.matrixCount - state.usedMatrices;
 
     t = &i->task;
     t->list.t.data_ptr = (u64 *) dynamicp->glist;

@@ -9,7 +9,7 @@
 #include "src/defs.h"
 #include "src/font/fontrenderer.h"
 
-#define DYANAMIC_LIST_LEN 512
+#define DYANAMIC_LIST_LEN 612
 #define DYNAMIC_MATRIX_COUNT 128
 #define LOOK_AT_COUNT   8
 
@@ -64,7 +64,8 @@ extern u64          gDramStack[];
 extern int gFrameNumber;
 extern int gScreenHeight;
 extern float gScreenYScale;
-extern int gUnusedDL;
+extern short gUnusedDL;
+extern short gUnusedMatrices;
 
 #define SCALE_FOR_PAL(input) ((gScreenHeight == SCREEN_HT_NTSC) ? (input) : ((input) * SCREEN_HT_PAL/SCREEN_HT_NTSC))
 #define UNSCALE_FOR_PAL(input) ((gScreenHeight == SCREEN_HT_NTSC) ? (input) : ((input) * SCREEN_HT_NTSC/SCREEN_HT_PAL))

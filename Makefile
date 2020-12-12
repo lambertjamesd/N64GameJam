@@ -41,6 +41,7 @@ LEVELS = cadet_intro \
 	spiral \
 	loop_around \
 	radioactive_river \
+	canyon \
 	double_crossing \
 	track_blockage \
 	raised_platform \

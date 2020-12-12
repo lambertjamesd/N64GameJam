@@ -7,7 +7,7 @@
 #include "src/math/basictransform.h"
 
 #define MAX_UPDATES             32
-#define MAX_EVENTS              32
+#define MAX_EVENTS              64
 #define AUDIO_HEAP_SIZE         400000
 
 #define MAX_VOICES              22
@@ -58,12 +58,6 @@ struct SeqPlayEvent {
     int loopStart;
     int loopEnd;
     int loopCount;
-};
-
-struct Sound3DState {
-    ALSndId id;
-    float distance;
-    int looped;
 };
 
 void    amCreateAudioMgr(ALSynConfig *c, OSPri priority, amConfig *amc);

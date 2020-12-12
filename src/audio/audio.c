@@ -9,6 +9,22 @@ extern OSSched         gScheduler;
 
 #define MAX_SEQ_LENGTH         (40 * 1024)
 
+struct PendingSound {
+    ALSndId snd;
+    float pitch;
+    float volume;
+    float pan;
+    int priority;
+};
+
+
+struct Sound3DState {
+    ALSndId id;
+    float distance;
+    int flags;
+    struct PendingSound params;
+};
+
 u8* gAudioHeapBuffer;
 
 ALSeqPlayer	   *gSequencePlayer;
@@ -30,23 +46,16 @@ static float gMusicFadeDuration = 0.0f;
 
 #define GLOBAL_VOLUME_SCALE      1.3f
 
-ALHeap             gAudioHeap;
+ALHeap      gAudioHeap;
 ALSndPlayer gSoundPlayer;
 
-#define MAX_PENDING_SOUNDS  4
+#define MAX_PENDING_SOUNDS  8
 #define UNUSED_PENDING_SOUND -1
 #define UNUSED_DISTANCE 1000000000.0f
 
-struct PendingSound {
-    ALSndId snd;
-    float pitch;
-    float volume;
-    float pan;
-    int priority;
-};
-
 struct SeqPlayEvent gPendingSeq;
 struct PendingSound gPendingSounds[MAX_PENDING_SOUNDS];
+struct PendingSound gPendingUpdate[MAX_PENDING_SOUNDS];
 
 #define MAX_SOUNDS 40
 
@@ -191,25 +200,25 @@ void audioStopSound(ALSndId snd) {
     alSndpStop(&gSoundPlayer);
 }
 
-int audioPendsound(ALSndId snd, float pitch, float volume, float pan, int priority) {
+int audioPendsound(struct PendingSound* into, ALSndId snd, float pitch, float volume, float pan, int priority) {
     int i;
 
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
-        if (gPendingSounds[i].snd == UNUSED_PENDING_SOUND) {
-            gPendingSounds[i].snd = snd;
-            gPendingSounds[i].volume = volume;
-            gPendingSounds[i].pitch = pitch;
-            gPendingSounds[i].priority = priority;
+        if (into[i].snd == UNUSED_PENDING_SOUND || into[i].snd == snd) {
+            into[i].snd = snd;
+            into[i].volume = volume;
+            into[i].pitch = pitch;
+            into[i].priority = priority;
             return 1;
         }
     }
 
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
-        if (gPendingSounds[i].priority < priority) {
-            gPendingSounds[i].snd = snd;
-            gPendingSounds[i].volume = volume;
-            gPendingSounds[i].pitch = pitch;
-            gPendingSounds[i].priority = priority;
+        if (into[i].priority < priority) {
+            into[i].snd = snd;
+            into[i].volume = volume;
+            into[i].pitch = pitch;
+            into[i].priority = priority;
             return 1;
         }
     }
@@ -220,7 +229,7 @@ int audioPendsound(ALSndId snd, float pitch, float volume, float pan, int priori
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority) {
     alSndpSetSound(&gSoundPlayer, snd);
     if (alSndpGetState(&gSoundPlayer) != AL_STOPPED) {
-        if (audioPendsound(snd, pitch, volume, pan, priority)) {
+        if (audioPendsound(gPendingSounds, snd, pitch, volume, pan, priority)) {
             alSndpStop(&gSoundPlayer);
         }
     } else {
@@ -228,35 +237,42 @@ void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, in
     }
 }
 
+void audioUpdateParameters(ALSndId snd, float pitch, float volume, float pan, int priority) {
+    if (volume > 1.0f) {
+        volume = 1.0f;
+    }
+
+    float floatAsShort = gSoundVolume * volume * (32767 * GLOBAL_VOLUME_SCALE);
+    
+    if (floatAsShort > 32767.0f) {
+        alSndpSetVol(&gSoundPlayer, 32767);
+    } else {
+        alSndpSetVol(&gSoundPlayer, (s16)floatAsShort);
+    }
+
+    alSndpSetSound(&gSoundPlayer, snd);
+    alSndpSetPitch(&gSoundPlayer, pitch);
+
+    float panAs127 = (pan + 1.0f) * 64.0f;
+
+    if (panAs127 <= 0.0f) {
+        alSndpSetPan(&gSoundPlayer, 0);
+    } else if (panAs127 >= 127.0f) {
+        alSndpSetPan(&gSoundPlayer, 127);
+    } else {
+        alSndpSetPan(&gSoundPlayer, (u8)(panAs127));
+    }
+    alSndpSetPriority(&gSoundPlayer, snd, 10);
+}
+
 void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority) {
     if (volume > 0.0f && snd != UNUSED_PENDING_SOUND) {
         alSndpSetSound(&gSoundPlayer, snd);
-        alSndpSetPitch(&gSoundPlayer, pitch);
-
-        if (volume > 1.0f) {
-            volume = 1.0f;
-        }
-
-        float floatAsShort = gSoundVolume * volume * (32767 * GLOBAL_VOLUME_SCALE);
-        if (floatAsShort > 32767.0f) {
-            alSndpSetVol(&gSoundPlayer, 32767);
-        } else {
-            alSndpSetVol(&gSoundPlayer, (s16)floatAsShort);
-        }
-
-        float panAs127 = (pan + 1.0f) * 64.0f;
-
-        if (panAs127 <= 0.0f) {
-            alSndpSetPan(&gSoundPlayer, 0);
-        } else if (panAs127 >= 127.0f) {
-            alSndpSetPan(&gSoundPlayer, 127);
-        } else {
-            alSndpSetPan(&gSoundPlayer, (u8)(panAs127));
-        }
-        alSndpSetPriority(&gSoundPlayer, snd, 10);
-
         if (alSndpGetState(&gSoundPlayer) == AL_STOPPED) {
+            audioUpdateParameters(snd, pitch, volume, pan, priority);
             alSndpPlay(&gSoundPlayer);
+        } else {
+            audioPendsound(gPendingUpdate, snd, pitch, volume, pan, priority);
         }
     }
 }
@@ -264,11 +280,11 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
 #define FULL_VOLUME_RADIUS   20.0f
 #define SOUND_VELOCITY      40.0f
 
-struct Sound3DState* audioFindState(ALSndId snd, int loop) {
+struct Sound3DState* audioFindState(ALSndId snd, int flags) {
     int index;
     int emptySlot = -1;
     for (index = 0; index < MAX_3D_SOUNDS; ++index) {
-        if (gSound3DStates[index].id == snd && gSound3DStates[index].looped == loop) {
+        if (gSound3DStates[index].id == snd && gSound3DStates[index].flags == flags) {
             return &gSound3DStates[index];
         } else if (gSound3DStates[index].id == UNUSED_PENDING_SOUND && emptySlot == -1) {
             emptySlot = index;
@@ -279,7 +295,7 @@ struct Sound3DState* audioFindState(ALSndId snd, int loop) {
         return 0;
     } else {
         gSound3DStates[emptySlot].id = snd;
-        gSound3DStates[emptySlot].looped = loop;
+        gSound3DStates[emptySlot].flags = flags;
         return &gSound3DStates[emptySlot];
     }
 }
@@ -290,7 +306,7 @@ void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* so
     } else {
         struct Vector3 offset;
         vector3Sub(source, &gListener->position, &offset);
-        struct Sound3DState* state = audioFindState(snd, flags & AUDIO_3D_FLAGS_LOOPED);
+        struct Sound3DState* state = audioFindState(snd, flags);
 
         float distance = vector3MagSqrd(&offset);
         float pan;
@@ -313,12 +329,12 @@ void audioPlaySound3D(ALSndId snd, float pitch, float volume, struct Vector3* so
             pan = 0.0f;
         }
 
-
-        if (flags & AUDIO_3D_FLAGS_RESTART) {
-            audioRestartPlaySound(snd, pitch, volume, pan, priority);
-        } else {
-            audioPlaySound(snd, pitch, volume, pan, priority);
-        }
+        state->flags = flags;
+        state->params.snd = snd;
+        state->params.pitch = pitch;
+        state->params.volume = volume;
+        state->params.pan = pan;
+        state->params.priority = priority;
     }
 }
 
@@ -344,10 +360,18 @@ void audioUpdate() {
     for (i = 0; i < MAX_3D_SOUNDS; ++i) {
         if (gSound3DStates[i].id != UNUSED_PENDING_SOUND) {
             if (gSound3DStates[i].distance == UNUSED_DISTANCE) {
-                if (gSound3DStates[i].looped) {
+                if (gSound3DStates[i].flags & AUDIO_3D_FLAGS_LOOPED) {
                     audioStopSound(gSound3DStates[i].id);
                 }
                 gSound3DStates[i].id = UNUSED_PENDING_SOUND;
+            } else {
+                if (gSound3DStates[i].flags & AUDIO_3D_FLAGS_RESTART) {
+                    audioRestartPlaySound(gSound3DStates[i].params.snd, gSound3DStates[i].params.pitch, gSound3DStates[i].params.volume, gSound3DStates[i].params.pan, gSound3DStates[i].params.priority);
+                } else if (audioPlayState(gPendingUpdate[i].snd) == AL_PLAYING) {
+                    audioUpdateParameters(gSound3DStates[i].params.snd, gSound3DStates[i].params.pitch, gSound3DStates[i].params.volume, gSound3DStates[i].params.pan, gSound3DStates[i].params.priority);
+                } else {
+                    audioPlaySound(gSound3DStates[i].params.snd, gSound3DStates[i].params.pitch, gSound3DStates[i].params.volume, gSound3DStates[i].params.pan, gSound3DStates[i].params.priority);
+                }
             }
 
             gSound3DStates[i].distance = UNUSED_DISTANCE;
@@ -367,6 +391,19 @@ void audioUpdate() {
 
                 gPendingSounds[i].snd = UNUSED_PENDING_SOUND;
             }
+        }
+
+        if (gPendingUpdate[i].snd != UNUSED_PENDING_SOUND) {
+            if (audioPlayState(gPendingUpdate[i].snd) == AL_PLAYING) {
+                audioUpdateParameters(
+                    gPendingUpdate[i].snd, 
+                    gPendingUpdate[i].pitch, 
+                    gPendingUpdate[i].volume, 
+                    gPendingUpdate[i].pan, 
+                    gPendingUpdate[i].priority
+                );
+            }
+            gPendingUpdate[i].snd = UNUSED_PENDING_SOUND;
         }
     }
 
