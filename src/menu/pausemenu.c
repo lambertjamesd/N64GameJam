@@ -35,9 +35,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
     int modfiedLineHeight = SCALE_FOR_PAL(LINE_HEIGHT);
 
     gDPPipeSync(state->dl++);
-    gDPSetCycleType(state->dl++, G_CYC_FILL);
-    gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
-                GPACK_RGBA5551(0, 0, 0, 1)));
+	gDPSetCombineLERP(state->dl++, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
     gDPFillRectangle(
         state->dl++, 
         (SCREEN_WD-PAUSE_MENU_WIDTH)>>1, 

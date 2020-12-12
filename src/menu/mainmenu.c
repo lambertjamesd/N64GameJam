@@ -400,8 +400,17 @@ void mainMenuUpdate(void* data) {
                 gRocket.color.r = gRocket.color.g = gRocket.color.b = (u8)finalAlpha;
                 gRocket.trail.alpha = (u8)finalAlpha;
             } else if (gMainMenuExitTime < MAIN_MENU_EXIT_DURATION) {
-                gRocket.color.r = gRocket.color.g = gRocket.color.b = 255;
-                gRocket.trail.alpha = 255;
+                float finalAlpha = mathfLerp(0.0f, 255.0f, (MAIN_MENU_EXIT_DURATION - gMainMenuExitTime) / 0.5f);
+
+                if (finalAlpha > 255.0f) {
+                    gRocket.color.r = gRocket.color.g = gRocket.color.b = 255;
+                    gRocket.trail.alpha = 255;
+                } else {
+                    gRocket.color.r = gRocket.color.g = gRocket.color.b = (u8)finalAlpha;
+                    gRocket.trail.alpha = (u8)finalAlpha;
+                }
+
+                audioStopSequence(MAIN_MENU_EXIT_DURATION - MAIN_MENU_FADE_IN_TIME);
             } else {
                 if (gMainMenuSelectedLevel == -1) {
                     gNextLevel = gMainMenuUnlockedLevels - 1;
@@ -409,7 +418,7 @@ void mainMenuUpdate(void* data) {
                     gNextLevel = gMainMenuSelectedLevel;
                 }
 
-                audioStopSequence();
+                audioStopSequence(0.0f);
             }
 
             gMainMenuExitTime += gTimeDelta;
@@ -552,7 +561,6 @@ void mainMenuInit() {
     seq.loopStart = 0;
     seq.loopCount = -1;
     seq.playbackStart = 0;
-    seq.volume = 0x7fff;
     seq.romStart = _thermalImagingSegmentRomStart;
     seq.romEnd =_thermalImagingSegmentRomEnd;
     audioPlaySequence(&seq);

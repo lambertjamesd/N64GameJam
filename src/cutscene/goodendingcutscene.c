@@ -20,7 +20,6 @@ struct CutsceneEvent gGoodEndingCutsceneEvents[] = {
             _cosmicDustSegmentRomStart,
             _cosmicDustSegmentRomEnd,
             57600-960*20, 0, 0, 0,
-            0x7fff,
         }
     },
     {

@@ -27,7 +27,8 @@ int gCurrentLoadedImage[MAX_LOADED_SLIDES];
 char* gEncodedAddress;
 float gSkipTimer;
 
-int gLoadedSlideIndex;
+short gPendingImageCount;
+short gHasLoadedFirstImage; 
 
 int cutsceneGetImageSlot(int slideId) {
     int i;
@@ -44,7 +45,7 @@ void cutSceneEnd() {
     timeRemoveListener(&gCutsceneListener, TimeUpdateGroupWorld);
     jpegDecoderFlush();
     gNextLevel = gCutscenePlayer.targetLevel;
-    audioStopSequence();
+    audioStopSequence(0.0f);
 }
 
 int requestImageSlot(int nextSlide, int currentSlide) {
@@ -67,6 +68,7 @@ int requestImageSlot(int nextSlide, int currentSlide) {
             gAllSlideEndLocations[nextSlide] - gAllSlideLocations[nextSlide]
         );
 
+        ++gPendingImageCount;
         jpegDecode(gEncodedAddress, gCutsceneBuffer[result]);
     }
 
@@ -84,7 +86,8 @@ struct CutsceneFrame* cutSceneGetFrame(int offset) {
 void cutSceneUpdate(void* data) {
     struct JpegDecodeRequest* jpeg;
     if (osRecvMesg(&gCompletedImages, (OSMesg*)&jpeg, OS_MESG_NOBLOCK) == 0) {
-        ++gLoadedSlideIndex;
+        gHasLoadedFirstImage = 1;
+        --gPendingImageCount;
     }
 
     if (getButtonDown(0, START_BUTTON)) {
@@ -104,41 +107,6 @@ void cutSceneUpdate(void* data) {
         }
     }
 
-    if (gCutscenePlayer.currentFrame > gLoadedSlideIndex) {
-        return;
-    }
-
-    gCutscenePlayer.currentTime += gTimeDelta;
-    gCutscenePlayer.totalTime += gTimeDelta;
-
-    if (gCutscenePlayer.nextEvent < gCutscenePlayer.cutscene->eventCount) {
-        struct CutsceneEvent* currentEvent = &gCutscenePlayer.cutscene->events[gCutscenePlayer.nextEvent];
-        if (gCutscenePlayer.totalTime >= currentEvent->at) {
-            switch (currentEvent->eventType) {
-                case CutsceneEventTypeSeq:
-                    audioPlaySequence(&currentEvent->seq);
-                    break;
-                case CutsceneEventTypeSeqStop:
-                    audioStopSequence();
-                    break;
-                case CutsceneEventTypeSound:
-                    audioPlaySound(
-                        gPlayerSoundIds[currentEvent->sound.soundId],
-                        currentEvent->sound.pitch,
-                        currentEvent->sound.volume,
-                        currentEvent->sound.pan,
-                        currentEvent->sound.priority
-                    );
-                    break;
-                case CutsceneEventTypeSoundStop:
-                    audioStopSound(gPlayerSoundIds[currentEvent->sound.soundId]);
-                    break;
-            }
-
-            gCutscenePlayer.nextEvent++;
-        }
-    }
-
     struct CutsceneFrame* currFrame = cutSceneGetFrame(0);
     struct CutsceneFrame* nextFrame = cutSceneGetFrame(1);
 
@@ -146,17 +114,47 @@ void cutSceneUpdate(void* data) {
         requestImageSlot(nextFrame->slideIndex, currFrame->slideIndex);
     }
 
-    if (gCutscenePlayer.currentTime >= currFrame->duration) {
+    if (cutsceneGetImageSlot(nextFrame->slideIndex) == -1) {
+        return;
+    }
+
+    if (gCutscenePlayer.currentTime < currFrame->duration) {
+        gCutscenePlayer.currentTime += gTimeDelta;
+        gCutscenePlayer.totalTime += gTimeDelta;
+
+        if (gCutscenePlayer.nextEvent < gCutscenePlayer.cutscene->eventCount) {
+            struct CutsceneEvent* currentEvent = &gCutscenePlayer.cutscene->events[gCutscenePlayer.nextEvent];
+            if (gCutscenePlayer.totalTime >= currentEvent->at) {
+                switch (currentEvent->eventType) {
+                    case CutsceneEventTypeSeq:
+                        audioPlaySequence(&currentEvent->seq);
+                        break;
+                    case CutsceneEventTypeSeqStop:
+                        audioStopSequence(currentEvent->seqStop.fadeTime);
+                        break;
+                    case CutsceneEventTypeSound:
+                        audioPlaySound(
+                            gPlayerSoundIds[currentEvent->sound.soundId],
+                            currentEvent->sound.pitch,
+                            currentEvent->sound.volume,
+                            currentEvent->sound.pan,
+                            currentEvent->sound.priority
+                        );
+                        break;
+                    case CutsceneEventTypeSoundStop:
+                        audioStopSound(gPlayerSoundIds[currentEvent->sound.soundId]);
+                        break;
+                }
+
+                gCutscenePlayer.nextEvent++;
+            }
+        }
+    } else {
         if (gCutscenePlayer.currentFrame + 1 >= gCutscenePlayer.cutscene->frameCount) {
             cutSceneEnd();
-        } else {
+        } else if (gPendingImageCount == 0) {
             gCutscenePlayer.currentFrame++;
             gCutscenePlayer.currentTime = 0.0f;
-
-            nextFrame = cutSceneGetFrame(1);
-            if (nextFrame && cutsceneGetImageSlot(nextFrame->slideIndex) != -1) {
-                ++gLoadedSlideIndex;
-            }
         }
     }
 }
@@ -168,14 +166,14 @@ char* cutsceneBufferAtY(char* input, int y) {
 #define MAX_TILE_X  64
 #define MAX_TILE_Y  32
 
-void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih, int sx, int sy, int dx, int dy, int width, int height) {
+void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih, int sx, int sy, int dx, int dy, int width, int height, int alpha) {
     gDPPipeSync(state->dl++);
     gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
-    gDPSetRenderMode(state->dl++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-    gDPSetCombineMode(state->dl++, G_CC_DECALRGB, G_CC_DECALRGB);
+    gDPSetRenderMode(state->dl++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+	gDPSetCombineLERP(state->dl++, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT);
     gDPSetTextureLUT(state->dl++, G_TT_NONE);
     gDPSetTexturePersp(state->dl++, G_TP_NONE);
-    gDPSetPrimColor(state->dl++, 0, 0, 255, 255, 255, 255);
+    gDPSetEnvColor(state->dl++, 255, 255, 255, alpha);
 
     int tileXCount = (width + MAX_TILE_X-1) / MAX_TILE_X;
     int tileYCount = (height + MAX_TILE_Y-1) / MAX_TILE_Y;
@@ -246,10 +244,11 @@ void graphicsCopyImage(struct GraphicsState* state, char* source, int iw, int ih
     }
 
     gDPPipeSync(state->dl++);
+    gDPSetRenderMode(state->dl++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
 }
 
 void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
-    if (gCutscenePlayer.currentFrame >= gCutscenePlayer.cutscene->frameCount || gCutscenePlayer.currentFrame > gLoadedSlideIndex) {
+    if (gCutscenePlayer.currentFrame >= gCutscenePlayer.cutscene->frameCount || !gHasLoadedFirstImage) {
         return;
     }
 
@@ -272,13 +271,23 @@ void cutSceneRender(void* data, struct GraphicsState* state, struct FontRenderer
 
     int index = cutsceneGetImageSlot(currFrame->slideIndex);
 
+    float alpha = 1.0f - currFrame->startFade - currFrame->fadeVelocity * gCutscenePlayer.currentTime;
+
+    if (alpha < 0.0f) {
+        alpha = 0.0f;
+    } else if (alpha > 1.0f) {
+        alpha = 1.0f;
+    }
+
     if (index != -1) {
         graphicsCopyImage(state, gCutsceneBuffer[index], 
             SCREEN_WD, CUTSCENE_HEIGHT, 
             0, yOffset, 
             dxOffset, SCALE_FOR_PAL(barHeight), 
-            SCREEN_WD, CUTSCENE_HEIGHT
+            SCREEN_WD, CUTSCENE_HEIGHT,
+            (int)(255 * alpha)
         );
+        gDPPipeSync(state->dl++);
     }
 }
 
@@ -325,7 +334,8 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
         playerSoundsUseBank(cutscene->soundBank);
     }
 
-    gLoadedSlideIndex = -1;
+    gPendingImageCount = 0;
+    gHasLoadedFirstImage = 0;
     if (cutscene->frameCount) {
         requestImageSlot(cutscene->frames[0].slideIndex, -1);
     }

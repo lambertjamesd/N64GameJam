@@ -119,8 +119,7 @@ void spinningLogoUpdate(void* data) {
                 playEvent.loopStart = 0;
                 playEvent.loopEnd = 0;
                 playEvent.loopCount = 0;
-                playEvent.playbackStart = 0;
-                playEvent.volume = 0x7fff;
+                playEvent.playbackStart = 0;    
                 audioPlaySequence(&playEvent);
             }
 

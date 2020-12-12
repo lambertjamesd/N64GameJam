@@ -22,7 +22,6 @@ struct CutsceneEvent gBadEndingCutsceneEvents[] = {
             _darkSunsSegmentRomStart,
             _darkSunsSegmentRomEnd,
             0, 0, 0, 0,
-            0x7fff,
         }
     },
     {

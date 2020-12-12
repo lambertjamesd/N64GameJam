@@ -513,7 +513,6 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         seq.playbackStart = 0;
         seq.romStart = levelDef->levelData->musicRomStart;
         seq.romEnd = levelDef->levelData->musicRomEnd;
-        seq.volume = 0x7fff;
         audioPlaySequence(&seq);
     }
 

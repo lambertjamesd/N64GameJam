@@ -37,6 +37,8 @@ struct CutsceneFrame {
     float yOffset;
     float dxVelocity;
     float dxOffset;
+    float startFade;
+    float fadeVelocity;
 };
 
 enum CutsceneEventType {
@@ -58,6 +60,9 @@ struct CutsceneEvent {
             float pan;
             int priority;
         } sound;
+        struct {
+            float fadeTime;
+        } seqStop;
     };
 };
 

@@ -3,7 +3,8 @@
 #include "src/audio/allseq.h"
 
 struct CutsceneFrame gIntroCutsceneFrames[] = {
-    {2.0f, _01_insidecockpit, 0.0f, 0.0f},
+    {1.5f, _01_insidecockpit, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f / 1.5f},
+    {1.5f, _01_insidecockpit, 0.0f, 0.0f},
     {1.5f, _01_insidecockpit_flash, 0.0f, 0.0f},
     {1.5f, _01_insidecockpit, 0.0f, 0.0f},
     {1.5f, _01_insidecockpit_flash, 0.0f, 0.0f},
@@ -33,7 +34,6 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
             _darkSunsSegmentRomStart,
             _darkSunsSegmentRomEnd,
             0, 0, 0, 0,
-            0x7fff,
         }
     },
     {
@@ -48,7 +48,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        2.0f,
+        3.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndAlarm1,
@@ -59,7 +59,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        5.0f,
+        6.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndAlarm1,
@@ -70,7 +70,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        6.5f,
+        7.5f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndGemNotice,
@@ -81,7 +81,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        8.0f,
+        9.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndAlarm1,
@@ -92,7 +92,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        11.0f,
+        12.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndAlarm1,
@@ -103,7 +103,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        11.5f,
+        12.5f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndGemNotice2,
@@ -114,7 +114,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        14.0f,
+        15.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndAlarm1,
@@ -125,7 +125,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        14.5f,
+        15.5f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndGemHudGlow,
@@ -136,7 +136,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        17.0f,
+        18.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndAlarm1,
@@ -147,11 +147,11 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        19.5f,
+        20.5f,
         CutsceneEventTypeSeqStop,
     },
     {
-        19.5f,
+        20.5f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndGoButtonPress,
@@ -162,7 +162,7 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        20.0f,
+        21.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndProcessing,
@@ -173,29 +173,35 @@ struct CutsceneEvent gIntroCutsceneEvents[] = {
         }
     },
     {
-        20.5f,
+        21.5f,
         CutsceneEventTypeSeq,
         .seq = {
             _cosmicDustSegmentRomStart,
             _cosmicDustSegmentRomEnd,
             57600, 0, 0, 0,
-            0x7fff,
         }
     },
     {
-        23.5f,
+        24.5f,
         CutsceneEventTypeSoundStop,
         .sound = {IntroSndCockpit}
     },
     {
-        24.0f,
+        25.0f,
         CutsceneEventTypeSound,
         .sound = {
             IntroSndSpaceshipFlyby,
             0.5f,
-            1.0f,
+            0.7f,
             0.0f,
             10
+        }
+    },
+    {
+        38.0f,
+        CutsceneEventTypeSeqStop,
+        .seqStop = {
+            2.0f,
         }
     },
 };

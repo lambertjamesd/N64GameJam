@@ -58,7 +58,6 @@ struct SeqPlayEvent {
     int loopStart;
     int loopEnd;
     int loopCount;
-    short volume;
 };
 
 struct Sound3DState {
@@ -76,8 +75,9 @@ extern ALSndPlayer gSoundPlayer;
 extern ALHeap gAudioHeap;
 extern struct BasicTransform* gListener;
 
+void audioSetSeqVolume(float value);
 void audioPlaySequence(struct SeqPlayEvent* playEvent);
-void audioStopSequence();
+void audioStopSequence(float fadeTime);
 
 int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);

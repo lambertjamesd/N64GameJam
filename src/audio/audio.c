@@ -23,6 +23,10 @@ static char* gCurrentSeq = 0;
 struct BasicTransform* gListener;
 struct Vector3 gListenerRight = {1.0f, 0.0f, 0.0f};
 struct Sound3DState gSound3DStates[MAX_3D_SOUNDS];
+static float gMusicVolume = 1.0f;
+static float gSoundVolume = 1.0f;
+static float gMusicFadeTime = 0.0f;
+static float gMusicFadeDuration = 0.0f;
 
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
@@ -61,11 +65,22 @@ void soundPlayerInit() {
     alSndpNew(&gSoundPlayer, &sndConfig);
 }
 
-void audioStopSequence() {
-    if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
-        alSeqpStop(gSequencePlayer);
-        gCurrentSeq = 0;
+void audioStopSequence(float fadeTime) {
+    if (fadeTime == 0.0f) {
+        if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
+            alSeqpStop(gSequencePlayer);
+            gCurrentSeq = 0;
+            gMusicFadeDuration = 0.0f;
+            gMusicFadeTime = 0.0f;
+        }
+    } else {
+        gMusicFadeDuration = fadeTime;
     }
+}
+
+void audioSetSeqVolume(float value) {
+    gMusicVolume = value;
+    alSeqpSetVol(gSequencePlayer, (s16)(0x7fff * gMusicVolume));
 }
 
 void audioPlaySequence(struct SeqPlayEvent* playEvent) {
@@ -76,6 +91,8 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
 
         gPendingSeq = *playEvent;
     } else {
+        gMusicFadeDuration = 0.0f;
+        gMusicFadeTime = 0.0f;
         gSequenceLen[gNextSeq] = playEvent->romEnd - playEvent->romStart;
         romCopy(playEvent->romStart, (char *) gSequenceData[gNextSeq], gSequenceLen[gNextSeq]);
 
@@ -84,7 +101,6 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceLoopStart[gNextSeq], playEvent->loopStart);
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopEnd);
         alSeqpLoop(gSequencePlayer, &gSequenceLoopStart[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopCount);
-        alSeqpSetVol(gSequencePlayer, playEvent->volume);
 
         if (playEvent->playbackStart) {
             alSeqSetLoc(gSequence[gNextSeq], &gSequenceStart[gNextSeq]);
@@ -208,7 +224,12 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
     if (volume > 0.0f && snd != UNUSED_PENDING_SOUND) {
         alSndpSetSound(&gSoundPlayer, snd);
         alSndpSetPitch(&gSoundPlayer, pitch);
-        float floatAsShort = volume * 32767;
+
+        if (volume > 1.0f) {
+            volume = 1.0f;
+        }
+
+        float floatAsShort = gSoundVolume * volume * 32767;
         if (floatAsShort > 32767.0f) {
             alSndpSetVol(&gSoundPlayer, 32767);
         } else {
@@ -298,6 +319,18 @@ void audioUpdate() {
 
     if (gListener) {
         quatMultVector(&gListener->rotation, &gRight, &gListenerRight);
+    }
+
+    if (gMusicFadeDuration > 0.0f) {
+        gMusicFadeTime += gTimeDelta;
+
+        if (gMusicFadeTime > gMusicFadeDuration) {
+            audioStopSequence(0.0f);
+            gMusicFadeDuration = 0.0f;
+            gMusicFadeTime = 0.0f;
+        } else {
+            alSeqpSetVol(gSequencePlayer, (s16)(0x7fff * gMusicVolume * (1.0f - gMusicFadeTime / gMusicFadeDuration)));
+        }
     }
 
     for (i = 0; i < MAX_3D_SOUNDS; ++i) {
