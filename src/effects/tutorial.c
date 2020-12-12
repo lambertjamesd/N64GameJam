@@ -49,66 +49,67 @@ char* gTutorialText[TutorialMenuTypeCount] = {
 };
 
 void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
-    struct TutorialMenu* menu = (struct TutorialMenu*)data;
-    char buttonText[2];
-    buttonText[0] = gTutorialButton[menu->type];
-    buttonText[1] = 0;
+    if (gInputMask[0] & InputMaskPlayer) {
+        struct TutorialMenu* menu = (struct TutorialMenu*)data;
+        char buttonText[2];
+        buttonText[0] = gTutorialButton[menu->type];
+        buttonText[1] = 0;
 
-    float menuWidth = (fontRendererMeasureWidth(&gButtonFont, buttonText) + 
-        fontRendererMeasureWidth(&gEndlessBossBattle, gTutorialText[menu->type])) * TEXT_SCALE + BAR_SIDE_PADDING;
+        float menuWidth = (fontRendererMeasureWidth(&gButtonFont, buttonText) + 
+            fontRendererMeasureWidth(&gEndlessBossBattle, gTutorialText[menu->type])) * TEXT_SCALE + BAR_SIDE_PADDING;
 
-    int halfWidth = (int)menuWidth / 2;
+        int halfWidth = (int)menuWidth / 2;
 
-    float offset = 0.5f * menu->currTime * menu->currTime * ACCEL;
+        float offset = 0.5f * menu->currTime * menu->currTime * ACCEL;
 
-    int topY = (int)(offset + BAR_Y-(BAR_HEIGHT>>1));
-    int bottomY = (int)(offset + BAR_Y+(BAR_HEIGHT>>1));
+        int topY = (int)(offset + BAR_Y-(BAR_HEIGHT>>1));
+        int bottomY = (int)(offset + BAR_Y+(BAR_HEIGHT>>1));
 
-    if (topY < gScreenHeight) {
-        if (bottomY > gScreenHeight-1) {
-            bottomY = gScreenHeight-1;
+        if (topY < gScreenHeight) {
+            if (bottomY > gScreenHeight-1) {
+                bottomY = gScreenHeight-1;
+            }
+
+            gDPPipeSync(state->dl++);
+            gDPSetCycleType(state->dl++, G_CYC_FILL);
+            gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
+                        GPACK_RGBA5551(0, 0, 0, 1)));
+            gDPFillRectangle(
+                state->dl++, 
+                SCREEN_WD/2-BAR_SIDE_PADDING - halfWidth, 
+                topY,
+                SCREEN_WD/2+BAR_SIDE_PADDING + halfWidth, 
+                bottomY
+            );
+            gDPPipeSync(state->dl++);
+
+            gSPDisplayList(state->dl++, gButtonFontUse);
+            fontRendererSetScale(fontRenderer, TEXT_SCALE, TEXT_SCALE * gScreenYScale);
+            float nextX = fontRendererDrawCharacters(
+                fontRenderer, 
+                &gButtonFont, 
+                &state->dl, 
+                buttonText, 
+                SCREEN_WD/2-halfWidth, 
+                (int)offset+BAR_Y-12
+            );
+            gDPPipeSync(state->dl++);
+
+            nextX += BAR_SIDE_PADDING;
+
+            gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+            fontRendererDrawCharacters(
+                fontRenderer, 
+                &gEndlessBossBattle, 
+                &state->dl, 
+                gTutorialText[menu->type],
+                (int)nextX,
+                (int)offset+BAR_Y-SCALE_FOR_PAL(8)
+            );
+
+            gDPPipeSync(state->dl++);
         }
-
-        gDPPipeSync(state->dl++);
-        gDPSetCycleType(state->dl++, G_CYC_FILL);
-        gDPSetFillColor(state->dl++, (GPACK_RGBA5551(0, 0, 0, 1) << 16 | 
-                    GPACK_RGBA5551(0, 0, 0, 1)));
-        gDPFillRectangle(
-            state->dl++, 
-            SCREEN_WD/2-BAR_SIDE_PADDING - halfWidth, 
-            topY,
-            SCREEN_WD/2+BAR_SIDE_PADDING + halfWidth, 
-            bottomY
-        );
-        gDPPipeSync(state->dl++);
-
-        gSPDisplayList(state->dl++, gButtonFontUse);
-        fontRendererSetScale(fontRenderer, TEXT_SCALE, TEXT_SCALE * gScreenYScale);
-        float nextX = fontRendererDrawCharacters(
-            fontRenderer, 
-            &gButtonFont, 
-            &state->dl, 
-            buttonText, 
-            SCREEN_WD/2-halfWidth, 
-            (int)offset+BAR_Y-12
-        );
-        gDPPipeSync(state->dl++);
-
-        nextX += BAR_SIDE_PADDING;
-
-        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
-        fontRendererDrawCharacters(
-            fontRenderer, 
-            &gEndlessBossBattle, 
-            &state->dl, 
-            gTutorialText[menu->type],
-            (int)nextX,
-            (int)offset+BAR_Y-SCALE_FOR_PAL(8)
-        );
-
-        gDPPipeSync(state->dl++);
     }
-
 }
 
 int tutorialMenuIsActive(struct TutorialMenu* menu) {

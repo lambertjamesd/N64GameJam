@@ -93,6 +93,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
             (gScreenHeight >> 1) + yOffset
         );
     }
+    gDPPipeSync(state->dl++);
 }
 
 void pauseMenuExit(struct PauseMenu* pauseMenu) {

@@ -200,5 +200,5 @@ void switchInit(struct PuzzleSwitch* puzzleSwitch, struct Vector3* position, enu
 
     sparseCollisionAdd(&gSparseCollisionGrid, &puzzleSwitch->trigger, NULL);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, puzzleSwitch, switchRender, DynamicMaterialTypeSwitch, 1.0f);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &puzzleSwitch->transform, puzzleSwitch, switchRender, DynamicMaterialTypeSwitch, 1.4f);
 }
