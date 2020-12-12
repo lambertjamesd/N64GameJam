@@ -8,6 +8,7 @@
 #define ANIMATE_DURATION     0.5f
 #define MAX_LIST_DISPLAY      8
 
+/*  */
 void menuListGetPage(struct MenuItemGroup* group, int selected) {
 
 }
@@ -86,7 +87,12 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
 
     for (i = 0; i+scrollOffset < group->itemCount && i < MAX_LIST_DISPLAY; i++) {
         if (selected == i+scrollOffset) {
-            gDPSetEnvColor(state->dl++, 255, 0, 255, 255);
+            gDPSetEnvColor(state->dl++, 
+                group->items[selected].selectedColor.r, 
+                group->items[selected].selectedColor.g,
+                group->items[selected].selectedColor.b,
+                group->items[selected].selectedColor.a
+            );
         } else {
             gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
         }

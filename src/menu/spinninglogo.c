@@ -108,7 +108,7 @@ void spinningLogoRender(struct DynamicActor* data, struct GraphicsState* state) 
 void spinningLogoUpdate(void* data) {
     if (gControllerIsConnected) {
         if (gSpinningLogoTimer >= SPINNING_LOGO_TIME) {
-            gNextLevel = SceneIndexMainMenu;
+            levelSetNext(SceneIndexMainMenu, 1);
         } else {
             float nextTime = gSpinningLogoTimer + gTimeDelta;
 

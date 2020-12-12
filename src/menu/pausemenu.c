@@ -17,16 +17,42 @@
 
 #define LINE_HEIGHT         20
 
+#define SOUND_STEP_COUNT    4
+
+float gVolumeSettingSteps[SOUND_STEP_COUNT] = {1.0f, 0.666f, 0.333f, 0.0f};
+int gSoundVolumeSetting = 0;
+int gMusicVolumeSetting = 0;
+
 char* gPauseMenuTitle = "Paused";
+
+char* gSoundVolumeNames[SOUND_STEP_COUNT] = {
+    "Sound - High",
+    "Sound - Medium",
+    "Sound - Low",
+    "Sound - Off",
+};
+
+char* gMusicVolumeNames[SOUND_STEP_COUNT] = {
+    "Music - High",
+    "Music - Medium",
+    "Music - Low",
+    "Music - Off",
+};
 
 char* gPauseMenuText[PauseMenuItemCount] = {
     "Resume",
     "Restart Level",
+    "Sound - High",
+    "Music - High",
     "Save",
     "Save and Quit",
 };
 
 struct PauseMenu gPauseMenu;
+
+struct Color gSelectColor = {MENU_SELECTED_COLOR};
+struct Color gGoodColor = {MENU_GOOD_COLOR};
+struct Color gBadColor = {MENU_BAD_COLOR};
 
 void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     struct PauseMenu* pauseMenu =  (struct PauseMenu*)data;
@@ -66,21 +92,36 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
     int i;
 
     for (i = 0; i < PauseMenuItemCount; ++i) {
-        int isSaved = i == 2 && !saveFileNeedsSave();
+        int isSaved = i == PauseMenuItemSave && !saveFileNeedsSave();
         char* text = isSaved ? "Saved" : gPauseMenuText[i];
         halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, text) * 0.5f;
         int yOffset = 20 + i * modfiedLineHeight - (int)((modfiedLineHeight * PauseMenuItemCount) >> 1);
 
+        struct Color color = {MENU_TEXT_COLOR};
+
+        if (i == PauseMenuItemSoundVolume) {
+            text = gSoundVolumeNames[gSoundVolumeSetting];
+
+            if (gSoundVolumeSetting == SOUND_STEP_COUNT - 1) {
+                color = gBadColor;
+            }
+        } else if (i == PauseMenuItemMusicVolume) {
+            text = gMusicVolumeNames[gMusicVolumeSetting];
+
+            if (gMusicVolumeSetting == SOUND_STEP_COUNT - 1) {
+                color = gBadColor;
+            }
+        }
 
         if (pauseMenu->selectedItem == i) {
             if (isSaved) {
-                gDPSetEnvColor(state->dl++, 0, 255, 0, 255);
+                color = gGoodColor;
             } else {
-                gDPSetEnvColor(state->dl++, 255, 0, 255, 255);
+                color = gSelectColor;
             }
-        } else {
-            gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
         }
+
+        gDPSetEnvColor(state->dl++, color.r, color.g, color.b, color.a);
 
         fontRendererDrawCharacters(
             fontRenderer,
@@ -138,13 +179,6 @@ void pauseMenuUpdate(void* data) {
         );
         pauseMenuExit(pauseMenu);
     } else if (getButtonDown(0, A_BUTTON)) {
-        audioRestartPlaySound(
-            gPlayerSoundIds[SoundUISelect],
-            0.5f,
-            MENU_SELECT_SOUND_VOLUME,
-            0.0f,
-            10
-        );
         switch (pauseMenu->selectedItem) {
             case PauseMenuItemResume:
                 pauseMenuExit(pauseMenu);
@@ -152,14 +186,38 @@ void pauseMenuUpdate(void* data) {
             case PauseMenuItemRestart:
                 restartLevel();
                 break;
+            case PauseMenuItemSoundVolume:
+                gSoundVolumeSetting = (gSoundVolumeSetting + 1) % SOUND_STEP_COUNT;
+                audioSetSoundVolume(gVolumeSettingSteps[gSoundVolumeSetting]);
+                break;
+            case PauseMenuItemMusicVolume:
+                gMusicVolumeSetting = (gMusicVolumeSetting + 1) % SOUND_STEP_COUNT;
+                audioSetSeqVolume(gVolumeSettingSteps[gMusicVolumeSetting]);
+                break;
             case PauseMenuItemSave:
+                if (saveFileNeedsSave()) {
+                    audioPlaySound(
+                        gPlayerSoundIds[GoalTouchSmall],
+                        0.5f,
+                        0.8f,
+                        0.0f,
+                        10
+                    );
+                }
                 saveFileSave();
                 break;
             case PauseMenuItemMainMenu:
                 saveFileSave();
-                gNextLevel = SceneIndexMainMenu;
+                levelSetNext(SceneIndexMainMenu, 1);
                 break;
         }
+        audioRestartPlaySound(
+            gPlayerSoundIds[SoundUISelect],
+            0.5f,
+            MENU_SELECT_SOUND_VOLUME,
+            0.0f,
+            10
+        );
     }
 }
 

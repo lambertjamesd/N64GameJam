@@ -82,18 +82,21 @@ struct MenuItem gSelectCoopItems[] = {
         "Single Player",
         MenuItemAction,
         .action = mainMenuStart,
+        {MENU_SELECTED_COLOR},
         0,
     },
     {
         "Co-op",
         MenuItemAction,
         .action = mainMenuStart,
+        {MENU_SELECTED_COLOR},
         (void*)1,
     },
     {
         "Back",
         MenuItemBack,
         .popDistance = 1,
+        {MENU_SELECTED_COLOR},
         0
     }
 };
@@ -126,12 +129,14 @@ struct MenuItem gEraseConfirmMenuItems[] = {
         "Cancel",
         MenuItemBack,
         .popDistance = 1,
+        {MENU_SELECTED_COLOR},
         0
     },
     {
         "Erase",
         MenuItemAction,
         .action = eraseMenuConfirm,
+        {MENU_BAD_COLOR},
         0,
     },
 };
@@ -159,6 +164,7 @@ struct MenuItem gNewGameItems[] = {
         "New Game",
         MenuItemAction,
         .action = mainMenuSelectLevel,
+        {MENU_GOOD_COLOR},
         (void*)SceneIndexIntroCutscene,
     },
 };
@@ -174,18 +180,21 @@ struct MenuItem gMainMenuItems[] = {
         "Continue",
         MenuItemAction,
         .action = mainMenuSelectLevel,
+        {MENU_GOOD_COLOR},
         (void*)-1,
     },
     {
         "Level Select",
         MenuItemMenu,
         .targetMenu = &gLevelSelectGroup,
+        {MENU_SELECTED_COLOR},
         0,
     },
     {
         "Erase",
         MenuItemMenu,
         .targetMenu = &gEraseMenuItemGroup,
+        {MENU_BAD_COLOR},
         0,
     },
 };
@@ -380,7 +389,7 @@ void mainMenuUpdate(void* data) {
             audioPlaySound(
                 gPlayerSoundIds[GoalTouchSmall],
                 0.5f,
-                1.0f,
+                0.8f,
                 0.0f,
                 10
             );
@@ -413,9 +422,9 @@ void mainMenuUpdate(void* data) {
                 audioStopSequence(MAIN_MENU_EXIT_DURATION - MAIN_MENU_FADE_IN_TIME);
             } else {
                 if (gMainMenuSelectedLevel == -1) {
-                    gNextLevel = gMainMenuUnlockedLevels - 1;
+                    levelSetNext(gMainMenuUnlockedLevels - 1, 1);
                 } else {
-                    gNextLevel = gMainMenuSelectedLevel;
+                    levelSetNext(gMainMenuSelectedLevel, 1);
                 }
 
                 audioStopSequence(0.0f);
@@ -462,11 +471,14 @@ int mainMenuBuildLevelSelect() {
         ALIGNMENT_OF(struct MenuItem)
     );
 
+    struct Color selectColor = {MENU_SELECTED_COLOR};
+
     items[0].text = "Back";
     items[0].targetMenu = 0;
     items[0].type = MenuItemBack;
     items[0].data = 0;
     items[0].renderMore = 0;
+    items[0].selectedColor = selectColor;
 
     int i;
     for (i = 1; i <= completeLevels; ++i) {
@@ -475,6 +487,7 @@ int mainMenuBuildLevelSelect() {
         items[i].data = (void*)(i-1);
         items[i].type = MenuItemAction;
         items[i].renderMore = levelSelectRenderGems;
+        items[i].selectedColor = selectColor;
     }
 
     gLevelSelectGroup.items = items;

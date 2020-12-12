@@ -79,6 +79,7 @@ void audioSetSeqVolume(float value);
 void audioPlaySequence(struct SeqPlayEvent* playEvent);
 void audioStopSequence(float fadeTime);
 
+void audioSetSoundVolume(float value);
 int audioPlayState(ALSndId snd);
 void audioStopSound(ALSndId snd);
 void audioRestartPlaySound(ALSndId snd, float pitch, float volume, float pan, int priority);

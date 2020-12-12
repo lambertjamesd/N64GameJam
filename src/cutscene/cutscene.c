@@ -44,7 +44,7 @@ int cutsceneGetImageSlot(int slideId) {
 void cutSceneEnd() {
     timeRemoveListener(&gCutsceneListener, TimeUpdateGroupWorld);
     jpegDecoderFlush();
-    gNextLevel = gCutscenePlayer.targetLevel;
+    levelSetNext(gCutscenePlayer.targetLevel, 1);
     audioStopSequence(0.0f);
 }
 
@@ -114,7 +114,7 @@ void cutSceneUpdate(void* data) {
         requestImageSlot(nextFrame->slideIndex, currFrame->slideIndex);
     }
 
-    if (cutsceneGetImageSlot(nextFrame->slideIndex) == -1) {
+    if (currFrame && cutsceneGetImageSlot(currFrame->slideIndex) == -1) {
         return;
     }
 

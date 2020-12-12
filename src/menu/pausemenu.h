@@ -7,6 +7,8 @@
 enum PauseMenuItem {
     PauseMenuItemResume,
     PauseMenuItemRestart,
+    PauseMenuItemSoundVolume,
+    PauseMenuItemMusicVolume,
     PauseMenuItemSave,
     PauseMenuItemMainMenu,
     PauseMenuItemCount,

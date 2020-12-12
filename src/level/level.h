@@ -96,6 +96,7 @@ extern int gNextLevel;
 extern int gLevelFlags;
 extern enum LevelPlayMode gCurrentPlayMode;
 
+void levelSetNext(int index, int needReloadSounds);
 void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode);
 void restartLevel();
 void levelSwitchToCadet();

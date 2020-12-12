@@ -5,6 +5,7 @@
 #define MAX_MENU_DEPTH 8
 
 #include "src/graphics/graphics.h"
+#include "src/graphics/color.h"
 
 struct Menu;
 
@@ -26,6 +27,7 @@ struct MenuItem {
         MenuItemActionCallback action;
         int popDistance;
     };
+    struct Color selectedColor;
     void* data;
     MenuItemAdditionalRender renderMore;
     short inputShortcutMask;
@@ -60,6 +62,12 @@ struct Menu {
     char exitAnimationLevel;
     float animationTime;
 };
+
+
+#define MENU_TEXT_COLOR         255, 255, 255, 255
+#define MENU_SELECTED_COLOR     247, 0, 170, 255
+#define MENU_GOOD_COLOR         0, 247, 131, 255
+#define MENU_BAD_COLOR          247, 50, 0, 255
 
 void menuPush(struct Menu* menu, struct MenuItemGroup* items);
 void menuGoBack(struct Menu* menu);

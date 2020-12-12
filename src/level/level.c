@@ -50,18 +50,18 @@ short gFocusCamera;
 
 void levelNext() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
-        gNextLevel = gCurrentLevel + 1;
+        levelSetNext(gCurrentLevel + 1, 0);
     }
 }
 
 void levelPrev() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel > 0) {
-        gNextLevel = gCurrentLevel - 1;
+        levelSetNext(gCurrentLevel - 1, 0);
     }
 }
 
 void restartLevel() {
-    gNextLevel = gCurrentLevel;
+    levelSetNext(gCurrentLevel, 0);
     gCurrentLevel = -1;
 }
 
@@ -256,9 +256,9 @@ void levelUpdate(void* data) {
                 if (gRocket.rocketFlags & ROCKET_FLAGS_ANIMATION_DONE) {
                     saveFileSave();
                     if (saveFileCalculateGemsCollected(_level_group_all_levels_count) == _level_group_all_levels_count * 3) {
-                        gNextLevel = SceneIndexGoodEndingCutscene;
+                        levelSetNext(SceneIndexGoodEndingCutscene, 1);
                     } else {
-                        gNextLevel = SceneIndexBadEndingCutscene;
+                        levelSetNext(SceneIndexBadEndingCutscene, 1);
                     }
                 } else if (!(gRocket.rocketFlags & ROCKET_FLAGS_LAUNCHING)) {
                     rocketLaunch(&gRocket);
@@ -272,10 +272,14 @@ void levelUpdate(void* data) {
         }
     }
     
-    if (getButtonDown(0, R_JPAD)) {
+    if (getButtonDown(0, R_JPAD) && getButton(0, L_TRIG) && saveFileIsLevelComplete(gCurrentLevel)) {
         levelNext();
-    } else if (getButtonDown(0, L_JPAD)) {
-        levelPrev();
+    } else if (getButtonDown(0, L_JPAD) && getButton(0, L_TRIG)) {
+        if (gCurrentLevel == 0) {
+            levelSetNext(SceneIndexIntroCutscene, 1);
+        } else {
+            levelPrev();
+        }
     }
 }
 

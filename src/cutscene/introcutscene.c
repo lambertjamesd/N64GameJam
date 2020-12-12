@@ -23,7 +23,8 @@ struct CutsceneFrame gIntroCutsceneFrames[] = {
     {1.5f, _00_rocket, 0.0f, 0.0f},
     {1.5f, _08_rocket_turn, 0.0f, 0.0f},
     {8.0f, _09_see_planet, -17.5, 140.0f},
-    {4.0f, _09_see_planet, 0.0f, 0.0f},
+    {2.0f, _09_see_planet, 0.0f, 0.0f},
+    {2.0f, _09_see_planet, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f},
 };
 
 struct CutsceneEvent gIntroCutsceneEvents[] = {

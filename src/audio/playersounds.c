@@ -43,6 +43,8 @@ int playerSoundsStopAll() {
 
         return result;
     }
+
+    return 1;
 }
 
 void playerSoundsUseBank(enum SoundsBanks bankIndex) {

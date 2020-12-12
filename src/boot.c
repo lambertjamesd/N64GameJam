@@ -31,6 +31,7 @@
 
 OSThread gGameThread;
 OSThread gInitThread;
+int gNeedStopSounds = 0;
 
 /**** Stack for boot code.  Space can be reused after 1st thread starts ****/
 u64    bootStack[STACKSIZEBYTES/sizeof(u64)];
@@ -63,6 +64,11 @@ OSScClient      gfxClient;
 
 
 OSPiHandle	*handler;
+
+void levelSetNext(int index, int needReloadSounds) {
+    gNextLevel = index;
+    gNeedStopSounds = needReloadSounds;
+}
 
 void boot(void *arg)
 {
@@ -111,7 +117,7 @@ static void gameEntryPoint(void *argv)
             case (OS_SC_RETRACE_MSG):   
                 if (gNextLevel != gCurrentLevel) {
                     controllersReadData();
-                    int allStopped = playerSoundsStopAll();
+                    int allStopped = !gNeedStopSounds || playerSoundsStopAll();
 
                     if (allStopped && pendingGFX == 0) {
                         gCurrentLevel = gNextLevel;

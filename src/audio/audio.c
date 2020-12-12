@@ -101,6 +101,7 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceLoopStart[gNextSeq], playEvent->loopStart);
         alSeqNewMarker(gSequence[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopEnd);
         alSeqpLoop(gSequencePlayer, &gSequenceLoopStart[gNextSeq], &gSequenceEnd[gNextSeq], playEvent->loopCount);
+        alSeqpSetVol(gSequencePlayer, (s16)(0x7fff * gMusicVolume));
 
         if (playEvent->playbackStart) {
             alSeqSetLoc(gSequence[gNextSeq], &gSequenceStart[gNextSeq]);
@@ -157,6 +158,7 @@ void audioInit()
     gSequencePlayer = alHeapAlloc(&gAudioHeap, 1, sizeof(ALSeqPlayer));
     alSeqpNew(gSequencePlayer, &seqc);
     alSeqpSetBank(gSequencePlayer, bankPtr->bankArray[0]);
+    alSeqpSetVol(gSequencePlayer, 0x7fff);
 
     soundPlayerInit();
 
@@ -171,6 +173,10 @@ void audioInit()
     for (i = 0; i < MAX_PENDING_SOUNDS; ++i) {
         gPendingSounds[i].snd = UNUSED_PENDING_SOUND;
     }
+}
+
+void audioSetSoundVolume(float value) {
+    gSoundVolume = value;
 }
 
 int audioPlayState(ALSndId snd) {
