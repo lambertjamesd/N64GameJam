@@ -48,7 +48,7 @@ void doorUpdate(void* data) {
         audioPlaySound3D(
             gPlayerSoundIds[SoundDoorOpen],
             0.5f,
-            0.7f,
+            0.3f,
             &door->transform.position,
             &gZeroVec,
             AUDIO_3D_FLAGS_RESTART,

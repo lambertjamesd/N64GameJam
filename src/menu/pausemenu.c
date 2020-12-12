@@ -70,7 +70,6 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
         (gScreenHeight+modifiedHeight)>>1
     );
     gDPPipeSync(state->dl++);
-    gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
 
     gSPDisplayList(state->dl++, gEndlessBossBattleUse);
 

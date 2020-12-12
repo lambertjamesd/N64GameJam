@@ -27,6 +27,10 @@
 #include "src/save/savefile.h"
 #include "src/system/memory.h"
 #include "src/time/time.h"
+#include "src/defs.h"
+#include "src/font/fontrenderer.h"
+#include "src/font/endlessbossbattle/endlessbossbattle.h"
+#include "src/font/buttons/buttons.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -40,6 +44,8 @@ struct ExpandedLevel {
 
 struct ExpandedLevel gExpandedLevel;
 
+#define FADE_DURATION       0.5f
+
 int gLevelFlags;
 struct TimeUpdateListener gLevelUpdateListener;
 int gCurrentLevel;
@@ -47,6 +53,7 @@ int gNextLevel;
 float gLevelCutsceneTimer;
 enum LevelPlayMode gCurrentPlayMode;
 short gFocusCamera;
+float gFadeTimer = 0.0f;
 
 void levelNext() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
@@ -100,6 +107,125 @@ int levelSwitchToRobot() {
     return gRobot.controllerIndex;
 }
 
+char* gCamHudText[] = {
+    "Move",
+    "View",
+    "Back",
+};
+
+char gCamHudIcon[] = {
+    ButtonFontMappingJoystick,
+    ButtonFontMappingC_U,
+    ButtonFontMappingR,
+};
+
+#define CAM_HUD_PADDING     8
+
+void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
+    if (gFadeTimer > 0) {
+        float fadeLerp = gFadeTimer / FADE_DURATION;
+
+        gDPPipeSync(state->dl++);
+	    gDPSetRenderMode(state->dl++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+        gDPSetCombineLERP(state->dl++, 0, 0, 0, 0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, 0, 0, 0, 0, ENVIRONMENT);
+        gDPSetEnvColor(state->dl++, 0, 0, 0, (u8)(fadeLerp * 255.0f));
+        gDPFillRectangle(
+            state->dl++, 
+            0, 
+            0,
+            SCREEN_WD,
+            gScreenHeight
+        );
+        gDPPipeSync(state->dl++);
+    }
+
+    int i;
+    for (i = 0; i < 2; ++i) {
+        if (gInputMask[i] & InputMaskFreeCamera) {
+            fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
+
+            int centerScreen = (gScene.viewports[i].minx + gScene.viewports[i].maxx) / 2;
+            int yScreen = SCALE_FOR_PAL(180);
+
+            int viewWidth = 4 * CAM_HUD_PADDING;
+            int itemIndex;
+
+            for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
+                viewWidth += (int)fontRendererMeasureWidth(&gEndlessBossBattle, gCamHudText[itemIndex]);
+            }
+
+            gDPPipeSync(state->dl++);
+	        gDPSetCombineLERP(state->dl++, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
+
+            int x = centerScreen - (viewWidth >> 1) + CAM_HUD_PADDING;
+
+            gDPFillRectangle(
+                state->dl++, 
+                x - CAM_HUD_PADDING, 
+                yScreen - SCALE_FOR_PAL(6),
+                x - CAM_HUD_PADDING + viewWidth, 
+                yScreen + SCALE_FOR_PAL(30)
+            );
+            gDPPipeSync(state->dl++);
+
+            gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+            for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
+                fontRendererDrawCharacters(
+                    fontRenderer,
+                    &gEndlessBossBattle,
+                    &state->dl,
+                    gCamHudText[itemIndex],
+                    x,
+                    yScreen
+                );
+
+                x += (int)fontRendererMeasureWidth(&gEndlessBossBattle, gCamHudText[itemIndex]) + CAM_HUD_PADDING;
+            }
+
+            gDPPipeSync(state->dl++);
+            gSPDisplayList(state->dl++, gButtonFontUse);
+            x = centerScreen - (viewWidth >> 1) + CAM_HUD_PADDING;
+            
+            for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
+                int textWidth = (int)fontRendererMeasureWidth(&gEndlessBossBattle, gCamHudText[itemIndex]);
+                char text[4];
+                text[0] = gCamHudIcon[itemIndex];
+                text[1] = 0;
+                fontRendererDrawCharacters(
+                    fontRenderer,
+                    &gButtonFont,
+                    &state->dl,
+                    text,
+                    x + (textWidth >> 1) - 5,
+                    yScreen + SCALE_FOR_PAL(13)
+                );
+
+                x += textWidth + CAM_HUD_PADDING;
+            }
+        }
+    }
+    gDPPipeSync(state->dl++);
+
+#if DEBUG 
+
+    char buffer[8];
+    sprintf(buffer, "%d", gUnusedDL);
+    gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+    fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
+
+    fontRendererDrawCharacters(
+        fontRenderer,
+        &gEndlessBossBattle,
+        &state->dl,
+        buffer,
+        30,
+        30
+    );
+
+#endif
+    gDPPipeSync(state->dl++);
+}
+
 void levelFocusCutscene(struct Vector3* target, float time, int viewportIndex) {
     gLevelCutsceneTimer = time;
     inputMaskPush(0);
@@ -144,6 +270,14 @@ void levelUpdateCamera(int controllerIndex, struct Vector3* target) {
 }
 
 void levelUpdate(void* data) {
+    if (gFadeTimer > 0.0f) {
+        gFadeTimer -= gTimeDelta;
+
+        if (gFadeTimer < 0.0f) {
+            gFadeTimer = 0.0f;
+        }
+    }
+
     if ((gInputMask[0] & InputMaskPlayer) && 
         !(gLevelFlags & (LEVEL_INTRO_CUTSCENE | LEVEL_FOCUS_CUTSCENE))) {
         tutorialMenuCheck();
@@ -498,6 +632,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
 
     levelExpand(levelDef);
     timeAddListener(&gLevelUpdateListener, levelUpdate, 0, TimeUpdateGroupWorld);
+    graphicsAddMenu(levelHudRender, 0, 1);
 
     gLoadedLevel = levelDef;
 
@@ -528,6 +663,7 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         cameraSetFollowDistance(&gScene.camera[0], 1);
         rocketLandAt(&gRocket, &rocketPos);
         gCadet.actor.stateFlags |= CADET_IS_INVISIBLE;
+        gFadeTimer = FADE_DURATION;
     } else {
         levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
     }

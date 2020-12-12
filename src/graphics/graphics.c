@@ -23,6 +23,7 @@ extern GFXInfo         gInfo[];
 
 int gScreenHeight;
 float gScreenYScale;
+int gUnusedDL;
 
 u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 unsigned short __attribute__((aligned(64)))	gZBuffer[SCREEN_WD*MAX_SCREEN_HT];
@@ -294,6 +295,8 @@ void createGfxTask(GFXInfo *i) {
     osWritebackDCache(&dynamicp, sizeof(Dynamic));
 
     assert(glistp <= &dynamicp->glist[DYANAMIC_LIST_LEN]);
+
+    gUnusedDL = &dynamicp->glist[DYANAMIC_LIST_LEN] - glistp;
 
     t = &i->task;
     t->list.t.data_ptr = (u64 *) dynamicp->glist;

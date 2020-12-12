@@ -10,7 +10,8 @@ struct CutsceneFrame gBadEndingCutsceneFrames[] = {
     {4.0f, _03_leave_robot, 0.0f, 0.0f},
     {6.0f, _04_leave_planet, 0.0f, 0.0f},
     {5.0f, _10_credits_text, 0.0f, 0.0f},
-    {5.0f, _11_homebrew, 0.0f, 0.0f},
+    {3.0f, _11_homebrew, 0.0f, 0.0f},
+    {2.0f, _11_homebrew, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f},
 };
 
 

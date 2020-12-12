@@ -9,7 +9,8 @@ struct CutsceneFrame gGoodEndingCutsceneFrames[] = {
     {6.0f, _02_leave_with_robot, 0.0f, 0.0f, -53.333333333f, 320.0f},
     {6.0f, _02_leave_with_robot, 0.0f, 0.0f},
     {5.0f, _10_credits_text, 0.0f, 0.0f},
-    {5.0f, _11_homebrew, 0.0f, 0.0f},
+    {3.0f, _11_homebrew, 0.0f, 0.0f},
+    {2.0f, _11_homebrew, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f},
 };
 
 struct CutsceneEvent gGoodEndingCutsceneEvents[] = {
@@ -58,6 +59,13 @@ struct CutsceneEvent gGoodEndingCutsceneEvents[] = {
             1.0f,
             0.0f,
             10
+        }
+    },
+    {
+        31.0f,
+        CutsceneEventTypeSeqStop,
+        .seqStop = {
+            2.0f,
         }
     },
 };

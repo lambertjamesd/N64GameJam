@@ -28,6 +28,8 @@ static float gSoundVolume = 1.0f;
 static float gMusicFadeTime = 0.0f;
 static float gMusicFadeDuration = 0.0f;
 
+#define GLOBAL_VOLUME_SCALE      1.3f
+
 ALHeap             gAudioHeap;
 ALSndPlayer gSoundPlayer;
 
@@ -235,7 +237,7 @@ void audioPlaySound(ALSndId snd, float pitch, float volume, float pan, int prior
             volume = 1.0f;
         }
 
-        float floatAsShort = gSoundVolume * volume * 32767;
+        float floatAsShort = gSoundVolume * volume * (32767 * GLOBAL_VOLUME_SCALE);
         if (floatAsShort > 32767.0f) {
             alSndpSetVol(&gSoundPlayer, 32767);
         } else {

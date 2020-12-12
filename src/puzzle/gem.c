@@ -164,7 +164,7 @@ void gemTrigger(void* data, struct Vector3* origin) {
     saveFileMarkCollectedGem(gCurrentLevel, gem->index);
     struct Vector3 collectPos;
     collectPos.x = gem->transform.position.x;
-    collectPos.y = gem->transform.position.y + 0.5f;
+    collectPos.y = gem->transform.position.y + 0.8f;
     collectPos.z = gem->transform.position.z;
     explosionInit(&gem->explosion, &gem->transform.position, ExplosionTypeGemCollect);
 

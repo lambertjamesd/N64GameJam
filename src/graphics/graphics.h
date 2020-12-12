@@ -64,6 +64,7 @@ extern u64          gDramStack[];
 extern int gFrameNumber;
 extern int gScreenHeight;
 extern float gScreenYScale;
+extern int gUnusedDL;
 
 #define SCALE_FOR_PAL(input) ((gScreenHeight == SCREEN_HT_NTSC) ? (input) : ((input) * SCREEN_HT_PAL/SCREEN_HT_NTSC))
 #define UNSCALE_FOR_PAL(input) ((gScreenHeight == SCREEN_HT_NTSC) ? (input) : ((input) * SCREEN_HT_NTSC/SCREEN_HT_PAL))
