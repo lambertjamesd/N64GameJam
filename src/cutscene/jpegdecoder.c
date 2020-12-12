@@ -107,4 +107,6 @@ void jpegDecoderFlush() {
     if (gIsDecoding) {
         osRecvMesg(&gCompletedImages, &msg, OS_MESG_BLOCK);
     }
+
+    gNextRequestBuffer = 0;
 }

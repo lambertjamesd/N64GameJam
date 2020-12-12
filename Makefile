@@ -4,7 +4,7 @@ include $(ROOT)/usr/include/make/PRdefs
 FINAL = YES
 
 ifeq ($(FINAL), YES)
-OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
+OPTIMIZER       = -O2 -std=gnu90 -mno-shared
 # OPTIMIZER       = -g
 LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
@@ -176,7 +176,8 @@ SONG_FILES = build/music/AuroraBorealis.mid \
 	build/music/StepsAcrosstheSky.mid \
 	build/music/TeamUltraRareLogoJingleWIP1.mid \
 	build/music/ThermalImaging.mid \
-	build/music/LostHasselbladBoogie.mid
+	build/music/LostHasselbladBoogie.mid \
+	build/music/ReducedGravity.mid
 
 build/music/%.mid: sound/music/%.mid sound/music/%.meta
 	@mkdir -p $(@D)
@@ -193,8 +194,8 @@ build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
 
-DEBUGGERFILES = src/debugger/serial.c \
-	src/debugger/debugger.c
+# DEBUGGERFILES = src/debugger/serial.c \
+# 	src/debugger/debugger.c
 
 HFILES = $(DEBUGGERHFILES) \
 	src/game.h	\

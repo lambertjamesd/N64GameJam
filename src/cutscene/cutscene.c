@@ -90,6 +90,10 @@ void cutSceneUpdate(void* data) {
         --gPendingImageCount;
     }
 
+    if (!gHasLoadedFirstImage) {
+        return;
+    }
+
     if (getButtonDown(0, START_BUTTON)) {
         if (!tutorialMenuIsActive(&gTutorialMenu)) {
             tutorialMenuInit(&gTutorialMenu, TutorialMenuSkip);
@@ -334,6 +338,7 @@ void cutScenePlay(struct Cutscene* cutscene, int nextLevel) {
         playerSoundsUseBank(cutscene->soundBank);
     }
 
+    jpegDecoderFlush();
     gPendingImageCount = 0;
     gHasLoadedFirstImage = 0;
     if (cutscene->frameCount) {

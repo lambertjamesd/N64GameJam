@@ -1,5 +1,4 @@
 
-
 envelope Percussion_01Env
 {
     attackTime = 0;
@@ -312,6 +311,25 @@ sound Splash_cymbal
     envelope = Percussion_01Env;
 }
 
+keymap CowbellKeymap
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 55;
+    keyMax = 55;
+    keyBase = 68;
+    detune = 0;
+}
+
+sound Cowbell
+{
+    use("./sounds/High_TomSnd.aifc");
+    pan = 64;
+    volume = 127;
+    keymap = CowbellKeymap;
+    envelope = Percussion_01Env;
+}
+
 keymap Ride_Cymbal_2Keymap
 {
     velocityMin = 0;
@@ -371,6 +389,7 @@ instrument Percussion
     sound = High_Tom;
     sound = China_Cymbal;
     sound = Splash_cymbal;
+    sound = Cowbell;
     sound = Ride_Cymbal_2;
     sound = Cuica_High;
 }
@@ -528,7 +547,7 @@ instrument _003Honkytonk_Piano
     sound = _003Honkytonk_PianoSound;
 }
 
-envelope ClavinetSoundEnv
+envelope _007ClavinetSoundEnv
 {
     attackTime = 0;
     attackVolume = 127;
@@ -537,7 +556,7 @@ envelope ClavinetSoundEnv
     releaseTime = 200000;
 }
 
-keymap ClavinetSoundKeymap
+keymap _007ClavinetSoundKeymap
 {
     velocityMin = 0;
     velocityMax = 127;
@@ -547,22 +566,102 @@ keymap ClavinetSoundKeymap
     detune = 0;
 }
 
-sound ClavinetSound
+sound _007ClavinetSound
 {
-    use("./sounds/ClavinetSoundSnd.aifc");
+    use("./sounds/_007ClavinetSoundSnd.aifc");
     pan = 64;
     volume = 127;
-    keymap = ClavinetSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    keymap = _007ClavinetSoundKeymap;
+    envelope = _007ClavinetSoundEnv;
 }
 
-instrument Clavinet
+keymap _007ClavinetSoundKeymap2
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 62;
+    keyMax = 68;
+    keyBase = 75;
+    detune = 0;
+}
+
+sound _007ClavinetSound2
+{
+    use("./sounds/_007ClavinetSoundSnd2.aifc");
+    pan = 64;
+    volume = 127;
+    keymap = _007ClavinetSoundKeymap2;
+    envelope = _007ClavinetSoundEnv;
+}
+
+keymap _007ClavinetSoundKeymap3
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 69;
+    keyMax = 75;
+    keyBase = 78;
+    detune = 0;
+}
+
+sound _007ClavinetSound3
+{
+    use("./sounds/_007ClavinetSoundSnd3.aifc");
+    pan = 64;
+    volume = 127;
+    keymap = _007ClavinetSoundKeymap3;
+    envelope = _007ClavinetSoundEnv;
+}
+
+keymap _007ClavinetSoundKeymap4
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 76;
+    keyMax = 81;
+    keyBase = 87;
+    detune = 0;
+}
+
+sound _007ClavinetSound4
+{
+    use("./sounds/_007ClavinetSoundSnd4.aifc");
+    pan = 64;
+    volume = 127;
+    keymap = _007ClavinetSoundKeymap4;
+    envelope = _007ClavinetSoundEnv;
+}
+
+keymap _007ClavinetSoundKeymap5
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 82;
+    keyMax = 102;
+    keyBase = 90;
+    detune = 0;
+}
+
+sound _007ClavinetSound5
+{
+    use("./sounds/_007ClavinetSoundSnd5.aifc");
+    pan = 64;
+    volume = 127;
+    keymap = _007ClavinetSoundKeymap5;
+    envelope = _007ClavinetSoundEnv;
+}
+
+instrument _007Clavinet
 {
     volume = 127;
     pan = 64;
     priority = 5;
     bendRange = 200;
-    sound = ClavinetSound;
+    sound = _007ClavinetSound;
+    sound = _007ClavinetSound2;
+    sound = _007ClavinetSound3;
+    sound = _007ClavinetSound4;
+    sound = _007ClavinetSound5;
 }
 
 keymap MarimbaSoundKeymap
@@ -581,7 +680,7 @@ sound MarimbaSound
     pan = 64;
     volume = 127;
     keymap = MarimbaSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Marimba
@@ -609,7 +708,7 @@ instrument Marimba
 //     pan = 64;
 //     volume = 127;
 //     keymap = Rock_OrganSoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument Rock_Organ
@@ -682,6 +781,42 @@ instrument _018Rock_OrganEcho
     sound = _018Rock_OrganEchoSound;
 }
 
+envelope _033Electric_Bass_fingerSoundEnv
+{
+    attackTime = 0;
+    attackVolume = 127;
+    decayTime = 11024306;
+    decayVolume = 104;
+    releaseTime = 38188;
+}
+
+keymap _033Electric_Bass_fingerSoundKeymap
+{
+    velocityMin = 0;
+    velocityMax = 127;
+    keyMin = 0;
+    keyMax = 127;
+    keyBase = 43;
+    detune = -12;
+}
+
+sound _033Electric_Bass_fingerSound
+{
+    use("./sounds/_033Electric_Bass_fingerSoundSnd.aiff");
+    pan = 64;
+    volume = 127;
+    keymap = _033Electric_Bass_fingerSoundKeymap;
+    envelope = _033Electric_Bass_fingerSoundEnv;
+}
+
+instrument _033Electric_Bass_finger
+{
+    volume = 127;
+    pan = 64;
+    priority = 0;
+    sound = _033Electric_Bass_fingerSound;
+}
+
 // keymap Electric_Bass_pickSoundKeymap
 // {
 //     velocityMin = 0;
@@ -698,7 +833,7 @@ instrument _018Rock_OrganEcho
 //     pan = 64;
 //     volume = 127;
 //     keymap = Electric_Bass_pickSoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument Electric_Bass_pick
@@ -763,7 +898,7 @@ instrument _034Electric_Bass_pick
 //     pan = 64;
 //     volume = 127;
 //     keymap = Slap_Bass_2SoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument Slap_Bass_2
@@ -869,7 +1004,7 @@ sound CelloSound
     pan = 64;
     volume = 127;
     keymap = CelloSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Cello
@@ -901,7 +1036,7 @@ sound Orchestral_HarpSound
     pan = 64;
     volume = 127;
     keymap = Orchestral_HarpSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Orchestral_Harp
@@ -929,7 +1064,7 @@ instrument Orchestral_Harp
 //     pan = 64;
 //     volume = 127;
 //     keymap = TimpaniSoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument Timpani
@@ -1054,7 +1189,7 @@ instrument String_Ensemble_2
 //     pan = 64;
 //     volume = 127;
 //     keymap = Synth_Strings_2SoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument Synth_Strings_2
@@ -1118,7 +1253,7 @@ sound TrumpetSound
     pan = 64;
     volume = 127;
     keymap = TrumpetSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 keymap TrumpetSoundKeymap2
@@ -1137,7 +1272,7 @@ sound TrumpetSound2
     pan = 64;
     volume = 127;
     keymap = TrumpetSoundKeymap2;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 keymap TrumpetSoundKeymap3
@@ -1156,7 +1291,7 @@ sound TrumpetSound3
     pan = 64;
     volume = 127;
     keymap = TrumpetSoundKeymap3;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 keymap TrumpetSoundKeymap4
@@ -1175,7 +1310,7 @@ sound TrumpetSound4
     pan = 64;
     volume = 127;
     keymap = TrumpetSoundKeymap4;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Trumpet
@@ -1210,7 +1345,7 @@ sound TromboneSound
     pan = 64;
     volume = 127;
     keymap = TromboneSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 keymap TromboneSoundKeymap2
@@ -1229,7 +1364,7 @@ sound TromboneSound2
     pan = 64;
     volume = 127;
     keymap = TromboneSoundKeymap2;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Trombone
@@ -1262,7 +1397,7 @@ instrument Trombone
 //     pan = 64;
 //     volume = 127;
 //     keymap = French_HornSoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument French_Horn
@@ -1330,7 +1465,7 @@ sound Alto_SaxSound
     pan = 64;
     volume = 127;
     keymap = Alto_SaxSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Alto_Sax
@@ -1362,7 +1497,7 @@ sound WhistleSound
     pan = 64;
     volume = 127;
     keymap = WhistleSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Whistle
@@ -1390,7 +1525,7 @@ sound Lead_1_squareSound
     pan = 64;
     volume = 127;
     keymap = Lead_1_squareSoundKeymap;
-    envelope = ClavinetSoundEnv;
+    envelope = _007ClavinetSoundEnv;
 }
 
 instrument Lead_1_square
@@ -1418,7 +1553,7 @@ instrument Lead_1_square
 //     pan = 64;
 //     volume = 127;
 //     keymap = Pad_2_warmSoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument Pad_2_warm
@@ -1469,7 +1604,7 @@ instrument _089Pad_2_warm
 
 ///////////////////////////////////////
 
-// envelope ClavinetSoundEnv
+// envelope _007ClavinetSoundEnv
 // {
 //     attackTime = 0;
 //     attackVolume = 127;
@@ -1494,7 +1629,7 @@ instrument _089Pad_2_warm
 //     pan = 64;
 //     volume = 127;
 //     keymap = FX_5_brightnessSoundKeymap;
-//     envelope = ClavinetSoundEnv;
+//     envelope = _007ClavinetSoundEnv;
 // }
 
 // instrument FX_5_brightness
@@ -1577,10 +1712,11 @@ bank Bank
     percussionDefault = Percussion;
     instrument [0] = Acoustic_Grand_Piano;
     instrument [3] = _003Honkytonk_Piano;
-    instrument [7] = Clavinet;
+    instrument [7] = _007Clavinet;
     instrument [12] = Marimba;
     instrument [18] = _018Rock_Organ;
     instrument [19] = _018Rock_OrganEcho;
+    instrument [33] = _033Electric_Bass_finger;
     instrument [34] = _034Electric_Bass_pick;
     instrument [37] = _037Slap_Bass_2;
     instrument [40] = Violin;

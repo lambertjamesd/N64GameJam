@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -97,7 +98,24 @@ func processLevel(levelName string, levelFile string, outputFile string, gridSiz
 				var mesh = meshPair.Mesh
 				var material = meshPair.Material
 
-				if len(mesh.faces) > 0 {
+				var prebakedPath = filepath.Join(filepath.Dir(outputFile), fmt.Sprintf("_level_input_%s_geo_%d_%d_%d.ply", levelName, x, y, material))
+
+				if _, err := os.Stat(prebakedPath); err == nil {
+					plyData, err := ioutil.ReadFile(prebakedPath)
+
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					mesh, _, err := ParsePly(string(plyData))
+
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					var gfxName = WriteMeshToC(outputGeo, mesh, fmt.Sprintf("_level_%s_geo_%d_%d_%d", levelName, x, y, material), writeColorVertex)
+					tileMeshNames = append(tileMeshNames, gfxName)
+				} else if len(mesh.faces) > 0 {
 					mesh = TransformMesh(mesh, RoundToN64)
 					mesh = RemoveDuplicates(mesh)
 					mesh = FlipZ(mesh)

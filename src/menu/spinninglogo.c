@@ -13,11 +13,11 @@
 #include "src/input/controller.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 
-#define SPINNING_LOGO_TIME      8.0f
+#define DELAY_TIME              2.0f
+#define SPINNING_LOGO_TIME      (DELAY_TIME + 7.0f)
 #define FADE_TIME               2.0f
-#define JINGLE_PLAY_TIME        1.0f
-#define LAUGH_PLAY_TIME         4.0f
-#define DELAY_TIME              1.0f
+#define JINGLE_PLAY_TIME        (DELAY_TIME)
+#define LAUGH_PLAY_TIME         (DELAY_TIME + 3.0f)
 #define RADS_PER_SEC            (M_PI*1/3)
 #define RAD_OFFSET              (M_PI*0.5f)
 

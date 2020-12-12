@@ -135,6 +135,12 @@ beginseg
 endseg
 
 beginseg
+	name "reducedGravity"
+	flags RAW
+	include "build/music/ReducedGravity.mid"
+endseg
+
+beginseg
 	name "player_sounds"
 	flags RAW
 	include "build/audio/player.sounds"
@@ -181,6 +187,7 @@ beginwave
 	include "enceladus"
 	include "auroraBorealis"
 	include "boogie"
+	include "reducedGravity"
 	include "player_sounds"
 	include "player_sounds_table"
 	include "intro_cutscene"

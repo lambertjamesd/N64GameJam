@@ -202,7 +202,7 @@ static void initGame(void)
     threadPtr[0] = &gGameThread;
     enum GDBError err = gdbInitDebugger(handler, &gDMAMessageQ, threadPtr, 1);
 #else
-    enum GDBError err = gdbSerialInit(handler, &gDMAMessageQ);
+    // enum GDBError err = gdbSerialInit(handler, &gDMAMessageQ);
 #endif
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
@@ -227,6 +227,6 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    // gNextLevel =     SceneIndexIntroCutscene;
+    // gNextLevel = SceneIndexIntroCutscene;
 }
 
