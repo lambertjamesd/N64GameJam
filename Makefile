@@ -42,7 +42,6 @@ LEVELS = cadet_intro \
 	loop_around \
 	radioactive_river \
 	canyon \
-	double_crossing \
 	track_blockage \
 	raised_platform \
 	moving_platforms \

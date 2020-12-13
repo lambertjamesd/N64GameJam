@@ -11,6 +11,7 @@ extern int gControllerIsConnected;
 
 extern void controllersInit();
 extern void controllersReadData();
+extern int controllersClearState();
 
 extern int getButton(int controller, int mask);
 extern int getButtonDown(int controller, int mask);

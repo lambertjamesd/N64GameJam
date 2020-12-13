@@ -2,6 +2,7 @@
 #include "savefile.h"
 
 #include <ultra64.h>
+#include "src/input/controller.h"
 
 struct SaveFile gSaveFile;
 extern OSMesgQueue gContMessageQ;
@@ -37,6 +38,7 @@ void saveFileSave() {
     if (gEepromProbe) {
         OSMesg dummy;
         (void)osRecvMesg(&gContMessageQ, &dummy, OS_MESG_BLOCK);
+        controllersClearState();
         gControllerDeadFrames = 30;
         osEepromLongWrite(&gContMessageQ, 0, (char*)&gSaveFile, sizeof(struct SaveFile));
         osContStartReadData(&gContMessageQ);

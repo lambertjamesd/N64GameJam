@@ -2,6 +2,7 @@
 #include "controller.h"
 #include "src/system/assert.h"
 #include "src/save/savefile.h"
+#include <memory.h>
 
 static OSMesg gDummyMessage;
 OSMesgQueue gContMessageQ;
@@ -21,6 +22,11 @@ int gInputRange[MAXCONTROLLERS] = {
     64,
 };
 
+extern int controllersClearState() {
+    memset(gControllerState, 0, sizeof(gControllerState));
+    memset(gControllerLastButton, 0, sizeof(gControllerLastButton));
+}
+
 void controllersInit() {
     u8 pattern;
     osCreateMesgQueue(&gContMessageQ, &gDummyMessage, 1);
@@ -38,11 +44,6 @@ void controllersInit() {
 void controllersReadData() {
     int i;
 
-    if (gControllerDeadFrames) {
-        --gControllerDeadFrames;
-        return;
-    }
-
     if (osRecvMesg(&gContMessageQ, &gDummyMessage, OS_MESG_NOBLOCK) == 0) {
         for (i = 0; i < MAXCONTROLLERS; ++i) {
             gControllerLastButton[i] = gControllerState[i].button;
@@ -50,6 +51,12 @@ void controllersReadData() {
 
         osContGetReadData(gControllerState);
         osContStartReadData(&gContMessageQ);
+
+        // after saving, ignore controller input for some time
+        if (gControllerDeadFrames) {
+            --gControllerDeadFrames;
+            memset(gControllerState, 0, sizeof(gControllerState));
+        }
     }
 }
 
