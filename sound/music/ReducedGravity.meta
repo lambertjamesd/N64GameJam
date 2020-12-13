@@ -1,4 +1,5 @@
-volume=1.08
-speed=1
-channelVolume2=1
+volume=0.75
+speed=0.95
+channelVolume0=0.9
+channelVolume1=0.8
 channelVolume9=1

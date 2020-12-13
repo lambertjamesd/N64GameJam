@@ -430,6 +430,7 @@ void cadetTeleportOut(struct Cadet* cadet) {
     targetCenter.z = gCadetExit.transform.position.z;
 
     vector3MoveTowards(&cadet->transform.position, &targetCenter, gTimeDelta * 0.5f, &cadet->transform.position);
+    cadet->actor.stateFlags &= ~SPHERE_ACTOR_IS_GROUNDED;
 
     if (!teleportEffectUpdate(&gCadet.teleport)) {
         cadet->state = cadetIdle;

@@ -4,8 +4,8 @@ include $(ROOT)/usr/include/make/PRdefs
 FINAL = YES
 
 ifeq ($(FINAL), YES)
-# OPTIMIZER       = -O2 -std=gnu90 -mno-shared
-OPTIMIZER       = -g
+OPTIMIZER       = -O2 -std=gnu90 -mno-shared
+# OPTIMIZER       = -g
 LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
 else
@@ -195,8 +195,8 @@ build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
 
-DEBUGGERFILES = src/debugger/serial.c \
-	src/debugger/debugger.c
+# DEBUGGERFILES = src/debugger/serial.c \
+# 	src/debugger/debugger.c
 
 HFILES = $(DEBUGGERHFILES) \
 	src/game.h	\

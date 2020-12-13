@@ -44,7 +44,7 @@ static float gSoundVolume = 1.0f;
 static float gMusicFadeTime = 0.0f;
 static float gMusicFadeDuration = 0.0f;
 
-#define GLOBAL_VOLUME_SCALE      1.3f
+#define GLOBAL_VOLUME_SCALE      1.4f
 
 ALHeap      gAudioHeap;
 ALSndPlayer gSoundPlayer;
