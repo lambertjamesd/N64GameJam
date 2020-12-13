@@ -226,7 +226,7 @@ void cadetMove(struct Cadet* cadet) {
 
     struct Vector3 targetVelocity;
     cadetTargetVelocity(cadet, &targetVelocity);
-    enum SphereActorCollideResult colliderResult = SphereActorCollideResultNone;
+    enum SphereActorCollideResult colliderResult = -1;
 
     while (cadet->accumTime >= MIN_DELTA_TIME) {
         cadet->actor.velocity.y += cadet->gravity * MIN_DELTA_TIME;
@@ -264,6 +264,10 @@ void cadetMove(struct Cadet* cadet) {
         if ((cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) && cadet->actor.velocity.y > 0.0f) {
             cadet->actor.velocity.y = 0.0f;
         }
+    }
+
+    if (colliderResult == -1) {
+        colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
     }
 
     if (cadet->actor.anchor) {

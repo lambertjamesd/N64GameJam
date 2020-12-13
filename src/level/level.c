@@ -137,6 +137,32 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
             gScreenHeight
         );
         gDPPipeSync(state->dl++);
+    } else {
+        gDPPipeSync(state->dl++);
+        gSPDisplayList(state->dl++, gButtonFontUse);
+
+        char gemString[4];
+        int levelIndex = (int)data;
+        int i;
+        for (i = 0; i < 3; ++i) {
+            if (saveFileDidCollectGem(gCurrentLevel, i)) {
+                gemString[i] = ButtonFontMappingGem;
+            } else {
+                gemString[i] = ButtonFontMappingGemGone;
+            }
+        }
+        gemString[3] = 0;
+
+        fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
+
+        fontRendererDrawCharacters(
+            fontRenderer,
+            &gButtonFont,
+            &state->dl,
+            gemString,
+            260,
+            SCALE_FOR_PAL(20)
+        );
     }
 
     int i;

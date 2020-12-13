@@ -114,7 +114,7 @@ void entranceExitInit(struct EntranceExit* exit, struct Vector3* pos, int isCade
     bb.max.z = pos->z + 1.0f;
     sparseCollisionAdd(&gSparseCollisionGrid, &exit->exitTrigger, &bb);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &exit->transform, exit, exitEntranceRender, MATERIAL_INDEX_NOT_BATCHED, 1.0f);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &exit->transform, exit, exitEntranceRender, MATERIAL_INDEX_NOT_BATCHED, 2.0f);
 }
 
 struct EntranceExit gCadetExit;

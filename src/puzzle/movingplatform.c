@@ -204,7 +204,7 @@ void movingPlatformInit(struct MovingPlatform* platform, struct Vector3* positio
 
     sparseCollisionAdd(&gSparseCollisionGrid, &platform->collider, NULL);
 
-    dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform, 2.0f);
+    dynamicActorAddToGroup(&gScene.dynamicActors, &platform->transform, platform, movingPlatformRender, DynamicMaterialTypeMovingPlatform, 2.2f);
 }
 
 void movingPlatformJoinSlots(struct MovingPlatformSlot* platform, int count) {

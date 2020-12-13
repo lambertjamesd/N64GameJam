@@ -117,6 +117,7 @@ void mainMenuSelectLevel(struct Menu* menu, void* data) {
 
 void eraseMenuConfirm(struct Menu* menu, void* data) {
     saveFileErase();
+    audioPlaySound(gPlayerSoundIds[PlayerCadetFall], 0.5f, 0.7f, 0.0f, 10);
     gMainMenu.current[0] = &gNewGameGroup;
     gMainMenu.selected[0] = 0;
     gMainMenuTotalGems = 0;
