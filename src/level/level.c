@@ -160,8 +160,8 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
             &gButtonFont,
             &state->dl,
             gemString,
-            260,
-            SCALE_FOR_PAL(20)
+            250,
+            SCALE_FOR_PAL(24)
         );
     }
 
