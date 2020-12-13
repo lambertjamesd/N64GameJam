@@ -260,6 +260,10 @@ void cadetMove(struct Cadet* cadet) {
         cadet->accumTime -= MIN_DELTA_TIME;
 
         colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
+
+        if ((cadet->actor.stateFlags & SPHERE_ACTOR_IS_GROUNDED) && cadet->actor.velocity.y > 0.0f) {
+            cadet->actor.velocity.y = 0.0f;
+        }
     }
 
     if (cadet->actor.anchor) {
