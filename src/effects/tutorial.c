@@ -9,6 +9,7 @@
 #include "src/level/level.h"
 #include "src/robot/robot.h"
 #include "src/cadet/cadet.h"
+#include "src/puzzle/entranceexit.h"
 
 #define ANIMATION_DURATION      0.5f
 
@@ -33,7 +34,7 @@ enum ButtonFontMapping gTutorialButton[TutorialMenuTypeCount] = {
     ButtonFontMappingA,
     ButtonFontMappingB,
     ButtonFontMappingZ,
-    ButtonFontMappingC_U,
+    ButtonFontMappingC_R,
     ButtonFontMappingR,
     ButtonFontMappingStart,
 };
@@ -154,12 +155,12 @@ int tutorialDidPlayerMove() {
 }
 
 int tutorialDidPlayerCamera() {
-    return gCadet.controllerIndex != -1 && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
+    return gCurrentLevel >= 1 && gCadet.controllerIndex != -1 && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
             getButtonDown(gCadet.controllerIndex, R_CBUTTONS | L_CBUTTONS | U_CBUTTONS | D_CBUTTONS);
 }
 
 int tutorialDidPlayerCamFree() {
-    return gCadet.controllerIndex != -1 && ((gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
+    return gCurrentLevel >= 1 && gCadet.controllerIndex != -1 && ((gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
             getButtonDown(gCadet.controllerIndex, R_TRIG) || (gInputMask[gCadet.controllerIndex] & InputMaskFreeCamera));
 }
 
@@ -263,17 +264,17 @@ void tutorialMenuCheck() {
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuJump);
             }
-        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_MOVE)) {
-            if (gTutorialMenu.delay < TUTORIAL_DELAY) {
-                gTutorialMenu.delay += gTimeDelta;
-            } else {
-                tutorialMenuInit(&gTutorialMenu, TutorialMenuCamMove);
-            }
-        } else if (!saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_FREE)) {
+        } else if (gCurrentLevel >= 1 && !saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_FREE)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
                 gTutorialMenu.delay += gTimeDelta;
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuCamFree);
+            }
+        } else if (gCurrentLevel >= 1 && !saveFileCheckTutorial(SAVEFILE_LEARNED_CAM_MOVE)) {
+            if (gTutorialMenu.delay < TUTORIAL_DELAY) {
+                gTutorialMenu.delay += gTimeDelta;
+            } else {
+                tutorialMenuInit(&gTutorialMenu, TutorialMenuCamMove);
             }
         } else if (gRobot.controllerIndex != -1 && (gInputMask[gRobot.controllerIndex] & InputMaskPlayer) && !saveFileCheckTutorial(SAVEFILE_LEARNED_ATTACK)) {
             if (gTutorialMenu.delay < TUTORIAL_DELAY) {
@@ -281,12 +282,8 @@ void tutorialMenuCheck() {
             } else {
                 tutorialMenuInit(&gTutorialMenu, TutorialMenuRobot);
             }
-        } else if (gRobot.controllerIndex == 0 && (gInputMask[0] & InputMaskPlayer) && !saveFileCheckTutorial(SAVEFILE_LEARNED_SWITCH)) {
-            if (gTutorialMenu.delay < TUTORIAL_DELAY) {
-                gTutorialMenu.delay += gTimeDelta;
-            } else {
-                tutorialMenuInit(&gTutorialMenu, TutorialMenuSwitch);
-            }
+        } else if (gRobot.controllerIndex == 0 && (gInputMask[0] & InputMaskPlayer) && !saveFileCheckTutorial(SAVEFILE_LEARNED_SWITCH) && (gCurrentLevel > 2 || gRobotExit.isActive)) {
+            tutorialMenuInit(&gTutorialMenu, TutorialMenuSwitch);
         }
     }
 

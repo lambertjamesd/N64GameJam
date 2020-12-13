@@ -84,9 +84,9 @@ void switchRender(struct DynamicActor* data, struct GraphicsState* state) {
     gDPPipeSync(state->dl++);
 
     if (puzzleSwitch->sender.currentSignal) {
-        graphicsStateSetPrimitiveColor(state, gSwitchColors[puzzleSwitch->sender.signalIndex]);
-    } else {
         graphicsStateSetPrimitiveColor(state, gSwitchDarkColors[puzzleSwitch->sender.signalIndex]);
+    } else {
+        graphicsStateSetPrimitiveColor(state, gSwitchColors[puzzleSwitch->sender.signalIndex]);
     }
 
 
