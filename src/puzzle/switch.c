@@ -22,8 +22,8 @@ struct CollisionCollider gSmallSwitchCollider = {
     ColliderTypeBox,
     0,
     .box = {
-        {-0.1466f, 0.0f, -0.1466f},
-        {0.1466f, 0.25f, 0.1466f},
+        {-0.2f, 0.0f, -0.2f},
+        {0.2f, 0.25f, 0.2f},
     }
 };
 

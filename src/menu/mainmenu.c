@@ -119,6 +119,8 @@ void eraseMenuConfirm(struct Menu* menu, void* data) {
     saveFileErase();
     gMainMenu.current[0] = &gNewGameGroup;
     gMainMenu.selected[0] = 0;
+    gMainMenuTotalGems = 0;
+    gMainMenuUnlockedLevels = 0;
     menuGoBack(menu);
 }
 

@@ -81,7 +81,7 @@ void levelSwitchToCadet() {
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerSwitchBack],
         0.5f,
-        0.7f,
+        0.6f,
         0.0f,
         10
     );
@@ -99,7 +99,7 @@ int levelSwitchToRobot() {
     audioRestartPlaySound(
         gPlayerSoundIds[PlayerSwitch],
         0.5f,
-        0.7f,
+        0.6f,
         0.0f,
         10
     );
@@ -341,6 +341,9 @@ void levelUpdate(void* data) {
             0.0f,
             10
         );
+        audioStopSound(gPlayerSoundIds[PlayerRobotMove]);
+        audioStopSound(gPlayerSoundIds[PlayerSoundsFootstepsMetal]);
+        audioStopSound(gPlayerSoundIds[PlayerSoundsFootsteps]);
         pauseMenuShow(&gPauseMenu);
     }
 

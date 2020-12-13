@@ -9,6 +9,7 @@ OSContStatus gControllerStatus[MAXCONTROLLERS];
 OSContPad gControllerState[MAXCONTROLLERS];
 u16 gControllerLastButton[MAXCONTROLLERS];
 int gControllerIsConnected;
+int gControllerDeadFrames = 0;
 
 #define OUTER_DEAD_ZONE     10
 #define INNER_DEAD_ZONE     6
@@ -36,6 +37,11 @@ void controllersInit() {
 
 void controllersReadData() {
     int i;
+
+    if (gControllerDeadFrames) {
+        --gControllerDeadFrames;
+        return;
+    }
 
     if (osRecvMesg(&gContMessageQ, &gDummyMessage, OS_MESG_NOBLOCK) == 0) {
         for (i = 0; i < MAXCONTROLLERS; ++i) {

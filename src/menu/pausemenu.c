@@ -168,7 +168,7 @@ void pauseMenuUpdate(void* data) {
 
     if (pauseMenu->selectedItem == -1) {
         pauseMenu->selectedItem = 0;
-    } else if (getButtonDown(0, START_BUTTON)) {
+    } else if (getButtonDown(0, START_BUTTON|B_BUTTON)) {
         audioRestartPlaySound(
             gPlayerSoundIds[SoundUISelect],
             0.5f,

@@ -7,6 +7,7 @@ struct SaveFile gSaveFile;
 extern OSMesgQueue gContMessageQ;
 int gEepromProbe;
 int gNeedsSave;
+extern int gControllerDeadFrames;
 
 void saveFileNew() {
     gSaveFile.header = SAVEFILE_HEADER;
@@ -36,6 +37,7 @@ void saveFileSave() {
     if (gEepromProbe) {
         OSMesg dummy;
         (void)osRecvMesg(&gContMessageQ, &dummy, OS_MESG_BLOCK);
+        gControllerDeadFrames = 30;
         osEepromLongWrite(&gContMessageQ, 0, (char*)&gSaveFile, sizeof(struct SaveFile));
         osContStartReadData(&gContMessageQ);
         gNeedsSave = 0;

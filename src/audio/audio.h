@@ -10,11 +10,11 @@
 #define MAX_EVENTS              64
 #define AUDIO_HEAP_SIZE         400000
 
-#define MAX_VOICES              22
+#define MAX_VOICES              26
 #define EXTRA_SAMPLES           80
 #define NUM_OUTPUT_BUFFERS      3      /* Need three of these */
 #define OUTPUT_RATE             44100
-#define MAX_AUDIO_MESGS         8
+#define MAX_AUDIO_MESGS         12
 #define QUIT_MSG                10
 
 #define DMA_BUFFER_LENGTH       0x800  /* Larger buffers result in fewer DMA' but more  */
