@@ -2,11 +2,10 @@
 #include "boxcollision.h"
 
 #include "meshcollision.h"
+#include "collisiondata.h"
 #include "src/math/ray.h"
 #include "src/math/mathf.h"
 #include <math.h>
-
-#define COLLIDE_EXTRA_RADIUS        0.01f
 
 int collisionBoxCollideSphere(struct Box* box, struct Vector3* center, float radius, struct CollisionResult* result) {
     struct ContactPoint* contact = &result->contacts[result->contactCount];

@@ -206,7 +206,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
     }
     gDPPipeSync(state->dl++);
 
-#if DEBUG || 1
+#if DEBUG
 
     char buffer[16];
     sprintf(buffer, "%d %d", gUnusedDL, gUnusedMatrices);

@@ -2,8 +2,6 @@
 #include "meshcollision.h"
 #include "src/math/ray.h"
 
-#define COLLIDE_EXTRA_RADIUS        0.01f
-
 void collisionFaceBaryCoord(struct CollisionFace* face, struct Vector3* in, struct Vector3* baryCoord) {
     struct Vector3 relative;
     vector3Sub(in, &face->origin, &relative);

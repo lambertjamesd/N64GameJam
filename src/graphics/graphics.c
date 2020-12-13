@@ -100,9 +100,6 @@ void graphicsCaluclateFrustum(Dynamic* dynamicp, struct SceneViewport* vp, int c
     guMtxF2L(perspectiveMtx, &dynamicp->projection[cameraIndex]);
 
     transformInvert(&gScene.camera[cameraIndex].transform, &cameraInverse);
-    if (getButton(0, B_BUTTON)) {
-        quatIdent(&cameraInverse.rotation);
-    }
     transformToMatrix(&cameraInverse, 1.0f, viewMtx);
     guMtxF2L(viewMtx, &dynamicp->viewing[cameraIndex]);
 

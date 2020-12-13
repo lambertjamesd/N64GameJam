@@ -1,5 +1,6 @@
 
 #include "levelcollisiongrid.h"
+#include "collisiondata.h"
 #include <ultra64.h>
 
 #include "src/input/controller.h"
@@ -46,7 +47,7 @@ int collisionGridCollideSphere(struct Vector3* center, float radius, struct Leve
     float gridY = (center->y + 2.0f) * 0.5f;
     float gridZ = (center->z - 1.0f) * -0.5f;
 
-    float halfRadius = radius * 0.5f;
+    float halfRadius = radius * 0.5f + COLLIDE_EXTRA_RADIUS;
 
     int minX = (int)floorf(gridX - halfRadius);
     int minY = (int)floorf(gridY - halfRadius);

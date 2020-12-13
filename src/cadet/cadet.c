@@ -226,6 +226,7 @@ void cadetMove(struct Cadet* cadet) {
 
     struct Vector3 targetVelocity;
     cadetTargetVelocity(cadet, &targetVelocity);
+    enum SphereActorCollideResult colliderResult = SphereActorCollideResultNone;
 
     while (cadet->accumTime >= MIN_DELTA_TIME) {
         cadet->actor.velocity.y += cadet->gravity * MIN_DELTA_TIME;
@@ -257,9 +258,9 @@ void cadetMove(struct Cadet* cadet) {
 
         vector3AddScaled(&cadet->transform.position, &cadet->actor.velocity, MIN_DELTA_TIME, &cadet->transform.position);
         cadet->accumTime -= MIN_DELTA_TIME;
-    }
 
-    enum SphereActorCollideResult colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
+        colliderResult = sphereActorCollideScene(&cadet->actor, &cadet->transform.position);
+    }
 
     if (cadet->actor.anchor) {
         struct Quaternion quatInv;
@@ -367,6 +368,7 @@ void cadetFreefall(struct Cadet* cadet) {
         );
 
         cadet->state = cadetWalk;
+        cadet->coyoteTimer = COYOTE_TIME;
         rocketTrailStop(&cadet->jumpTrail);
     }
 }

@@ -13,6 +13,8 @@
 
 #define NEAR_ZERO   0.000001f
 
+#define COLLIDE_EXTRA_RADIUS        0.01f
+
 enum CollisionLayers {
     CollisionLayersGeometry = 1 << 0,
     CollisionLayersRobot = 1 << 1,

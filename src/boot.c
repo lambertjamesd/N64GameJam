@@ -227,6 +227,7 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    // gNextLevel = 9;
+    gNextLevel = 19;
+    gCurrentPlayMode = LevelPlayModeCoOp;
 }
 

@@ -1,5 +1,6 @@
 
 #include "sparsecollisiongrid.h"
+#include "collisiondata.h"
 
 #include "src/input/controller.h"
 
@@ -150,11 +151,11 @@ int collisionSparseGridCellCollideSphere(struct Vector3* center, float radius, s
 int collisionSparseGridCollideSphere(struct Vector3* center, float radius, struct SparseCollisionGrid* grid, int collisionMask, struct CollisionResult* result) {
     int didCollide = 0;
 
-    int minX = MIN_INDEX(center->x - radius);
-    int minZ = MIN_INDEX(center->z - radius);
+    int minX = MIN_INDEX(center->x - radius - COLLIDE_EXTRA_RADIUS);
+    int minZ = MIN_INDEX(center->z - radius - COLLIDE_EXTRA_RADIUS);
 
-    int maxX = MAX_INDEX(center->x + radius);
-    int maxZ = MAX_INDEX(center->z + radius);
+    int maxX = MAX_INDEX(center->x + radius + COLLIDE_EXTRA_RADIUS);
+    int maxZ = MAX_INDEX(center->z + radius + COLLIDE_EXTRA_RADIUS);
 
     int x;
     int z;
