@@ -150,24 +150,24 @@ BANK_SOUNDS = $(wildcard sound/ins/sounds/*.aiff)
 BANK_SOUNDS_COMP = $(BANK_SOUNDS:.aiff=.aifc)
 
 sound/clips/%.aif: sound/clips/%.wav
-	$(SFZ2N64 $< $@
+	$(SFZ2N64) $< $@
 
 %.aif: %.aiff
 	cp $< $@
 
 %.table: %.aif
-	$(SFZ2N64 $< $@
+	$(SFZ2N64) $< $@
 
 %.aifc: %.aif %.table
 	wine /home/james/Documents/AudioTools/tools/ADPCMENC.EXE -c $(word 2,$^) $< $@
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
-	$(SFZ2N64 $@ $^ --compress
+	$(SFZ2N64) $@ $^ --compress
 
 build/audio/intro_cutscene.sounds: $(INTRO_CUTSCENE_SOUNDS)
 	@mkdir -p $(@D)
-	$(SFZ2N64 $@ $^ --compress
+	$(SFZ2N64) $@ $^ --compress
 
 SONG_FILES = build/music/AuroraBorealis.mid \
 	build/music/CosmicDust.mid \
@@ -188,7 +188,7 @@ build/music/%.mid: sound/music/%.mid sound/music/%.meta
 
 build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 	@mkdir -p $(@D)
-	# $(SFZ2N64 sound/ins/Bank.ins build/ins/Bank.ctl
+	# $(SFZ2N64) sound/ins/Bank.ins build/ins/Bank.ctl
 	cd sound/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
 	mv sound/ins/Bank.ctl build/ins/Bank.ctl
 	mv sound/ins/Bank.tbl build/ins/Bank.tbl
