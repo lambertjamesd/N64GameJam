@@ -1,0 +1,17 @@
+
+envelope Envelope {
+    attackTime = 0
+    attackVolume = 127
+    decayTime = -1
+    decayVolume = 127
+    releaseTime = 0
+}
+
+sound Sound {
+    use("./RobotMovement.wav");
+    pan = 64;
+    volume = 127;
+    loopEnd = -1
+    loopCount = -1
+    envelope = Envelope
+}

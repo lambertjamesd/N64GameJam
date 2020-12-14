@@ -1,0 +1,16 @@
+
+envelope Envelope {
+    attackTime = 250000
+    attackVolume = 127
+    decayTime = -1
+    decayVolume = 127
+    releaseTime = 250000
+}
+
+sound Sound {
+    use("PlatformMove1.wav")
+    loopCount = -1
+    loopEnd = -1
+    pan=64
+    envelope = Envelope
+}

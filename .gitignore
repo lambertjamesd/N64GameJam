@@ -10,14 +10,17 @@ levelbuilder/output/*
 
 slidebuilder/slidebuilder
 
-sound/clips/*
+sound/clips/*.wav
+sound/clips/*.aif
+sound/clips/*.aiff
 sound/introcutscene/*
 sound/instruments/*
 sound/instruments_full/*
-sound/music/*.mid
-sound/ins/sounds/*
+sound/ins/sounds/*.aif
+sound/ins/sounds/*.wav
+sound/ins/sounds/*.aiff
 
-imageslides/*
+imageslides/*.o
 
 src/levels/**/*.c
 src/levels/**/*.h
