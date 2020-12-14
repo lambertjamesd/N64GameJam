@@ -4,7 +4,6 @@
 #include "graphics.h"
 #include "src/boot.h"
 #include "src/system/memory.h"
-#include "src/levels/debug/header.h"
 #include "src/levelthemes/alienworld/theme.h"
 #include "src/input/controller.h"
 #include "src/math/vector.h"
