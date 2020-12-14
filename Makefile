@@ -310,12 +310,19 @@ LDFLAGS =	$(MKDEPOPT) -L$(ROOT)/usr/lib $(N64LIB) -L$(N64_LIBGCCDIR) -L$(N64_NEW
 
 LDIRT  =	$(APP)
 
+ifdef $(INIT)
+default: init
+else
 default:	$(TARGETS)
+endif
 
 %.d: %.c
 	$(CC) $(GCINCS) $(LCINCS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
 
+
+ifndef $(INIT)
 -include $(DEPS)
+endif
 
 include $(COMMONRULES)
 
