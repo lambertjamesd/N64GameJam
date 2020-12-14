@@ -341,5 +341,7 @@ $(TARGETS) $(APP):      spec $(OBJECTS)
 	$(MAKEROM) -r $(TARGETS) spec
 endif
 
+init: $(LEVEL_GEO) $(DEPS)
+
 cleanall: clean
 	rm -f $(CODEOBJECTS) $(OBJECTS) $(DEPS)
