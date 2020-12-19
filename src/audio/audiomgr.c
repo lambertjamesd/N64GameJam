@@ -62,6 +62,7 @@ AMDMAState      dmaState;
 AMDMABuffer     dmaBuffs[NUM_DMA_BUFFERS];
 u32             audFrameCt = 0;
 u32             nextDMA = 0;
+u32             lastDMA = 0;
 u32             curAcmdList = 0;
 u32             minFrameSize;
 u32             frameSize;
@@ -279,7 +280,7 @@ s32 __amDMA(s32 addr, s32 len, void *state)
 
     dmaPtr = dmaState.firstFree;
 
-    if(!dmaPtr) {
+    if(!dmaPtr || nextDMA == NUM_DMA_BUFFERS) {
 	    return osVirtualToPhysical(dmaState.firstUsed);
     }
 
@@ -372,6 +373,7 @@ static void __clearAudioDMA(void)
         dmaPtr = nextPtr;
     }
     
+    lastDMA = nextDMA;
     nextDMA = 0;
     audFrameCt++;
 }

@@ -55,6 +55,8 @@ enum LevelPlayMode gCurrentPlayMode;
 short gFocusCamera;
 float gFadeTimer = 0.0f;
 
+extern u32 lastDMA;
+
 void levelNext() {
     if (gNextLevel == gCurrentLevel && gCurrentLevel + 1 < _level_group_all_levels_count) {
         levelSetNext(gCurrentLevel + 1, 0);
@@ -234,8 +236,8 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
 
 #if DEBUG
 
-    char buffer[16];
-    sprintf(buffer, "%d %d", gUnusedDL, gUnusedMatrices);
+    char buffer[32];
+    sprintf(buffer, "%d %d %d", gUnusedDL, gUnusedMatrices, lastDMA);
     gSPDisplayList(state->dl++, gEndlessBossBattleUse);
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
 
