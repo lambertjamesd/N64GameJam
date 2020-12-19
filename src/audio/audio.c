@@ -97,7 +97,7 @@ void audioSetSeqVolume(float value) {
 void audioPlaySequence(struct SeqPlayEvent* playEvent) {
     if (gCurrentSeq == playEvent->romStart) {
         return;
-    } else if (alSeqpGetState(gSequencePlayer) != AL_STOPPED) {
+    } else if (alSeqpGetState(gSequencePlayer) == AL_PLAYING) {
         alSeqpStop(gSequencePlayer);
 
         gPendingSeq = *playEvent;
@@ -407,7 +407,7 @@ void audioUpdate() {
         }
     }
 
-    if (gPendingSeq.romStart && alSeqpGetState(gSequencePlayer) == AL_STOPPED) {
+    if (gPendingSeq.romStart && alSeqpGetState(gSequencePlayer) != AL_PLAYING) {
         audioPlaySequence(&gPendingSeq);
         gPendingSeq.romStart = 0;
     }

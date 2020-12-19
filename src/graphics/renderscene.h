@@ -13,7 +13,7 @@
 #define CAMERA_MAX_SPEED 20.0f
 #define SPLIT_SCREEN_BORDER_SIZE 2
 
-#define MAX_VIEWPORTS    4
+#define MAX_VIEWPORTS    2
 
 struct SceneViewport {
     int minx, maxx, miny, maxy;

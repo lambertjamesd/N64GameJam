@@ -6,7 +6,7 @@ FINAL = YES
 SFZ2N64:=/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64
 
 ifeq ($(FINAL), YES)
-OPTIMIZER       = -O2 -std=gnu90 -mno-shared
+OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
 # OPTIMIZER       = -g
 LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
@@ -196,8 +196,8 @@ build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
 
-# DEBUGGERFILES = src/debugger/serial.c \
-# 	src/debugger/debugger.c
+DEBUGGERFILES = src/debugger/serial.c \
+	src/debugger/debugger.c
 
 HFILES = $(DEBUGGERHFILES) \
 	src/game.h	\

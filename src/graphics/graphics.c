@@ -25,7 +25,7 @@ float gScreenYScale;
 short gUnusedDL;
 short gUnusedMatrices;
 
-u64 gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
+u64 __attribute__((aligned(64))) gRSPYieldBuffer[OS_YIELD_DATA_SIZE/sizeof(u64)];
 unsigned short __attribute__((aligned(64)))	gZBuffer[SCREEN_WD*MAX_SCREEN_HT];
 unsigned short* gColorBuffer[2];
 char* gStaticSegmentBuffer;
@@ -34,7 +34,6 @@ char* gLevelThemeSegmentBuffer;
 struct LevelGraphics* gCurrentLevelGraphics;
 struct LevelThemeGraphics* gCurrentLevelTheme;
 u64 gDramStack[SP_DRAM_STACK_SIZE64];
-int gFrameNumber;
 MenuRenderCallback gMenuGraphics[MAX_MENUS];
 void* gMenuGraphicsData[MAX_MENUS];
 
@@ -77,8 +76,6 @@ void graphicsInit(void)
 			OS_VI_GAMMA_DITHER_OFF |
 			OS_VI_DIVOT_OFF |
 			OS_VI_DITHER_FILTER_OFF);
-
-    gFrameNumber = -1;
 }
 
 void graphicsCaluclateFrustum(Dynamic* dynamicp, struct SceneViewport* vp, int cameraIndex, struct Plane out[4]) {
@@ -324,7 +321,6 @@ void createGfxTask(GFXInfo *i) {
     t->msg      = (OSMesg)&i->msg;
     t->framebuffer = (void *)i->cfb;
     osSendMesg(gSchedulerCommandQ, (OSMesg) t, OS_MESG_BLOCK); 
-    ++gFrameNumber;
 }
 
 void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority) {

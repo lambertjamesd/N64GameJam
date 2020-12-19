@@ -144,6 +144,11 @@ void pauseMenuExit(struct PauseMenu* pauseMenu) {
 void pauseMenuUpdate(void* data) {
     struct PauseMenu* pauseMenu =  (struct PauseMenu*)data;
 
+    if (pauseMenu->selectedItem == -1) {
+        pauseMenu->selectedItem = 0;
+        return;
+    }
+
     int inputDir = menuGetInputDir(gControllerState[0].stick_y, &pauseMenu->lastVerticalInput, 0);
 
     if (inputDir > 0 && pauseMenu->selectedItem > 0) {
@@ -166,9 +171,7 @@ void pauseMenuUpdate(void* data) {
         );
     }
 
-    if (pauseMenu->selectedItem == -1) {
-        pauseMenu->selectedItem = 0;
-    } else if (getButtonDown(0, START_BUTTON|B_BUTTON)) {
+    if (getButtonDown(0, START_BUTTON|B_BUTTON)) {
         audioRestartPlaySound(
             gPlayerSoundIds[SoundUISelect],
             0.5f,
