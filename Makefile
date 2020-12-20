@@ -4,6 +4,7 @@ include $(ROOT)/usr/include/make/PRdefs
 FINAL = YES
 
 SFZ2N64:=/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64
+MIDICVT:=/home/james/go/src/github.com/lambertjamesd/midicvt/midicvt
 
 ifeq ($(FINAL), YES)
 OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
@@ -158,8 +159,8 @@ sound/clips/%.aif: sound/clips/%.wav
 %.table: %.aif
 	$(SFZ2N64) $< -o $@
 
-%.aifc: %.aif %.table
-	wine /home/james/Documents/AudioTools/tools/ADPCMENC.EXE -c $(word 2,$^) $< $@
+%.aifc: %.aif
+	$(SFZ2N64) -o $@ $^
 
 build/audio/player.sounds: $(PLAYER_SOUNDS)
 	@mkdir -p $(@D)
@@ -184,7 +185,7 @@ SONG_FILES = build/music/AuroraBorealis.mid \
 build/music/%.mid: sound/music/%.mid sound/music/%.meta
 	@mkdir -p $(@D)
 	midicomp $< | grep PrCh > $@.instruments
-	/home/james/go/src/github.com/lambertjamesd/midicvt/midicvt $< $@ --metadata $(word 2,$^)
+	$(MIDICVT) $< $@ --metadata $(word 2,$^)
 
 build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 	@mkdir -p $(@D)
