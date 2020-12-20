@@ -184,7 +184,7 @@ SONG_FILES = build/music/AuroraBorealis.mid \
 
 build/music/%.mid: sound/music/%.mid sound/music/%.meta
 	@mkdir -p $(@D)
-	midicomp $< | grep PrCh > $@.instruments
+	# midicomp $< | grep PrCh > $@.instruments
 	$(MIDICVT) $< $@ --metadata $(word 2,$^)
 
 build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
