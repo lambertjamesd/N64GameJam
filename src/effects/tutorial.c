@@ -10,6 +10,7 @@
 #include "src/robot/robot.h"
 #include "src/cadet/cadet.h"
 #include "src/puzzle/entranceexit.h"
+#include "src/strings/strings.h"
 
 #define ANIMATION_DURATION      0.5f
 
@@ -40,13 +41,13 @@ enum ButtonFontMapping gTutorialButton[TutorialMenuTypeCount] = {
 };
 
 char* gTutorialText[TutorialMenuTypeCount] = {
-    "Move",
-    "Jump",
-    "Attack",
-    "Switch",
-    "Camera",
-    "Map",
-    "Skip",
+    STR_MOVE,
+    STR_JUMP,
+    STR_ATTACK,
+    STR_SWITCH,
+    STR_CAMERA,
+    STR_MAP,
+    STR_SKIP,
 };
 
 void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {

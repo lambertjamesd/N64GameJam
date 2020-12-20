@@ -31,6 +31,7 @@
 #include "src/font/fontrenderer.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 #include "src/font/buttons/buttons.h"
+#include "src/strings/strings.h"
 
 struct LevelDefinition* gLoadedLevel;
 
@@ -110,9 +111,9 @@ int levelSwitchToRobot() {
 }
 
 char* gCamHudText[] = {
-    "Move",
-    "View",
-    "Back",
+    STR_MAP_MOVE,
+    STR_MAP_VIEW,
+    STR_MAP_BACK,
 };
 
 char gCamHudIcon[] = {

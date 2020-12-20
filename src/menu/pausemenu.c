@@ -11,6 +11,7 @@
 #include "src/save/savefile.h"
 #include "src/audio/playersounds.h"
 #include "src/audio/audio.h"
+#include "src/strings/strings.h"
 
 #define PAUSE_MENU_WIDTH    120
 #define PAUSE_MENU_HEIGHT   160
@@ -23,29 +24,27 @@ float gVolumeSettingSteps[SOUND_STEP_COUNT] = {1.0f, 0.666f, 0.333f, 0.0f};
 int gSoundVolumeSetting = 0;
 int gMusicVolumeSetting = 0;
 
-char* gPauseMenuTitle = "Paused";
-
 char* gSoundVolumeNames[SOUND_STEP_COUNT] = {
-    "Sound - High",
-    "Sound - Medium",
-    "Sound - Low",
-    "Sound - Off",
+    STR_SOUND_HIGH,
+    STR_SOUND_MEDIUM,
+    STR_SOUND_LOW,
+    STR_SOUND_OFF,
 };
 
 char* gMusicVolumeNames[SOUND_STEP_COUNT] = {
-    "Music - High",
-    "Music - Medium",
-    "Music - Low",
-    "Music - Off",
+    STR_MUSIC_HIGH,
+    STR_MUSIC_MEDIUM,
+    STR_MUSIC_LOW,
+    STR_MUSIC_OFF,
 };
 
 char* gPauseMenuText[PauseMenuItemCount] = {
-    "Resume",
-    "Restart Level",
-    "Sound - High",
-    "Music - High",
-    "Save",
-    "Save and Quit",
+    STR_RESUME,
+    STR_RESTART_LEVEL,
+    STR_SOUND_HIGH,
+    STR_MUSIC_HIGH,
+    STR_SAVE,
+    STR_SAVE_AND_QUIT,
 };
 
 struct PauseMenu gPauseMenu;
@@ -73,7 +72,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
 
     gSPDisplayList(state->dl++, gEndlessBossBattleUse);
 
-    float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, gPauseMenuTitle);
+    float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, STR_PAUSED);
 
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
 
@@ -81,7 +80,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
         fontRenderer,
         &gEndlessBossBattle,
         &state->dl,
-        gPauseMenuTitle,
+        STR_PAUSED,
         (SCREEN_WD >> 1) - (int)(halfWidth),
         ((gScreenHeight - modifiedHeight) >> 1) + SCALE_FOR_PAL(10)
     );
@@ -92,7 +91,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
 
     for (i = 0; i < PauseMenuItemCount; ++i) {
         int isSaved = i == PauseMenuItemSave && !saveFileNeedsSave();
-        char* text = isSaved ? "Saved" : gPauseMenuText[i];
+        char* text = isSaved ? STR_SAVED : gPauseMenuText[i];
         halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, text) * 0.5f;
         int yOffset = 20 + i * modfiedLineHeight - (int)((modfiedLineHeight * PauseMenuItemCount) >> 1);
 

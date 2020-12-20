@@ -20,6 +20,7 @@
 #include "src/font/buttons/buttons.h"
 #include "src/audio/audio.h"
 #include "src/audio/allseq.h"
+#include "src/strings/strings.h"
 
 extern char _titlescreenSegmentRomStart[];
 extern char _titlescreenSegmentRomEnd[];
@@ -79,21 +80,21 @@ void mainMenuStart(struct Menu* menu, void* data) {
 
 struct MenuItem gSelectCoopItems[] = {
     {
-        "Single Player",
+        STR_SINGLE_PLAYER,
         MenuItemAction,
         .action = mainMenuStart,
         {MENU_SELECTED_COLOR},
         0,
     },
     {
-        "Co-op",
+        STR_CO_OP,
         MenuItemAction,
         .action = mainMenuStart,
         {MENU_SELECTED_COLOR},
         (void*)1,
     },
     {
-        "Back",
+        STR_BACK,
         MenuItemBack,
         .popDistance = 1,
         {MENU_SELECTED_COLOR},
@@ -102,7 +103,7 @@ struct MenuItem gSelectCoopItems[] = {
 };
 
 struct MenuItemGroup gSelectCoopGroup = {
-    "Players",
+    STR_PLAYERS,
     gSelectCoopItems,
     3,
 };
@@ -129,14 +130,14 @@ void eraseMenuConfirm(struct Menu* menu, void* data) {
 
 struct MenuItem gEraseConfirmMenuItems[] = {
     {
-        "Cancel",
+        STR_CANCEL,
         MenuItemBack,
         .popDistance = 1,
         {MENU_SELECTED_COLOR},
         0
     },
     {
-        "Erase",
+        STR_ERASE_CONFIRM,
         MenuItemAction,
         .action = eraseMenuConfirm,
         {MENU_BAD_COLOR},
@@ -145,7 +146,7 @@ struct MenuItem gEraseConfirmMenuItems[] = {
 };
 
 struct MenuItemGroup gEraseMenuItemGroup = {
-    "Are you sure?",
+    STR_ARE_YOU_SURE,
     gEraseConfirmMenuItems,
     2,
 };
@@ -153,7 +154,7 @@ struct MenuItemGroup gEraseMenuItemGroup = {
 ////////////////////
 
 struct MenuItemGroup gLevelSelectGroup = {
-    "Level Select",
+    STR_LEVEL_SELECT,
     0,
     6,
     MenuTypeList,
@@ -164,7 +165,7 @@ struct MenuItemGroup gLevelSelectGroup = {
 
 struct MenuItem gNewGameItems[] = {
     {
-        "New Game",
+        STR_NEW_GAME,
         MenuItemAction,
         .action = mainMenuSelectLevel,
         {MENU_GOOD_COLOR},
@@ -180,21 +181,21 @@ struct MenuItemGroup gNewGameGroup = {
 
 struct MenuItem gMainMenuItems[] = {
     {
-        "Continue",
+        STR_CONTINUE,
         MenuItemAction,
         .action = mainMenuSelectLevel,
         {MENU_GOOD_COLOR},
         (void*)-1,
     },
     {
-        "Level Select",
+        STR_LEVEL_SELECT,
         MenuItemMenu,
         .targetMenu = &gLevelSelectGroup,
         {MENU_SELECTED_COLOR},
         0,
     },
     {
-        "Erase",
+        STR_ERASE,
         MenuItemMenu,
         .targetMenu = &gEraseMenuItemGroup,
         {MENU_BAD_COLOR},
@@ -476,7 +477,7 @@ int mainMenuBuildLevelSelect() {
 
     struct Color selectColor = {MENU_SELECTED_COLOR};
 
-    items[0].text = "Back";
+    items[0].text = STR_BACK;
     items[0].targetMenu = 0;
     items[0].type = MenuItemBack;
     items[0].data = 0;
