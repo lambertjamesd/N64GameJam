@@ -219,6 +219,15 @@ void createGfxTask(GFXInfo *i) {
         gSPMatrix(state.dl++, OS_K0_TO_PHYSICAL(&dynamicp->projection[index]), G_MTX_PROJECTION|G_MTX_LOAD|G_MTX_NOPUSH);
         gSPMatrix(state.dl++, OS_K0_TO_PHYSICAL(&dynamicp->viewing[index]), G_MTX_MODELVIEW|G_MTX_LOAD|G_MTX_NOPUSH);
 
+        if (gCurrentLevelTheme) {
+            dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);
+        } else {
+            dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0, 0);
+        }
+
+        gSPClearGeometryMode(state.dl++, G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_CULL_FRONT | G_FOG | G_LIGHTING | G_SHADE);
+        gSPSetGeometryMode(state.dl++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
+
         if (gCurrentLevelGraphics && gCurrentLevelTheme) {
             gSPMatrix(state.dl++, OS_K0_TO_PHYSICAL(&dynamicp->worldScale[index]), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
             graphicsRenderLevelTileGrid(&gCurrentLevelGraphics->grid, gCurrentLevelTheme->materials, gCurrentLevelTheme->materialCount, &state);
@@ -230,12 +239,6 @@ void createGfxTask(GFXInfo *i) {
             gSPSetGeometryMode(state.dl++, G_ZBUFFER | G_SHADING_SMOOTH | G_CULL_BACK);
             gDPSetRenderMode(state.dl++, G_RM_ZB_OPA_SURF, G_RM_ZB_OPA_SURF2);
             gDPSetTextureLUT(state.dl++, G_TT_NONE);
-        }
-
-        if (gCurrentLevelTheme) {
-            dynamicActorGroupRender(&gScene.dynamicActors, &state, gCurrentLevelTheme->dynamicMaterials, gCurrentLevelTheme->dynamicMaterialCleanup, gCurrentLevelTheme->dynamicMaterialCount);
-        } else {
-            dynamicActorGroupRender(&gScene.dynamicActors, &state, 0, 0, 0);
         }
 
 	    gDPSetRenderMode(state.dl++, G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2);

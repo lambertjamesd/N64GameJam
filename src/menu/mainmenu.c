@@ -174,7 +174,7 @@ struct MenuItem gNewGameItems[] = {
 };
 
 struct MenuItemGroup gNewGameGroup = {
-    "",
+    STR_EMPTY,
     gNewGameItems,
     1,
 };
@@ -204,7 +204,7 @@ struct MenuItem gMainMenuItems[] = {
 };
 
 struct MenuItemGroup gMainMenuGroup = {
-    "",
+    STR_EMPTY,
     gMainMenuItems,
     3,
     MenuTypeLarge,

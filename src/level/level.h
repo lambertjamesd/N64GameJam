@@ -5,6 +5,7 @@
 #include "src/collision/levelcollisiongrid.h"
 #include "src/graphics/levelgraphics.h"
 #include "src/graphics/levelthemegraphics.h"
+#include "src/strings/strings.h"
 
 typedef void (*CleanupFunction)(void*);
 
@@ -66,7 +67,6 @@ struct LevelData {
     int platformSlotCount;
     struct LevelGemDef* gems;
     int gemCount;
-    char* name;
     char* musicRomStart;
     char* musicRomEnd;
 };
@@ -78,7 +78,7 @@ struct LevelThemeDefinition {
 };
 
 struct LevelDefinition {
-    char* name;
+    enum StringIndex name;
     char* levelRomStart;
     char* levelRomEnd;
     struct LevelData* levelData;

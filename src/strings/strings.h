@@ -1,90 +1,90 @@
 
-#ifndef LANG
-// default to english
+#ifndef STRINGS_STRINGS_H
+#define STRINGS_STRINGS_H
 
-#define STR_SINGLE_PLAYER       "Single Player"
-#define STR_CO_OP               "Co-op"
-#define STR_BACK                "Back"
-#define STR_PLAYERS             "Players"
+enum Languages {
+    LangEnglish,
+    LangScots,
+    LangScotsGalic,
+    LangItalian,
+    LangCount,
+};
 
-#define STR_CANCEL              "Cancel"
-#define STR_ERASE_CONFIRM       "Erase"
-#define STR_ARE_YOU_SURE        "Are you sure?"
+enum StringIndex {
+    STR_EMPTY,
+    STR_SINGLE_PLAYER,
+    STR_CO_OP,
+    STR_BACK,
+    STR_PLAYERS,
 
-#define STR_LEVEL_SELECT        "Level Select"
+    STR_CANCEL,
+    STR_ERASE_CONFIRM,
+    STR_ARE_YOU_SURE,
 
-#define STR_NEW_GAME            "New Game"
+    STR_NEW_GAME,
 
-#define STR_CONTINUE            "Continue"
-#define STR_LEVEL_SELECT        "Level Select"
-#define STR_ERASE               "Erase"
+    STR_CONTINUE,
+    STR_LEVEL_SELECT,
+    STR_ERASE,
 
-#define STR_PAUSED              "Paused"
+    STR_PAUSED,
 
-#define STR_SOUND_HIGH          "Sound - High"
-#define STR_SOUND_MEDIUM        "Sound - Medium"
-#define STR_SOUND_LOW           "Sound - Low"
-#define STR_SOUND_OFF           "Sound - Off"
+    STR_SOUND_HIGH,
+    STR_SOUND_MEDIUM,
+    STR_SOUND_LOW,
+    STR_SOUND_OFF,
 
-#define STR_MUSIC_HIGH          "Music - High"
-#define STR_MUSIC_MEDIUM        "Music - Medium"
-#define STR_MUSIC_LOW           "Music - Low"
-#define STR_MUSIC_OFF           "Music - Off"
+    STR_MUSIC_HIGH,
+    STR_MUSIC_MEDIUM,
+    STR_MUSIC_LOW,
+    STR_MUSIC_OFF,
 
-#define STR_RESUME              "Resume"
-#define STR_RESTART_LEVEL       "Restart Level"
-#define STR_SAVE                "Save"
-#define STR_SAVED               "Saved"
-#define STR_SAVE_AND_QUIT       "Save and Quit"
+    STR_RESUME,
+    STR_RESTART_LEVEL,
+    STR_SAVE,
+    STR_SAVED,
+    STR_SAVE_AND_QUIT,
 
-#define STR_MOVE                "Move"
-#define STR_JUMP                "Jump"
-#define STR_ATTACK              "Attack"
-#define STR_SWITCH              "Switch"
-#define STR_CAMERA              "Camera"
-#define STR_MAP                 "Map"
-#define STR_SKIP                "Skip"
+    STR_MOVE,
+    STR_JUMP,
+    STR_ATTACK,
+    STR_SWITCH,
+    STR_CAMERA,
+    STR_MAP,
+    STR_SKIP,
 
-#define STR_MAP_MOVE            "Move"
-#define STR_MAP_VIEW            "View"
-#define STR_MAP_BACK            "Back"
+    STR_MAP_MOVE,
+    STR_MAP_VIEW,
+    STR_MAP_BACK,
 
-#elif LANG=ITALIAN
+    STR_LVL_cadet_intro,
+    STR_LVL_switch_intro,
+    STR_LVL_robot_intro,
+    STR_LVL_robot_platform,
+    STR_LVL_switch_sizes,
+    STR_LVL_lava_platform,
+    STR_LVL_connected_colors,
+    STR_LVL_switch_tagteam,
+    STR_LVL_inverted_doors,
+    STR_LVL_platform_intro,
+    STR_LVL_spiral,
+    STR_LVL_loop_around,
+    STR_LVL_radioactive_river,
+    STR_LVL_canyon,
+    STR_LVL_track_blockage,
+    STR_LVL_raised_platform,
+    STR_LVL_moving_platforms,
+    STR_LVL_switch_mania,
+    STR_LVL_raise_robot,
+    STR_LVL_final,
 
-// TODO
-#define STR_SINGLE_PLAYER       "Single Player"
-#define STR_CO_OP               "Co-op"
-#define STR_BACK                "Back"
-#define STR_PLAYERS             "Players"
+    STR_COUNT,
+};
 
-#define STR_CANCEL              "Cancel"
-#define STR_ERASE_CONFIRM       "Erase"
-#define STR_ARE_YOU_SURE        "Are you sure?"
+extern char gSelectedLanguage;
+extern char* gStrings[LangCount][STR_COUNT];
 
-#define STR_LEVEL_SELECT        "Level Select"
+char* getStr(enum StringIndex name);
 
-#define STR_NEW_GAME            "New Game"
-
-#define STR_CONTINUE            "Continue"
-#define STR_LEVEL_SELECT        "Level Select"
-#define STR_ERASE               "Erase"
-
-#define STR_PAUSED              "Paused"
-
-#define STR_SOUND_HIGH          "Sound - High"
-#define STR_SOUND_MEDIUM        "Sound - Medium"
-#define STR_SOUND_LOW           "Sound - Low"
-#define STR_SOUND_OFF           "Sound - Off"
-
-#define STR_MUSIC_HIGH          "Music - High"
-#define STR_MUSIC_MEDIUM        "Music - Medium"
-#define STR_MUSIC_LOW           "Music - Low"
-#define STR_MUSIC_OFF           "Music - Off"
-
-#define STR_RESUME              "Resume"
-#define STR_RESTART_LEVEL       "Restart Level"
-#define STR_SAVE                "Save"
-#define STR_SAVED               "Saved"
-#define STR_SAVE_AND_QUIT       "Save and Quit"
 
 #endif

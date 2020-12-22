@@ -254,12 +254,6 @@ struct LevelGemDef _level_%s_gems[] = {
 
 	outputLevel.WriteString("};\n")
 
-	var humanName = tileMap.Name
-
-	if humanName == "" {
-		humanName = levelName
-	}
-
 	var romStart = "0"
 	var romEnd = "0"
 
@@ -288,7 +282,6 @@ struct LevelData _level_%s_levelData = {
 	%d,
 	_level_%s_gems,
 	%d,
-	"%s",
 	%s,
 	%s,
 };
@@ -303,7 +296,6 @@ struct LevelData _level_%s_levelData = {
 		levelName, len(tileMap.Platforms),
 		levelName, len(tileMap.PlatformSlots),
 		levelName, len(tileMap.Gems),
-		humanName,
 		romStart,
 		romEnd,
 	))

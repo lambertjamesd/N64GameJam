@@ -37,7 +37,7 @@ enum SphereActorCollideResult sphereActorCollideScene(struct SphereActor* actor,
 
             if (!(actor->groundCollisionMask & CollisionLayersRobot)) {
                 struct Vector3* normal = &collisionResult->contacts[i].normal;
-                struct Vector3 adjustedPos = *position;
+                struct Vector3 adjustedPos = collisionResult->contacts[i].point;
 
                 if (normal->x != 0.0f || normal->z != 0.0f) {
                     struct Vector2 offsetAmount;

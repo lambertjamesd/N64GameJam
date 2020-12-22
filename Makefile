@@ -253,8 +253,8 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/level/level.c	\
 	src/levels/levels.c \
 	src/levelthemes/alienworld/theme.c	\
-	src/levelthemes/alienworldred/theme.c	\
 	src/levelthemes/alienworldgrey/theme.c	\
+	src/levelthemes/alienworldred/theme.c	\
 	src/levelthemes/allthemes.c	\
 	src/levelthemes/menu/theme.c	\
 	src/math/basictransform.c   	\
@@ -281,6 +281,7 @@ CODEFILES = $(DEBUGGERFILES) \
 	src/rocket/geo/model.c \
 	src/rocket/rocket.c \
 	src/save/savefile.c	\
+	src/strings/strings.c \
 	src/system/assert.c		\
 	src/time/time.c		\
 	src/tjpeg/tjpgd.c \

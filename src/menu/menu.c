@@ -14,7 +14,7 @@ void menuListGetPage(struct MenuItemGroup* group, int selected) {
 }
 
 void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRenderer, struct MenuItemGroup* group, int selected, int scrollOffset, int xOffset) {
-    float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, group->title);
+    float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, getStr(group->title));
     
     gDPPipeSync(state->dl++);
     gSPDisplayList(state->dl++, gEndlessBossBattleUse);
@@ -24,7 +24,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
         fontRenderer,
         &gEndlessBossBattle,
         &state->dl,
-        group->title,
+        getStr(group->title),
         (SCREEN_WD/2) - (int)halfWidth + xOffset, (gScreenHeight >> 1) - SCALE_FOR_PAL(80)
     );
 
@@ -47,7 +47,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
     for (i = 0; i < group->itemCount; i++) {
         int sectionWidth = (int)(fontRendererMeasureWidth(
             &gEndlessBossBattle, 
-            group->items[i].text
+            getStr(group->items[i].text)
         ) * scale);
         int currentX = ((SCREEN_WD - sectionWidth)/2);
         if (currentX < x) {
@@ -101,7 +101,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
             fontRenderer,
             &gEndlessBossBattle,
             &state->dl,
-            group->items[i+scrollOffset].text,
+            getStr(group->items[i+scrollOffset].text),
             x, y
         );
 

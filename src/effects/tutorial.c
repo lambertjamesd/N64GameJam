@@ -40,7 +40,7 @@ enum ButtonFontMapping gTutorialButton[TutorialMenuTypeCount] = {
     ButtonFontMappingStart,
 };
 
-char* gTutorialText[TutorialMenuTypeCount] = {
+enum StringIndex gTutorialText[TutorialMenuTypeCount] = {
     STR_MOVE,
     STR_JUMP,
     STR_ATTACK,
@@ -58,7 +58,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
         buttonText[1] = 0;
 
         float menuWidth = (fontRendererMeasureWidth(&gButtonFont, buttonText) + 
-            fontRendererMeasureWidth(&gEndlessBossBattle, gTutorialText[menu->type])) * TEXT_SCALE + BAR_SIDE_PADDING;
+            fontRendererMeasureWidth(&gEndlessBossBattle, getStr(gTutorialText[menu->type]))) * TEXT_SCALE + BAR_SIDE_PADDING;
 
         int halfWidth = (int)menuWidth / 2;
 
@@ -102,7 +102,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
                 fontRenderer, 
                 &gEndlessBossBattle, 
                 &state->dl, 
-                gTutorialText[menu->type],
+                getStr(gTutorialText[menu->type]),
                 (int)nextX,
                 (int)offset+BAR_Y-SCALE_FOR_PAL(8)
             );

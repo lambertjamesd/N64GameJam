@@ -6,6 +6,7 @@
 
 #include "src/graphics/graphics.h"
 #include "src/graphics/color.h"
+#include "src/strings/strings.h"
 
 struct Menu;
 
@@ -20,7 +21,7 @@ enum MenuItemType {
 };
 
 struct MenuItem {
-    char* text;
+    enum StringIndex text;
     enum MenuItemType type;
     union {
         struct MenuItemGroup* targetMenu;
@@ -43,7 +44,7 @@ struct MenuItemGroup;
 typedef void (*MenuItemGroupAdditionalRender)(struct MenuItemGroup* group, struct GraphicsState* state, struct FontRenderer* fontRenderer);
 
 struct MenuItemGroup {
-    char *title;
+    enum StringIndex title;
     struct MenuItem* items;
     int itemCount;
     enum MenuType type;

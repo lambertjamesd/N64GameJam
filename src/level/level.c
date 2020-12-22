@@ -110,7 +110,7 @@ int levelSwitchToRobot() {
     return gRobot.controllerIndex;
 }
 
-char* gCamHudText[] = {
+enum StringIndex gCamHudText[] = {
     STR_MAP_MOVE,
     STR_MAP_VIEW,
     STR_MAP_BACK,
@@ -170,6 +170,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
 
     int i;
     for (i = 0; i < gScene.activeViewportCount && i < 2; ++i) {
+        break;
         if (gInputMask[i] & InputMaskFreeCamera) {
             fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
 
@@ -180,7 +181,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
             int itemIndex;
 
             for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
-                viewWidth += (int)fontRendererMeasureWidth(&gEndlessBossBattle, gCamHudText[itemIndex]);
+                viewWidth += (int)fontRendererMeasureWidth(&gEndlessBossBattle, getStr(gCamHudText[itemIndex]));
             }
 
             gDPPipeSync(state->dl++);
@@ -203,12 +204,12 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
                     fontRenderer,
                     &gEndlessBossBattle,
                     &state->dl,
-                    gCamHudText[itemIndex],
+                    getStr(gCamHudText[itemIndex]),
                     x,
                     yScreen
                 );
 
-                x += (int)fontRendererMeasureWidth(&gEndlessBossBattle, gCamHudText[itemIndex]) + CAM_HUD_PADDING;
+                x += (int)fontRendererMeasureWidth(&gEndlessBossBattle, getStr(gCamHudText[itemIndex])) + CAM_HUD_PADDING;
             }
 
             gDPPipeSync(state->dl++);
@@ -216,7 +217,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
             x = centerScreen - (viewWidth >> 1) + CAM_HUD_PADDING;
             
             for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
-                int textWidth = (int)fontRendererMeasureWidth(&gEndlessBossBattle, gCamHudText[itemIndex]);
+                int textWidth = (int)fontRendererMeasureWidth(&gEndlessBossBattle, getStr(gCamHudText[itemIndex]));
                 char text[4];
                 text[0] = gCamHudIcon[itemIndex];
                 text[1] = 0;
@@ -337,7 +338,7 @@ void levelUpdate(void* data) {
                 gScene.camera[0].targetPosition = gRocket.landingSpot;
             } else if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
                 gCadet.actor.stateFlags &= ~CADET_IS_INVISIBLE;
-                levelTitleEffectInit(&gLevelTitleEffect, gLoadedLevel->levelData->name);
+                levelTitleEffectInit(&gLevelTitleEffect, getStr(_level_group_all_levels[gCurrentLevel].name));
                 gScene.camera[0].targetPosition = gCadet.transform.position;
                 gScene.camera[0].followDistanceStep = 0;
             }
@@ -697,6 +698,6 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gCadet.actor.stateFlags |= CADET_IS_INVISIBLE;
         gFadeTimer = FADE_DURATION;
     } else {
-        levelTitleEffectInit(&gLevelTitleEffect, levelDef->levelData->name);
+        levelTitleEffectInit(&gLevelTitleEffect, getStr(_level_group_all_levels[gCurrentLevel].name));
     }
 }

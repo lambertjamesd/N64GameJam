@@ -24,21 +24,21 @@ float gVolumeSettingSteps[SOUND_STEP_COUNT] = {1.0f, 0.666f, 0.333f, 0.0f};
 int gSoundVolumeSetting = 0;
 int gMusicVolumeSetting = 0;
 
-char* gSoundVolumeNames[SOUND_STEP_COUNT] = {
+enum StringIndex gSoundVolumeNames[SOUND_STEP_COUNT] = {
     STR_SOUND_HIGH,
     STR_SOUND_MEDIUM,
     STR_SOUND_LOW,
     STR_SOUND_OFF,
 };
 
-char* gMusicVolumeNames[SOUND_STEP_COUNT] = {
+enum StringIndex gMusicVolumeNames[SOUND_STEP_COUNT] = {
     STR_MUSIC_HIGH,
     STR_MUSIC_MEDIUM,
     STR_MUSIC_LOW,
     STR_MUSIC_OFF,
 };
 
-char* gPauseMenuText[PauseMenuItemCount] = {
+enum StringIndex gPauseMenuText[PauseMenuItemCount] = {
     STR_RESUME,
     STR_RESTART_LEVEL,
     STR_SOUND_HIGH,
@@ -72,7 +72,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
 
     gSPDisplayList(state->dl++, gEndlessBossBattleUse);
 
-    float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, STR_PAUSED);
+    float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, getStr(STR_PAUSED));
 
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
 
@@ -80,7 +80,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
         fontRenderer,
         &gEndlessBossBattle,
         &state->dl,
-        STR_PAUSED,
+        getStr(STR_PAUSED),
         (SCREEN_WD >> 1) - (int)(halfWidth),
         ((gScreenHeight - modifiedHeight) >> 1) + SCALE_FOR_PAL(10)
     );
@@ -91,20 +91,20 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
 
     for (i = 0; i < PauseMenuItemCount; ++i) {
         int isSaved = i == PauseMenuItemSave && !saveFileNeedsSave();
-        char* text = isSaved ? STR_SAVED : gPauseMenuText[i];
+        char* text = getStr(isSaved ? STR_SAVED : gPauseMenuText[i]);
         halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, text) * 0.5f;
         int yOffset = 20 + i * modfiedLineHeight - (int)((modfiedLineHeight * PauseMenuItemCount) >> 1);
 
         struct Color color = {MENU_TEXT_COLOR};
 
         if (i == PauseMenuItemSoundVolume) {
-            text = gSoundVolumeNames[gSoundVolumeSetting];
+            text = getStr(gSoundVolumeNames[gSoundVolumeSetting]);
 
             if (gSoundVolumeSetting == SOUND_STEP_COUNT - 1) {
                 color = gBadColor;
             }
         } else if (i == PauseMenuItemMusicVolume) {
-            text = gMusicVolumeNames[gMusicVolumeSetting];
+            text = getStr(gMusicVolumeNames[gMusicVolumeSetting]);
 
             if (gMusicVolumeSetting == SOUND_STEP_COUNT - 1) {
                 color = gBadColor;
