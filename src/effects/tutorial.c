@@ -157,12 +157,12 @@ int tutorialDidPlayerMove() {
 
 int tutorialDidPlayerCamera() {
     return gCurrentLevel >= 1 && gCadet.controllerIndex != -1 && (gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
-            getButtonDown(gCadet.controllerIndex, R_CBUTTONS | L_CBUTTONS | U_CBUTTONS | D_CBUTTONS);
+            getButtonDown(gCadet.controllerIndex, R_CBUTTONS | L_CBUTTONS | U_CBUTTONS | D_CBUTTONS) || gCurrentLevel >= 2;
 }
 
 int tutorialDidPlayerCamFree() {
     return gCurrentLevel >= 1 && gCadet.controllerIndex != -1 && ((gInputMask[gCadet.controllerIndex] & InputMaskPlayer) &&
-            getButtonDown(gCadet.controllerIndex, R_TRIG) || (gInputMask[gCadet.controllerIndex] & InputMaskFreeCamera));
+            getButtonDown(gCadet.controllerIndex, R_TRIG) || (gInputMask[gCadet.controllerIndex] & InputMaskFreeCamera)) || gCurrentLevel >= 2;
 }
 
 int tutorialDidPlayerJump() {
