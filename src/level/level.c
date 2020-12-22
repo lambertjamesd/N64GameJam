@@ -170,7 +170,6 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
 
     int i;
     for (i = 0; i < gScene.activeViewportCount && i < 2; ++i) {
-        break;
         if (gInputMask[i] & InputMaskFreeCamera) {
             fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
 
