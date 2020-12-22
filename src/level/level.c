@@ -188,13 +188,24 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
 
             int x = centerScreen - (viewWidth >> 1) + CAM_HUD_PADDING;
 
-            gDPFillRectangle(
-                state->dl++, 
-                x - CAM_HUD_PADDING, 
-                yScreen - SCALE_FOR_PAL(6),
-                x - CAM_HUD_PADDING + viewWidth, 
-                yScreen + SCALE_FOR_PAL(30)
-            );
+            if (x - CAM_HUD_PADDING < gScene.viewports[i].minx) {
+                gDPFillRectangle(
+                    state->dl++, 
+                    gScene.viewports[i].minx, 
+                    yScreen - SCALE_FOR_PAL(6),
+                    gScene.viewports[i].maxx, 
+                    yScreen + SCALE_FOR_PAL(30)
+                );
+            } else {
+                gDPFillRectangle(
+                    state->dl++, 
+                    x - CAM_HUD_PADDING, 
+                    yScreen - SCALE_FOR_PAL(6),
+                    x - CAM_HUD_PADDING + viewWidth, 
+                    yScreen + SCALE_FOR_PAL(30)
+                );
+            }
+
             gDPPipeSync(state->dl++);
 
             gSPDisplayList(state->dl++, gEndlessBossBattleUse);

@@ -189,10 +189,10 @@ build/music/%.mid: sound/music/%.mid sound/music/%.meta
 
 build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 	@mkdir -p $(@D)
-	$(SFZ2N64) sound/ins/Bank.ins -o build/ins/Bank.ctl
-	# cd sound/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
-	# mv sound/ins/Bank.ctl build/ins/Bank.ctl
-	# mv sound/ins/Bank.tbl build/ins/Bank.tbl
+	# $(SFZ2N64) sound/ins/Bank.ins -o build/ins/Bank.ctl
+	cd sound/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
+	mv sound/ins/Bank.ctl build/ins/Bank.ctl
+	mv sound/ins/Bank.tbl build/ins/Bank.tbl
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
