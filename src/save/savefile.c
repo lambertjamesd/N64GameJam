@@ -80,8 +80,10 @@ void saveFileMarkDidCompleteLevel(int level) {
 }
 
 void saveFileErase() {
+    char prevLanguage = saveFileSelectedLanguage();
     saveFileNew();
     saveFileSave();
+    saveFileSetSelectedLanguage(prevLanguage);
 }
 
 void saveUnlockAll() {
@@ -103,4 +105,12 @@ void saveFileMarkTutorial(int flags) {
 
 int saveFileNeedsSave() {
     return gNeedsSave;
+}
+
+char saveFileSelectedLanguage() {
+    return gSaveFile.levelData[MAX_LEVELS];
+}
+
+void saveFileSetSelectedLanguage(char value) {
+    gSaveFile.levelData[MAX_LEVELS] = value;
 }

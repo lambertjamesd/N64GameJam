@@ -2,7 +2,7 @@
 #ifndef _SAVE_SAVEFILE_H
 #define _SAVE_SAVEFILE_H
 
-#define MAX_LEVELS  27
+#define MAX_LEVELS  26
 
 #define SAVEFILE_LEARNED_MOVE           (1 << 0)
 #define SAVEFILE_LEARNED_JUMP           (1 << 1)
@@ -20,7 +20,7 @@
 struct SaveFile {
     int header;
     char tutorialFlags;
-    char levelData[MAX_LEVELS];
+    char levelData[MAX_LEVELS+1];
 };
 
 int saveFileDidCollectGem(int level, int gemIndex);
@@ -40,5 +40,8 @@ int saveFileCheckTutorial(int flags);
 void saveFileMarkTutorial(int flags);
 
 int saveFileNeedsSave();
+
+char saveFileSelectedLanguage();
+void saveFileSetSelectedLanguage(char value);
 
 #endif

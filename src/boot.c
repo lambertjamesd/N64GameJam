@@ -214,7 +214,14 @@ static void initGame(void)
     gListener = &gScene.camera[0].transform;
     cadetInit();
     robotInit();
+    // also loads the save file
     controllersInit();
+    gSelectedLanguage = saveFileSelectedLanguage();
+
+    if (gSelectedLanguage < 0 || gSelectedLanguage >= LangCount) {
+        gSelectedLanguage = LangEnglish;
+    }
+
     layoutMemory();
     graphicsInit(); 
     audioInit();
@@ -227,7 +234,8 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    gNextLevel = 17;
-    // gCurrentPlayMode = LevelPlayModeCoOp;
+    // gNextLevel = 1;
+    // gSelectedLanguage = LangScotsGalic;
+    // // gCurrentPlayMode = LevelPlayModeCoOp;
 }
 

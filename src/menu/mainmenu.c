@@ -380,7 +380,13 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
 }
 
 void mainMenuUpdate(void* data) {
-    if (getButtonDown(0, gKonamiCodeButtons[gKonamiCodeIndex])) {
+    if (getButton(0, L_TRIG) && getButtonDown(0, U_JPAD)) {
+        gSelectedLanguage = (gSelectedLanguage + 1) % LangCount;
+        saveFileSetSelectedLanguage(gSelectedLanguage);
+    } else if (getButton(0, L_TRIG) && getButtonDown(0, D_JPAD)) {
+        gSelectedLanguage = (gSelectedLanguage + LangCount - 1) % LangCount;
+        saveFileSetSelectedLanguage(gSelectedLanguage);
+    } else if (getButtonDown(0, gKonamiCodeButtons[gKonamiCodeIndex])) {
         ++gKonamiCodeIndex;
 
         if (gKonamiCodeIndex == sizeof(gKonamiCodeButtons)/sizeof(*gKonamiCodeButtons)) {

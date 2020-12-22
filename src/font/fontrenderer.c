@@ -64,12 +64,14 @@ float fontRendererDrawCharacters(struct FontRenderer* fontRenderer, struct Font*
             int renderXInt = (int)(renderX * 4.0f);
             int renderRightInt = (int)(renderRight * 4.0f);
 
+            int yOffset = (int)(((int)character->yOffset << 2) * fontRenderer->sy);
+
             if (renderXInt < renderRightInt) {
                 assert((nextDL-fontRenderer->dl) < MAX_FONT_CHARACTERS);
                 gSPTextureRectangle(
                     nextDL++,
-                    renderXInt, shiftedY,
-                    renderRightInt, shiftedLower,
+                    renderXInt, shiftedY + yOffset,
+                    renderRightInt, shiftedLower + yOffset,
                     0,
                     (character->left << 5) + leftOffset, (character->top << 5) + topOffset,
                     deltaTextureX, deltaTextureY
@@ -98,7 +100,7 @@ float fontRendererMeasureWidth(struct Font* font, char* string) {
         struct FontCharacter* character = font->ansiiLookup[*string];
 
         if (character) {
-            result += character->w;
+            result += character->w + character->kerning;
         }
 
         ++string;

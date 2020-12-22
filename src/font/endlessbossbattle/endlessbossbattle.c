@@ -89,9 +89,10 @@ struct FontCharacter gEndlessBossBattleCharacters[] = {
     {'/',   27, 89, 5},
     {'<',   37, 89, 6},
     {'^',   10, 100, 7},
-    {'^',   10, 100, 7},
     {EBBUpArrow,   17, 100, 10},
-    {EBBDownArrow,   29, 100, 10},
+    {EBBDownArrow,   27, 100, 10},
+    {EBBAccent, 37, 100, 4, -4, -1},
+    {EBBHighAccent, 37, 100, 4, -4, -3},
     {' ',   3, 111, 2},
 
     {'\0',   0, 0, 0},

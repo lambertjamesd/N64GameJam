@@ -7,6 +7,8 @@
 enum EBBSpecial {
     EBBUpArrow = 1,
     EBBDownArrow = 2,
+    EBBAccent = 3,
+    EBBHighAccent = 4,
 };
 
 extern u8 _endless_boss_battle_ia4[];
