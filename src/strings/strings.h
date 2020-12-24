@@ -57,6 +57,8 @@ enum StringIndex {
     STR_MAP_VIEW,
     STR_MAP_BACK,
 
+    STR_LANGUAGE,
+
     STR_LVL_cadet_intro,
     STR_LVL_switch_intro,
     STR_LVL_robot_intro,

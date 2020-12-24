@@ -61,6 +61,8 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_MAP_VIEW] = "View",
         [STR_MAP_BACK] = "Back",
 
+        [STR_LANGUAGE] = "English",
+
         [STR_LVL_cadet_intro] = "Jump to it!",
         [STR_LVL_switch_intro] = "Doors and Switches",
         [STR_LVL_robot_intro] = "Big Robot Buddy",
@@ -129,6 +131,8 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_MAP_VIEW] = "Keek",
         [STR_MAP_BACK] = "Oot",
 
+        [STR_LANGUAGE] = "Scots",
+
         [STR_LVL_cadet_intro] = "Jimp tae it!",
         [STR_LVL_switch_intro] = "Doors an Switches",
         [STR_LVL_robot_intro] = "Muckle Robot Mate",
@@ -152,7 +156,7 @@ char* gStrings[LangCount][STR_COUNT] = {
     },
 
     [LangScotsGalic] = {
-        [STR_SINGLE_PLAYER] = "Cluicheadair Singilte",
+        [STR_SINGLE_PLAYER] = "Cluichidair Singilte",
         [STR_CO_OP] = "Co-ob",
         [STR_BACK] = "Air Ais",
         [STR_PLAYERS] = "Iomairtichean",
@@ -164,28 +168,28 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_NEW_GAME] = "Geama \003ur",
 
         [STR_CONTINUE] = "Buanachadh",
-        [STR_LEVEL_SELECT] = "Taghadh mapa",
-        [STR_ERASE] = "Suath e",
+        [STR_LEVEL_SELECT] = "Tagh mapa",
+        [STR_ERASE] = "Cuir dhan sguadal e",
 
         [STR_PAUSED] = "S\003oradh",
 
         [STR_SOUND_HIGH] = "Uaim - \004Ard",
         [STR_SOUND_MEDIUM] = "Uaim - Meadhanail",
         [STR_SOUND_LOW] = "Uaim - \004Iosal",
-        [STR_SOUND_OFF] = "Uaim - Balbh",
+        [STR_SOUND_OFF] = "Uaim - Cuir dheth",
 
         [STR_MUSIC_HIGH] = "Ce\003ol - \004Ard",
         [STR_MUSIC_MEDIUM] = "Ce\003ol - Meadhanail",
         [STR_MUSIC_LOW] = "Ce\003ol - \004Iosal",
-        [STR_MUSIC_OFF] = "Ce\003ol - Balbh",
+        [STR_MUSIC_OFF] = "Ce\003ol - Cuir dheth ",
 
         [STR_RESUME] = "Buanachadh",
-        [STR_RESTART_LEVEL] = "Ath-toisichadh Mapa",
-        [STR_SAVE] = "Caomhnadh",
-        [STR_SAVED] = "Chaomh",
-        [STR_SAVE_AND_QUIT] = "Ceomhnadh is tog na si\003uil",
+        [STR_RESTART_LEVEL] = "Ath-toisichadh",
+        [STR_SAVE] = "S\003abhail",
+        [STR_SAVED] = "Sh\003abhail",
+        [STR_SAVE_AND_QUIT] = "S\003abhail agus dùin",
 
-        [STR_MOVE] = "Sioftaigeadh",
+        [STR_MOVE] = "Caraich",
         [STR_JUMP] = "Leum",
         [STR_ATTACK] = "Sl\003araigeadh",
         [STR_SWITCH] = "Suidseadh",
@@ -197,14 +201,16 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_MAP_VIEW] = "Seall",
         [STR_MAP_BACK] = "Air Ais",
 
+        [STR_LANGUAGE] = "G\003aidhlig",
+
         [STR_LVL_cadet_intro] = "Leum Bhuaithe!",
-        [STR_LVL_switch_intro] = "Dorasan agus Steafagan",
+        [STR_LVL_switch_intro] = "Dorasan agus Suidsean",
         [STR_LVL_robot_intro] = "R\003obot Caraid M\003or",
-        // [STR_LVL_robot_platform] = "Robot Springboard",
+        [STR_LVL_robot_platform] = "B\003ord Spring an Robot",
         [STR_LVL_switch_sizes] = "Steafag M\003or",
-        [STR_LVL_lava_platform] = "Rèidio-be\003o",
+        [STR_LVL_lava_platform] = "R\003eidio-be\003o",
         [STR_LVL_connected_colors] = "Dathan Cheangailte",
-        // [STR_LVL_switch_tagteam] = "Switch Tag Team",
+        [STR_LVL_switch_tagteam] = "Suidse Sgioba",
         [STR_LVL_inverted_doors] = "Dorasan Ais-thionndaichte",
         [STR_LVL_platform_intro] = "Cl\003aran-gluasadaiche",
         [STR_LVL_spiral] = "Cuachag",
@@ -212,10 +218,10 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_LVL_radioactive_river] = "Crois-abhainn",
         [STR_LVL_canyon] = "Canyon",
         [STR_LVL_track_blockage] = "Traca Suidseadh",
-        [STR_LVL_raised_platform] = "Bun-adhbhar \003ardaichte",
+        [STR_LVL_raised_platform] = "Bun-adhbhar \004Ardaichte",
         [STR_LVL_moving_platforms] = "Cl\003aran-gluasadaiche",
-        [STR_LVL_switch_mania] = "Ioma-shlighe do Steafagan",
-        // [STR_LVL_raise_robot] = "Robot Raiser",
+        [STR_LVL_switch_mania] = "Ioma-shlighe do Suidsean",
+        [STR_LVL_raise_robot] = "Togadair an R\003obot",
         [STR_LVL_final] = "T\003im gu dol a-mach",
     },
 
@@ -264,6 +270,8 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_MAP_MOVE] = "Muovere",
         [STR_MAP_VIEW] = "Guardare",
         [STR_MAP_BACK] = "Torna",
+
+        [STR_LANGUAGE] = "Italiano",
 
         [STR_LVL_cadet_intro] = "Salta ad esso!",
         [STR_LVL_switch_intro] = "Porte ed Interruttori",
