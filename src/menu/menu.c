@@ -17,7 +17,7 @@ void menuGroupRender(struct GraphicsState* state, struct FontRenderer* fontRende
     float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, getStr(group->title));
     
     gDPPipeSync(state->dl++);
-    gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
     gDPSetEnvColor(state->dl++, 255, 255, 255, 255);
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f*gScreenYScale);
     fontRendererDrawCharacters(

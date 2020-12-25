@@ -7,8 +7,8 @@ SFZ2N64:=/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64
 MIDICVT:=/home/james/go/src/github.com/lambertjamesd/midicvt/midicvt
 
 ifeq ($(FINAL), YES)
-OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
-# OPTIMIZER       = -g
+# OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
+OPTIMIZER       = -g
 LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
 else
@@ -200,13 +200,15 @@ DEBUGGERHFILES = src/debugger/serial.h \
 DEBUGGERFILES = src/debugger/serial.c \
 	src/debugger/debugger.c
 
+VALIDATORFILES = src/gfxvalidator/validator.c
+
 HFILES = $(DEBUGGERHFILES) \
 	src/game.h	\
 	src/audio/audio.h		\
 	src/boot.h		\
 	src/graphics/graphics.h
 
-CODEFILES = $(DEBUGGERFILES) \
+CODEFILES = $(DEBUGGERFILES) $(VALIDATORFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
 	src/audio/playersounds.c \

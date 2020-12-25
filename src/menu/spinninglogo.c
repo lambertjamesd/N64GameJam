@@ -70,7 +70,7 @@ void spinningLogoText(void* data, struct GraphicsState* state, struct FontRender
         gDPPipeSync(state->dl++);
         gDPSetCycleType(state->dl++, G_CYC_1CYCLE);
 
-        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
         fontRendererSetScale(fontRenderer, 1.0f, gScreenYScale);
         fontRendererDrawCharacters(
             fontRenderer,

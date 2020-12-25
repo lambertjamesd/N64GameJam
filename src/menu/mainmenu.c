@@ -214,7 +214,7 @@ struct MenuItemGroup gMainMenuGroup = {
 
 void levelSelectPrepGems(struct MenuItemGroup* group, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     gDPPipeSync(state->dl++);
-    gSPDisplayList(state->dl++, gButtonFontUse);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gButtonFontUse));
 }
 
 void levelSelectRenderGems(void* data, int x, int y, int selected, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
@@ -327,7 +327,7 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
     menuRender(data, state, fontRenderer);
 
     if (gMainMenuTotalGems && gMainMenu.itemStackDepth != 0) {
-        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
         char buffer[16];
         sprintf(buffer, "%d/%d", gMainMenuTotalGems, 3 * _level_group_all_levels_count);
         fontRendererSetScale(fontRenderer, 1.0f, 1.0f);
@@ -344,7 +344,7 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
         );
 
         gDPPipeSync(state->dl++);
-        gSPDisplayList(state->dl++, gButtonFontUse);
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gButtonFontUse));
 
         buffer[0] = ButtonFontMappingGem;
         buffer[1] = '\0';
@@ -552,8 +552,8 @@ void mainMenuInit() {
     gScene.viewports[0].miny = 0;
     gScene.viewports[0].maxy = gScreenHeight;
     gScene.fov[0] = 54.188044907f;
-    gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
-    gScene.transparentMaterialCleanup[TransparentMaterialTypeShockwave] = _shockwave_mat_cleanup;
+    gScene.transparentMaterials[TransparentMaterialTypeShockwave] = (Gfx*)K0_TO_PHYS(_shockwave_mat);
+    gScene.transparentMaterialCleanup[TransparentMaterialTypeShockwave] = (Gfx*)K0_TO_PHYS(_shockwave_mat_cleanup);
     
 
     gMainMenuTime = 0.0f;

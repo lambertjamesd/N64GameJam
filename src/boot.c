@@ -234,7 +234,7 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    // gNextLevel = 1;
+    // gNextLevel = SceneIndexMainMenu;
     // gSelectedLanguage = LangScotsGalic;
     // // gCurrentPlayMode = LevelPlayModeCoOp;
 }

@@ -83,7 +83,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
             );
             gDPPipeSync(state->dl++);
 
-            gSPDisplayList(state->dl++, gButtonFontUse);
+            gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gButtonFontUse));
             fontRendererSetScale(fontRenderer, TEXT_SCALE, TEXT_SCALE * gScreenYScale);
             float nextX = fontRendererDrawCharacters(
                 fontRenderer, 
@@ -97,7 +97,7 @@ void tutorialRender(void* data, struct GraphicsState* state, struct FontRenderer
 
             nextX += BAR_SIDE_PADDING;
 
-            gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+            gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
             fontRendererDrawCharacters(
                 fontRenderer, 
                 &gEndlessBossBattle, 

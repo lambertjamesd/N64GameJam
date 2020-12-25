@@ -71,10 +71,10 @@ void switchRender(struct DynamicActor* data, struct GraphicsState* state) {
             toRender = gLoadedLevel->theme->theme->themeMeshes[LevelThemeMeshesSSwitchUp + puzzleSwitch->sender.currentSignal];
             break;
         case PuzzleSwitchTypeLargePermanant:
-            toRender = PermanantSwitch_PermanantSwitch_mesh_tri_0;
+            toRender = (Gfx*)OS_K0_TO_PHYSICAL((Gfx*)PermanantSwitch_PermanantSwitch_mesh_tri_0);
             break;
         case PuzzleSwitchTypeSmallPermanant:
-            toRender = PermanantSwitch_PermanantSwitch_mesh_tri_0;
+            toRender = (Gfx*)OS_K0_TO_PHYSICAL((Gfx*)PermanantSwitch_PermanantSwitch_mesh_tri_0);
             scale = 1.0f / 512.0f;
             break;
     }

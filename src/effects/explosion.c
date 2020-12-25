@@ -56,14 +56,14 @@ void explosionRender(struct DynamicActor* data, struct GraphicsState* state) {
     } else {
         gDPSetEnvColor(state->dl++, 10, alpha, (alpha >> 2) + 127, alpha);
     }
-    gSPDisplayList(state->dl++, _shockwave_mesh_tri_0);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(_shockwave_mesh_tri_0));
     gDPPipeSync(state->dl++);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 
     if (explosion->type == ExplosionTypeRobot) {
         gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(spikeTransform), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
         gDPSetCombineLERP(state->dl++, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
-        gSPDisplayList(state->dl++, _explosion_spike_mesh_tri_0);
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(_explosion_spike_mesh_tri_0));
         gDPPipeSync(state->dl++);
         gDPSetCombineLERP(state->dl++, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0);
         gDPPipeSync(state->dl++);

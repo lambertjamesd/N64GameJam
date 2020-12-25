@@ -70,7 +70,7 @@ void pauseMenuRender(void* data, struct GraphicsState* state, struct FontRendere
     );
     gDPPipeSync(state->dl++);
 
-    gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
 
     float halfWidth = fontRendererMeasureWidth(&gEndlessBossBattle, getStr(STR_PAUSED));
 

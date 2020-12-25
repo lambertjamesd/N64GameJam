@@ -664,9 +664,9 @@ Gfx mat_revert_Rocket_Rocket[] = {
 
 
 Gfx Rocket_Rocket_mesh[] = {
-	gsSPDisplayList(mat_Rocket_Rocket),
-	gsSPDisplayList(Rocket_Rocket_mesh_tri_0),
-	gsSPDisplayList(mat_revert_Rocket_Rocket),
+	gsSPDisplayList(OS_K0_TO_PHYSICAL(mat_Rocket_Rocket)),
+	gsSPDisplayList(OS_K0_TO_PHYSICAL(Rocket_Rocket_mesh_tri_0)),
+	gsSPDisplayList(OS_K0_TO_PHYSICAL(mat_revert_Rocket_Rocket)),
 	gsDPPipeSync(),
 	gsSPEndDisplayList(),
 };

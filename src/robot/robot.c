@@ -71,7 +71,7 @@ void robotRender(struct DynamicActor* data, struct GraphicsState* state) {
     gSPLookAt(state->dl++, K0_TO_PHYS(nextLookat));
 
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    gSPDisplayList(state->dl++, _robot_mesh);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(_robot_mesh));
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 

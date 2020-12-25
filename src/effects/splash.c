@@ -47,7 +47,7 @@ void splashEffectRender(struct DynamicActor* data, struct GraphicsState* state) 
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(splashMatrix), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    gSPDisplayList(state->dl++, Splash_mesh_tri_1);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(Splash_mesh_tri_1));
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
     gDPPipeSync(state->dl++);
 }

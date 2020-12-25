@@ -57,7 +57,7 @@ void levelTitleEffectRender(void* data, struct GraphicsState* state, struct Font
             centerOffset -= titleEffect->edgeAccel * accelTime * accelTime;
         }
 
-        gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
         fontRendererSetScale(fontRenderer, MESSAGE_SCALE, MESSAGE_SCALE * gScreenYScale);
         fontRendererDrawCharacters(
             fontRenderer, 

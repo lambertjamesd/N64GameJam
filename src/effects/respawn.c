@@ -17,7 +17,7 @@ void respawnRender(struct DynamicActor* data, struct GraphicsState* state) {
     gDPSetEnvColor(state->dl++, 128, 255, 255, alpha);
 
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(transform), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
-    gSPDisplayList(state->dl++, _shockwave_mesh_tri_0);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(_shockwave_mesh_tri_0));
     gDPPipeSync(state->dl++);
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }

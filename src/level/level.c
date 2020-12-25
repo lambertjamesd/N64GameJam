@@ -142,7 +142,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
         gDPPipeSync(state->dl++);
     } else {
         gDPPipeSync(state->dl++);
-        gSPDisplayList(state->dl++, gButtonFontUse);
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gButtonFontUse));
 
         char gemString[4];
         int levelIndex = (int)data;
@@ -208,7 +208,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
 
             gDPPipeSync(state->dl++);
 
-            gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+            gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
             for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
                 fontRendererDrawCharacters(
                     fontRenderer,
@@ -223,7 +223,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
             }
 
             gDPPipeSync(state->dl++);
-            gSPDisplayList(state->dl++, gButtonFontUse);
+            gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gButtonFontUse));
             x = centerScreen - (viewWidth >> 1) + CAM_HUD_PADDING;
             
             for (itemIndex = 0; itemIndex < 3; ++itemIndex) {
@@ -250,7 +250,7 @@ void levelHudRender(void* data, struct GraphicsState* state, struct FontRenderer
 
     char buffer[32];
     sprintf(buffer, "%d %d %d", gUnusedDL, gUnusedMatrices, lastDMA);
-    gSPDisplayList(state->dl++, gEndlessBossBattleUse);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
     fontRendererSetScale(fontRenderer, 2.0f, 2.0f * gScreenYScale);
 
     fontRendererDrawCharacters(
@@ -679,12 +679,12 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
 
     gLoadedLevel = levelDef;
 
-    gScene.transparentMaterials[TransparentMaterialTypeShadow] = _drop_shadow_material;
-    gScene.transparentMaterials[TransparentMaterialTypeGem] = _gem_mat;
-    gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = _gem_cleanup_mat;
-    gScene.transparentMaterials[TransparentMaterialTypeShockwave] = _shockwave_mat;
-    gScene.transparentMaterialCleanup[TransparentMaterialTypeShockwave] = _shockwave_mat_cleanup;
-    gScene.transparentMaterials[TransparentMaterialTypeSmoke] = _smoke_mat;
+    gScene.transparentMaterials[TransparentMaterialTypeShadow] = (Gfx*)K0_TO_PHYS(_drop_shadow_material);
+    gScene.transparentMaterials[TransparentMaterialTypeGem] = (Gfx*)K0_TO_PHYS(_gem_mat);
+    gScene.transparentMaterialCleanup[TransparentMaterialTypeGem] = (Gfx*)K0_TO_PHYS(_gem_cleanup_mat);
+    gScene.transparentMaterials[TransparentMaterialTypeShockwave] = (Gfx*)K0_TO_PHYS(_shockwave_mat);
+    gScene.transparentMaterialCleanup[TransparentMaterialTypeShockwave] = (Gfx*)K0_TO_PHYS(_shockwave_mat_cleanup);
+    gScene.transparentMaterials[TransparentMaterialTypeSmoke] = (Gfx*)K0_TO_PHYS(_smoke_mat);
     gTutorialMenu.state = 0;
 
     if (levelDef->levelData->musicRomStart && levelDef->levelData->musicRomEnd) {

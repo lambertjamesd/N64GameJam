@@ -13,6 +13,11 @@
 #include "src/level/level.h"
 #include "renderscene.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
+#include "src/debugger/debugger.h"
+
+#if VALIDATE_GFX
+#include "src/gfxvalidator/validator.h"
+#endif
 
 #define MAX_MENUS   8
 
@@ -130,6 +135,11 @@ void createGfxTask(GFXInfo *i) {
     dynamicp = &i->dp;
     Gfx* glistp   = i->dp.glist;
 
+    if (gCurrentLevel == SceneIndexMainMenu) {
+        // gdbSetWatchPoint(((char*)&gInfo) + 736, 1, 1);
+        // gdbSetWatchPoint(((char*)&gInfo) + 20240, 1, 1);
+    }
+
     gSPSegment(glistp++, 0, 0);
     if (gStaticSegmentBuffer) {
         gSPSegment(glistp++, STATIC_SEGMENT,  osVirtualToPhysical(gStaticSegmentBuffer));
@@ -211,7 +221,7 @@ void createGfxTask(GFXInfo *i) {
 
         viewportConvert(vp, &dynamicp->viewports[index]);
 
-        gSPViewport(state.dl++, &dynamicp->viewports[index]);
+        gSPViewport(state.dl++, K0_TO_PHYS(&dynamicp->viewports[index]));
 
         graphicsCaluclateFrustum(dynamicp, vp, index, state.frustumPlanes);
         guScale(&dynamicp->worldScale[index], 1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f);
@@ -251,9 +261,9 @@ void createGfxTask(GFXInfo *i) {
 
     gDPPipeSync(glistp++);
     if (gScreenHeight == SCREEN_HT_PAL) {
-        gSPViewport(glistp++, &gFullPalVP);
+        gSPViewport(glistp++, K0_TO_PHYS(&gFullPalVP));
     } else {
-        gSPViewport(glistp++, &gFullVP);
+        gSPViewport(glistp++, K0_TO_PHYS(&gFullVP));
     }
 
     gSPClearGeometryMode(state.dl++, G_ZBUFFER|G_CULL_BACK);
@@ -324,6 +334,12 @@ void createGfxTask(GFXInfo *i) {
     t->msg      = (OSMesg)&i->msg;
     t->framebuffer = (void *)i->cfb;
     osSendMesg(gSchedulerCommandQ, (OSMesg) t, OS_MESG_BLOCK); 
+
+#if VALIDATE_GFX
+    struct GFXValidationResult validateResult;
+    enum GFXValidatorError error = gfxValidate(&t->list, DYANAMIC_LIST_LEN, &validateResult);
+    assert(!error);
+#endif
 }
 
 void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority) {

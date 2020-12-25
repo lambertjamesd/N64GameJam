@@ -49,7 +49,7 @@ void rocketRender(struct DynamicActor* data, struct GraphicsState* state) {
 
     gSPMatrix(state->dl++, OS_K0_TO_PHYSICAL(nextTransfrom), G_MTX_MODELVIEW|G_MTX_MUL|G_MTX_PUSH);
     gDPSetEnvColor(state->dl++, rocket->color.r, rocket->color.g, rocket->color.b, rocket->color.a);
-    gSPDisplayList(state->dl++, Rocket_Rocket_mesh);
+    gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(Rocket_Rocket_mesh));
     gSPPopMatrix(state->dl++, G_MTX_MODELVIEW);
 }
 
