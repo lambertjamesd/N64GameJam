@@ -19,13 +19,21 @@ float fsign(float in) {
     }
 }
 
+float fabsf(float input) {
+    if (input < 0) {
+        return -input;
+    } else {
+        return input;
+    }
+}
+
 float mathfLerp(float from, float to, float t) {
     return from * (1.0f - t) + to * t;
 }
 
 float mathfMoveTowards(float from, float to, float maxMove) {
     float offset = to - from;
-    if (fabs(offset) <= maxMove) {
+    if (fabsf(offset) <= maxMove) {
         return to;
     } else {
         return fsign(offset) * maxMove + from;

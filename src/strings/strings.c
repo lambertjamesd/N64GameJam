@@ -294,4 +294,74 @@ char* gStrings[LangCount][STR_COUNT] = {
         [STR_LVL_raise_robot] = "Robot Raiser",
         [STR_LVL_final] = "Ora di Uscire",
     },
+
+    [LangSpanish] = {
+        [STR_SINGLE_PLAYER] = "Un Jugador",
+        [STR_CO_OP] = "Cooperativa",
+        [STR_BACK] = "Volver",
+        [STR_PLAYERS] = "Jugadores",
+
+        [STR_CANCEL] = "Cancelar",
+        [STR_ERASE_CONFIRM] = "Borrar",
+        [STR_ARE_YOU_SURE] = "\006Seguro?",
+
+        [STR_NEW_GAME] = "Juego Nuevo",
+
+        [STR_CONTINUE] = "Continuar",
+        [STR_LEVEL_SELECT] = "Electionar Nivel",
+        [STR_ERASE] = "Borrar",
+
+        [STR_PAUSED] = "Pausado",
+
+        [STR_SOUND_HIGH] = "Sonido - Alto",
+        [STR_SOUND_MEDIUM] = "Sonido - Mediano",
+        [STR_SOUND_LOW] = "Sonido - Bajo",
+        [STR_SOUND_OFF] = "Sonido - Apagado",
+
+        [STR_MUSIC_HIGH] = "Musica - Alto",
+        [STR_MUSIC_MEDIUM] = "Musica - Mediano",
+        [STR_MUSIC_LOW] = "Musica - Bajo",
+        [STR_MUSIC_OFF] = "Musica - Apagado",
+
+        [STR_RESUME] = "Volver",
+        [STR_RESTART_LEVEL] = "Empezar de Nuevo",
+        [STR_SAVE] = "Guardar",
+        [STR_SAVED] = "Guardado",
+        [STR_SAVE_AND_QUIT] = "Guardar y Salir",
+
+        [STR_MOVE] = "Mover",
+        [STR_JUMP] = "Saltar",
+        [STR_ATTACK] = "Atacar",
+        [STR_SWITCH] = "Cambiar",
+        [STR_CAMERA] = "C\003amera",
+        [STR_MAP] = "Mapa",
+        [STR_SKIP] = "Pasar",
+
+        [STR_MAP_MOVE] = "Mover",
+        [STR_MAP_VIEW] = "Vista",
+        [STR_MAP_BACK] = "Volver",
+
+        [STR_LANGUAGE] = "Espa\007ol",
+
+        [STR_LVL_cadet_intro] = "\005Salta Ya!",
+        [STR_LVL_switch_intro] = "Puertas y Interruptores",
+        [STR_LVL_robot_intro] = "Cuate Robot Grande",
+        [STR_LVL_robot_platform] = "Plataforma Robot",
+        [STR_LVL_switch_sizes] = "Interruptore Grande",
+        [STR_LVL_lava_platform] = "Radioactivo",
+        [STR_LVL_connected_colors] = "Colores Connectados",
+        [STR_LVL_switch_tagteam] = "Equipo de Interruptores",
+        [STR_LVL_inverted_doors] = "Puertas Invertidas",
+        [STR_LVL_platform_intro] = "Plataformas M\003oviles",
+        [STR_LVL_spiral] = "Espiral",
+        [STR_LVL_loop_around] = "Alrededor",
+        [STR_LVL_radioactive_river] = "Traves\003ia de R\003io",
+        [STR_LVL_canyon] = "Ca\007\003on",
+        [STR_LVL_track_blockage] = "Carril Interpusado",
+        [STR_LVL_raised_platform] = "Plataforma Subida",
+        [STR_LVL_moving_platforms] = "Plataformas M\003oviles",
+        [STR_LVL_switch_mania] = "Laberinto",
+        [STR_LVL_raise_robot] = "Robot Subido",
+        [STR_LVL_final] = "Hora de Salir",
+    },
 };

@@ -14,7 +14,7 @@
 #define MAX_SCREEN_HT   288
 #define	SCREEN_WD	320
 
-#define DEBUG 1
-#define VALIDATE_GFX    1
+#define DEBUG 0
+#define VALIDATE_GFX    0
 
 #endif

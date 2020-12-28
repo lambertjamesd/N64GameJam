@@ -29,6 +29,7 @@ extern unsigned short _titleScreenRendered_tex[];
 struct TimeUpdateListener gMainMenuUpdate;
 float gMainMenuTime;
 float gMainMenuExitTime;
+float gLanguageChangeTimer;
 
 #define MAIN_MENU_FADE_START_TIME       5.0f
 #define MAIN_MENU_FADE_END_TIME         6.0f
@@ -263,12 +264,15 @@ void mainMenuRocketPosition(float time, struct Vector3* out, struct Vector3* eul
 }
 
 #define GEM_COUNT_X     280
+#define LANGUAGE_X      40
 #define GEM_COUNT_Y     200
 
 #define TITLE_SCREEN_WIDTH          256
 #define TITLE_SCREEN_TILE_HEIGHT    8
 #define TITLE_SCREEN_TILES          8
 #define TITLE_SCREEN_LOCATION       30
+
+#define LANGUAGE_SHOW_TIME          3.0f
 
 void mainMenuRenderImage(struct GraphicsState* state, int y) {
     gDPPipeSync(state->dl++);
@@ -326,6 +330,20 @@ void mainMenuRenderImage(struct GraphicsState* state, int y) {
 void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer* fontRenderer) {
     menuRender(data, state, fontRenderer);
 
+    if (gLanguageChangeTimer > 0) {
+        gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
+        fontRendererSetScale(fontRenderer, 1.0f, 1.0f);
+        gDPSetEnvColor(state->dl++, 255, 255, 255, (u8)(255.0f * gLanguageChangeTimer / LANGUAGE_SHOW_TIME));
+        fontRendererDrawCharacters(
+            fontRenderer,
+            &gEndlessBossBattle,
+            &state->dl,
+            getStr(STR_LANGUAGE),
+            LANGUAGE_X - 20,
+            SCALE_FOR_PAL(GEM_COUNT_Y + 10)
+        );
+    }
+
     if (gMainMenuTotalGems && gMainMenu.itemStackDepth != 0) {
         gSPDisplayList(state->dl++, OS_K0_TO_PHYSICAL(gEndlessBossBattleUse));
         char buffer[16];
@@ -340,7 +358,7 @@ void mainMenuRender(void* data, struct GraphicsState* state, struct FontRenderer
             &state->dl,
             buffer,
             GEM_COUNT_X - (int)w,
-            GEM_COUNT_Y
+            SCALE_FOR_PAL(GEM_COUNT_Y)
         );
 
         gDPPipeSync(state->dl++);
@@ -383,9 +401,11 @@ void mainMenuUpdate(void* data) {
     if (getButton(0, L_TRIG) && getButtonDown(0, U_JPAD)) {
         gSelectedLanguage = (gSelectedLanguage + 1) % LangCount;
         saveFileSetSelectedLanguage(gSelectedLanguage);
+        gLanguageChangeTimer = LANGUAGE_SHOW_TIME;
     } else if (getButton(0, L_TRIG) && getButtonDown(0, D_JPAD)) {
         gSelectedLanguage = (gSelectedLanguage + LangCount - 1) % LangCount;
         saveFileSetSelectedLanguage(gSelectedLanguage);
+        gLanguageChangeTimer = LANGUAGE_SHOW_TIME;
     } else if (getButtonDown(0, gKonamiCodeButtons[gKonamiCodeIndex])) {
         ++gKonamiCodeIndex;
 
@@ -406,6 +426,14 @@ void mainMenuUpdate(void* data) {
         }
     } else if (getButtonDown(0, ~gKonamiCodeButtons[gKonamiCodeIndex])) {
         gKonamiCodeIndex = 0;
+    
+        if (getButtonDown(0, gKonamiCodeButtons[0])) {
+            ++gKonamiCodeIndex;
+        }
+    }
+
+    if (gLanguageChangeTimer > 0.0f) {
+        gLanguageChangeTimer -= gTimeDelta;
     }
 
     if (gMainMenuTime < MAIN_MENU_FADE_END_TIME && gMainMenuTime > MAIN_MENU_FADE_START_TIME) {

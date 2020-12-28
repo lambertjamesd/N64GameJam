@@ -7,6 +7,7 @@ enum Languages {
     LangScots,
     LangScotsGalic,
     LangItalian,
+    LangSpanish,
     LangCount,
 };
 
