@@ -198,7 +198,8 @@ DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
 
 DEBUGGERFILES = src/debugger/serial.c \
-	src/debugger/debugger.c
+	src/debugger/debugger.c \
+	src/debugger/usb.c
 
 VALIDATORFILES = src/gfxvalidator/validator.c
 

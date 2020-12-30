@@ -38,7 +38,7 @@ if (process.argv[2] == 'cen64') {
 } else {
     spawned.push(child_process.spawn(
         'node', 
-        ['/home/james/libultragdb/proxy/proxy.js', '/dev/ttyUSB1', '8080'], 
+        ['/home/james/libultragdb/proxy/proxy.js', '/dev/ttyUSB0', '8080'], 
         {
             detached: true,
         }

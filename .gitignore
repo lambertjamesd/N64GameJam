@@ -26,6 +26,7 @@ src/levels/**/*.c
 src/levels/**/*.h
 src/levels/**/*.ply
 src/collision/geo/*.inc.c
+src/debugger/usb.*
 
 src/cutscene/slides.h
 src/cutscene/slides.c

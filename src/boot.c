@@ -206,7 +206,7 @@ static void initGame(void)
 #endif
 
     gSchedulerCommandQ = osScGetCmdQ(&gScheduler);
-
+    
     timeUpdate(osGetTime());
     fastMallocReset();
     cameraInit(&gScene.camera[0], &gZeroVec, 0);
@@ -234,7 +234,7 @@ static void initGame(void)
     spinningLogoInit();
     gCurrentLevel = SceneIndexSpinningLogo;
     gNextLevel = SceneIndexSpinningLogo;
-    // gNextLevel = 0;
+    gNextLevel = 0;
     // gSelectedLanguage = LangScotsGalic;
     // // gCurrentPlayMode = LevelPlayModeCoOp;
 }
