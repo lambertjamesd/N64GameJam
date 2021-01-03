@@ -13,6 +13,7 @@
 #include "src/input/controller.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
 
+#define WHITE_CLEAR_TIME        0.5f
 #define DELAY_TIME              2.0f
 #define SPINNING_LOGO_TIME      (DELAY_TIME + 7.0f)
 #define FADE_TIME               2.0f
@@ -30,6 +31,7 @@ extern char _spinning_logoSegmentRomStart[], _spinning_logoSegmentRomEnd[];
 
 struct TimeUpdateListener gSpinningLogoUpdate;
 float gSpinningLogoTimer;
+int gPlayedBeep;
 
 char* noControllerMessage = "No controller connnected";
 
@@ -63,7 +65,11 @@ void spinningLogoText(void* data, struct GraphicsState* state, struct FontRender
 
         gDPPipeSync(state->dl++);
         gDPSetCombineLERP(state->dl++, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
-        gDPSetEnvColor(state->dl++, 0, 0, 0, 255 - alpha);
+        if (gSpinningLogoTimer < WHITE_CLEAR_TIME) {
+            gDPSetEnvColor(state->dl++, 32, 32, 32, 255 - alpha);
+        } else {
+            gDPSetEnvColor(state->dl++, 0, 0, 0, 255 - alpha);
+        }
         gDPFillRectangle(state->dl++, 0, 0, SCREEN_WD-1, gScreenHeight-1);
         gDPPipeSync(state->dl++);
     } else {
@@ -190,4 +196,11 @@ void spinningLogoInit() {
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, 0, spinningLogoRender, MATERIAL_INDEX_NOT_BATCHED, 1.0f);
 
     graphicsAddMenu(spinningLogoText, 0, 1);
+
+    // This is to help newer tv's get a lock on the av singal before
+    // any important sounds/video shows up on screen
+    if (!gPlayedBeep) {
+        audioPlaySound(IntroSndGemHudGlow, 4.0f, 0.1f, 0.0f, 10);
+        gPlayedBeep = 1;
+    }
 }

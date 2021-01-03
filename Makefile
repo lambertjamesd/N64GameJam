@@ -7,8 +7,8 @@ SFZ2N64:=/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64
 MIDICVT:=/home/james/go/src/github.com/lambertjamesd/midicvt/midicvt
 
 ifeq ($(FINAL), YES)
-# OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
-OPTIMIZER       = -g
+OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
+# OPTIMIZER       = -g
 LCDEFS			= -DNDEBUG -D_FINALROM -Werror
 N64LIB          = -lultra_rom
 else
@@ -197,9 +197,9 @@ build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
 
-DEBUGGERFILES = src/debugger/serial.c \
-	src/debugger/debugger.c \
-	src/debugger/usb.c
+# DEBUGGERFILES = src/debugger/serial.c \
+# 	src/debugger/debugger.c \
+# 	src/debugger/usb.c
 
 VALIDATORFILES = src/gfxvalidator/validator.c
 
