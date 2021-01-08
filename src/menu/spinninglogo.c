@@ -31,7 +31,6 @@ extern char _spinning_logoSegmentRomStart[], _spinning_logoSegmentRomEnd[];
 
 struct TimeUpdateListener gSpinningLogoUpdate;
 float gSpinningLogoTimer;
-int gPlayedBeep;
 
 char* noControllerMessage = "No controller connnected";
 
@@ -196,11 +195,4 @@ void spinningLogoInit() {
     dynamicActorAddToGroup(&gScene.dynamicActors, &gCadet.transform, 0, spinningLogoRender, MATERIAL_INDEX_NOT_BATCHED, 1.0f);
 
     graphicsAddMenu(spinningLogoText, 0, 1);
-
-    // This is to help newer tv's get a lock on the av singal before
-    // any important sounds/video shows up on screen
-    if (!gPlayedBeep) {
-        audioPlaySound(IntroSndGemHudGlow, 4.0f, 0.1f, 0.0f, 10);
-        gPlayedBeep = 1;
-    }
 }
