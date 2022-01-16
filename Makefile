@@ -62,8 +62,9 @@ src/levels/%/geo.c: levels/%.level levels/%.meta levelbuilder/levelbuilder
 	@mkdir -p $(@D)
 	levelbuilder/levelbuilder level $* $< $@
 
-build/spec/level_segs src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA) $(LEVEL_META_DATA)
+build/spec/level_segs src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA) $(LEVEL_META_DATA) $(LEVEL_GEO)
 	@mkdir -p build/spec
+	@mkdir -p src/levels
 	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs $(LEVELS)
 
 IMAGE_SLIDES = _00_rocket \
@@ -105,6 +106,9 @@ src/collision/geo/%.inc.c: collision/%.ply levelbuilder/levelbuilder
 	levelbuilder/levelbuilder collision $* $< $@
 
 src/collision/geo/geo.c: $(COLLISION_GEO)
+
+src/puzzle/switch.c: src/collision/geo/permanant_switch.inc.c src/collision/geo/large_switch.inc.c
+src/robot/robot.c: src/collision/geo/robot_collision.inc.c
 
 PLAYER_SOUNDS = sound/clips/Jump.aifc \
 	sound/clips/JumpPeakBeep.aifc \
@@ -362,4 +366,4 @@ output/telocation.z64: $(BASE_TARGET_NAME).z64
 init: $(LEVEL_GEO)
 
 cleanall: clean
-	rm -rf $(CODEOBJECTS) $(OBJECTS) build/ src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/level_segs src/levels/levels.c src/levels/levels.h
+	rm -rf $(CODEOBJECTS) $(OBJECTS) output/ src/levels build/ src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/level_segs src/levels/levels.c src/levels/levels.h
