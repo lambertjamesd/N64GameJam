@@ -32,7 +32,7 @@ SLIDE_BUILDER_SOURCE = $(wildcard ./slidebuilder/*.go)
 slidebuilder/slidebuilder: $(SLIDE_BUILDER_SOURCE)
 	go build -o slidebuilder/slidebuilder ./slidebuilder/
 
-LEVELS = cadet_intro \
+LEVELS ?= cadet_intro \
 	switch_intro \
 	robot_intro \
 	robot_platform \
@@ -335,6 +335,10 @@ build/asm/sound_data.o: $(SONG_FILES) build/ins/Bank.ctl build/ins/Bank.tbl buil
 
 build/asm/image_slide_data.o: build/spec/slide_segs
 
+src/boot.c src/level/level.c src/menu/mainmenu.c: src/levels/levels.h
+
+src/cutscene/cutscene.c: src/cutscene/slides.h
+
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
 
@@ -350,7 +354,12 @@ $(BASE_TARGET_NAME).z64: $(CODESEGMENT) \
 	$(OBJCOPY) --pad-to=0x100000 --gap-fill=0xFF $(BASE_TARGET_NAME).elf $(BASE_TARGET_NAME).z64 -O binary
 	makemask $(BASE_TARGET_NAME).z64
 
+output/telocation.z64: $(BASE_TARGET_NAME).z64
+	@mkdir -p $(@D)
+	cp $(BASE_TARGET_NAME).z64 output/telocation.z64
+
+
 init: $(LEVEL_GEO)
 
 cleanall: clean
-	rm -f $(CODEOBJECTS) $(OBJECTS)
+	rm -rf $(CODEOBJECTS) $(OBJECTS) build/ src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/level_segs src/levels/levels.c src/levels/levels.h

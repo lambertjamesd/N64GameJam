@@ -34,5 +34,6 @@ src/cutscene/slides.c
 launch/last_launch.txt
 
 build/*
+output/*
 
 src/gfxvalidator

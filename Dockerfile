@@ -30,4 +30,4 @@ COPY sound/music sound/music
 COPY src src
 COPY telocation.ld telocation.ld
 
-CMD make
+CMD make output/telocation.z64
