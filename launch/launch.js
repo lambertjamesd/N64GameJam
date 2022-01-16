@@ -16,17 +16,17 @@ try {
 }
 
 if (process.argv[2] == 'cen64') {
-    spawned.push(child_process.spawn(
-        'node', 
-        ['/home/james/libultragdb/proxy/proxy.js', 'localhost:2159', '8080'], 
-        {
-            detached: true,
-        }
-    ));
+    // spawned.push(child_process.spawn(
+    //     'node', 
+    //     ['/home/james/libultragdb/proxy/proxy.js', 'localhost:2159', '8080'], 
+    //     {
+    //         detached: true,
+    //     }
+    // ));
 
     spawned.push(child_process.spawn(
         '/home/james/cen64/cen64/cen64',
-        ['/home/james/cen64/pifdata.bin', process.argv[3]],
+        ['-debug', 'localhost:8080', '/home/james/cen64/pifdata.bin', process.argv[3]],
         {
             detached: true,
         }

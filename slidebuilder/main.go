@@ -83,26 +83,11 @@ func writeSpecSegs(output string, slides []string) {
 
 	for _, slide := range slides {
 		outFile.WriteString(fmt.Sprintf(`
-beginseg
-	name "%s_slide"
-	flags RAW
-	include "imageslides/%s.jpeg"
-endseg		
-`, slide, slide))
-	}
-}
-
-func writeSpecInclude(output string, slides []string) {
-	outFile, err := os.OpenFile(output, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0664)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer outFile.Close()
-
-	for _, slide := range slides {
-		outFile.WriteString(fmt.Sprintf("    include \"%s_slide\"\n", slide))
+glabel _%s_slideSegmentRomStart
+.incbin "imageslides/%s.jpeg"
+.balign 16
+glabel _%s_slideSegmentRomEnd
+`, slide, slide, slide))
 	}
 }
 
@@ -111,11 +96,9 @@ func main() {
 	var slidesHeader = os.Args[1]
 	var slideData = os.Args[2]
 	var slideSegs = os.Args[3]
-	var slideInclude = os.Args[4]
-	var slideNames = os.Args[5:len(os.Args)]
+	var slideNames = os.Args[4:len(os.Args)]
 
 	writeHeader(slidesHeader, slideNames)
 	writeSpecSegs(slideSegs, slideNames)
-	writeSpecInclude(slideInclude, slideNames)
 	writeData(slideData, slidesHeader, slideNames)
 }

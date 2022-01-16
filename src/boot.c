@@ -4,7 +4,9 @@
 
 #include "audio/audio.h"
 #include "src/cadet/cadet.h"
+#if DEBUG
 #include "src/debugger/debugger.h"
+#endif
 #include "src/graphics/graphics.h"
 #include "src/graphics/renderscene.h"
 #include "src/input/controller.h"
@@ -27,7 +29,6 @@
 #include "boot.h"
 #include "defs.h"
 #include "game.h"
-#include "memory.h"
 
 OSThread gGameThread;
 OSThread gInitThread;

@@ -33,7 +33,7 @@ int collisionBoxCollideSphere(struct Box* box, struct Vector3* center, float rad
     }
 
     if (containedCount == 3) {
-        float edgeDifference = MAXFLOAT;
+        float edgeDifference = 1000000000000000.0f;
         int edgeIndex = 0;
 
         for (i = 0; i < 3; ++i) {

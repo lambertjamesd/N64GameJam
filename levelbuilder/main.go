@@ -10,7 +10,7 @@ func printUsage() {
 Usage:
 levelbuilder level cName inputFile.level outputDir/geo.c
 levelbuilder collision cName inputFile.ply outputDir/geo.inc.c
-levelbuilder levelpack cName themeIndex outputDir/levels.c spec_level_segments spec_level_includes inputFile.level levelName0 levelName1 levelName2
+levelbuilder levelpack cName themeIndex outputDir/levels.c spec_level_segments inputFile.level levelName0 levelName1 levelName2
 `)
 }
 
@@ -31,7 +31,7 @@ func main() {
 		}
 	} else if os.Args[1] == "levelpack" {
 		if len(os.Args) >= 7 {
-			err := ProcessLevelPack(os.Args[2], os.Args[3], os.Args[4], os.Args[5], os.Args[6], os.Args[7:len(os.Args)])
+			err := ProcessLevelPack(os.Args[2], os.Args[3], os.Args[4], os.Args[5], os.Args[6:len(os.Args)])
 
 			if err != nil {
 				log.Fatal(err)

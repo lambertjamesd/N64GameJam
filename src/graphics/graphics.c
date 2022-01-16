@@ -13,10 +13,8 @@
 #include "src/level/level.h"
 #include "renderscene.h"
 #include "src/font/endlessbossbattle/endlessbossbattle.h"
+#if DEBUG
 #include "src/debugger/debugger.h"
-
-#if VALIDATE_GFX
-#include "src/gfxvalidator/validator.h"
 #endif
 
 #define MAX_MENUS   8
@@ -334,12 +332,6 @@ void createGfxTask(GFXInfo *i) {
     t->msg      = (OSMesg)&i->msg;
     t->framebuffer = (void *)i->cfb;
     osSendMesg(gSchedulerCommandQ, (OSMesg) t, OS_MESG_BLOCK); 
-
-#if VALIDATE_GFX
-    struct GFXValidationResult validateResult;
-    enum GFXValidatorError error = gfxValidate(&t->list, DYANAMIC_LIST_LEN, &validateResult);
-    assert(!error);
-#endif
 }
 
 void graphicsAddMenu(MenuRenderCallback renderCallback, void* data, int priority) {

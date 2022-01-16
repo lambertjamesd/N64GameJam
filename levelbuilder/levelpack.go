@@ -8,22 +8,6 @@ import (
 	"strconv"
 )
 
-func writeSpecInclude(specInc string, levels []string) error {
-	output, err := os.OpenFile(specInc, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
-
-	if err != nil {
-		return err
-	}
-
-	defer output.Close()
-
-	for _, level := range levels {
-		output.WriteString(fmt.Sprintf("\tinclude \"%s\"\n", level))
-	}
-
-	return nil
-}
-
 func writeSpecSeg(specSeg string, levels []string) error {
 	output, err := os.OpenFile(specSeg, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0664)
 
@@ -35,13 +19,13 @@ func writeSpecSeg(specSeg string, levels []string) error {
 
 	for _, level := range levels {
 		output.WriteString(fmt.Sprintf(`
-beginseg
-	name "%s"
-	flags OBJECT
-	number LEVEL_SEGMENT
-	include "src/levels/%s/geo.o"
-endseg
-`, level, level))
+BEGIN_SEG(%s, LEVEL_SEGMENT)
+{
+	build/src/levels/%s/geo.o(.data);
+	build/src/levels/%s/geo.o(.bss);
+}
+END_SEG(%s)
+`, level, level, level, level))
 	}
 
 	return nil
@@ -140,16 +124,12 @@ extern int _level_group_%s_count;
 	return nil
 }
 
-func ProcessLevelPack(cName string, themeIndex string, geoOutput string, specSeg string, specInc string, levels []string) error {
+func ProcessLevelPack(cName string, themeIndex string, geoOutput string, specSeg string, levels []string) error {
 	err := writeLevelPack(cName, themeIndex, geoOutput, levels)
 	if err != nil {
 		return err
 	}
 	err = writeLevelPackHeader(cName, geoOutput, levels)
-	if err != nil {
-		return err
-	}
-	err = writeSpecInclude(specInc, levels)
 	if err != nil {
 		return err
 	}

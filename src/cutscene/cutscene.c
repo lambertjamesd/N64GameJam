@@ -9,7 +9,6 @@
 #include "src/effects/tutorial.h"
 #include "src/input/controller.h"
 #include "slides.h"
-#include <memory.h>
 
 #define CUTSCENE_HEIGHT     180
 #define MAX_CUTSCENE_HEIGHT 480

@@ -20,6 +20,8 @@ void tlbAlign(unsigned int len, u32* alignedSize, OSPageMask* pageMask);
 void* fastMalloc(int len, int align);
 void fastMallocReset();
 
+extern void memcpy(char*, char*, u32);
+
 #define FAST_MALLOC_STRUCT(structType) (fastMalloc(sizeof(structType), ALIGNMENT_OF(structType)))
 #define FAST_MALLOC_STRUCT_ARRAY(structType, count) (fastMalloc(((sizeof(structType) + (ALIGNMENT_OF(structType) - 1)) & ~(ALIGNMENT_OF(structType) - 1)) * count, ALIGNMENT_OF(structType)))
 

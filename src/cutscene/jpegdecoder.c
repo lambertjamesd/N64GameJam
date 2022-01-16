@@ -3,7 +3,7 @@
 #include "src/boot.h"
 #include "src/tjpeg/tjpgd.h"
 #include "src/system/assert.h"
-#include <memory.h>
+#include "src/system/memory.h"
 
 #define JPEG_MEMORY_REQUIREMENT 3100
 #define MAX_REQUEST_COUNT 2

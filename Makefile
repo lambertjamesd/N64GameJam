@@ -1,25 +1,26 @@
 #!smake
 include $(ROOT)/usr/include/make/PRdefs
 
-FINAL = YES
+SFZ2N64:=bin/sfz2n64
+MIDICVT:=bin/midicvt
 
-SFZ2N64:=/home/james/go/src/github.com/lambertjamesd/sfz2n64/sfz2n64
-MIDICVT:=/home/james/go/src/github.com/lambertjamesd/midicvt/midicvt
+OPTIMIZER		:= -O0
+LCDEFS			:= -g -Isrc/ -I/usr/include/n64/nustd -Werror
+N64LIB			:= -lultra_rom -lnustd
 
-ifeq ($(FINAL), YES)
-OPTIMIZER       = -g -O2 -std=gnu90 -mno-shared
-# OPTIMIZER       = -g
-LCDEFS			= -DNDEBUG -D_FINALROM -Werror
-N64LIB          = -lultra_rom
-else
-OPTIMIZER       = -g -std=gnu90 -mno-shared
-LCDEFS          = -DDEBUG -Werror
-N64LIB          = -lultra_d
-endif
+LCINCS =	-I. -I/usr/include/n64/PR 
 
-APP =		game.out
+BASE_TARGET_NAME = build/telocation
 
-TARGETS =	game.n64
+LD_SCRIPT	= telocation.ld
+CP_LD_SCRIPT	= build/telocation
+
+ASMFILES    =	$(shell find asm/ -type f -name '*.s')
+
+ASMOBJECTS  =	$(patsubst %.s, build/%.o, $(ASMFILES))
+
+LDIRT  =	$(BASE_TARGET_NAME).elf $(CP_LD_SCRIPT) $(BASE_TARGET_NAME).z64 $(BASE_TARGET_NAME)_no.map $(ASMOBJECTS)
+LDFLAGS =	-L/usr/lib/n64 $(N64LIB)  -L$(N64_LIBGCCDIR) -lgcc
 
 GO_SOURCE = $(wildcard ./levelbuilder/*.go)
 
@@ -61,9 +62,9 @@ src/levels/%/geo.c: levels/%.level levels/%.meta levelbuilder/levelbuilder
 	@mkdir -p $(@D)
 	levelbuilder/levelbuilder level $* $< $@
 
-build/spec/level_segs build/spec/level_include src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA) $(LEVEL_META_DATA)
+build/spec/level_segs src/levels/levels.c src/levels/levels.h: levelbuilder/levelbuilder $(LEVEL_DATA) $(LEVEL_META_DATA)
 	@mkdir -p build/spec
-	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs build/spec/level_include $(LEVELS)
+	levelbuilder/levelbuilder levelpack all_levels 0 src/levels/levels.c build/spec/level_segs $(LEVELS)
 
 IMAGE_SLIDES = _00_rocket \
 	_01_insidecockpit \
@@ -92,8 +93,9 @@ IMAGE_SLIDES = _00_rocket \
 
 SLIDE_IMAGES = $(foreach slide, $(IMAGE_SLIDES), imageslides/$(slide).jpeg)
 
-src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include: slidebuilder/slidebuilder $(SLIDE_IMAGES)
-	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs build/spec/slide_include $(IMAGE_SLIDES)
+src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs: slidebuilder/slidebuilder $(SLIDE_IMAGES)
+	@mkdir -p build/spec
+	slidebuilder/slidebuilder src/cutscene/slides.h src/cutscene/slides.c build/spec/slide_segs $(IMAGE_SLIDES)
 
 COLLISION_SHAPES = solid_block tunnel_block ramp_block stair_block entrance_exit rocket_collision large_switch
 COLLISION_GEO = $(foreach shape, $(COLLISION_SHAPES), src/collision/geo/$(shape).inc.c)
@@ -189,10 +191,10 @@ build/music/%.mid: sound/music/%.mid sound/music/%.meta
 
 build/ins/Bank.ctl build/ins/Bank.tbl: sound/ins/Bank.ins $(BANK_SOUNDS_COMP)
 	@mkdir -p $(@D)
-	# $(SFZ2N64) sound/ins/Bank.ins -o build/ins/Bank.ctl
-	cd sound/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
-	mv sound/ins/Bank.ctl build/ins/Bank.ctl
-	mv sound/ins/Bank.tbl build/ins/Bank.tbl
+	$(SFZ2N64) sound/ins/Bank.ins -o build/ins/Bank.ctl
+	# cd sound/ins && wine /home/james/Documents/AudioTools/tools/ic.exe -OBank ./Bank.ins
+	# mv sound/ins/Bank.ctl build/ins/Bank.ctl
+	# mv sound/ins/Bank.tbl build/ins/Bank.tbl
 
 DEBUGGERHFILES = src/debugger/serial.h \
 	src/debugger/debugger.h
@@ -201,15 +203,13 @@ DEBUGGERHFILES = src/debugger/serial.h \
 # 	src/debugger/debugger.c \
 # 	src/debugger/usb.c
 
-VALIDATORFILES = src/gfxvalidator/validator.c
-
 HFILES = $(DEBUGGERHFILES) \
 	src/game.h	\
 	src/audio/audio.h		\
 	src/boot.h		\
 	src/graphics/graphics.h
 
-CODEFILES = $(DEBUGGERFILES) $(VALIDATORFILES) \
+CODEFILES = $(DEBUGGERFILES) \
 	src/audio/audio.c		\
 	src/audio/audiomgr.c	\
 	src/audio/playersounds.c \
@@ -290,9 +290,9 @@ CODEFILES = $(DEBUGGERFILES) $(VALIDATORFILES) \
 	src/tjpeg/tjpgd.c \
 	src/system/memory.c
 
-CODEOBJECTS =	$(CODEFILES:.c=.o)
+CODEOBJECTS = $(patsubst %.c, build/%.o, $(CODEFILES))
 
-CODESEGMENT =	codesegment.o
+CODESEGMENT =	build/codesegment.o
 
 # Data files that have thier own segments:
 
@@ -302,60 +302,55 @@ DATAFILES =	$(LEVEL_GEO) \
 	src/levelthemes/alienworldred/materials.c \
 	src/levelthemes/alienworldgrey/materials.c \
 	src/menu/geo/spinninglogo.c \
-	src/system/heapstart.c \
 	src/menu/geo/titlescreen.c
 
-DATAOBJECTS =	$(DATAFILES:.c=.o)
+DATAOBJECTS = $(patsubst %.c, build/%.o, $(DATAFILES))
 
-DEPS = $(CODEFILES:.c=.d) $(DATAFILES:.c=.d)
+BOOT		=	/usr/lib/n64/PR/bootcode/boot.6102
+BOOT_OBJ	=	build/boot.6102.o
 
-OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS) build/audio/player.sounds build/audio/intro_cutscene.sounds 
+OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS) $(ASMOBJECTS) $(BOOT_OBJ) build/audio/player.sounds build/audio/intro_cutscene.sounds 
 
-LCINCS =	-I. -I$(ROOT)/usr/include/PR -I $(ROOT)/usr/include
 LCOPTS =	-mno-shared -G 0
-LDFLAGS =	$(MKDEPOPT) -L$(ROOT)/usr/lib $(N64LIB) -L$(N64_LIBGCCDIR) -L$(N64_NEWLIBDIR) -lgcc -lc
 
 LDIRT  =	$(APP)
 
-ifdef $(INIT)
-default: init
-else
-default:	$(TARGETS)
-endif
+default:	build/telocation.z64
 
-%.d: %.c
-	$(CC) $(GCINCS) $(LCINCS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
+build/%.o: %.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -MM $^ -MF "$(@:.o=.d)" -MT"$@"
+	$(CC) $(CFLAGS) -c -o $@ $<
 
+build/%.o: %.s
+	@mkdir -p $(@D)
+	$(AS) -Wa,-Iasm -o $@ $<
 
-ifndef $(INIT)
--include $(DEPS)
-endif
+$(BOOT_OBJ): $(BOOT)
+	$(OBJCOPY) -I binary -B mips -O elf32-bigmips $< $@
 
 include $(COMMONRULES)
 
-spec: build/spec/level_segs \
-	build/spec/level_include \
-	build/spec/slide_segs \
-	build/spec/slide_include \
-	$(SLIDE_IMAGES) \
-	$(SONG_FILES) \
-	build/ins/Bank.ctl \
-	build/ins/Bank.tbl
-	touch spec
+build/asm/sound_data.o: $(SONG_FILES) build/ins/Bank.ctl build/ins/Bank.tbl build/audio/player.sounds build/audio/intro_cutscene.sounds
+
+build/asm/image_slide_data.o: build/spec/slide_segs
 
 $(CODESEGMENT):	$(CODEOBJECTS)
 		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
 
-ifeq ($(FINAL), YES)
-$(TARGETS) $(APP):      spec $(OBJECTS)
-	$(MAKEROM) -s 9 -r $(TARGETS) spec
-	makemask $(TARGETS)
-else
-$(TARGETS) $(APP):      spec $(OBJECTS)
-	$(MAKEROM) -r $(TARGETS) spec
-endif
+$(CP_LD_SCRIPT).ld: $(LD_SCRIPT) build/spec/level_segs build/spec/slide_segs
+	cpp -P -Wno-trigraphs $(LCDEFS) -DCODE_SEGMENT=$(CODESEGMENT) -o $@ $<
 
-init: $(LEVEL_GEO) $(DEPS)
+$(BASE_TARGET_NAME).z64: $(CODESEGMENT) \
+	$(OBJECTS) \
+	$(CP_LD_SCRIPT).ld \
+	build/spec/slide_segs \
+	$(SLIDE_IMAGES)
+	$(LD) -L. -T $(CP_LD_SCRIPT).ld -Map $(BASE_TARGET_NAME).map -o $(BASE_TARGET_NAME).elf
+	$(OBJCOPY) --pad-to=0x100000 --gap-fill=0xFF $(BASE_TARGET_NAME).elf $(BASE_TARGET_NAME).z64 -O binary
+	makemask $(BASE_TARGET_NAME).z64
+
+init: $(LEVEL_GEO)
 
 cleanall: clean
-	rm -f $(CODEOBJECTS) $(OBJECTS) $(DEPS)
+	rm -f $(CODEOBJECTS) $(OBJECTS)

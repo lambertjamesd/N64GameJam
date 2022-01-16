@@ -2,7 +2,7 @@
 #include "controller.h"
 #include "src/system/assert.h"
 #include "src/save/savefile.h"
-#include <memory.h>
+#include <string.h>
 
 static OSMesg gDummyMessage;
 OSMesgQueue gContMessageQ;

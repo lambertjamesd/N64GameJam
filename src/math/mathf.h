@@ -9,5 +9,6 @@ float mathfLerp(float from, float to, float t);
 float mathfMoveTowards(float from, float to, float maxMove);
 float mathfBounceBackLerp(float t);
 float mathfRandomFloat();
+float sqrtf(float input);
 
 #endif
