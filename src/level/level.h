@@ -78,7 +78,7 @@ struct LevelThemeDefinition {
 };
 
 struct LevelDefinition {
-    enum StringIndex name;
+    char* name;
     char* levelRomStart;
     char* levelRomEnd;
     struct LevelData* levelData;

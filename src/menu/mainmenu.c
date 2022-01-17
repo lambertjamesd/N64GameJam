@@ -520,7 +520,7 @@ int mainMenuBuildLevelSelect() {
 
     int i;
     for (i = 1; i <= completeLevels; ++i) {
-        items[i].text = _level_group_all_levels[i-1].name;
+        items[i].text = (enum StringIndex)_level_group_all_levels[i-1].name;
         items[i].action = mainMenuSelectLevel;
         items[i].data = (void*)(i-1);
         items[i].type = MenuItemAction;

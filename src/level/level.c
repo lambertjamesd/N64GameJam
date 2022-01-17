@@ -348,7 +348,7 @@ void levelUpdate(void* data) {
                 gScene.camera[0].targetPosition = gRocket.landingSpot;
             } else if (gCadet.actor.stateFlags & CADET_IS_INVISIBLE) {
                 gCadet.actor.stateFlags &= ~CADET_IS_INVISIBLE;
-                levelTitleEffectInit(&gLevelTitleEffect, getStr(_level_group_all_levels[gCurrentLevel].name));
+                levelTitleEffectInit(&gLevelTitleEffect, _level_group_all_levels[gCurrentLevel].name);
                 gScene.camera[0].targetPosition = gCadet.transform.position;
                 gScene.camera[0].followDistanceStep = 0;
             }
@@ -708,6 +708,6 @@ void levelLoad(struct LevelDefinition* levelDef, enum LevelPlayMode playMode) {
         gCadet.actor.stateFlags |= CADET_IS_INVISIBLE;
         gFadeTimer = FADE_DURATION;
     } else {
-        levelTitleEffectInit(&gLevelTitleEffect, getStr(_level_group_all_levels[gCurrentLevel].name));
+        levelTitleEffectInit(&gLevelTitleEffect, _level_group_all_levels[gCurrentLevel].name);
     }
 }

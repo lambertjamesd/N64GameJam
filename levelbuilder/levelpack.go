@@ -89,8 +89,8 @@ struct LevelDefinition _level_group_%s[] = {
 `, cName))
 
 	for _, level := range levels {
-		_, levelThemeIndex := getLevelName(level)
-		output.WriteString(fmt.Sprintf("    {STR_LVL_%s, _%sSegmentRomStart, _%sSegmentRomEnd, &_level_%s_levelData, &gAllThemes[%d]},\n", level, level, level, level, levelThemeIndex))
+		name, levelThemeIndex := getLevelName(level)
+		output.WriteString(fmt.Sprintf("    {\"%s\", _%sSegmentRomStart, _%sSegmentRomEnd, &_level_%s_levelData, &gAllThemes[%d]},\n", name, level, level, level, levelThemeIndex))
 	}
 
 	output.WriteString(fmt.Sprintf("};\n\nint _level_group_%s_count = sizeof(_level_group_%s) / sizeof(*_level_group_%s);\n", cName, cName, cName))

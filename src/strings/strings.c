@@ -3,7 +3,9 @@
 
 
 char* getStr(enum StringIndex name) {
-    if (gStrings[gSelectedLanguage][name]) {
+    if (name >= STR_COUNT) {
+        return (char*)name;
+    } else if (gStrings[gSelectedLanguage][name]) {
         return gStrings[gSelectedLanguage][name];
     } else if (gStrings[LangEnglish][name]) {
         return gStrings[LangEnglish][name];
