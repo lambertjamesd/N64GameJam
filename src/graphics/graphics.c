@@ -50,18 +50,21 @@ static Vp gFullPalVP = {
     SCREEN_WD*2, 288*2, G_MAXZ/2, 0,
 };
 
-void graphicsInit(void) 
+int graphicsInit(void) 
 {
     gInfo[0].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[0].cfb = gColorBuffer[0];
     gInfo[1].msg.gen.type = OS_SC_DONE_MSG;
     gInfo[1].cfb = gColorBuffer[1];
 
+    int fps = 60;
+
 	switch (osTvType) {
 		case 0: // PAL
 			osViSetMode(&osViModeTable[OS_VI_FPAL_LPF1]);
             gScreenHeight = SCREEN_HT_PAL;
             gScreenYScale = (float)SCREEN_HT_PAL/SCREEN_HT_NTSC;
+            fps = 50;
 			break;
 		case 1: // NTSC
 			osViSetMode(&osViModeTable[OS_VI_NTSC_LPF1]);
@@ -79,6 +82,8 @@ void graphicsInit(void)
 			OS_VI_GAMMA_DITHER_OFF |
 			OS_VI_DIVOT_OFF |
 			OS_VI_DITHER_FILTER_OFF);
+
+    return fps;
 }
 
 void graphicsCaluclateFrustum(Dynamic* dynamicp, struct SceneViewport* vp, int cameraIndex, struct Plane out[4]) {

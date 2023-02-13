@@ -80,7 +80,7 @@ static u32  __amHandleFrameMsg(AudioInfo *, AudioInfo *);
 static void __amHandleDoneMsg(AudioInfo *);
 static void __clearAudioDMA(void);
 
-void amCreateAudioMgr(ALSynConfig *c, OSPri pri, amConfig *amc)
+void amCreateAudioMgr(ALSynConfig *c, OSPri pri, amConfig *amc, int fps)
 {
     u32     i;
     f32     fsize;
@@ -90,7 +90,7 @@ void amCreateAudioMgr(ALSynConfig *c, OSPri pri, amConfig *amc)
     c->dmaproc    = __amDmaNew;    
     c->outputRate = osAiSetFrequency(amc->outputRate);
 
-    fsize = (f32) amc->framesPerField * c->outputRate / (f32) 60;
+    fsize = (f32) amc->framesPerField * c->outputRate / (f32) fps;
     frameSize = (s32) fsize;
     if (frameSize < fsize)
         frameSize++;

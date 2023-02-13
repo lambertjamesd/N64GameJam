@@ -224,8 +224,8 @@ static void initGame(void)
     }
 
     layoutMemory();
-    graphicsInit(); 
-    audioInit();
+    int fps = graphicsInit(); 
+    audioInit(fps);
     playerSoundsInit();
     jpegDecoderStartThread();
 

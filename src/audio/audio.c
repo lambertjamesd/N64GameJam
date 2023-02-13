@@ -126,7 +126,7 @@ void audioPlaySequence(struct SeqPlayEvent* playEvent) {
     }
 }
 
-void audioInit() 
+void audioInit(int fps) 
 {
     ALBankFile    *bankPtr;
     u32           bankLen;
@@ -154,7 +154,7 @@ void audioInit()
     amc.framesPerField = NUM_FIELDS;
     amc.maxACMDSize = MAX_RSP_CMDS;
  
-    amCreateAudioMgr(&synConfig, AUDIO_PRIORITY, &amc);
+    amCreateAudioMgr(&synConfig, AUDIO_PRIORITY, &amc, fps);
     
     seqc.maxVoices      = MAX_VOICES;
     seqc.maxEvents      = MAX_EVENTS;

@@ -44,8 +44,8 @@ extern char _tableSegmentRomStart[], _tableSegmentRomEnd[];
 extern char _bankSegmentRomStart[], _bankSegmentRomEnd[];
 
 
-void     audioInit();
-void     graphicsInit(void);
+void     audioInit(int fps);
+int     graphicsInit(void);
 void     createGfxTask(GFXInfo *i);
 void     romCopy(const char *src, const char *dest, const int len);
 
